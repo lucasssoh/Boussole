@@ -1,7 +1,6 @@
 @startuml 21-parsing-answers
 skinparam packageStyle rectangle
 skinparam classAttributeIconSize 0
-skinparam linetype ortho
 skinparam nodesep 40
 skinparam ranksep 50
 hide empty members

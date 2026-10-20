@@ -1,7 +1,6 @@
 @startuml 31-validation
 skinparam packageStyle rectangle
 skinparam classAttributeIconSize 0
-skinparam linetype ortho
 skinparam nodesep 40
 skinparam ranksep 50
 hide empty members
@@ -60,11 +59,11 @@ package "source" {
 
 SubjectInspector --> Validator
 SubjectInspector ..> FolderSourceDocuments : creates
-ValidationContext --> Course
-Validator o-- "*" ValidationRule
-ValidationRule ..> ValidationContext
-ValidationContext --> SourceDocuments
-ValidationContext --> VideoCatalog
+ValidationContext --> Course : course
+Validator o-- "*" ValidationRule : rules
+ValidationRule ..> ValidationContext : reads
+ValidationContext --> SourceDocuments : sources
+ValidationContext --> VideoCatalog : videos
 SourceDocuments <|.. FolderSourceDocuments
 ValidationRule <|.. DuplicateIdRule
 ValidationRule <|.. IdSyntaxRule

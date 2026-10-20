@@ -1,7 +1,6 @@
 @startuml 10-model-course
 skinparam packageStyle rectangle
 skinparam classAttributeIconSize 0
-skinparam linetype ortho
 skinparam nodesep 40
 skinparam ranksep 50
 hide empty members
@@ -55,7 +54,7 @@ class LearnerProfile <<record>> {
   sessionMinutes : int
   quickCheck : boolean
 }
-note right of LearnerProfile
+note bottom of LearnerProfile
   enums: Goal, Explanations,
   Order, Closing, Videos
 end note
@@ -86,29 +85,29 @@ class Notion <<record>> {
 class Checkpoint <<record>>
 class Practice <<record>>
 
-Course *-- "1" Subject
-Course *-- "1" Syllabus
-Course *-- "1" Lexicon
-Course *-- "0..1" LearnerProfile
-Course *-- "*" LoadedSession
-Syllabus *-- "*" Chapter
-Syllabus --> SyllabusStatus
-Chapter *-- "*" SessionEntry
-SessionEntry --> SessionKind
-Lexicon *-- "*" Term
-LoadedSession --> SessionId
-LoadedSession --> Chapter
-LoadedSession --> SessionEntry
-LoadedSession *-- "1" Session
-Session *-- "1" SessionHeader
-Session *-- "*" Part
-SessionHeader *-- "*" SourceRef
+Course *-- "1" Subject : subject
+Course *-- "1" Syllabus : syllabus
+Course *-- "1" Lexicon : lexicon
+Course *-- "0..1" LearnerProfile : learner
+Course *-- "*" LoadedSession : sessions read
+Syllabus *-- "*" Chapter : chapters
+Syllabus --> SyllabusStatus : status
+Chapter *-- "*" SessionEntry : sessions
+SessionEntry --> SessionKind : kind
+Lexicon *-- "*" Term : terms
+LoadedSession --> SessionId : id
+LoadedSession --> Chapter : chapter
+LoadedSession --> SessionEntry : entry
+LoadedSession *-- "1" Session : session
+Session *-- "1" SessionHeader : header
+Session *-- "*" Part : parts
+SessionHeader *-- "*" SourceRef : sources
 Part <|.. TextPart
 Part <|.. Warmup
 Part <|.. Notion
 Part <|.. Checkpoint
 Part <|.. Practice
-Part o-- "*" Block
+Part o-- "*" Block : blocks
 
 class Block <<sealed interface>>
 note bottom of Block : see 11-model-blocks

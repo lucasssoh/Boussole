@@ -1,7 +1,6 @@
 @startuml 00-overview
 skinparam packageStyle rectangle
 skinparam classAttributeIconSize 0
-skinparam linetype ortho
 skinparam nodesep 40
 skinparam ranksep 50
 hide empty members
@@ -50,10 +49,10 @@ package "boussole-format" as format {
   }
 }
 
-clipkg --> SubjectInspector : validate
-initpkg --> SubjectInspector : checks the result
-SubjectInspector --> load
-SubjectInspector --> validate
+clipkg --> SubjectInspector : boussole validate
+initpkg --> SubjectInspector : checks the new subject
+SubjectInspector --> load : 1. read
+SubjectInspector --> validate : 2. check
 load --> parse : session bodies
 load --> yaml
 parse --> model : builds
@@ -71,7 +70,7 @@ note right of format
   Dependencies point down only.
 end note
 
-note bottom of clipkg
+note left of cli
   Planned: boussole-core, boussole-adapters,
   boussole-server and web/ (Angular).
 end note

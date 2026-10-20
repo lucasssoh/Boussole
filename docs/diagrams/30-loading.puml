@@ -1,7 +1,6 @@
 @startuml 30-loading
 skinparam packageStyle rectangle
 skinparam classAttributeIconSize 0
-skinparam linetype ortho
 skinparam nodesep 40
 skinparam ranksep 50
 hide empty members
@@ -75,12 +74,12 @@ package "diagnostic" {
 
 SubjectInspector --> SubjectLoader : 1. read
 SubjectInspector ..> InspectionReport : returns
-SubjectLoader --> SubjectFiles
-SubjectLoader --> SubjectReader
-SubjectLoader --> SyllabusReader
-SubjectLoader --> LexiconReader
-SubjectLoader --> LearnerProfileReader
-SubjectLoader --> SessionReader
+SubjectLoader --> SubjectFiles : files
+SubjectLoader --> SubjectReader : subject.yaml
+SubjectLoader --> SyllabusReader : syllabus.yaml
+SubjectLoader --> LexiconReader : lexique.yaml
+SubjectLoader --> LearnerProfileReader : learner.yaml
+SubjectLoader --> SessionReader : each session file
 SyllabusReader --> SourceRefs
 SessionReader --> SourceRefs
 SubjectReader --> YamlMap

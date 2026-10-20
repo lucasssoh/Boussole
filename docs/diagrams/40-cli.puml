@@ -1,7 +1,6 @@
 @startuml 40-cli
 skinparam packageStyle rectangle
 skinparam classAttributeIconSize 0
-skinparam linetype ortho
 skinparam nodesep 40
 skinparam ranksep 50
 hide empty members
@@ -77,18 +76,18 @@ class SubjectInspector <<boussole-format>>
 BoussoleCommand --> ValidateCommand : subcommand
 BoussoleCommand --> InitCommand : subcommand
 BoussoleCommand --> ManifestVersion
-ValidateCommand --> SubjectInspector
-ValidateCommand --> ReportPrinter
+ValidateCommand --> SubjectInspector : inspects
+ValidateCommand --> ReportPrinter : prints
 ValidateCommand ..> ExitCode
-InitCommand --> SubjectScaffold
-InitCommand --> AgentKitInstaller
-InitCommand --> Launcher
-InitCommand ..> LearnerProfiles
+InitCommand --> SubjectScaffold : 1. subject files
+InitCommand --> AgentKitInstaller : 2. agent kit
+InitCommand --> Launcher : validate command
+InitCommand ..> LearnerProfiles : usual profile
 SubjectScaffold --> SubjectFolder
 SubjectScaffold ..> Settings
 SubjectScaffold ..> Slug
 AgentKitInstaller --> SubjectFolder
-AgentKitInstaller --> AgentKit
+AgentKitInstaller --> AgentKit : skills, format
 AgentKitInstaller --> MarkedBlock : AGENTS.md
 SubjectScaffold ..> InitReport
 AgentKitInstaller ..> InitReport

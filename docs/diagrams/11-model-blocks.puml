@@ -1,7 +1,6 @@
 @startuml 11-model-blocks
 skinparam packageStyle rectangle
 skinparam classAttributeIconSize 0
-skinparam linetype ortho
 skinparam nodesep 40
 skinparam ranksep 50
 hide empty members
@@ -87,30 +86,30 @@ Block <|.. Exercise
 Block <|.. Qcm
 Block <|.. ExerciseRef
 
-Prose *-- "*" InlineDirective
+Prose *-- "*" InlineDirective : inlines
 InlineDirective <|.. TermMention
 InlineDirective <|.. PdfMention
-PdfMention --> SourceRef
-PdfRef --> SourceRef
+PdfMention --> SourceRef : source
+PdfRef --> SourceRef : source
 
 Example o-- "*" Block : content
 Recall o-- "*" Block : content
 Callout o-- "*" Block : content
-Callout --> CalloutKind
+Callout --> CalloutKind : kind
 
-Exercise --> ExerciseType
+Exercise --> ExerciseType : type
 Exercise o-- "*" Block : statement
-Exercise *-- "0..1" Answer
-Exercise *-- "*" Hint
-Exercise *-- "0..1" Solution
+Exercise *-- "0..1" Answer : answer
+Exercise *-- "*" Hint : hints
+Exercise *-- "0..1" Solution : solution
 Qcm o-- "*" Block : statement
-Qcm *-- "2..*" Choice
-Qcm *-- "*" Hint
-Qcm *-- "0..1" Solution
-Hint o-- "*" Block
-Solution o-- "*" Block
+Qcm *-- "2..*" Choice : choices
+Qcm *-- "*" Hint : hints
+Qcm *-- "0..1" Solution : solution
+Hint o-- "*" Block : content
+Solution o-- "*" Block : content
 
 Blocks ..> Block : walks nested
-QuestionTime ..> Exercise
-QuestionTime ..> Qcm
+QuestionTime ..> Exercise : estimates
+QuestionTime ..> Qcm : estimates
 @enduml
