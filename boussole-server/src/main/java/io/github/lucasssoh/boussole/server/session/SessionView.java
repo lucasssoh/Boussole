@@ -51,7 +51,7 @@ record SessionView(
         SyllabusSession entry = session.entry();
         SessionFrontMatter header = session.session().header();
         String sourcesDir = course.subject().sourcesDir();
-        BlockViewMapper mapper = new BlockViewMapper(sourcesDir, opened.referenced(), opened.progress());
+        BlockViewMapper mapper = new BlockViewMapper(sourcesDir, opened.referenced(), opened.progress(), opened.answered());
         List<String> written = course.sessions().stream().map(found -> found.entry().id()).toList();
         int index = written.indexOf(entry.id());
         return new SessionView(

@@ -38,5 +38,5 @@ import { QuestionState } from './question-state';
 export class QuestionCorrectionComponent {
   readonly state = input.required<QuestionState>();
 
-  protected readonly verdict = computed(() => this.state().result()?.verdict ?? null);
+  protected readonly verdict = computed(() => this.state().verdict());
 }

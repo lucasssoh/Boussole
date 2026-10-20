@@ -1,6 +1,7 @@
 package io.github.lucasssoh.boussole.core.learn;
 
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
+import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import io.github.lucasssoh.boussole.format.model.Course;
 import io.github.lucasssoh.boussole.format.model.CourseSession;
 import io.github.lucasssoh.boussole.format.model.block.Block;
@@ -24,7 +25,8 @@ public final class OpenSession {
     public OpenedSession open(String subject, String session) {
         Course course = lookup.course(subject);
         CourseSession found = lookup.session(course, session);
-        return new OpenedSession(course, found, referenced(course, found), progress.exercises(subject));
+        return new OpenedSession(course, found, referenced(course, found), progress.exercises(subject),
+                AnswerOnce.appliesTo(found) ? progress.firstVerdicts(new SessionKey(subject, session)) : Map.of());
     }
 
     private static Map<String, Block> referenced(Course course, CourseSession session) {

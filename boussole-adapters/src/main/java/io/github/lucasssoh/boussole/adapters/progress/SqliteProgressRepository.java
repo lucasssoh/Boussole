@@ -117,6 +117,21 @@ public final class SqliteProgressRepository implements ProgressRepository {
     }
 
     @Override
+    public Map<String, Verdict> firstVerdicts(SessionKey session) {
+        return query("SELECT exercise, verdict FROM attempt WHERE subject = ? AND session = ? ORDER BY at, id", statement -> {
+            statement.setString(1, session.subject());
+            statement.setString(2, session.session());
+            Map<String, Verdict> found = new HashMap<>();
+            try (ResultSet rows = statement.executeQuery()) {
+                while (rows.next()) {
+                    found.putIfAbsent(rows.getString("exercise"), Verdict.valueOf(rows.getString("verdict")));
+                }
+            }
+            return found;
+        });
+    }
+
+    @Override
     public List<AttemptRecord> attemptHistory() {
         return query("SELECT subject, exercise, at, verdict FROM attempt ORDER BY at, id", statement -> {
             List<AttemptRecord> found = new ArrayList<>();

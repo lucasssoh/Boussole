@@ -53,6 +53,26 @@ class LearningTest {
     }
 
     @Test
+    void in_a_lesson_the_first_answer_is_final_and_shows_when_the_session_opens_again() {
+        SubmitAttempt submit = new SubmitAttempt(content, progress, RewardedSubjects.all(), clock);
+        submit.submit(MAC_BITS, new ValueResponse("6"), Optional.of("s11"));
+
+        assertThatThrownBy(() -> submit.submit(MAC_BITS, new ValueResponse("48"), Optional.of("s11")))
+                .isInstanceOf(LearningRuleException.class);
+        assertThat(new OpenSession(content, progress).open("reseaux", "s11").answered()).containsEntry("s11-a1", Verdict.WRONG);
+    }
+
+    @Test
+    void a_review_can_be_sat_again() {
+        SubmitAttempt submit = new SubmitAttempt(content, progress, RewardedSubjects.all(), clock);
+        ExerciseKey reviewed = new ExerciseKey("reseaux", "r19-q1");
+        submit.submit(reviewed, new ChoicesResponse(Set.of(0)), Optional.of("r19"));
+
+        assertThat(submit.submit(reviewed, new ChoicesResponse(Set.of(1)), Optional.of("r19")).progress().attempts()).isEqualTo(2);
+        assertThat(new OpenSession(content, progress).open("reseaux", "r19").answered()).isEmpty();
+    }
+
+    @Test
     void the_solution_waits_for_a_first_attempt() {
         RevealSolution solution = new RevealSolution(content, progress);
 

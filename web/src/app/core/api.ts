@@ -151,6 +151,8 @@ export interface QuestionProgress {
   attempts: number;
   solved: boolean;
   lastVerdict: Verdict | null;
+  /** In a lesson, the verdict of the answer already given in it: that answer is final. */
+  answeredHere: Verdict | null;
 }
 
 interface QuestionView {

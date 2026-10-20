@@ -203,7 +203,7 @@ export class ExerciseBlockComponent {
   }
 
   protected verdictIs(verdict: string): boolean {
-    return this.state().result()?.verdict === verdict;
+    return this.state().verdict() === verdict;
   }
 
   protected move(index: number, step: number): void {

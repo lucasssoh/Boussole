@@ -11,7 +11,7 @@ import { BlockListComponent } from './blocks/block-list.component';
 import { clock } from './blocks/video-block.component';
 import { LearnFacade } from './learn.facade';
 import { SessionPathComponent } from './session-path.component';
-import { BlockView } from '../core/api';
+import { BlockView, Verdict } from '../core/api';
 import { SessionScreen, sessionPlan } from './session-screens';
 import { SessionRun } from './session-run';
 import { SidePanelComponent } from './side-panel.component';
@@ -213,7 +213,7 @@ export class SessionPageComponent {
           () => {
             const opened = this.learn.session();
             if (opened) {
-              this.run.begin(opened.kind, opened.duration, opened.subject, opened.id);
+              this.run.begin(opened.kind, opened.duration, opened.subject, opened.id, this.answeredHere());
               this.resumeStoredScreen(opened.kind === 'lesson');
             }
           },
@@ -269,6 +269,18 @@ export class SessionPageComponent {
   private exerciseType(screen: SessionScreen): string | undefined {
     const block = this.questionOf(screen);
     return block?.type === 'exercise' ? block.exerciseType : undefined;
+  }
+
+  /** The questions of the lesson answered in an earlier sitting, with the verdict of that answer. */
+  private answeredHere(): Map<string, Verdict> {
+    const answered = new Map<string, Verdict>();
+    for (const screen of this.plan().screens) {
+      const block = this.questionOf(screen);
+      if ((block?.type === 'mcq' || block?.type === 'exercise') && block.progress.answeredHere) {
+        answered.set(block.id, block.progress.answeredHere);
+      }
+    }
+    return answered;
   }
 
   /** A question answered in an earlier sitting no longer holds the learner. */

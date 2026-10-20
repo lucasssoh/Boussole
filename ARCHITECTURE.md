@@ -90,6 +90,11 @@ Experience is never stored: `ReadStudyStats` computes it from the history of att
 finished sessions with `XpRules` (a first answer earns more than one given again, a wrong one
 still earns something), with the level (`Level`) and the streak of days in a row.
 
+In a lesson a question is answered once (`AnswerOnce`): `SubmitAttempt` refuses a second answer
+in the same session, and `OpenSession` returns the verdict of each answer already given, which
+the interface shows again (with the answer itself when the browser kept it). A review or a mock
+exam can be sat again.
+
 A response is a sealed `LearnerResponse` (choices, a value, gaps, an order, pairs, a self
 grade). `QuestionChecker` hands it to the `ResponseChecker` of the question's kind, which
 returns a `CheckResult`: a `Verdict` (correct, partly, wrong) and each part judged, never the

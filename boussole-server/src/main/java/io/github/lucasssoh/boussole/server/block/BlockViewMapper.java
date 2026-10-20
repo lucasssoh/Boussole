@@ -1,5 +1,6 @@
 package io.github.lucasssoh.boussole.server.block;
 
+import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
 import io.github.lucasssoh.boussole.format.model.answer.Answer;
 import io.github.lucasssoh.boussole.format.model.answer.FillAnswer;
@@ -30,6 +31,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Turns the blocks of a session into what the interface receives. Questions get the learner's
@@ -40,16 +42,20 @@ public final class BlockViewMapper {
     private final String sourcesDir;
     private final Map<String, Block> referenced;
     private final Map<String, ExerciseProgress> progress;
+    private final Map<String, Verdict> answered;
 
-    public BlockViewMapper(String sourcesDir, Map<String, Block> referenced, Map<String, ExerciseProgress> progress) {
+    /** {@code answered}: the questions already answered in the session, whose answer is final. */
+    public BlockViewMapper(
+            String sourcesDir, Map<String, Block> referenced, Map<String, ExerciseProgress> progress, Map<String, Verdict> answered) {
         this.sourcesDir = sourcesDir;
         this.referenced = referenced;
         this.progress = progress;
+        this.answered = answered;
     }
 
     /** A mapper for content outside a session, such as a hint or a solution: it holds no question. */
     public static BlockViewMapper forContent(String sourcesDir) {
-        return new BlockViewMapper(sourcesDir, Map.of(), Map.of());
+        return new BlockViewMapper(sourcesDir, Map.of(), Map.of(), Map.of());
     }
 
     public List<BlockView> blocks(List<Block> blocks) {
@@ -98,7 +104,7 @@ public final class BlockViewMapper {
     }
 
     private ProgressView progressOf(String id) {
-        return ProgressView.of(progress.getOrDefault(id, ExerciseProgress.NONE));
+        return ProgressView.of(progress.getOrDefault(id, ExerciseProgress.NONE), Optional.ofNullable(answered.get(id)));
     }
 
     private static InputView input(ExerciseBlock exercise) {

@@ -39,12 +39,15 @@ export class SessionRun implements OnDestroy {
   readonly hintsAllowed = computed(() => this.kind() !== 'exam');
   readonly rightFirstTime = computed(() => [...this.firstVerdicts().values()].filter((verdict) => verdict === 'correct').length);
 
-  /** A lesson starts at once; a review or an exam when the learner says so, with its countdown. */
-  begin(kind: SessionKind, minutes: number, subject: string, session: string): void {
+  /**
+   * A lesson starts at once; a review or an exam when the learner says so, with its countdown.
+   * {@code answered}: the questions of a lesson answered in an earlier sitting, whose verdict stays.
+   */
+  begin(kind: SessionKind, minutes: number, subject: string, session: string, answered: ReadonlyMap<string, Verdict> = new Map()): void {
     this.seenKey = `seen.${subject}.${session}`;
     this.kind.set(kind);
     this.spent.set(0);
-    this.firstVerdicts.set(new Map());
+    this.firstVerdicts.set(new Map(answered));
     this.questions.clear();
     this.seen.set(new Set(storedNumbers(this.seenKey)));
     this.xpEarned.set(0);

@@ -97,6 +97,7 @@ class RewardTest {
         @Override public void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, Instant at) { }
         @Override public void saveSessionFinished(SessionKey key, Instant at, Duration spent) { }
         @Override public Set<String> finishedSessions(String subject) { return Set.of(); }
+        @Override public Map<String, Verdict> firstVerdicts(SessionKey session) { return Map.of(); }
         @Override public List<AttemptRecord> attemptHistory() { return attempts; }
         @Override public List<SessionFinishedRecord> sessionsFinished() { return finished; }
         @Override public Optional<LastActivity> lastActivity(String subject) { return Optional.empty(); }

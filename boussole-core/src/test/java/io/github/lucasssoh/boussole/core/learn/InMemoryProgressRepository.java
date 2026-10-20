@@ -26,6 +26,7 @@ final class InMemoryProgressRepository implements ProgressRepository {
     private final Map<String, LastActivity> last = new HashMap<>();
     private final List<AttemptRecord> history = new ArrayList<>();
     private final List<SessionFinishedRecord> finishedAt = new ArrayList<>();
+    private final Map<SessionKey, Map<String, Verdict>> firstInSession = new HashMap<>();
 
     @Override
     public ExerciseProgress exercise(ExerciseKey key) {
@@ -55,6 +56,13 @@ final class InMemoryProgressRepository implements ProgressRepository {
     public void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, Instant at) {
         last.put(key.subject(), new LastActivity(at, session, false));
         history.add(new AttemptRecord(key.subject(), key.exercise(), at, verdict));
+        session.ifPresent(id -> firstInSession.computeIfAbsent(new SessionKey(key.subject(), id), unused -> new HashMap<>())
+                .putIfAbsent(key.exercise(), verdict));
+    }
+
+    @Override
+    public Map<String, Verdict> firstVerdicts(SessionKey session) {
+        return Map.copyOf(firstInSession.getOrDefault(session, Map.of()));
     }
 
     @Override

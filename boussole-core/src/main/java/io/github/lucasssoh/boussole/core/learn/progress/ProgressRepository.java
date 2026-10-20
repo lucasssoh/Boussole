@@ -28,6 +28,9 @@ public interface ProgressRepository {
     /** The IDs of the sessions of a subject finished at least once. */
     Set<String> finishedSessions(String subject);
 
+    /** The verdict of the first attempt on each exercise answered in a session, by exercise ID. */
+    Map<String, Verdict> firstVerdicts(SessionKey session);
+
     /** Every attempt, in every subject, oldest first. */
     List<AttemptRecord> attemptHistory();
 
