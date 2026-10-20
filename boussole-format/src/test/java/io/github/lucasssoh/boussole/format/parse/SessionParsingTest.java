@@ -140,10 +140,10 @@ class SessionParsingTest {
 
         @Test
         void aDirectiveIsInItsPlace() {
-            parse("::ref{id=e1}\n\n:::hint\nIndice.\n:::\n\n:::example\n:::::warmup\n:::::\n:::\n");
+            parse(":::example\n::ref{id=e1}\n:::\n\n:::hint\nIndice.\n:::\n\n:::example\n:::::warmup\n:::::\n:::\n");
 
             assertThat(messages(Code.F020)).containsExactly(
-                    "`ref` is not allowed in the body of a session",
+                    "`ref` is not allowed in `example`",
                     "`hint` is only allowed inside `exercise` or `qcm`, as :::hint",
                     "`warmup` is only allowed at the top level of a session");
         }

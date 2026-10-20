@@ -8,6 +8,7 @@ import io.github.lucasssoh.boussole.format.model.LearnerProfile.Explanations;
 import io.github.lucasssoh.boussole.format.model.LearnerProfile.Goal;
 import io.github.lucasssoh.boussole.format.model.LearnerProfile.Order;
 import io.github.lucasssoh.boussole.format.model.LearnerProfile.Videos;
+import io.github.lucasssoh.boussole.format.model.SessionKind;
 import io.github.lucasssoh.boussole.format.yaml.YamlMap;
 import java.util.Arrays;
 import java.util.Locale;
@@ -37,9 +38,9 @@ final class LearnerProfileReader {
     private static LearnerProfile profile(YamlMap map, Diagnostics diagnostics) {
         map.reportUnknownKeys(FIELDS);
         int minutes = map.integer("session_minutes").orElse(DEFAULT_MINUTES);
-        if (minutes < SyllabusReader.MIN_DURATION || minutes > SyllabusReader.MAX_DURATION) {
+        if (minutes < SessionKind.LESSON.minDuration() || minutes > SessionKind.LESSON.maxDuration()) {
             diagnostics.report(Code.F001, map.positionOf("session_minutes"), "`session_minutes` is between "
-                    + SyllabusReader.MIN_DURATION + " and " + SyllabusReader.MAX_DURATION + ", not " + minutes);
+                    + SessionKind.LESSON.minDuration() + " and " + SessionKind.LESSON.maxDuration() + ", not " + minutes);
             minutes = DEFAULT_MINUTES;
         }
         return new LearnerProfile(

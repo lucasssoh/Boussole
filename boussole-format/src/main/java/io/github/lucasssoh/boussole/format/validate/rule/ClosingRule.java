@@ -15,13 +15,15 @@ import java.util.List;
 
 /**
  * P006: a session ends the way the learner asked in {@code learner.yaml}: a checkpoint quiz, a
- * closing exercise in the practice, or both. Without a profile, nothing is checked.
+ * closing exercise in the practice, or both. Without a profile, nothing is checked; timed
+ * sessions end with their time.
  */
 public final class ClosingRule implements ValidationRule {
 
     @Override
     public void check(ValidationContext context, Diagnostics diagnostics) {
-        context.course().learner().map(LearnerProfile::closing).ifPresent(closing -> context.course().sessions()
+        context.course().learner().map(LearnerProfile::closing).ifPresent(closing -> context.course().sessions().stream()
+                .filter(loaded -> !TimedSessions.isTimed(loaded))
                 .forEach(loaded -> check(loaded, closing, diagnostics)));
     }
 

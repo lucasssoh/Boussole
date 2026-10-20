@@ -65,6 +65,7 @@ class SubjectLoadingTest {
                     sessions:
                       - id: s1
                         title: Séance
+                        kind: quiz
                         duration: 300
                         file: s1.md
                 """).inspect();
@@ -72,7 +73,8 @@ class SubjectLoadingTest {
         assertThat(report.withCode(Code.F001)).extracting(Diagnostic::message).containsExactly(
                 "`status` is `proposed` or `approved`, not `finished`",
                 "`goal` is required",
-                "`duration` is between 15 and 120 minutes, not 300");
+                "`kind` is lesson, review or exam, not `quiz`",
+                "`duration` of a lesson is between 15 and 120 minutes, not 300");
     }
 
     @Test

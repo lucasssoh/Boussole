@@ -25,6 +25,7 @@ public final class SubjectFixture {
 
     private final Path root;
     private final Map<String, Optional<String>> sessions = new LinkedHashMap<>();
+    private final Map<String, String> timing = new LinkedHashMap<>();
     private String status = "approved";
     private Optional<String> subjectYaml = Optional.empty();
     private Optional<String> syllabusYaml = Optional.empty();
@@ -54,6 +55,12 @@ public final class SubjectFixture {
     public SubjectFixture sessionFile(String id, String content) {
         sessions.put(id, Optional.of(content));
         return this;
+    }
+
+    /** A review or an exam allowing {@code minutes}, with a minimal front matter and this body. */
+    public SubjectFixture timedSession(String id, String kind, int minutes, String body) {
+        timing.put(id, "\n        kind: " + kind + "\n        duration: " + minutes);
+        return session(id, body);
     }
 
     /** A session planned in the syllabus, without a file. */
@@ -119,7 +126,8 @@ public final class SubjectFixture {
                 + "\n    title: Chapitre\n    dir: " + DIR + "\n    sessions:\n");
         sessions.keySet().forEach(id -> yaml.append("      - id: ").append(id)
                 .append("\n        title: Séance ").append(id)
-                .append("\n        duration: 60\n        goal: Faire quelque chose.\n        file: ").append(id).append(".md\n"));
+                .append(timing.getOrDefault(id, "\n        duration: 60"))
+                .append("\n        goal: Faire quelque chose.\n        file: ").append(id).append(".md\n"));
         if (sessions.isEmpty()) {
             yaml.append("      []\n");
         }

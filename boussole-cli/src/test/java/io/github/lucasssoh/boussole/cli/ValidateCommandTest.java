@@ -31,7 +31,7 @@ class ValidateCommandTest {
         int status = run("validate", Path.of("..", "examples", "reseaux").toString());
 
         assertThat(status).isZero();
-        assertThat(out.toString()).isEqualTo("✓ ../examples/reseaux: no problem, 1 of 1 session written.\n");
+        assertThat(out.toString()).isEqualTo("✓ ../examples/reseaux: no problem, 2 of 2 sessions written.\n");
     }
 
     @Test

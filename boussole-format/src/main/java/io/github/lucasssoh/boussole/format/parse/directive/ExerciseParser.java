@@ -21,7 +21,10 @@ import java.util.stream.Collectors;
 final class ExerciseParser implements DirectiveParser {
 
     private static final DirectiveSpec SPEC = new DirectiveSpec(
-            "exercise", DirectiveKind.CONTAINER, Set.of("id", "type"), Set.of("tolerance", "unit", "strict"), Parents.FLOW);
+            "exercise", DirectiveKind.CONTAINER, Set.of("id", "type"), Set.of("tolerance", "unit", "strict", "minutes"), Parents.FLOW);
+
+    /** Attributes every type accepts, besides {@code id} and {@code type}. */
+    private static final Set<String> COMMON = Set.of("minutes");
 
     @Override
     public DirectiveSpec spec() {
@@ -46,6 +49,7 @@ final class ExerciseParser implements DirectiveParser {
                 answer,
                 parts.hints(),
                 parts.solution(directive, context),
+                directive.attributes().positiveInteger("minutes"),
                 context.position(directive.line())));
     }
 
@@ -58,7 +62,7 @@ final class ExerciseParser implements DirectiveParser {
 
     private static void checkTypeAttributes(Directive directive, ExerciseType type, Set<String> allowed) {
         for (String name : directive.attributes().names()) {
-            if (!SPEC.required().contains(name) && !allowed.contains(name)) {
+            if (!SPEC.required().contains(name) && !COMMON.contains(name) && !allowed.contains(name)) {
                 throw new InvalidAttributeException(name, "is not an attribute of a " + type.attributeValue() + " exercise");
             }
         }

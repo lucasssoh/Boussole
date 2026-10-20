@@ -33,7 +33,9 @@ public enum Code {
     P004(WARNING, "exercise without hint"),
     P005(WARNING, "term used but not declared"),
     P006(WARNING, "session does not close as the learner asked"),
-    P007(WARNING, "notion without the quick check the learner asked for");
+    P007(WARNING, "notion without the quick check the learner asked for"),
+    P008(WARNING, "timed session whose questions do not fit its time"),
+    P009(WARNING, "timed session with a notion or a worked example");
 
     private final Severity severity;
     private final String summary;

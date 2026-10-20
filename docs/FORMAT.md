@@ -84,6 +84,12 @@ chapters:
         duration: 60
         goal: Dire ce que la couche 3 apporte par rapport à la couche 2.
         file: 11-role-couche-reseau.md
+      - id: r19
+        title: Révision — la couche réseau
+        kind: review
+        duration: 20
+        goal: Retrouver l'essentiel de la couche réseau sans notes, en temps limité.
+        file: 19-revision.md
       - id: s12
         title: RIB, FIB et plus long préfixe
         duration: 60
@@ -100,7 +106,8 @@ chapters:
 | `chapters[].sources` | no | Files of `sources/` this chapter is built from. |
 | `sessions[].id` | yes | Slug, unique in the chapter. |
 | `sessions[].title` | yes | Display title. The session file has no `#` title of its own. |
-| `sessions[].duration` | yes | Estimated minutes of work at a normal pace, 15 to 120. An estimate of the content, not a time limit: a session ends with its closing. |
+| `sessions[].kind` | no | `lesson` (default), `review` or `exam`. Reviews and exams are **timed** (§5.3). |
+| `sessions[].duration` | yes | For a lesson, estimated minutes of work at a normal pace, 15 to 120: an estimate of the content, not a time limit, since a lesson ends with its closing. For a review (5 to 120) or an exam (5 to 240), the time allowed. |
 | `sessions[].goal` | yes | One sentence: what the learner can do at the end. |
 | `sessions[].file` | yes | File in the chapter folder. It may not exist yet while the course is being written. |
 
@@ -188,6 +195,11 @@ A session is read top to bottom in this order:
 Text before the first notion is an introduction. Level-3 headings and below are free inside
 a notion.
 
+**Timed sessions** (`kind: review` or `exam`) only ask questions, against the clock: an optional
+introduction, then exercises, qcms and `::ref`s, with no notion and no `example`. Their questions'
+estimated times (§5.6) add up to the time allowed. In an exam, hints are not shown and solutions
+come when the time is up; in a review, both are available after each answer.
+
 ### 5.4 Directive syntax
 
 | Kind | Syntax | Example |
@@ -228,13 +240,24 @@ Where each directive may appear:
 | `recall` | the same, and `hint`, `solution` |
 | `note`, `tip`, `warning` | the same as `recall`, and `example`, `recall` |
 | `video`, `pdf` | anywhere except `answer` |
-| `ref` | `warmup`, `checkpoint`, `practice` |
+| `ref` | a notion, an introduction, a section, the body of a review or exam |
 | `answer` | `exercise` |
 | `hint`, `solution` | `exercise`, `qcm` |
 
 ### 5.6 Exercises
 
-Every exercise has an `id` that is **unique in the subject and never reused**. The convention is
+Every exercise has an `id` that is **unique in the subject and never reused**. An exercise or a
+qcm may also have `minutes=N`, the time it takes at a normal pace when it differs from the
+estimate of its type:
+
+| Question | Estimated minutes |
+|---|---|
+| `qcm` | 1, or 1.5 with `multiple=true` |
+| `order`, `match` | 2 |
+| `numeric`, `text`, `fill` | 3 |
+| `free` | 8 |
+
+These estimates size timed sessions. The convention is
 `<session>-<letter><n>`: `s11-a1` (À toi), `s11-w1` (warmup), `s11-c1` (checkpoint),
 `s11-p1` (practice). Renaming an ID loses the progress recorded on it.
 
@@ -300,8 +323,9 @@ A `qcm` may also have `:::hint` parts. It has no `:::answer`: the ticked boxes a
 
 #### Reusing an exercise
 
-`::ref{id=s10-a3}` inside `warmup`, `checkpoint` or `practice` shows an exercise defined
-elsewhere in the subject. This is how a warmup asks again a question of the previous session.
+`::ref{id=s10-a3}` shows an exercise defined elsewhere in the subject. This is how a warmup asks
+again a question of the previous session, and how a review asks again the questions of a
+chapter.
 
 ---
 
@@ -338,6 +362,11 @@ elsewhere in the subject. This is how a warmup asks again a question of the prev
 | `P005` | warning | `term` used in the body but not listed in the front matter's `terms`. |
 | `P006` | warning | With a `learner.yaml`: a session without the checkpoint, or without the final practice holding an exercise, that `closing` asks for. |
 | `P007` | warning | With `quick_check: true`: a notion without a `qcm` before its example. |
+| `P008` | warning | A review or exam whose questions' estimated times add up to less than 80 % or more than 110 % of its duration. |
+| `P009` | warning | A review or exam holding a notion or an `example`. |
+
+`P001`, `P002`, `P006` and `P007` apply to lessons only; `P004` does not apply to exams, which
+give no hints.
 
 `F` codes are about the format, `P` codes about the teaching contract.
 

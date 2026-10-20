@@ -10,3 +10,9 @@ chapters:
         duration: 60
         goal: Dire ce que la couche 3 apporte par rapport à la couche 2 et distinguer datagramme et circuit virtuel.
         file: 11-role-couche-reseau.md
+      - id: r19
+        title: Révision — rôle de la couche réseau
+        kind: review
+        duration: 5
+        goal: Retrouver sans notes ce que la couche 3 apporte, en temps limité.
+        file: 19-revision.md

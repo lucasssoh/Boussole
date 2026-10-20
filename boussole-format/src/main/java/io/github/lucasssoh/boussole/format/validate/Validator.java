@@ -16,6 +16,8 @@ import io.github.lucasssoh.boussole.format.validate.rule.ReferenceRule;
 import io.github.lucasssoh.boussole.format.validate.rule.SessionIdMatchRule;
 import io.github.lucasssoh.boussole.format.validate.rule.SingleExampleRule;
 import io.github.lucasssoh.boussole.format.validate.rule.SourceFileRule;
+import io.github.lucasssoh.boussole.format.validate.rule.TimedSessionContentRule;
+import io.github.lucasssoh.boussole.format.validate.rule.TimedSessionFitRule;
 import io.github.lucasssoh.boussole.format.validate.rule.VideoExistsRule;
 import java.util.List;
 
@@ -49,7 +51,9 @@ public final class Validator {
                 new HintPresenceRule(),
                 new DeclaredTermsRule(),
                 new ClosingRule(),
-                new QuickCheckRule()));
+                new QuickCheckRule(),
+                new TimedSessionFitRule(),
+                new TimedSessionContentRule()));
     }
 
     public void validate(ValidationContext context, Diagnostics diagnostics) {

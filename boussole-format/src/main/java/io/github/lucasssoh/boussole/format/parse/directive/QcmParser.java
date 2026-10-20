@@ -11,7 +11,7 @@ import java.util.Set;
 final class QcmParser implements DirectiveParser {
 
     private static final DirectiveSpec SPEC =
-            new DirectiveSpec("qcm", DirectiveKind.CONTAINER, Set.of("id"), Set.of("multiple"), Parents.FLOW);
+            new DirectiveSpec("qcm", DirectiveKind.CONTAINER, Set.of("id"), Set.of("multiple", "minutes"), Parents.FLOW);
 
     @Override
     public DirectiveSpec spec() {
@@ -34,6 +34,7 @@ final class QcmParser implements DirectiveParser {
                 read.choices(),
                 parts.hints(),
                 parts.solution(directive, context),
+                directive.attributes().positiveInteger("minutes"),
                 context.position(directive.line())));
     }
 }

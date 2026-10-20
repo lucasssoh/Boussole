@@ -6,11 +6,11 @@ import io.github.lucasssoh.boussole.format.parse.ParseContext;
 import java.util.Optional;
 import java.util.Set;
 
-/** {@code ::ref{id=…}}: an exercise of the subject asked again in a section. */
+/** {@code ::ref{id=…}}: an exercise of the subject asked again, in a section or a review. */
 final class RefParser implements DirectiveParser {
 
     private static final DirectiveSpec SPEC =
-            new DirectiveSpec("ref", DirectiveKind.LEAF, Set.of("id"), Set.of(), Parents.SECTIONS);
+            new DirectiveSpec("ref", DirectiveKind.LEAF, Set.of("id"), Set.of(), Parents.FLOW);
 
     @Override
     public DirectiveSpec spec() {
