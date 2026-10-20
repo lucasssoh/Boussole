@@ -1,0 +1,322 @@
+# Boussole course format — version 1
+
+This document is the contract between three readers:
+
+- **people** who write or correct a course in a text editor;
+- **agents** that turn a learner's documents (lecture notes, slides, past exams) into a course;
+- **Boussole**, which parses, validates and renders it.
+
+If this document and the code disagree, the code has a bug.
+
+Principles:
+
+1. **Plain text only.** A course is Markdown and YAML files that can live in git.
+2. **One file = one session** of 45 to 90 minutes.
+3. **Stable identifiers.** Progress is stored against IDs, never against file names or positions.
+4. **Answers stay hidden.** Answers, hints and solutions are never sent to the browser before the
+   learner asks for them or makes an attempt.
+5. **The course speaks the language of its sources.** The interface is bilingual (en/fr); the
+   content is in the language declared by the subject.
+
+---
+
+## 1. Layout of a subject
+
+A subject sits next to the learner's own documents. Its folder is declared in Boussole's
+configuration (see `ARCHITECTURE.md`, *Configuration*).
+
+```
+<subject>/
+├── subject.yaml              # what the subject is
+├── sources/                  # the learner's documents (PDF…), never modified by Boussole
+└── cursus/
+    ├── syllabus.yaml         # chapters and sessions, in order
+    ├── lexique.yaml          # the terms of the subject
+    ├── assets/               # images used by sessions
+    └── <chapter dir>/
+        └── <session file>.md
+```
+
+Files and folders that Boussole does not know are ignored, so a subject can hold anything else.
+
+---
+
+## 2. `subject.yaml`
+
+```yaml
+format: 1
+id: reseaux
+name: Réseaux
+lang: fr
+description: M1 networking course, network and transport layers.
+```
+
+| Field | Required | Meaning |
+|---|---|---|
+| `format` | yes | Version of this format. Always `1` for now. |
+| `id` | yes | Slug: lowercase letters, digits and `-`. Unique among the learner's subjects. |
+| `name` | yes | Display name. |
+| `lang` | yes | BCP 47 tag (`fr`, `en`, `de`…): the language of the sources, hence of the course. |
+| `sources` | no | Folder of the learner's documents, relative to the subject. Default `sources`. |
+| `description` | no | One or two sentences. |
+
+---
+
+## 3. `cursus/syllabus.yaml`
+
+The syllabus is the plan of the course. An agent writes it first with `status: proposed`; the
+learner reads it, edits it if needed, and sets `status: approved`. Sessions are written only
+after that.
+
+```yaml
+status: approved              # proposed | approved
+chapters:
+  - id: couche-reseau
+    title: La couche réseau
+    dir: 01-couche-reseau
+    sources: [Reseaux_Cours_Intro_2026.pdf, Reseaux_TD.pdf]
+    sessions:
+      - id: s11
+        title: Rôle de la couche réseau
+        duration: 60
+        goal: Dire ce que la couche 3 apporte par rapport à la couche 2.
+        file: 11-role-couche-reseau.md
+      - id: s12
+        title: RIB, FIB et plus long préfixe
+        duration: 60
+        goal: Lire une table de routage et choisir la bonne route.
+        file: 12-rib-fib-lpm.md
+```
+
+| Field | Required | Meaning |
+|---|---|---|
+| `status` | yes | `proposed` or `approved`. |
+| `chapters[].id` | yes | Slug, unique in the subject. |
+| `chapters[].title` | yes | Display title. |
+| `chapters[].dir` | yes | Folder under `cursus/`. |
+| `chapters[].sources` | no | Files of `sources/` this chapter is built from. |
+| `sessions[].id` | yes | Slug, unique in the chapter. |
+| `sessions[].title` | yes | Display title. The session file has no `#` title of its own. |
+| `sessions[].duration` | yes | Planned minutes, 15 to 120. |
+| `sessions[].goal` | yes | One sentence: what the learner can do at the end. |
+| `sessions[].file` | yes | File in the chapter folder. It may not exist yet while the course is being written. |
+
+The full ID of a session is `<subject>.<chapter>.<session>`, for example
+`reseaux.couche-reseau.s11`. The order in the file is the order of the course.
+
+---
+
+## 4. `cursus/lexique.yaml`
+
+```yaml
+- id: mac
+  term: Adresse MAC
+  aliases: [MAC, adresse physique]
+  definition: >
+    L'adresse « physique » d'une interface réseau (48 bits), **plate** et valable seulement
+    sur le lien local.
+  see: [arp]
+```
+
+| Field | Required | Meaning |
+|---|---|---|
+| `id` | yes | Slug, unique in the subject. |
+| `term` | yes | The term as displayed. |
+| `aliases` | no | Other spellings, used for search. |
+| `definition` | yes | Markdown, two or three sentences, for a learner who has never seen the term. |
+| `see` | no | IDs of related terms. |
+
+---
+
+## 5. Session files
+
+### 5.1 Front matter
+
+```markdown
+---
+id: s11
+objectives:
+  - Dire ce que la couche 3 apporte par rapport à la couche 2.
+  - Distinguer datagramme et circuit virtuel.
+prerequisites: [reseaux.couche-liaison.s05]
+terms: [paquet, trame, mac, routeur]
+sources:
+  - Reseaux_Cours_Intro_2026.pdf#page=14
+---
+```
+
+| Field | Required | Meaning |
+|---|---|---|
+| `id` | yes | Must match the session's `id` in the syllabus. |
+| `objectives` | yes | One to five sentences starting with a verb. |
+| `prerequisites` | no | Full session IDs the learner should have done before. |
+| `terms` | no | Lexicon IDs used in the session, shown as its vocabulary list. |
+| `sources` | no | Files of `sources/`, optionally with `#page=N`. |
+
+### 5.2 Body
+
+The body is [CommonMark](https://commonmark.org) with:
+
+- GitHub tables and strikethrough;
+- math: `$…$` inline, `$$…$$` on its own lines (rendered with KaTeX);
+- diagrams: a fenced code block with the language `mermaid`;
+- **directives**, following the
+  [generic directives proposal](https://talk.commonmark.org/t/generic-directives-plugins-syntax/444)
+  (the syntax of `remark-directive`).
+
+The body must not contain a level-1 heading (`#`): the title comes from the syllabus.
+
+### 5.3 Structure of a session
+
+A session is read top to bottom in this order:
+
+1. `:::warmup` — optional, first. Five minutes on the previous session of the **same subject**.
+2. **Notions** — each level-2 heading with an ID is a notion:
+   `## Ce que la couche 3 apporte {#couche3}`. A notion runs until the next level-2 heading.
+   Inside it: the explanation, **one** `:::example`, then at least one `:::exercise` or `:::qcm`
+   (the learner's « À toi »).
+3. `:::checkpoint` — optional. A short quiz on the whole session; passing it validates the
+   session.
+4. `:::practice` — optional, last. Longer final exercises.
+
+Level-3 headings and below are free inside a notion.
+
+### 5.4 Directive syntax
+
+| Kind | Syntax | Example |
+|---|---|---|
+| Container | `:::name[label]{attributes}` … `:::` | `:::example[Ce que vaut la hiérarchie]` |
+| Leaf (one line) | `::name[label]{attributes}` | `::video[Masques en 5 min]{youtube=abc123 start=2:10}` |
+| Inline (in a sentence) | `:name[text]{attributes}` | `les :term[adresses MAC]{id=mac} sont plates` |
+
+- Attributes: `{key=value key2="value with spaces" #id}`; `#x` is short for `id=x`.
+- A container inside another one uses **more colons on the outside**, one more per level, and
+  closes with the same number: `:::hint` (3) inside `::::exercise` (4) inside `:::::warmup` (5).
+  A closing line closes the innermost open container that has that many colons.
+- Directive names are lowercase English words, whatever the course language.
+
+### 5.5 Content directives
+
+| Directive | Kind | Meaning |
+|---|---|---|
+| `example` | container | A worked example, solution included and visible. One per notion. |
+| `recall` | container | A reminder of a term or prerequisite, just before it is needed. |
+| `note`, `tip`, `warning` | container | Callouts. |
+| `term` | inline | Hover definition from the lexicon. `{id=…}` is optional when the text equals a term or alias. |
+| `video` | leaf | YouTube video beside the text. `youtube=<video id>` required; `start`, `end` as `m:ss` or seconds. The label is the caption. |
+| `pdf` | leaf or inline | Opens a file of `sources/` beside the text. `src=<file>` required; `page=N` optional. |
+
+Images use plain Markdown (`![caption](../assets/route.png)`).
+
+### 5.6 Exercises
+
+Every exercise has an `id` that is **unique in the subject and never reused**. The convention is
+`<session>-<letter><n>`: `s11-a1` (À toi), `s11-w1` (warmup), `s11-c1` (checkpoint),
+`s11-p1` (practice). Renaming an ID loses the progress recorded on it.
+
+An exercise is a container. Its first part is the statement (Markdown); then come its parts:
+
+| Part | Count | Meaning |
+|---|---|---|
+| `:::answer` | exactly one, except `free` | What is accepted. Syntax depends on the type, below. |
+| `:::hint` | zero or more | Hints, revealed one at a time in file order. |
+| `:::solution` | exactly one | The worked solution, shown after the first attempt. |
+
+```markdown
+::::exercise{#s11-a1 type=numeric}
+Combien de bits fait une adresse MAC ?
+
+:::answer
+48
+:::
+
+:::hint
+Une adresse MAC s'écrit avec 6 octets, comme `3c:52:82:1a:9f:04`.
+:::
+
+:::solution
+48 bits (6 octets).
+:::
+::::
+```
+
+#### Exercise types
+
+| `type` | `answer` content | Checking |
+|---|---|---|
+| `numeric` | One value per line. Decimal point, or a fraction `3/4`. | Attribute `tolerance` (absolute, default `0`). Attribute `unit` is displayed, not typed. The learner may use a comma. |
+| `text` | One accepted answer per line. A line starting with `re:` is a regular expression. | Trimmed, spaces collapsed, case ignored. `strict=true` keeps case. |
+| `fill` | One line per gap: `1: answer | other accepted answer`. The statement marks gaps with `[[1]]`, `[[2]]`… | Each gap checked like `text`. |
+| `order` | An ordered list, in the right order. | Items are shown shuffled. |
+| `match` | One line per pair: `left => right`. | Right-hand sides are shown shuffled. |
+| `free` | No `answer` part. | The learner writes, reads the solution, then grades themself: *got it / partly / not yet*. For proofs and models. |
+
+#### Multiple choice
+
+A `qcm` is an exercise whose choices are a task list. A blockquote indented under a choice is
+the feedback shown when the learner picks it. `multiple=true` means several choices are right
+and the interface says so.
+
+```markdown
+::::qcm{#s11-a2}
+Dans quel modèle les routeurs gardent-ils un état **par communication** ?
+
+- [ ] Datagramme
+  > Non : en datagramme, chaque paquet porte l'adresse complète et les routeurs ne gardent rien.
+- [x] Circuit virtuel
+- [ ] Les deux
+
+:::solution
+Le circuit virtuel : chaque routeur traversé garde une entrée par circuit établi.
+:::
+::::
+```
+
+A `qcm` may also have `:::hint` parts. It has no `:::answer`: the ticked boxes are the answer.
+
+#### Reusing an exercise
+
+`::ref{id=s10-a3}` inside `warmup`, `checkpoint` or `practice` shows an exercise defined
+elsewhere in the subject. This is how a warmup asks again a question of the previous session.
+
+---
+
+## 6. Validation
+
+`boussole validate <subject folder>` checks everything below and reports
+`file:line: code message`. Errors block the import; warnings do not.
+
+| Code | Level | Rule |
+|---|---|---|
+| `F001` | error | `subject.yaml` missing, unreadable, or a required field is missing. |
+| `F002` | error | `format` is not a version this Boussole knows. |
+| `F003` | error | Duplicate ID (chapter, session, notion, exercise, term). |
+| `F004` | error | ID with characters other than `a-z`, `0-9`, `-`. |
+| `F010` | error | A session file's `id` does not match the syllabus. |
+| `F011` | warning | A session listed in an approved syllabus has no file yet. |
+| `F012` | error | A level-1 heading in a session body. |
+| `F020` | error | Unknown directive, or unknown attribute on a known directive. |
+| `F021` | error | Exercise without `id`, without `solution`, or with the wrong number of `answer` parts for its type. |
+| `F022` | error | `qcm` with no ticked choice, or several without `multiple=true`. |
+| `F023` | error | `fill` gaps in the statement and in the answer do not match. |
+| `F024` | error | `numeric` answer that is not a number. |
+| `F025` | error | `text` answer with an invalid regular expression. |
+| `F030` | error | `ref`, `term`, `prerequisites` or `see` pointing to an ID that does not exist. |
+| `F031` | error | `pdf` or `sources` naming a file absent from `sources/`, or a page past the end. |
+| `F032` | warning | `video` that YouTube does not know (checked only with `--check-videos`). |
+| `P001` | warning | A notion without exercise or `qcm`. |
+| `P002` | warning | A notion with more than one `example`. |
+| `P003` | warning | `warmup` not first, or `practice` not last. |
+| `P004` | warning | Exercise without any `hint`. |
+| `P005` | warning | `term` used in the body but not listed in the front matter's `terms`. |
+
+`F` codes are about the format, `P` codes about the teaching contract.
+
+---
+
+## 7. Versions
+
+`format: 1` is this document. A change that makes existing courses invalid increments the
+version; Boussole keeps reading older versions, or tells exactly what to change.
+
+A complete subject following this format is in [`examples/reseaux`](../examples/reseaux).

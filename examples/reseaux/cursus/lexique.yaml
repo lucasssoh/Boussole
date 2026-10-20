@@ -1,0 +1,36 @@
+- id: trame
+  term: Trame
+  definition: >
+    L'unité de données de la couche liaison (couche 2) : elle transporte un paquet **sur un seul
+    lien**, entre deux adresses MAC.
+  see: [mac]
+
+- id: mac
+  term: Adresse MAC
+  aliases: [MAC, adresse physique]
+  definition: >
+    L'adresse « physique » d'une interface réseau (48 bits, par exemple `3c:52:82:1a:9f:04`),
+    **plate** (sans hiérarchie) et valable seulement sur le lien local.
+  see: [trame]
+
+- id: agregation
+  term: Agrégation
+  aliases: [supernetting]
+  definition: >
+    Annoncer **un seul** préfixe court à la place de plusieurs préfixes longs contigus, pour
+    garder les tables de routage petites.
+
+- id: circuit-virtuel
+  term: Datagramme et circuit virtuel
+  aliases: [datagramme, circuit virtuel]
+  definition: >
+    Deux modèles : en **datagramme** (IP), chaque paquet porte l'adresse complète et les routeurs
+    ne gardent aucun état par communication ; en **circuit virtuel** (ATM, MPLS), on établit
+    d'abord un chemin et chaque routeur garde un état par circuit.
+
+- id: forwarding
+  term: Routage et forwarding
+  aliases: [routage, commutation]
+  definition: >
+    Le **routage** construit la table (lentement, en échangeant des annonces) ; le
+    **forwarding** la lit pour chaque paquet (en nanosecondes).
