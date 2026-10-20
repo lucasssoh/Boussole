@@ -37,7 +37,9 @@ configuration (see `ARCHITECTURE.md`, *Configuration*).
         └── <session file>.md
 ```
 
-Files and folders that Boussole does not know are ignored, so a subject can hold anything else.
+`boussole init` also writes `.boussole/` (this document and the agent skills), `AGENTS.md` and
+`CLAUDE.md`, for the agents that build the course. Files and folders that Boussole does not know
+are ignored, so a subject can hold anything else.
 
 ---
 

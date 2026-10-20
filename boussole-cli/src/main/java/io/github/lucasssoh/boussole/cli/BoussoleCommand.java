@@ -1,5 +1,6 @@
 package io.github.lucasssoh.boussole.cli;
 
+import io.github.lucasssoh.boussole.cli.init.InitCommand;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -9,7 +10,7 @@ import picocli.CommandLine.Command;
         mixinStandardHelpOptions = true,
         versionProvider = ManifestVersion.class,
         description = "Turn your course documents into a course, and plan when to study it.",
-        subcommands = {ValidateCommand.class})
+        subcommands = {InitCommand.class, ValidateCommand.class})
 public final class BoussoleCommand {
 
     public static void main(String[] args) {

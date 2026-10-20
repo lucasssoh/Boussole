@@ -223,7 +223,20 @@ The skills shipped in `skills/`:
 | `video-find` | Videos per notion, kept only if `boussole validate --check-videos` accepts them. |
 | `cursus-fix` | Runs `boussole validate` and fixes until there is no error. |
 
-A learner's path: put the documents in `sources/`, run `boussole init`, ask an agent to build the
+`boussole init` installs them in the subject folder:
+
+| File | Owner | On a new `init` |
+|---|---|---|
+| `.boussole/skills/<skill>/SKILL.md`, `.boussole/FORMAT.md` | Boussole | rewritten, so skills follow the installed version |
+| `AGENTS.md` | shared | only the block between `boussole:start` and `boussole:end` is replaced; the rest is the learner's |
+| `CLAUDE.md` | shared | an `@AGENTS.md` line is added once, since Claude Code reads `CLAUDE.md` rather than `AGENTS.md` |
+| `subject.yaml`, `cursus/syllabus.yaml` | the course | created when missing, never overwritten |
+
+`AGENTS.md` gives the exact command that runs the validator of this installation
+(`java -jar …/boussole.jar validate .`), so agents run the right version even when another
+program is called `boussole`.
+
+A learner's path: run `boussole init` on the folder of documents, ask an agent to build the
 course, read and approve the syllabus, let the agent write the sessions; the interface reloads
 by itself.
 

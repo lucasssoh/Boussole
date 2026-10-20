@@ -39,6 +39,52 @@
     <build>
         <plugins>
             <plugin>
+                <!-- The agent kit installed by `boussole init`: the skills and the format, from the repository. -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>agent-skills</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/boussole-agent/skills</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/../skills</directory>
+                                    <includes>
+                                        <include>*/**</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>README.md</exclude>
+                                    </excludes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>agent-format</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/boussole-agent</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/../docs</directory>
+                                    <includes>
+                                        <include>FORMAT.md</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <executions>
