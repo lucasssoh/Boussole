@@ -12,6 +12,7 @@ import io.github.lucasssoh.boussole.core.learn.RevealNextHint;
 import io.github.lucasssoh.boussole.core.learn.RevealSolution;
 import io.github.lucasssoh.boussole.core.learn.SubmitAttempt;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
+import io.github.lucasssoh.boussole.core.learn.reward.ReadStudyStats;
 import java.time.Clock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -63,6 +64,11 @@ class LearningConfiguration {
     @Bean
     RevealSolution revealSolution(ContentRepository content, ProgressRepository progress) {
         return new RevealSolution(content, progress);
+    }
+
+    @Bean
+    ReadStudyStats readStudyStats(ProgressRepository progress, Clock clock) {
+        return new ReadStudyStats(progress, clock);
     }
 
     @Bean

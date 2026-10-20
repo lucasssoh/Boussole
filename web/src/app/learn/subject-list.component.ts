@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { CourseSummary } from '../core/api';
 import { RichTextComponent } from '../shared/rich-text.component';
+import { subjectColor } from '../shared/subject-color';
 import { LearnFacade } from './learn.facade';
 
 /**
@@ -20,7 +21,7 @@ import { LearnFacade } from './learn.facade';
       }
       @if (resume(); as subject) {
         @if (subject.resume; as next) {
-          <section class="resume-card" [attr.lang]="subject.lang">
+          <section class="resume-card subject-scope" [attr.lang]="subject.lang" [style.--subject]="color(subject.id)">
             <p class="eyebrow">{{ subject.name }} · <app-rich-text [text]="next.chapterTitle" /></p>
             <h1><app-rich-text [text]="next.title" /></h1>
             <p class="resume-meta">
@@ -41,9 +42,9 @@ import { LearnFacade } from './learn.facade';
         <ul class="cards">
           @for (subject of subjects; track subject.id) {
             <li>
-              <a class="card" [routerLink]="['/subjects', subject.id]" [attr.lang]="subject.lang">
+              <a class="card subject-scope" [routerLink]="['/subjects', subject.id]" [attr.lang]="subject.lang" [style.--subject]="color(subject.id)">
                 <span class="card-title">{{ subject.name }}</span>
-                <progress [max]="subject.planned || 1" [value]="subject.finished"></progress>
+                <span class="xp-track"><span class="xp-fill" [style.width.%]="(100 * subject.finished) / (subject.planned || 1)"></span></span>
                 <span class="card-meta">{{ 'home.progress' | transloco: subject }}</span>
                 @if (subject.resume; as next) {
                   <span class="card-text">{{ 'course.next' | transloco: { title: '' } }}<app-rich-text [text]="next.title" /></span>
@@ -66,6 +67,8 @@ export class SubjectListComponent {
     const subjects = (this.learn.subjects() ?? []).filter((subject) => subject.resume !== null);
     return [...subjects].sort((a, b) => (b.lastStudied ?? '').localeCompare(a.lastStudied ?? ''))[0];
   });
+
+  protected readonly color = subjectColor;
 
   constructor() {
     void this.learn.loadSubjects().catch(() => undefined);

@@ -4,13 +4,11 @@ import io.github.lucasssoh.boussole.core.learn.FinishSession;
 import io.github.lucasssoh.boussole.core.learn.OpenSession;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import java.time.Duration;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -31,9 +29,12 @@ class SessionController {
     }
 
     @PostMapping("/finish")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    void finish(@PathVariable String subject, @PathVariable String session, @RequestBody FinishRequest request) {
-        finishSession.finish(new SessionKey(subject, session), Duration.ofSeconds(request.spentSeconds()));
+    FinishedView finish(@PathVariable String subject, @PathVariable String session, @RequestBody FinishRequest request) {
+        return new FinishedView(finishSession.finish(new SessionKey(subject, session), Duration.ofSeconds(request.spentSeconds())));
+    }
+
+    /** The experience earned by finishing. */
+    record FinishedView(int xpGained) {
     }
 
     /** The time actually spent on the session, measured by the interface. */

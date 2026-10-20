@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, input
 import { TranslocoPipe } from '@jsverse/transloco';
 import { RichTextComponent } from '../../shared/rich-text.component';
 import { BoussoleApi } from '../../core/boussole-api';
+import { StatsService } from '../../core/stats.service';
 import { McqBlockView } from '../../core/api';
 import { BlockListComponent } from '../blocks/block-list.component';
 import { LearnFacade } from '../learn.facade';
@@ -63,11 +64,12 @@ export class McqBlockComponent {
   private readonly api = inject(BoussoleApi);
   private readonly learn = inject(LearnFacade);
   private readonly run = inject(SessionRun, { optional: true });
+  private readonly stats = inject(StatsService);
 
   protected readonly state = computed(() => {
     const question = this.mcq();
     const create = () =>
-      new QuestionState(this.api, this.learn.session()?.subject ?? '', this.learn.session()?.id ?? null, question.id, question.progress, question.hints, this.run);
+      new QuestionState(this.api, this.learn.session()?.subject ?? '', this.learn.session()?.id ?? null, question.id, question.progress, question.hints, this.run, false, [], this.stats);
     return this.run?.question(question.id, create) ?? create();
   });
   protected readonly picked = computed(() => this.state().picked());

@@ -6,13 +6,16 @@ import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
 import io.github.lucasssoh.boussole.core.learn.progress.LastActivity;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
+import io.github.lucasssoh.boussole.core.learn.reward.AttemptRecord;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -106,6 +109,33 @@ public final class SqliteProgressRepository implements ProgressRepository {
             try (ResultSet rows = statement.executeQuery()) {
                 while (rows.next()) {
                     found.add(rows.getString(1));
+                }
+            }
+            return found;
+        });
+    }
+
+    @Override
+    public List<AttemptRecord> attemptHistory() {
+        return query("SELECT subject, exercise, at, verdict FROM attempt ORDER BY at, id", statement -> {
+            List<AttemptRecord> found = new ArrayList<>();
+            try (ResultSet rows = statement.executeQuery()) {
+                while (rows.next()) {
+                    found.add(new AttemptRecord(rows.getString("subject"), rows.getString("exercise"),
+                            Instant.parse(rows.getString("at")), Verdict.valueOf(rows.getString("verdict"))));
+                }
+            }
+            return found;
+        });
+    }
+
+    @Override
+    public List<Instant> sessionsFinishedAt() {
+        return query("SELECT at FROM session_finished ORDER BY at", statement -> {
+            List<Instant> found = new ArrayList<>();
+            try (ResultSet rows = statement.executeQuery()) {
+                while (rows.next()) {
+                    found.add(Instant.parse(rows.getString(1)));
                 }
             }
             return found;

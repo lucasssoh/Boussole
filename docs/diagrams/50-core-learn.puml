@@ -58,6 +58,8 @@ package "learn.progress" {
     +finishedSessions(subject) : Set<String>
     +recordAttempt(ExerciseKey, session, Verdict, Instant)
     +lastActivity(subject) : Optional<LastActivity>
+    +attemptHistory() : List<AttemptRecord>
+    +sessionsFinishedAt() : List<Instant>
   }
   class LastActivity <<record>>
   class ExerciseProgress <<record>> {
@@ -69,6 +71,27 @@ package "learn.progress" {
   }
   class ExerciseKey <<record>>
   class SessionKey <<record>>
+}
+
+package "learn.reward" {
+  class ReadStudyStats <<use case>> {
+    +read() : StudyStats
+  }
+  class XpRules <<helpers>> {
+    +{static} forAttempt(first, Verdict) : int
+    +SESSION_FINISHED = 20
+  }
+  class StudyStats <<record>> {
+    xp : int
+    level : Level
+    streakDays : int
+    studiedToday : boolean
+  }
+  class Level <<record>> {
+    number, xpInLevel, size : int
+    +{static} of(xp) : Level
+  }
+  class AttemptRecord <<record>>
 }
 
 package "learn.check" {
@@ -114,6 +137,11 @@ ListCourses --> ContentRepository
 ListCourses --> CourseOverviews
 OpenCourse --> CourseOverviews
 CourseOverviews ..> LastActivity : resume
+ReadStudyStats --> ProgressRepository : history
+ReadStudyStats ..> XpRules
+ReadStudyStats ..> StudyStats
+StudyStats --> Level
+SubmitAttempt ..> XpRules : xp gained
 CourseOverviews --> ProgressRepository
 OpenCourse --> CourseLookup
 OpenSession --> CourseLookup

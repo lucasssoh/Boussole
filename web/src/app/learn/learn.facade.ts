@@ -37,13 +37,15 @@ export class LearnFacade {
   }
 
   /** The finished mark of a session shows in the course at once. */
-  async finishSession(spentSeconds: number): Promise<void> {
+  /** Returns the experience earned by finishing. */
+  async finishSession(spentSeconds: number): Promise<number> {
     const session = this.session();
     if (!session) {
-      return;
+      return 0;
     }
-    await this.api.finishSession(session.subject, session.id, spentSeconds);
+    const finished = await this.api.finishSession(session.subject, session.id, spentSeconds);
     await this.openCourse(session.subject);
+    return finished.xpGained;
   }
 
   /** The term a :term directive names: by its ID, else by its text, ignoring case. */

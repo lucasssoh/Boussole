@@ -27,6 +27,8 @@ export class SessionRun implements OnDestroy {
   readonly timeIsUp = computed(() => this.remainingSeconds() === 0);
   readonly answered = computed(() => this.firstVerdicts().size);
   readonly verdicts = this.firstVerdicts.asReadonly();
+  /** The experience earned in this sitting. */
+  readonly xpEarned = signal(0);
   /** The screens seen in this sitting, by index. */
   readonly seen = signal<ReadonlySet<number>>(new Set());
   /** An exam shows its corrections when the time is up or the learner ends it; other sessions, after each answer. */
@@ -42,6 +44,7 @@ export class SessionRun implements OnDestroy {
     this.firstVerdicts.set(new Map());
     this.questions.clear();
     this.seen.set(new Set());
+    this.xpEarned.set(0);
     this.ended.set(false);
     this.allowedSeconds.set(kind === 'lesson' ? null : minutes * 60);
     this.started.set(kind === 'lesson');
@@ -71,10 +74,15 @@ export class SessionRun implements OnDestroy {
     return state;
   }
 
-  record(question: string, verdict: Verdict): void {
+  record(question: string, verdict: Verdict, xp: number): void {
+    this.xpEarned.update((total) => total + xp);
     if (!this.firstVerdicts().has(question)) {
       this.firstVerdicts.set(new Map(this.firstVerdicts()).set(question, verdict));
     }
+  }
+
+  earn(xp: number): void {
+    this.xpEarned.update((total) => total + xp);
   }
 
   ngOnDestroy(): void {

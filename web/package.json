@@ -17,6 +17,7 @@
     "@angular/forms": "^22.2.0",
     "@angular/platform-browser": "^22.2.0",
     "@angular/router": "^22.2.0",
+    "@fontsource-variable/nunito": "^5.3.0",
     "@jsverse/transloco": "^8.4.0",
     "@vscode/markdown-it-katex": "^1.1.2",
     "katex": "^0.19.0",

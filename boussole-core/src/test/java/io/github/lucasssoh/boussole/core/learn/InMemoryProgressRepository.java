@@ -8,7 +8,10 @@ import io.github.lucasssoh.boussole.core.learn.progress.LastActivity;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import java.time.Duration;
 import java.time.Instant;
+import io.github.lucasssoh.boussole.core.learn.reward.AttemptRecord;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -20,6 +23,8 @@ final class InMemoryProgressRepository implements ProgressRepository {
     private final Map<ExerciseKey, ExerciseProgress> exercises = new HashMap<>();
     private final Set<SessionKey> finished = new HashSet<>();
     private final Map<String, LastActivity> last = new HashMap<>();
+    private final List<AttemptRecord> history = new ArrayList<>();
+    private final List<Instant> finishedAt = new ArrayList<>();
 
     @Override
     public ExerciseProgress exercise(ExerciseKey key) {
@@ -42,11 +47,23 @@ final class InMemoryProgressRepository implements ProgressRepository {
     public void saveSessionFinished(SessionKey key, Instant at, Duration spent) {
         finished.add(key);
         last.put(key.subject(), new LastActivity(at, Optional.of(key.session()), true));
+        finishedAt.add(at);
     }
 
     @Override
     public void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, Instant at) {
         last.put(key.subject(), new LastActivity(at, session, false));
+        history.add(new AttemptRecord(key.subject(), key.exercise(), at, verdict));
+    }
+
+    @Override
+    public List<AttemptRecord> attemptHistory() {
+        return List.copyOf(history);
+    }
+
+    @Override
+    public List<Instant> sessionsFinishedAt() {
+        return List.copyOf(finishedAt);
     }
 
     @Override

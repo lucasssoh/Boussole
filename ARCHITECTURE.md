@@ -71,7 +71,8 @@ The domain. Organised by feature:
 core/
 ├── learn/       studying: use cases, ports
 │   ├── check/      responses and how each kind of question checks them
-│   └── progress/   attempts, hints revealed, sessions finished
+│   ├── progress/   attempts, hints revealed, sessions finished
+│   └── reward/     experience, levels and streak, computed from the history
 ├── plan/        scheduled events, the planner, commands with undo   (V2)
 └── reminder/    reminder rules and planning of reminders            (V2)
 ```
@@ -84,6 +85,10 @@ Each thing the application does is a **use case**, one class with one public met
 `ListCourses`, `OpenCourse`, `OpenSession`, `SubmitAttempt`, `RevealNextHint`,
 `RevealSolution`, `FinishSession`; later `PlanWeek`, `MoveEvent`… The list of use case classes
 is the list of features.
+
+Experience is never stored: `ReadStudyStats` computes it from the history of attempts and
+finished sessions with `XpRules` (a first answer earns more than one given again, a wrong one
+still earns something), with the level (`Level`) and the streak of days in a row.
 
 A response is a sealed `LearnerResponse` (choices, a value, gaps, an order, pairs, a self
 grade). `QuestionChecker` hands it to the `ResponseChecker` of the question's kind, which
@@ -227,8 +232,9 @@ web/src/app/
   (`sessionPlan()`): the goal, then within each part (warm-up, each notion, checkpoint,
   practice) the explanation, the worked example and each question on a screen of their own,
   then a closing screen. *Previous* and *Next* (or ← →) move between them. Beside it, the plan
-  of the session (`SessionOutlineComponent`): its parts, the screens of the current one, what
-  has been seen and how each question went; and the video or the document opened (the
+  of the session drawn as a path (`SessionPathComponent`): a node per screen, winding down under
+  the titles of the parts, green once seen, the colour of its verdict for a question, locked
+  while a question before it waits for an answer; and the video or the document opened (the
   browser's own PDF viewer, at the page). The screen is in the address and, for the next
   visit, in this browser; `SessionRun` keeps the answers of the sitting. A lesson ends with
   *I have finished this session*; a review or a mock exam starts with its countdown and ends
@@ -248,6 +254,10 @@ web/src/app/
 - **Translations** with Transloco, so the language changes without reloading. The interface is
   in English and French (the learner's choice, else `language:` of `config.yaml`, else the
   browser's); course content keeps its own language.
+- **The look**: rounded, colourful, buttons in relief, the Nunito font bundled with the
+  interface. Each subject has its colour (`subjectColor()`), set as `--subject` on the page.
+  The header shows the level, the experience and the streak (`StatsService`); each answer
+  shows the experience it earned.
 - **Light and dark** themes from CSS variables, following the system unless the learner chose.
 
 ---
@@ -266,6 +276,7 @@ POST …/exercises/{id}/attempts?session=  verdict, each part judged and the cor
 POST …/exercises/{id}/hints              the next hint, recorded
 GET  …/exercises/{id}/solution           after an attempt (at once for a free exercise)
 GET  …/files/{path}                      a file of the subject folder: PDFs, images
+GET  /api/stats                          experience, level, streak
 GET  /api/server                         lets boussole open recognise a running Boussole
 POST /api/server/stop                    boussole stop
 ```

@@ -3,11 +3,13 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { storedValue, storeValue } from '../core/local-preferences';
 import { ServerSettingsService } from '../core/server-settings.service';
+import { StatsService } from '../core/stats.service';
 import { RichTextComponent } from '../shared/rich-text.component';
+import { subjectColor } from '../shared/subject-color';
 import { BlockListComponent } from './blocks/block-list.component';
 import { clock } from './blocks/video-block.component';
 import { LearnFacade } from './learn.facade';
-import { SessionOutlineComponent } from './session-outline.component';
+import { SessionPathComponent } from './session-path.component';
 import { BlockView } from '../core/api';
 import { SessionScreen, sessionPlan } from './session-screens';
 import { SessionRun } from './session-run';
@@ -21,18 +23,19 @@ import { SidePanelComponent } from './side-panel.component';
  */
 @Component({
   selector: 'app-session-page',
-  imports: [RichTextComponent, RouterLink, TranslocoPipe, BlockListComponent, SessionOutlineComponent, SidePanelComponent],
+  imports: [RichTextComponent, RouterLink, TranslocoPipe, BlockListComponent, SessionPathComponent, SidePanelComponent],
   providers: [SessionRun],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'player',
+    class: 'player subject-scope',
     '[class.with-panel]': 'learn.panel() !== null',
     '[class.outline-open]': 'outlineOpen()',
     '(document:keydown)': 'onKey($event)',
+    '[style.--subject]': 'color()',
   },
   template: `
     @if (opened(); as current) {
-      <app-session-outline
+      <app-session-path
         [session]="current"
         [plan]="plan()"
         [current]="index()"
@@ -81,9 +84,22 @@ import { SidePanelComponent } from './side-panel.component';
             }
             @case ('end') {
               <h1>{{ 'session.endTitle' | transloco }}</h1>
-              @if (run.answered() > 0) {
-                <p class="score">{{ 'timed.score' | transloco: { correct: run.rightFirstTime(), total: run.answered() } }}</p>
-              }
+              <div class="bilan-stats">
+                <div class="bilan-stat xp">
+                  <strong>+{{ run.xpEarned() }} XP</strong>
+                  <span>{{ 'session.xpEarned' | transloco }}</span>
+                </div>
+                <div class="bilan-stat right">
+                  <strong>{{ run.rightFirstTime() }} / {{ run.answered() }}</strong>
+                  <span>{{ 'session.firstTime' | transloco }}</span>
+                </div>
+                @if (stats.stats(); as current) {
+                  <div class="bilan-stat streak">
+                    <strong>{{ current.streakDays }}</strong>
+                    <span>{{ 'stats.streak' | transloco }}</span>
+                  </div>
+                }
+              </div>
               @if (finishedIn() === null) {
                 <button type="button" class="primary" (click)="finish()">
                   {{ (current.kind === 'exam' ? 'session.endExam' : 'session.finish') | transloco }}
@@ -143,6 +159,7 @@ export class SessionPageComponent {
   protected readonly run = inject(SessionRun);
   private readonly router = inject(Router);
   private readonly settings = inject(ServerSettingsService);
+  protected readonly stats = inject(StatsService);
 
   protected readonly finishedIn = signal<number | null>(null);
   protected readonly outlineOpen = signal(false);
@@ -162,6 +179,7 @@ export class SessionPageComponent {
     return part?.kind === 'notion' ? (part.title ?? '') : (this.opened()?.title ?? '');
   });
   protected readonly timed = computed(() => this.opened()?.kind !== 'lesson');
+  protected readonly color = computed(() => subjectColor(this.subject()));
   /**
    * The last screen the learner may reach: in a lesson, the first question not answered yet in
    * this sitting, since the correction is part of the lesson. Practice exercises, free exercises
@@ -238,7 +256,8 @@ export class SessionPageComponent {
   protected async finish(): Promise<void> {
     const seconds = this.run.spentSeconds();
     this.run.end();
-    await this.learn.finishSession(seconds);
+    this.run.earn(await this.learn.finishSession(seconds));
+    this.stats.refresh();
     this.finishedIn.set(Math.max(1, Math.round(seconds / 60)));
   }
 

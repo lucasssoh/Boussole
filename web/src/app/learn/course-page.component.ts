@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { RichTextComponent } from '../shared/rich-text.component';
+import { subjectColor } from '../shared/subject-color';
 import { CourseOutlineComponent } from './course-outline.component';
 import { LearnFacade } from './learn.facade';
 
@@ -10,6 +11,7 @@ import { LearnFacade } from './learn.facade';
   selector: 'app-course-page',
   imports: [RichTextComponent, RouterLink, CourseOutlineComponent, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'subject-scope', '[style.--subject]': 'color()' },
   template: `
     <main class="page narrow">
       @if (learn.unreachable()) {
@@ -53,6 +55,7 @@ import { LearnFacade } from './learn.facade';
 export class CoursePageComponent {
   readonly subject = input.required<string>();
   protected readonly learn = inject(LearnFacade);
+  protected readonly color = computed(() => subjectColor(this.subject()));
 
   constructor() {
     effect(() => void this.learn.openCourse(this.subject()).catch(() => undefined));

@@ -7,6 +7,7 @@ import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
 import io.github.lucasssoh.boussole.core.learn.progress.LastActivity;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
+import io.github.lucasssoh.boussole.core.learn.reward.AttemptRecord;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
@@ -50,6 +51,16 @@ class SqliteProgressRepositoryTest {
 
         repository().saveSessionFinished(new SessionKey("oc", "s39"), NOW.plusSeconds(60), Duration.ofMinutes(40));
         assertThat(repository().lastActivity("oc")).contains(new LastActivity(NOW.plusSeconds(60), Optional.of("s39"), true));
+    }
+
+    @Test
+    void keeps_the_history_of_attempts_and_finished_sessions() {
+        repository().recordAttempt(KEY, Optional.empty(), Verdict.WRONG, NOW);
+        repository().recordAttempt(KEY, Optional.empty(), Verdict.CORRECT, NOW.plusSeconds(10));
+        repository().saveSessionFinished(new SessionKey("oc", "s34"), NOW.plusSeconds(60), Duration.ofMinutes(40));
+
+        assertThat(repository().attemptHistory()).extracting(AttemptRecord::verdict).containsExactly(Verdict.WRONG, Verdict.CORRECT);
+        assertThat(repository().sessionsFinishedAt()).containsExactly(NOW.plusSeconds(60));
     }
 
     @Test

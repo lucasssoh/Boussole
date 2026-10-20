@@ -9,6 +9,7 @@ import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
 import io.github.lucasssoh.boussole.format.model.block.McqBlock;
+import io.github.lucasssoh.boussole.core.learn.reward.XpRules;
 import java.time.Clock;
 import java.util.Optional;
 
@@ -33,9 +34,10 @@ public final class SubmitAttempt {
             case ExerciseBlock exercise -> checker.check(exercise, response);
             default -> throw new ResponseMismatchException(key.exercise() + " is not a question");
         };
-        ExerciseProgress after = progress.exercise(key).withAttempt(result.verdict());
+        ExerciseProgress before = progress.exercise(key);
+        ExerciseProgress after = before.withAttempt(result.verdict());
         progress.saveExercise(key, after, clock.instant());
         progress.recordAttempt(key, session, result.verdict(), clock.instant());
-        return new AttemptOutcome(result, after);
+        return new AttemptOutcome(result, after, XpRules.forAttempt(before.attempts() == 0, result.verdict()));
     }
 }

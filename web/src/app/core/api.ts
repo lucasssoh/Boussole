@@ -207,6 +207,17 @@ export interface AttemptResult {
   progress: QuestionProgress;
   /** The correction, shown right after the answer (at the end of an exam). */
   solution: RevealedSolution;
+  xpGained: number;
+}
+
+/** Experience, level and streak of days. */
+export interface StudyStats {
+  xp: number;
+  level: number;
+  levelXp: number;
+  levelSize: number;
+  streakDays: number;
+  studiedToday: boolean;
 }
 
 export interface RevealedHint {

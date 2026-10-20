@@ -31,6 +31,8 @@ class LearningTest {
         AttemptOutcome second = new SubmitAttempt(content, progress, clock).submit(MAC_BITS, new ValueResponse("48"), Optional.empty());
 
         assertThat(first.result().verdict()).isEqualTo(Verdict.WRONG);
+        assertThat(first.xpGained()).isEqualTo(5);
+        assertThat(second.xpGained()).isEqualTo(5);
         assertThat(second.progress().attempts()).isEqualTo(2);
         assertThat(second.progress().solved()).isTrue();
     }

@@ -12,6 +12,9 @@ package "core" {
   class boussoleHeaderInterceptor <<interceptor>>
   class LanguageService <<service>>
   class ThemeService <<service>>
+  class StatsService <<service>> {
+    stats : Signal
+  }
   class ServerSettingsService <<service>> {
     freeNavigation : Signal
   }
@@ -35,7 +38,7 @@ package "learn" {
     +goTo(index)
   }
   class "sessionPlan()" as SessionPlan <<start, explanation, example, question…, end>>
-  class SessionOutlineComponent <<plan of the session>>
+  class SessionPathComponent <<the session as a path of nodes>>
   class CourseOutlineComponent <<plan of a subject>>
   class SidePanelComponent <<video or PDF>>
 }
@@ -66,6 +69,7 @@ package "learn.question" {
 
 package "shared" {
   class MarkdownRenderer <<markdown-it + KaTeX>>
+  class "subjectColor()" as SubjectColor
   class RichTextComponent
   class "drawMermaidDiagrams()" as Mermaid
 }
@@ -76,7 +80,8 @@ SessionPageComponent --> LearnFacade
 SessionPageComponent *-- SessionRun : provides
 SessionPageComponent ..> SessionPlan : screens
 SessionPageComponent ..> ServerSettingsService : free navigation?
-SessionPageComponent --> SessionOutlineComponent
+SessionPageComponent --> SessionPathComponent
+QuestionState ..> StatsService : refresh after an answer
 SessionPageComponent --> BlockListComponent : the screen shown
 SessionRun o-- QuestionState : kept for the sitting
 SessionPageComponent --> SidePanelComponent

@@ -35,12 +35,8 @@ import { QuestionState } from './question-state';
           💡 {{ 'question.hint' | transloco }} ({{ question.hints().length + 1 }}/{{ question.hintTotal }})
         </button>
       }
-      @if (question.result(); as result) {
-        @if (question.correctionShown()) {
-          <span class="verdict" [class]="result.verdict" role="status">{{ 'verdict.' + result.verdict | transloco }}</span>
-        } @else {
-          <span class="verdict saved" role="status">{{ 'question.saved' | transloco }}</span>
-        }
+      @if (question.result() && !question.correctionShown()) {
+        <span class="verdict saved" role="status">{{ 'question.saved' | transloco }}</span>
       }
     </div>
     @if (question.error(); as error) {

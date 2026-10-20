@@ -41,6 +41,9 @@ package "exercise" {
   class HintView <<record>>
   class SolutionView <<record>>
 }
+package "reward" {
+  class StatsController <<GET /api/stats>>
+}
 package "files" {
   class SubjectFileController <<…/files/**>>
 }
@@ -73,6 +76,7 @@ CourseController --> core
 SessionController --> core
 ExerciseController --> core
 SubjectFileController --> core
+StatsController --> core
 CourseController ..> ResumeView : session to resume
 SessionController ..> SessionView
 SessionView *-- PartView : parts

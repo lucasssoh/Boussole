@@ -88,6 +88,11 @@ class ServerApiTest {
     }
 
     @Test
+    void reports_experience_level_and_streak() throws Exception {
+        assertThat(get("/api/stats").body()).contains("\"level\":", "\"streakDays\":");
+    }
+
+    @Test
     void a_wrong_choice_brings_its_feedback() throws Exception {
         assertThat(post("/api/subjects/reseaux/exercises/s11-a2/attempts", "{\"kind\":\"choices\",\"picked\":[0]}").body())
                 .contains("\"verdict\":\"wrong\"", "Non : en datagramme");
@@ -108,7 +113,7 @@ class ServerApiTest {
 
     @Test
     void a_finished_session_shows_in_the_course() throws Exception {
-        assertThat(post("/api/subjects/reseaux/sessions/s11/finish", "{\"spentSeconds\":3000}").statusCode()).isEqualTo(204);
+        assertThat(post("/api/subjects/reseaux/sessions/s11/finish", "{\"spentSeconds\":3000}").body()).contains("\"xpGained\":20");
         assertThat(get("/api/subjects/reseaux").body()).contains("\"id\":\"s11\"", "\"finished\":true");
     }
 

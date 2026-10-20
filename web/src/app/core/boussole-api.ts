@@ -10,6 +10,7 @@ import {
   RevealedSolution,
   ServerInfo,
   Session,
+  StudyStats,
 } from './api';
 
 /** The calls to the local server. Answers only come with an attempt or a solution asked for. */
@@ -33,7 +34,11 @@ export class BoussoleApi {
     return this.get(`/api/subjects/${enc(subject)}/sessions/${enc(session)}`);
   }
 
-  finishSession(subject: string, session: string, spentSeconds: number): Promise<void> {
+  stats(): Promise<StudyStats> {
+    return this.get('/api/stats');
+  }
+
+  finishSession(subject: string, session: string, spentSeconds: number): Promise<{ xpGained: number }> {
     return this.post(`/api/subjects/${enc(subject)}/sessions/${enc(session)}/finish`, { spentSeconds });
   }
 

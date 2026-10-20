@@ -4,6 +4,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { RichTextComponent } from '../../shared/rich-text.component';
 import { AttemptRequest, ExerciseBlockView } from '../../core/api';
 import { BoussoleApi } from '../../core/boussole-api';
+import { StatsService } from '../../core/stats.service';
 import { BlockListComponent } from '../blocks/block-list.component';
 import { LearnFacade } from '../learn.facade';
 import { SessionRun } from '../session-run';
@@ -151,6 +152,7 @@ export class ExerciseBlockComponent {
   private readonly api = inject(BoussoleApi);
   private readonly learn = inject(LearnFacade);
   private readonly run = inject(SessionRun, { optional: true });
+  private readonly stats = inject(StatsService);
   private readonly host: HTMLElement = inject(ElementRef).nativeElement;
 
   protected readonly grades: SelfGrade[] = ['got_it', 'partly', 'not_yet'];
@@ -160,7 +162,7 @@ export class ExerciseBlockComponent {
     const exercise = this.exercise();
     const input = exercise.input;
     const create = () => new QuestionState(this.api, this.learn.session()?.subject ?? '', this.learn.session()?.id ?? null, exercise.id, exercise.progress,
-      exercise.hints, this.run, input.kind === 'free', input.kind === 'order' ? input.items : []);
+      exercise.hints, this.run, input.kind === 'free', input.kind === 'order' ? input.items : [], this.stats);
     return this.run?.question(exercise.id, create) ?? create();
   });
   protected readonly typed = computed(() => this.state().value());

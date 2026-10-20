@@ -25,6 +25,7 @@
               }
             ],
             "styles": [
+              "node_modules/@fontsource-variable/nunito/index.css",
               "node_modules/katex/dist/katex.min.css",
               "src/styles.css"
             ],

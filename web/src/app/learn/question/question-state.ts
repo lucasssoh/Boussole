@@ -9,6 +9,7 @@ import {
   QuestionProgress,
   RevealedSolution,
 } from '../../core/api';
+import { StatsService } from '../../core/stats.service';
 import { SessionRun } from '../session-run';
 
 /**
@@ -52,6 +53,7 @@ export class QuestionState {
     private readonly run: SessionRun | null,
     readonly isFree = false,
     shuffledItems: string[] = [],
+    private readonly stats: StatsService | null = null,
   ) {
     this.order = signal([...shuffledItems]);
     this.progress = signal(progress);
@@ -69,7 +71,8 @@ export class QuestionState {
       this.result.set(result);
       this.solution.set(result.solution);
       this.progress.set(result.progress);
-      this.run?.record(this.id, result.verdict);
+      this.run?.record(this.id, result.verdict, result.xpGained);
+      this.stats?.refresh();
     });
   }
 
