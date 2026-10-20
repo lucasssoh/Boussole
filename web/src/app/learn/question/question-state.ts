@@ -22,6 +22,13 @@ export class QuestionState {
   readonly hintTotal: number;
   readonly solution = signal<RevealedSolution | null>(null);
   readonly busy = signal(false);
+
+  /** The response as the learner is writing it, kept with the question rather than its component. */
+  readonly picked = signal<ReadonlySet<number>>(new Set());
+  readonly value = signal('');
+  readonly order = signal<string[]>([]);
+  readonly pairs = signal<Readonly<Record<string, string>>>({});
+  readonly gaps = signal<Readonly<Record<number, string>>>({});
   readonly error = signal<string | null>(null);
 
   readonly hintsLeft = computed(() => this.hints().length < this.hintTotal);

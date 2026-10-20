@@ -34,8 +34,8 @@ type SelfGrade = 'got_it' | 'partly' | 'not_yet';
       @switch (input.kind) {
         @case ('number') {
           <p class="answer-line" [class.correct]="verdictIs('correct')" [class.wrong]="verdictIs('wrong')">
-            <input type="text" inputmode="decimal" [attr.aria-label]="'question.answer' | transloco" [ngModel]="value()"
-                   (ngModelChange)="value.set($event)" (keydown.enter)="check()" autocomplete="off" />
+            <input type="text" inputmode="decimal" [attr.aria-label]="'question.answer' | transloco" [ngModel]="typed()"
+                   (ngModelChange)="type($event)" (keydown.enter)="check()" autocomplete="off" />
             @if (input.unit) {
               <span class="unit">{{ input.unit }}</span>
             }
@@ -43,8 +43,8 @@ type SelfGrade = 'got_it' | 'partly' | 'not_yet';
         }
         @case ('text') {
           <p class="answer-line" [class.correct]="verdictIs('correct')" [class.wrong]="verdictIs('wrong')">
-            <input type="text" [attr.aria-label]="'question.answer' | transloco" [ngModel]="value()"
-                   (ngModelChange)="value.set($event)" (keydown.enter)="check()" autocomplete="off" spellcheck="false" />
+            <input type="text" [attr.aria-label]="'question.answer' | transloco" [ngModel]="typed()"
+                   (ngModelChange)="type($event)" (keydown.enter)="check()" autocomplete="off" spellcheck="false" />
           </p>
         }
         @case ('order') {
@@ -82,7 +82,7 @@ type SelfGrade = 'got_it' | 'partly' | 'not_yet';
           </table>
         }
         @case ('free') {
-          <textarea class="draft" rows="5" [placeholder]="'free.write' | transloco" [ngModel]="value()" (ngModelChange)="value.set($event)"></textarea>
+          <textarea class="draft" rows="5" [placeholder]="'free.write' | transloco" [ngModel]="typed()" (ngModelChange)="type($event)"></textarea>
         }
         @case ('unreadable') {
           <p class="frame warning">{{ 'question.unreadable' | transloco }}</p>
@@ -141,26 +141,31 @@ export class ExerciseBlockComponent {
   private readonly host: HTMLElement = inject(ElementRef).nativeElement;
 
   protected readonly grades: SelfGrade[] = ['got_it', 'partly', 'not_yet'];
-  protected readonly value = signal('');
-  protected readonly order = signal<string[]>([]);
-  protected readonly pairs = signal<Readonly<Record<string, string>>>({});
   protected readonly graded = signal<SelfGrade | null>(null);
 
   protected readonly state = computed(() => {
     const exercise = this.exercise();
-    return new QuestionState(this.api, this.learn.session()?.subject ?? '', exercise.id, exercise.progress, exercise.hints,
-      this.run, exercise.input.kind === 'free');
+    const create = () => {
+      const state = new QuestionState(this.api, this.learn.session()?.subject ?? '', exercise.id, exercise.progress,
+        exercise.hints, this.run, exercise.input.kind === 'free');
+      state.order.set(exercise.input.kind === 'order' ? [...exercise.input.items] : []);
+      return state;
+    };
+    return this.run?.question(exercise.id, create) ?? create();
   });
+  protected readonly typed = computed(() => this.state().value());
+  protected readonly order = computed(() => this.state().order());
+  protected readonly pairs = computed(() => this.state().pairs());
   protected readonly fill = computed(() => {
     const input = this.exercise().input;
-    return input.kind === 'fill' ? new FillGaps(input.gaps, () => this.check()) : null;
+    return input.kind === 'fill' ? new FillGaps(input.gaps, this.state().gaps, () => this.check()) : null;
   });
   protected readonly checkable = computed(() => !['free', 'unreadable'].includes(this.exercise().input.kind));
   protected readonly ready = computed(() => {
     switch (this.exercise().input.kind) {
       case 'number':
       case 'text':
-        return this.value().trim() !== '';
+        return this.typed().trim() !== '';
       case 'fill':
         return this.fill()?.values() !== undefined && Object.values(this.fill()!.values()).some((value) => value.trim() !== '');
       case 'match':
@@ -172,13 +177,13 @@ export class ExerciseBlockComponent {
 
   constructor() {
     effect(() => {
-      const input = this.exercise().input;
-      this.order.set(input.kind === 'order' ? [...input.items] : []);
-    });
-    effect(() => {
       const expected = this.state().solution()?.expected;
       this.fill()?.show(this.host, this.state().result()?.items ?? [], expected?.kind === 'gaps' ? expected.values : {});
     });
+  }
+
+  protected type(value: string): void {
+    this.state().value.set(value);
   }
 
   protected verdictIs(verdict: string): boolean {
@@ -188,11 +193,11 @@ export class ExerciseBlockComponent {
   protected move(index: number, step: number): void {
     const items = [...this.order()];
     [items[index], items[index + step]] = [items[index + step], items[index]];
-    this.order.set(items);
+    this.state().order.set(items);
   }
 
   protected pair(left: string, right: string): void {
-    this.pairs.update((pairs) => {
+    this.state().pairs.update((pairs) => {
       const next = { ...pairs };
       if (right) {
         next[left] = right;
@@ -219,7 +224,7 @@ export class ExerciseBlockComponent {
     switch (this.exercise().input.kind) {
       case 'number':
       case 'text':
-        return { kind: 'value', value: this.value() };
+        return { kind: 'value', value: this.typed() };
       case 'fill':
         return { kind: 'gaps', values: this.fill()!.values() };
       case 'order':

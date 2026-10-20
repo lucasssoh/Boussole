@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { WritableSignal } from '@angular/core';
 import { CheckedItem, FillGapInput } from '../../core/api';
 
 /**
@@ -7,12 +7,12 @@ import { CheckedItem, FillGapInput } from '../../core/api';
  * rendered Markdown; what the learner gives is kept in {@link values}.
  */
 export class FillGaps {
-  readonly values = signal<Readonly<Record<number, string>>>({});
   private marks: CheckedItem[] = [];
   private expected: Readonly<Record<string, string>> = {};
 
   constructor(
     private readonly gaps: FillGapInput[],
+    readonly values: WritableSignal<Readonly<Record<number, string>>>,
     private readonly onEnter: () => void,
   ) {}
 

@@ -845,3 +845,100 @@ progress {
 .gap input[type="text"] {
   width: 6.5em;
 }
+
+/* Session pages */
+
+.session-header.compact h1 {
+  font-size: 1.3rem;
+}
+
+.stepper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+}
+
+.stepper button {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  max-width: 14rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.stepper .step-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stepper li:not(.current) .step-title {
+  display: none;
+}
+
+.stepper .step-number {
+  display: inline-grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  font-weight: 700;
+}
+
+.stepper li.seen .step-number {
+  background: var(--correct-bg);
+  border-color: var(--correct);
+  color: var(--correct);
+}
+
+.stepper li.current button {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+.stepper li.current .step-number {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.step.new {
+  animation: reveal 0.35s ease-out;
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step.new {
+    animation: none;
+  }
+}
+
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.pager .primary {
+  margin-left: auto;
+}
+
+.pager-count {
+  color: var(--muted);
+  font-size: 0.85rem;
+}

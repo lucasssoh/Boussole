@@ -32,9 +32,12 @@ export const FR: Translations = {
     next: 'Séance suivante',
     previous: 'Séance précédente',
     course: 'Cours',
+    continue: 'Continuer',
+    nextPage: 'Suite',
+    previousPage: 'Précédent',
     contents: 'Sommaire',
   },
-  part: { text: '', warmup: 'Échauffement', notion: '', checkpoint: 'Point de contrôle', practice: "Pour s'entraîner" },
+  part: { text: 'Introduction', warmup: 'Échauffement', notion: '', checkpoint: 'Point de contrôle', practice: "Pour s'entraîner" },
   timed: {
     intro: 'Séance chronométrée : {{minutes}} minutes, pour environ {{questions}} minutes de questions à un rythme normal.',
     start: 'Commencer',

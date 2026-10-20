@@ -30,9 +30,12 @@ export const EN = {
     next: 'Next session',
     previous: 'Previous session',
     course: 'Course',
+    continue: 'Continue',
+    nextPage: 'Next',
+    previousPage: 'Previous',
     contents: 'Contents',
   },
-  part: { text: '', warmup: 'Warm-up', notion: '', checkpoint: 'Checkpoint', practice: 'Practice' },
+  part: { text: 'Introduction', warmup: 'Warm-up', notion: '', checkpoint: 'Checkpoint', practice: 'Practice' },
   timed: {
     intro: 'This session is timed: {{minutes}} minutes, for about {{questions}} minutes of questions at a normal pace.',
     start: 'Start',

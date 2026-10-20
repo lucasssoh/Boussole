@@ -21,11 +21,16 @@ package "learn" {
   }
   class SessionRun <<per session page>> {
     spentSeconds, remainingSeconds : Signal
+    +question(id, create) : QuestionState
     +record(question, verdict)
   }
   class SubjectListComponent <<page />>
   class CoursePageComponent <<page subjects/:subject>>
-  class SessionPageComponent <<page …/sessions/:session>>
+  class SessionPageComponent <<page …/sessions/:session?page=N>> {
+    pageIndex, revealed : Signal
+    +next() / previous()
+  }
+  class "sessionPages()" as SessionPages <<one page per part, steps end at a question>>
   class CourseOutlineComponent
   class SidePanelComponent <<video or PDF>>
 }
@@ -44,6 +49,7 @@ package "learn.question" {
   class QuestionHeaderComponent
   class QuestionState {
     progress, result, hints, solution : Signal
+    picked, value, order, pairs, gaps : Signal
     +attempt(AttemptRequest)
     +nextHint()
     +showSolution()
@@ -61,7 +67,9 @@ SubjectListComponent --> LearnFacade
 CoursePageComponent --> LearnFacade
 SessionPageComponent --> LearnFacade
 SessionPageComponent *-- SessionRun : provides
-SessionPageComponent --> BlockListComponent : parts
+SessionPageComponent ..> SessionPages : pages
+SessionPageComponent --> BlockListComponent : revealed steps
+SessionRun o-- QuestionState : kept for the sitting
 SessionPageComponent --> SidePanelComponent
 LearnFacade --> BoussoleApi
 BlockListComponent --> ProseBlockComponent

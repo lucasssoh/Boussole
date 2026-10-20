@@ -222,7 +222,11 @@ web/src/app/
 ```
 
 - **The session player** shows the outline of the course, the session, and beside it the video
-  or the document opened (the browser's own PDF viewer, at the page). A lesson ends with
+  or the document opened (the browser's own PDF viewer, at the page). The session comes **one
+  page per part** (warm-up, each notion, checkpoint, practice), never all at once, and each page
+  is **revealed step by step**: a step ends with a question, *Continue* shows the next one
+  (`sessionPages()`). The page number is in the address; *Previous* shows a page whole, with
+  the answers given, which `SessionRun` keeps for the sitting. A lesson ends with
   *I have finished this session*; a review or a mock exam starts with its countdown and ends
   with the number of questions right at the first attempt. `SessionRun` measures the time
   spent while the page is visible.

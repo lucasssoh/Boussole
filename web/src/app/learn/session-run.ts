@@ -1,15 +1,18 @@
 import { Injectable, OnDestroy, computed, signal } from '@angular/core';
 import { Verdict } from '../core/api';
+import { QuestionState } from './question/question-state';
 
 /**
  * One sitting on a session, for the session page only: the time actually spent (while the page
- * is visible), the countdown of a timed session, and the first verdict on each question.
+ * is visible), the countdown of a timed session, the first verdict on each question, and the
+ * state of each question, so that it is found as left when the learner comes back to its page.
  */
 @Injectable()
 export class SessionRun implements OnDestroy {
   private readonly firstVerdicts = signal<ReadonlyMap<string, Verdict>>(new Map());
   private readonly spent = signal(0);
   private readonly timer = setInterval(() => this.tick(), 1000);
+  private readonly questions = new Map<string, QuestionState>();
 
   readonly started = signal(false);
   readonly allowedSeconds = signal<number | null>(null);
@@ -26,12 +29,23 @@ export class SessionRun implements OnDestroy {
   begin(timedMinutes: number | null): void {
     this.spent.set(0);
     this.firstVerdicts.set(new Map());
+    this.questions.clear();
     this.allowedSeconds.set(timedMinutes === null ? null : timedMinutes * 60);
     this.started.set(timedMinutes === null);
   }
 
   start(): void {
     this.started.set(true);
+  }
+
+  /** The state of a question in this sitting, created the first time its page shows. */
+  question(id: string, create: () => QuestionState): QuestionState {
+    let state = this.questions.get(id);
+    if (!state) {
+      state = create();
+      this.questions.set(id, state);
+    }
+    return state;
   }
 
   record(question: string, verdict: Verdict): void {

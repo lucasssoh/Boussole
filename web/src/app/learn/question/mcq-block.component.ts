@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, input } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { RichTextComponent } from '../../shared/rich-text.component';
 import { BoussoleApi } from '../../core/boussole-api';
@@ -54,11 +54,13 @@ export class McqBlockComponent {
   private readonly learn = inject(LearnFacade);
   private readonly run = inject(SessionRun, { optional: true });
 
-  protected readonly picked = signal<ReadonlySet<number>>(new Set());
   protected readonly state = computed(() => {
     const question = this.mcq();
-    return new QuestionState(this.api, this.learn.session()?.subject ?? '', question.id, question.progress, question.hints, this.run);
+    const create = () =>
+      new QuestionState(this.api, this.learn.session()?.subject ?? '', question.id, question.progress, question.hints, this.run);
+    return this.run?.question(question.id, create) ?? create();
   });
+  protected readonly picked = computed(() => this.state().picked());
 
   /** Once the solution is open, every choice says whether it is right, with its feedback. */
   protected expectedChoice(index: number): { correct: boolean; feedback: string | null } | undefined {
@@ -73,7 +75,7 @@ export class McqBlockComponent {
     } else {
       next.add(index);
     }
-    this.picked.set(next);
+    this.state().picked.set(next);
   }
 
   protected check(): void {
