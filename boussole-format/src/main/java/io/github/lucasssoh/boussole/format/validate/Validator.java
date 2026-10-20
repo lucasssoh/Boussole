@@ -11,6 +11,7 @@ import io.github.lucasssoh.boussole.format.validate.rule.MissingSessionFileRule;
 import io.github.lucasssoh.boussole.format.validate.rule.NotionExerciseRule;
 import io.github.lucasssoh.boussole.format.validate.rule.PartOrderRule;
 import io.github.lucasssoh.boussole.format.validate.rule.McqChoicesRule;
+import io.github.lucasssoh.boussole.format.validate.rule.McqFeedbackRule;
 import io.github.lucasssoh.boussole.format.validate.rule.QuickCheckRule;
 import io.github.lucasssoh.boussole.format.validate.rule.ReferenceRule;
 import io.github.lucasssoh.boussole.format.validate.rule.SessionIdMatchRule;
@@ -49,6 +50,7 @@ public final class Validator {
                 new SingleExampleRule(),
                 new PartOrderRule(),
                 new HintPresenceRule(),
+                new McqFeedbackRule(),
                 new DeclaredTermsRule(),
                 new ClosingRule(),
                 new QuickCheckRule(),

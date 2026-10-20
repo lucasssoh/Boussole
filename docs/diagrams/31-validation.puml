@@ -44,6 +44,7 @@ package "validate" {
     class QuickCheckRule <<P007>>
     class TimedSessionFitRule <<P008>>
     class TimedSessionContentRule <<P009>>
+    class McqFeedbackRule <<P010>>
     class "CourseIds, LessonNotions, LexiconTermResolver,\nIdSeen, TimedSessions" as RuleHelpers <<helpers>>
   }
 }
@@ -83,6 +84,7 @@ ValidationRule <|.. ClosingRule
 ValidationRule <|.. QuickCheckRule
 ValidationRule <|.. TimedSessionFitRule
 ValidationRule <|.. TimedSessionContentRule
+ValidationRule <|.. McqFeedbackRule
 ValidationRule ..> DiagnosticCollector : reports
 ValidationRule ..> DiagnosticCollector : reports
 note bottom of RuleHelpers

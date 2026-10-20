@@ -25,4 +25,13 @@ class HintPresenceRuleTest {
                 .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("`e1`"));
         assertThat(report.errors()).isEmpty();
     }
+
+    @Test
+    void anMcqHasAHintToo() {
+        var report = SubjectFixture.in(dir)
+                .session("s1", "## A {#a}\n\n" + mcq("#q1", "- [x] Oui\n- [ ] Non\n  > Non.")).inspect();
+
+        assertThat(report.withCode(DiagnosticCode.P004)).singleElement()
+                .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("`q1`"));
+    }
 }

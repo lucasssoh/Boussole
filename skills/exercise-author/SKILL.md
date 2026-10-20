@@ -51,8 +51,10 @@ draw maths: write them in plain text with Unicode (`≤`, `x₁`, `u²`), never 
 
 - Each wrong choice of an MCQ is a **real mistake** a learner makes: a confusion between two
   notions, a forgotten step, an off-by-one. Never filler.
-- Each wrong choice gets feedback (`  > …` under it) that says **why it is wrong** and what to
-  look at, without giving the right answer away.
+- **Every wrong choice gets feedback** (`  > …` under it) that says **why it is wrong** and what
+  to look at, without giving the right answer away. The learner who picks it sees it in red,
+  with this feedback under it, right after answering (`boussole validate` warns, P010).
+- A right choice may have feedback too, to confirm what makes it right.
 
 ## Quick checks
 
@@ -62,7 +64,9 @@ calculation. Its ID follows the « À toi » numbering (`<session>-a1`…).
 
 ## Hints in tiers
 
-Two or three `:::hint`, from vague to precise:
+**Every exercise and every MCQ has hints**, quick checks included (`boussole validate` warns,
+P004); only an exam has none. The learner reveals them one at a time, before answering.
+For an MCQ, one or two hints; for an exercise, two or three, from vague to precise:
 
 1. **Where to look**: which notion or step applies.
 2. **How to start**: the method, the first step, the formula.
@@ -72,8 +76,11 @@ A hint never gives the final answer.
 
 ## Solutions
 
-The `:::solution` is a worked solution, step by step, not just the result: the learner reads it
-after an attempt to understand what went wrong. End with the result in bold.
+The learner answers **once**; right after, the interface shows the right answer in green, a
+wrong one in red, and the `:::solution` beside the question. So the solution **explains why
+the right answer is right**: the reasoning or the worked steps, not just the result, so that a
+learner who got it wrong understands what to change. Keep it short for a quick MCQ (two or
+three sentences), step by step for a calculation. End with the result in bold.
 
 ## Check
 

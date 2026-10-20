@@ -121,6 +121,10 @@ Qu'apporte la couche 3 que la couche 2 n'a pas ?
 - [ ] Un adressage plat sur 48 bits
   > C'est l'adressage MAC, celui de la couche 2.
 
+:::hint
+Pense à ce qui manque à un commutateur pour relier deux réseaux différents.
+:::
+
 :::solution
 L'adressage hiérarchique (agrégeable) et le relayage entre liens, plus un horizon global.
 :::

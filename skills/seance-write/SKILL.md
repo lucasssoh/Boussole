@@ -34,7 +34,8 @@ by `learner.yaml` as the table after it says:
    3. **One** `:::example`, fully worked, step by step. One example per notion, never more:
       further cases become exercises.
    4. **Right away**, one or two exercises or MCQs of the **same kind** as the example
-      (« À toi »), with hints.
+      (« À toi »). Every question, quick checks included, has hints, feedback on each wrong
+      choice and a solution that explains why the right answer is right (`exercise-author`).
 3. **Closing**, as `closing` asks: a **checkpoint** (`:::::checkpoint`), three to five questions
    on the whole session, passing it means the goal is reached; and/or a **practice**
    (`:::::practice`, last), exercises closer to the exam, often taken from the tutorial sheets

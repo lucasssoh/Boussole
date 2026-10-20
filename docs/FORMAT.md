@@ -197,8 +197,9 @@ a notion.
 
 **Timed sessions** (`kind: review` or `exam`) only ask questions, against the clock: an optional
 introduction, then exercises, MCQs and `::ref`s, with no notion and no `example`. Their questions'
-estimated times (§5.6) add up to the time allowed. In an exam, hints are not shown and solutions
-come when the time is up; in a review, both are available after each answer.
+estimated times (§5.6) add up to the time allowed. In an exam, hints are not shown and the corrections
+come when the time is up or the learner ends the exam; in a review, hints are available before
+each answer and the correction right after it.
 
 ### 5.4 Directive syntax
 
@@ -267,8 +268,8 @@ An exercise is a container. Its first part is the statement (Markdown); then com
 | Part | Count | Meaning |
 |---|---|---|
 | `:::answer` | exactly one, except `free` | What is accepted. Syntax depends on the type, below. |
-| `:::hint` | zero or more | Hints, revealed one at a time in file order. |
-| `:::solution` | exactly one | The worked solution, shown after the first attempt. |
+| `:::hint` | one or more, except in an exam | Hints, revealed one at a time in file order, before the learner answers. |
+| `:::solution` | exactly one | Why the right answer is right: shown beside the question as soon as the learner has answered, with the right answer in green and a wrong one in red. |
 
 ```markdown
 ::::exercise{#s11-a1 type=numeric}
@@ -312,8 +313,8 @@ hold maths.
 #### Multiple choice
 
 A `mcq` is an exercise whose choices are a task list, at the end of its statement. A blockquote indented under a choice is
-the feedback shown when the learner picks it. `multiple=true` means several choices are right
-and the interface says so.
+the feedback shown when the learner picks it: **every wrong choice has one**, saying why it is
+wrong. `multiple=true` means several choices are right and the interface says so.
 
 ```markdown
 ::::mcq{#s11-a2}
@@ -330,7 +331,11 @@ Le circuit virtuel : chaque routeur traversé garde une entrée par circuit éta
 ::::
 ```
 
-A `mcq` may also have `:::hint` parts. It has no `:::answer`: the ticked boxes are the answer.
+A `mcq` has `:::hint` parts like any exercise. It has no `:::answer`: the ticked boxes are the answer.
+
+The learner answers once: the interface then shows the right answer in green, a wrong one in red
+with its feedback, and the solution beside the question. Asking again is the job of a `::ref` in
+a later session.
 
 #### Reusing an exercise
 
@@ -369,12 +374,13 @@ chapter.
 | `P001` | warning | A notion without exercise or `mcq`. |
 | `P002` | warning | A notion with more than one `example`. |
 | `P003` | warning | `warmup` not first, or `practice` not last. |
-| `P004` | warning | Exercise without any `hint`. |
+| `P004` | warning | Exercise or `mcq` without any `hint`. |
 | `P005` | warning | `term` used in the body but not listed in the front matter's `terms`. |
 | `P006` | warning | With a `learner.yaml`: a session without the checkpoint, or without the final practice holding an exercise, that `closing` asks for. |
 | `P007` | warning | With `quick_check: true`: a notion without a `mcq` before its example. |
 | `P008` | warning | A review or exam whose questions' estimated times add up to less than 80 % or more than 110 % of its duration. |
 | `P009` | warning | A review or exam holding a notion or an `example`. |
+| `P010` | warning | Wrong choice of a `mcq` without feedback. |
 
 `P001`, `P002`, `P006` and `P007` apply to lessons only; `P004` does not apply to exams, which
 give no hints.

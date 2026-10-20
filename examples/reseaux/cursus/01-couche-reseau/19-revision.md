@@ -20,6 +20,10 @@ Pourquoi ne peut-on pas router Internet avec des :term[adresses MAC]{id=mac} ?
 - [ ] Elles changent à chaque redémarrage
   > Non : une adresse MAC est fixée par le fabricant de l'interface.
 
+:::hint
+Une table de routage regroupe les destinations : qu'est-ce qui permet de regrouper des adresses ?
+:::
+
 :::solution
 Les adresses MAC n'ont pas de structure hiérarchique : deux machines voisines n'ont aucun préfixe
 commun. Une table de routage devrait donc contenir une entrée par interface au monde.

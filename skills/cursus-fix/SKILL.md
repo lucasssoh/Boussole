@@ -34,9 +34,10 @@ are about the teaching contract and matter to the learner.
 | F027 | unknown or missing attribute | see the directive's attributes in FORMAT.md §5.5–5.6 |
 | F030 | reference to an ID that does not exist | add the term to the lexicon, or fix the ID |
 | F031 | source file or page not found | use the exact file name in the sources folder and a real page |
-| P001–P005 | teaching contract | add the exercise, keep one example, move warmup/practice, add hints, list terms |
+| P001–P005 | teaching contract | add the exercise, keep one example, move warmup/practice, add hints (MCQs too: one or two, never the answer), list terms |
 | P006, P007 | the session does not follow `learner.yaml` | close it as `closing` asks; add the quick MCQ before the example |
 | P008 | the questions of a review or exam do not fill its time | add or remove questions (estimated times in `exam-build`), or set `minutes=` on a long one |
 | P009 | a review or exam holds a notion or a worked example | move it to a lesson; a timed session only asks questions |
+| P010 | a wrong MCQ choice has no feedback | add `  > why it is wrong` under it |
 
 Never "fix" an error by deleting content the learner needs, and never edit the sources folder.

@@ -30,12 +30,13 @@ public enum DiagnosticCode {
     P001(WARNING, "notion without exercise"),
     P002(WARNING, "notion with several examples"),
     P003(WARNING, "warmup not first, or practice not last"),
-    P004(WARNING, "exercise without hint"),
+    P004(WARNING, "question without hint"),
     P005(WARNING, "term used but not declared"),
     P006(WARNING, "session does not close as the learner asked"),
     P007(WARNING, "notion without the quick check the learner asked for"),
     P008(WARNING, "timed session whose questions do not fit its time"),
-    P009(WARNING, "timed session with a notion or a worked example");
+    P009(WARNING, "timed session with a notion or a worked example"),
+    P010(WARNING, "MCQ wrong choice without feedback");
 
     private final DiagnosticSeverity severity;
     private final String summary;

@@ -48,8 +48,9 @@ Example: a 20-minute review → 14 single-choice MCQs and 2 numeric exercises (1
   questions, same balance between chapters, same difficulty, same length. Write new questions;
   do not reuse the lessons'. Say in the statement when a question is adapted from a past exam.
 - Order: easy to hard within a review; as the real exam does within a mock exam.
-- Every question still has its `solution`, worked step by step: the learner reads it afterwards.
-  In an exam, no `hint`.
+- Every question still has its `solution`, explaining why the right answer is right, and every
+  wrong MCQ choice its feedback: in a review the learner sees them right after each answer, in
+  an exam when the time is up. In a review, every question has hints; in an exam, none.
 
 ## 3. Write it
 
