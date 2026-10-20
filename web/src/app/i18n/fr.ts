@@ -73,6 +73,10 @@ export const FR: Translations = {
   question: {
     check: 'Vérifier',
     incomplete: 'Remplis chaque case avant de vérifier.',
+    confirmOne: 'Tu as coché une seule réponse, alors que plusieurs peuvent être justes. Ta réponse est définitive : c’est bien tout ?',
+    confirmSeveral: 'Tu as coché {{count}} réponses. Ta réponse est définitive : c’est bien tout ?',
+    confirmYes: 'Oui, vérifier',
+    confirmNo: 'Revoir',
     hint: 'Indice',
     hintCount: 'Indice {{number}} sur {{total}}',
     why: 'Pourquoi',

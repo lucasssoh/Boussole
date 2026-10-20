@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, forwardRef, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, forwardRef, input, output, signal } from '@angular/core';
 import { IconComponent } from '../../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { BlockListComponent } from '../blocks/block-list.component';
@@ -22,11 +22,19 @@ import { QuestionState } from './question-state';
     }
     <div class="question-actions">
       @if (checkable() && !question.answered()) {
-        <button type="button" class="primary" [disabled]="question.busy() || !ready()" (click)="check.emit()">
-          {{ 'question.check' | transloco }}
-        </button>
-        @if (incomplete() && !ready()) {
-          <span class="note incomplete">{{ 'question.incomplete' | transloco }}</span>
+        @if (confirming(); as message) {
+          <span class="confirm" role="alertdialog" [attr.aria-label]="message">
+            <span class="confirm-text">{{ message }}</span>
+            <button type="button" class="primary" [disabled]="question.busy()" (click)="send()">{{ 'question.confirmYes' | transloco }}</button>
+            <button type="button" (click)="confirming.set(null)">{{ 'question.confirmNo' | transloco }}</button>
+          </span>
+        } @else {
+          <button type="button" class="primary" [disabled]="question.busy() || !ready()" (click)="ask()">
+            {{ 'question.check' | transloco }}
+          </button>
+          @if (incomplete() && !ready()) {
+            <span class="note incomplete">{{ 'question.incomplete' | transloco }}</span>
+          }
         }
       }
       @if (question.isFree && !question.solution()) {
@@ -56,5 +64,23 @@ export class QuestionFooterComponent {
   readonly ready = input(true);
   /** The response has several fields: say why it cannot be sent yet. */
   readonly incomplete = input(false);
+  /** When set, the learner confirms with this message before the response is sent. */
+  readonly confirm = input<string | null>(null);
   readonly check = output<void>();
+
+  protected readonly confirming = signal<string | null>(null);
+
+  protected ask(): void {
+    const message = this.confirm();
+    if (message) {
+      this.confirming.set(message);
+    } else {
+      this.check.emit();
+    }
+  }
+
+  protected send(): void {
+    this.confirming.set(null);
+    this.check.emit();
+  }
 }

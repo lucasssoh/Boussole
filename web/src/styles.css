@@ -2263,6 +2263,25 @@ app-settings-drawer {
   fill: var(--subject-ink, var(--subject));
 }
 
+/* Before a final answer with several ticks, the learner confirms it is all. */
+.confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  border: 3px solid var(--partly-strong);
+  border-radius: 14px;
+  background: var(--partly-bg);
+  animation: bubble 0.3s ease-out both;
+}
+
+.confirm-text {
+  flex-basis: 100%;
+  color: var(--text);
+  font-weight: 800;
+}
+
 .note.incomplete {
   color: var(--muted);
   font-size: 0.9rem;

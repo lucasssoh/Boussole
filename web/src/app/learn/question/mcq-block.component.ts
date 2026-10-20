@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, input } from '@angular/core';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { RichTextComponent } from '../../shared/rich-text.component';
 import { BoussoleApi } from '../../core/boussole-api';
 import { StatsService } from '../../core/stats.service';
@@ -49,7 +49,7 @@ import { QuestionState } from './question-state';
               </li>
             }
           </ul>
-          <app-question-footer [state]="state()" [ready]="picked().size > 0" (check)="check()" />
+          <app-question-footer [state]="state()" [ready]="picked().size > 0" [confirm]="confirmation()" (check)="check()" />
         </div>
         @if (corrected) {
           <app-question-correction [state]="state()" />
@@ -65,6 +65,7 @@ export class McqBlockComponent {
   private readonly learn = inject(LearnFacade);
   private readonly run = inject(SessionRun, { optional: true });
   private readonly stats = inject(StatsService);
+  private readonly transloco = inject(TranslocoService);
 
   protected readonly state = computed(() => {
     const question = this.mcq();
@@ -73,6 +74,12 @@ export class McqBlockComponent {
     return this.run?.question(question.id, create) ?? create();
   });
   protected readonly picked = computed(() => this.state().picked());
+  /** Several answers may be right: before a final answer, the learner checks they ticked them all. */
+  protected readonly confirmation = computed(() =>
+    this.mcq().multiple
+      ? this.transloco.translate(this.picked().size === 1 ? 'question.confirmOne' : 'question.confirmSeveral', { count: this.picked().size })
+      : null,
+  );
 
   /** Once the solution is open, every choice says whether it is right, with its feedback. */
   protected expectedChoice(index: number): { correct: boolean; feedback: string | null } | undefined {

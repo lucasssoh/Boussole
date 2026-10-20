@@ -71,6 +71,10 @@ export const EN = {
   question: {
     check: 'Check',
     incomplete: 'Fill in every box before checking.',
+    confirmOne: 'You ticked only one answer, while several may be right. Your answer is final: is that all?',
+    confirmSeveral: 'You ticked {{count}} answers. Your answer is final: is that all?',
+    confirmYes: 'Yes, check',
+    confirmNo: 'Look again',
     hint: 'Hint',
     hintCount: 'Hint {{number}} of {{total}}',
     why: 'Why',
