@@ -255,7 +255,10 @@ export class SessionPathComponent {
       observer.observe(viewport);
       inject(DestroyRef).onDestroy(() => observer.disconnect());
     }, { injector: this.injector });
+    // Each change of screen brings the path back, even to the same place: the learner may have
+    // scrolled it away by hand in between.
     effect(() => {
+      this.current();
       const top = this.target();
       untracked(() => this.viewport().nativeElement.scrollTo({ top, behavior: 'smooth' }));
     });
