@@ -6,7 +6,6 @@ import io.github.lucasssoh.boussole.format.model.answer.OrderAnswer;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseType;
 import io.github.lucasssoh.boussole.format.parse.Attributes;
 import io.github.lucasssoh.boussole.format.parse.ParseContext;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -14,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /** A Markdown list, in the right order. */
-final class OrderAnswerParser implements AnswerParser {
+final class OrderAnswerParser extends LineAnswerParser<String> {
 
     private static final Pattern ITEM = Pattern.compile("(?:\\d+[.)]|[-*+])\\s+(.+)");
 
@@ -29,20 +28,22 @@ final class OrderAnswerParser implements AnswerParser {
     }
 
     @Override
-    public Optional<Answer> parse(List<AnswerLine> lines, Attributes attributes, ParseContext context) {
-        List<String> items = new ArrayList<>();
-        for (AnswerLine line : lines) {
-            Matcher matcher = ITEM.matcher(line.text());
-            if (!matcher.matches()) {
-                context.report(Code.F021, line.line(), "an order answer is a list: `1. first item`");
-                return Optional.empty();
-            }
-            items.add(matcher.group(1).strip());
-        }
-        if (items.size() < 2) {
-            context.report(Code.F021, lines.getFirst().line(), "an order answer needs at least two items");
+    protected int minimumItems() {
+        return 2;
+    }
+
+    @Override
+    protected Optional<String> readLine(AnswerLine line, Attributes attributes, ParseContext context) {
+        Matcher matcher = ITEM.matcher(line.text());
+        if (!matcher.matches()) {
+            context.report(Code.F021, line.line(), "an order answer is a list: `1. first item`");
             return Optional.empty();
         }
-        return Optional.of(new OrderAnswer(List.copyOf(items)));
+        return Optional.of(matcher.group(1).strip());
+    }
+
+    @Override
+    protected Optional<Answer> assemble(List<String> items, Attributes attributes, AnswerLine first, ParseContext context) {
+        return Optional.of(new OrderAnswer(items));
     }
 }

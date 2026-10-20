@@ -2,5 +2,6 @@ package io.github.lucasssoh.boussole.format.model.answer;
 
 import java.util.List;
 
-public record FillAnswer(List<Gap> gaps, boolean strict) implements Answer {
+/** The gaps of a fill exercise, in the order of the answer. */
+public record FillAnswer(List<Gap> gaps) implements Answer {
 }

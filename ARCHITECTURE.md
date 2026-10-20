@@ -44,7 +44,9 @@ run is this module).
 - **Model**: immutable `record`s. A `Course` holds the `Subject`, its `Syllabus` (`Chapter`s
   of `SessionEntry`s), its `Lexicon` of `Term`s, and the `Session`s read. A session is a list of
   `Part`s (`TextPart`, `Warmup`, `Notion`, `Checkpoint`, `Practice`), each a list of `Block`s.
-  `Part`, `Block` and `Answer` are sealed interfaces.
+  An exercise's `Answer` is a `SingleAnswer` (numeric, text), a `FillAnswer` of `Gap`s, an
+  `OrderAnswer` or a `MatchAnswer`; every value the learner gives is an `Expectation`: typed
+  text, a number, or a choice. `Part`, `Block`, `Answer` and `Expectation` are sealed interfaces.
 - **Loading**: `SubjectLoader` reads the YAML files (SnakeYAML Engine, through `YamlMap`, which
   knows the line of every value) and each session file through `SessionReader`.
 - **Parsing**: the structure of a session body is line-based, so Boussole parses it itself, in
@@ -130,6 +132,7 @@ A pattern is used where it solves a real problem, and the class name says which 
 | Use case | `core/*/` | one action = one class |
 | Repository | ports of `core` | data access behind an interface |
 | Strategy | `AnswerParser` and `AnswerChecker` per exercise type; `ReminderScheduler` per OS | add a case without touching the others |
+| Template method | `LineAnswerParser`: each answer type only says how a line reads and what the lines make | the reading loop and its error handling exist once |
 | Registry + factory | `DirectiveRegistry`, `AnswerParsers`; `BLOCK_RENDERERS` in `web/` | a new block type is a new class, registered |
 | Sealed interface + exhaustive `switch` | `Block`, `ScheduledEvent` | the compiler lists every place a new type must be handled |
 | Composite | `Validator` of `ValidationRule`s | one rule per file, tested alone |

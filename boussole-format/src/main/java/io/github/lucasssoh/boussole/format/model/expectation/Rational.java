@@ -1,4 +1,4 @@
-package io.github.lucasssoh.boussole.format.model.answer;
+package io.github.lucasssoh.boussole.format.model.expectation;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

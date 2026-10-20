@@ -11,9 +11,12 @@ import io.github.lucasssoh.boussole.format.model.Session;
 import io.github.lucasssoh.boussole.format.model.answer.FillAnswer;
 import io.github.lucasssoh.boussole.format.model.answer.MatchAnswer;
 import io.github.lucasssoh.boussole.format.model.answer.MatchPair;
-import io.github.lucasssoh.boussole.format.model.answer.NumericAnswer;
+import io.github.lucasssoh.boussole.format.model.answer.SingleAnswer;
+import io.github.lucasssoh.boussole.format.model.expectation.ChoiceExpectation;
+import io.github.lucasssoh.boussole.format.model.expectation.NumberExpectation;
+import io.github.lucasssoh.boussole.format.model.expectation.TextExpectation;
 import io.github.lucasssoh.boussole.format.model.answer.OrderAnswer;
-import io.github.lucasssoh.boussole.format.model.answer.Rational;
+import io.github.lucasssoh.boussole.format.model.expectation.Rational;
 import io.github.lucasssoh.boussole.format.model.block.Block;
 import io.github.lucasssoh.boussole.format.model.block.Exercise;
 import io.github.lucasssoh.boussole.format.model.block.Prose;
@@ -232,10 +235,11 @@ class SessionParsingTest {
             Exercise exercise = onlyExercise(parse(exerciseOfType("type=numeric tolerance=0,01", "3/4\n0,75")));
 
             assertThat(diagnostics.list()).isEmpty();
-            assertThat(exercise.answer()).get().isInstanceOfSatisfying(NumericAnswer.class, answer -> {
-                assertThat(answer.values()).containsExactly(rational("3/4"), rational("3/4"));
-                assertThat(answer.tolerance()).isEqualTo(rational("1/100"));
-            });
+            assertThat(exercise.answer()).get().isInstanceOfSatisfying(SingleAnswer.class, answer ->
+                    assertThat(answer.expected()).isInstanceOfSatisfying(NumberExpectation.class, number -> {
+                        assertThat(number.values()).containsExactly(rational("3/4"), rational("3/4"));
+                        assertThat(number.tolerance()).isEqualTo(rational("1/100"));
+                    }));
         }
 
         @Test
@@ -248,8 +252,9 @@ class SessionParsingTest {
         @Test
         void fillOrderAndMatchAnswersAreRead() {
             Exercise fill = onlyExercise(parse(exerciseOfType("type=fill", "1: a | b\n2: re:c+")));
-            assertThat(fill.answer()).get().isInstanceOfSatisfying(FillAnswer.class,
-                    answer -> assertThat(answer.gaps()).extracting(gap -> gap.accepted().size()).containsExactly(2, 1));
+            assertThat(fill.answer()).get().isInstanceOfSatisfying(FillAnswer.class, answer ->
+                    assertThat(answer.gaps()).extracting(gap -> ((TextExpectation) gap.expected()).accepted().size())
+                            .containsExactly(2, 1));
 
             Exercise order = onlyExercise(parse(exerciseOfType("type=order", "1. Physique\n2. Liaison\n3. Réseau")));
             assertThat(order.answer()).get().isInstanceOfSatisfying(OrderAnswer.class,
@@ -263,6 +268,35 @@ class SessionParsingTest {
         }
 
         @Test
+        void aGapIsTypedTextANumberOrAChoice() {
+            Exercise proof = onlyExercise(parse(exerciseOfType("type=fill",
+                    "1: x | $x$\n2: number 3/4 ±0.01\n3: choice $\\leq$ | *$\\geq$ | $=$")));
+
+            assertThat(diagnostics.list()).isEmpty();
+            assertThat(proof.answer()).get().isInstanceOfSatisfying(FillAnswer.class, answer -> {
+                assertThat(answer.gaps().get(0).expected()).isInstanceOf(TextExpectation.class);
+                assertThat(answer.gaps().get(1).expected()).isInstanceOfSatisfying(NumberExpectation.class, number -> {
+                    assertThat(number.values()).containsExactly(rational("0.75"));
+                    assertThat(number.tolerance()).isEqualTo(rational("0.01"));
+                });
+                assertThat(answer.gaps().get(2).expected()).isInstanceOfSatisfying(ChoiceExpectation.class, choice -> {
+                    assertThat(choice.options()).containsExactly("$\\leq$", "$\\geq$", "$=$");
+                    assertThat(choice.correctOption()).isEqualTo("$\\geq$");
+                });
+            });
+        }
+
+        @Test
+        void aChoiceGapStarsOneOptionAndANumberGapIsANumber() {
+            parse(exerciseOfType("type=fill", "1: choice a | b"));
+            parse(exerciseOfType("type=fill", "1: choice *a | *b"));
+            parse(exerciseOfType("type=fill", "1: number beaucoup"));
+
+            assertThat(messages(Code.F021)).hasSize(2).allMatch(message -> message.contains("one starred"));
+            assertThat(messages(Code.F024)).hasSize(1);
+        }
+
+        @Test
         void malformedAnswerLinesAreReported() {
             parse(exerciseOfType("type=match", "TCP transport\nIP => réseau"));
             parse(exerciseOfType("type=order", "Physique\nLiaison"));
@@ -271,7 +305,7 @@ class SessionParsingTest {
             assertThat(messages(Code.F021)).containsExactly(
                     "a match answer line reads `left => right`",
                     "an order answer is a list: `1. first item`",
-                    "a fill answer line reads `1: answer | other answer`");
+                    "a fill answer line reads `1: answer | other answer`, `2: number 62` or `3: choice *right | wrong`");
         }
 
         @Test

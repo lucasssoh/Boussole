@@ -17,7 +17,7 @@ report.course().ifPresent(course -> …);
 
 | Package | Contents |
 |---|---|
-| `model` | the course, its parts, blocks and answers |
+| `model` | the course, its parts and blocks; `model.answer` what exercises accept, `model.expectation` each value expected (text, number, choice) |
 | `load` | the YAML files and session files |
 | `parse` | the body of a session: raw tree, blocks, directives, answers |
 | `validate` | the rules that need the whole course |

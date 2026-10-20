@@ -1,7 +1,7 @@
 package io.github.lucasssoh.boussole.format.parse.answer;
 
 import io.github.lucasssoh.boussole.format.diagnostic.Code;
-import io.github.lucasssoh.boussole.format.model.answer.AcceptedText;
+import io.github.lucasssoh.boussole.format.model.expectation.AcceptedText;
 import io.github.lucasssoh.boussole.format.parse.ParseContext;
 import java.util.Optional;
 import java.util.regex.Pattern;

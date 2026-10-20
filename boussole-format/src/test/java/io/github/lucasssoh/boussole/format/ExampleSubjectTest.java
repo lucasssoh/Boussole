@@ -4,9 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.lucasssoh.boussole.format.model.Course;
 import io.github.lucasssoh.boussole.format.model.LoadedSession;
-import io.github.lucasssoh.boussole.format.model.answer.NumericAnswer;
-import io.github.lucasssoh.boussole.format.model.answer.Rational;
-import io.github.lucasssoh.boussole.format.model.answer.TextAnswer;
+import io.github.lucasssoh.boussole.format.model.answer.SingleAnswer;
+import io.github.lucasssoh.boussole.format.model.expectation.NumberExpectation;
+import io.github.lucasssoh.boussole.format.model.expectation.Rational;
+import io.github.lucasssoh.boussole.format.model.expectation.TextExpectation;
 import io.github.lucasssoh.boussole.format.model.block.Choice;
 import io.github.lucasssoh.boussole.format.model.block.Exercise;
 import io.github.lucasssoh.boussole.format.model.block.Qcm;
@@ -49,15 +50,15 @@ class ExampleSubjectTest {
     @Test
     void readsTheAnswers() {
         Exercise macBits = exercise("s11-a1");
-        assertThat(macBits.answer()).get().isInstanceOfSatisfying(NumericAnswer.class, answer -> {
-            assertThat(answer.values()).containsExactly(Rational.parse("48").orElseThrow());
-            assertThat(answer.unit()).contains("bits");
+        assertThat(expected(macBits)).isInstanceOfSatisfying(NumberExpectation.class, number -> {
+            assertThat(number.values()).containsExactly(Rational.parse("48").orElseThrow());
+            assertThat(number.unit()).contains("bits");
         });
         assertThat(macBits.hints()).hasSize(1);
         assertThat(macBits.solution()).isPresent();
 
-        assertThat(exercise("s11-w1").answer()).get().isInstanceOfSatisfying(TextAnswer.class,
-                answer -> assertThat(answer.accepted()).hasSize(4));
+        assertThat(expected(exercise("s11-w1"))).isInstanceOfSatisfying(TextExpectation.class,
+                text -> assertThat(text.accepted()).hasSize(4));
     }
 
     @Test
@@ -74,6 +75,10 @@ class ExampleSubjectTest {
 
     private Course course() {
         return report.course().orElseThrow();
+    }
+
+    private static Object expected(Exercise exercise) {
+        return ((SingleAnswer) exercise.answer().orElseThrow()).expected();
     }
 
     private Exercise exercise(String id) {

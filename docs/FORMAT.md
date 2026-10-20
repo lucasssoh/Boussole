@@ -254,7 +254,8 @@ estimate of its type:
 |---|---|
 | `qcm` | 1, or 1.5 with `multiple=true` |
 | `order`, `match` | 2 |
-| `numeric`, `text`, `fill` | 3 |
+| `numeric`, `text` | 3 |
+| `fill` | 1 per typed gap, 0.5 per choice gap (at least 1) |
 | `free` | 8 |
 
 These estimates size timed sessions. The convention is
@@ -293,10 +294,15 @@ Une adresse MAC s'écrit avec 6 octets, comme `3c:52:82:1a:9f:04`.
 |---|---|---|
 | `numeric` | One value per line. Decimal point, or a fraction `3/4`. | Attribute `tolerance` (absolute, default `0`). Attribute `unit` is displayed, not typed. The learner may use a comma. |
 | `text` | One accepted answer per line. A line starting with `re:` is a regular expression. | Trimmed, spaces collapsed, case ignored. `strict=true` keeps case. |
-| `fill` | One line per gap: `1: answer \| other accepted answer`, alternatives separated by a `\|` between spaces. The statement marks gaps with `[[1]]`, `[[2]]`… | Each gap checked like `text`. |
+| `fill` | One line per gap, `N: …`, where the statement has `[[N]]`. A gap is **typed text** (`1: answer \| other accepted answer`, alternatives separated by a `\|` between spaces), a **number** (`2: number 62` or `2: number 3/4 ±0.01`), or a **choice** in a drop-down list (`3: choice *right \| wrong \| other`, the right option starred). | Typed gaps like `text` and `numeric`; a choice gap by the option picked. |
 | `order` | A list (`1. item` or `- item`), in the right order, at least two items. | Items are shown shuffled. |
 | `match` | One line per pair: `left => right`, at least two pairs. | Right-hand sides are shown shuffled. |
-| `free` | No `answer` part. | The learner writes, reads the solution, then grades themself: *got it / partly / not yet*. For proofs and models. |
+| `free` | No `answer` part. | The learner writes, reads the solution, then grades themself: *got it / partly / not yet*. For what cannot be checked otherwise. |
+
+Typing must stay easy in a browser: an expected text or number is **short and precise** (a
+value, a keyword, an address), never a formula to write in LaTeX. A proof, an algorithm or an
+equation is asked as a `fill` whose gaps are mostly **choices**: the learner completes the
+reasoning by picking each missing step.
 
 #### Multiple choice
 

@@ -1,18 +1,16 @@
 package io.github.lucasssoh.boussole.format.parse.answer;
 
-import io.github.lucasssoh.boussole.format.model.answer.AcceptedText;
 import io.github.lucasssoh.boussole.format.model.answer.Answer;
-import io.github.lucasssoh.boussole.format.model.answer.TextAnswer;
+import io.github.lucasssoh.boussole.format.model.answer.SingleAnswer;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseType;
 import io.github.lucasssoh.boussole.format.parse.Attributes;
 import io.github.lucasssoh.boussole.format.parse.ParseContext;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-/** One accepted answer per line. */
-final class TextAnswerParser implements AnswerParser {
+/** One accepted spelling per line. */
+final class TextAnswerParser extends LineAnswerParser<String> {
 
     @Override
     public ExerciseType type() {
@@ -25,16 +23,12 @@ final class TextAnswerParser implements AnswerParser {
     }
 
     @Override
-    public Optional<Answer> parse(List<AnswerLine> lines, Attributes attributes, ParseContext context) {
-        boolean strict = attributes.flag("strict");
-        List<AcceptedText> accepted = new ArrayList<>();
-        for (AnswerLine line : lines) {
-            Optional<AcceptedText> text = AcceptedTexts.read(line.text(), strict, line.line(), context);
-            if (text.isEmpty()) {
-                return Optional.empty();
-            }
-            accepted.add(text.get());
-        }
-        return Optional.of(new TextAnswer(List.copyOf(accepted), strict));
+    protected Optional<String> readLine(AnswerLine line, Attributes attributes, ParseContext context) {
+        return Optional.of(line.text());
+    }
+
+    @Override
+    protected Optional<Answer> assemble(List<String> spellings, Attributes attributes, AnswerLine first, ParseContext context) {
+        return ExpectationReader.text(spellings, attributes.flag("strict"), first.line(), context).map(SingleAnswer::new);
     }
 }

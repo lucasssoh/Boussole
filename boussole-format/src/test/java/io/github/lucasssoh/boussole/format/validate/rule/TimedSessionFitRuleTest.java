@@ -49,6 +49,16 @@ class TimedSessionFitRuleTest {
     }
 
     @Test
+    void aFillTakesAMinutePerTypedGapAndHalfAMinutePerChoice() {
+        String fill = exercise("f1").replace("type=text", "type=fill").replace("Question ?", "[[1]] [[2]] [[3]] [[4]]")
+                .replace("oui", "1: x\n2: number 4\n3: choice *a | b\n4: choice *c | d");
+        var report = SubjectFixture.in(dir).timedSession("e1", "review", 5, fill + qcms("q", 2)).inspect();
+
+        assertThat(report.errors()).isEmpty();
+        assertThat(report.withCode(Code.P008)).isEmpty();
+    }
+
+    @Test
     void minutesOverrideTheEstimateAndRefsCount() {
         var report = SubjectFixture.in(dir)
                 .session("s1", notion("a", "a1"))

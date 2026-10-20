@@ -1,20 +1,18 @@
 package io.github.lucasssoh.boussole.format.parse.answer;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
 import io.github.lucasssoh.boussole.format.model.answer.Answer;
-import io.github.lucasssoh.boussole.format.model.answer.NumericAnswer;
-import io.github.lucasssoh.boussole.format.model.answer.Rational;
+import io.github.lucasssoh.boussole.format.model.answer.SingleAnswer;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseType;
+import io.github.lucasssoh.boussole.format.model.expectation.NumberExpectation;
+import io.github.lucasssoh.boussole.format.model.expectation.Rational;
 import io.github.lucasssoh.boussole.format.parse.Attributes;
-import io.github.lucasssoh.boussole.format.parse.InvalidAttributeException;
 import io.github.lucasssoh.boussole.format.parse.ParseContext;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-/** One value per line; {@code tolerance} and {@code unit} as attributes. */
-final class NumericAnswerParser implements AnswerParser {
+/** One accepted value per line; {@code tolerance} and {@code unit} as attributes. */
+final class NumericAnswerParser extends LineAnswerParser<Rational> {
 
     @Override
     public ExerciseType type() {
@@ -27,21 +25,13 @@ final class NumericAnswerParser implements AnswerParser {
     }
 
     @Override
-    public Optional<Answer> parse(List<AnswerLine> lines, Attributes attributes, ParseContext context) {
-        Rational tolerance = attributes.text("tolerance")
-                .map(value -> Rational.parse(value)
-                        .filter(number -> number.compareTo(Rational.ZERO) >= 0)
-                        .orElseThrow(() -> new InvalidAttributeException("tolerance", "must be a number, 0 or more, not `" + value + "`")))
-                .orElse(Rational.ZERO);
-        List<Rational> values = new ArrayList<>();
-        for (AnswerLine line : lines) {
-            Optional<Rational> value = Rational.parse(line.text());
-            if (value.isEmpty()) {
-                context.report(Code.F024, line.line(), "`" + line.text() + "` is not a number (write 2.5 or 3/4)");
-                return Optional.empty();
-            }
-            values.add(value.get());
-        }
-        return Optional.of(new NumericAnswer(List.copyOf(values), tolerance, attributes.text("unit")));
+    protected Optional<Rational> readLine(AnswerLine line, Attributes attributes, ParseContext context) {
+        return Numbers.read(line.text(), line.line(), context);
+    }
+
+    @Override
+    protected Optional<Answer> assemble(List<Rational> values, Attributes attributes, AnswerLine first, ParseContext context) {
+        return Optional.of(new SingleAnswer(
+                new NumberExpectation(values, Numbers.toleranceAttribute(attributes), attributes.text("unit"))));
     }
 }
