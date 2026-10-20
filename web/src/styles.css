@@ -1699,7 +1699,7 @@ select:disabled {
   border: 3px solid var(--line);
   border-radius: 20px;
   background: var(--surface);
-  animation: rise 0.25s ease-out;
+  animation: bubble 0.45s var(--spring) backwards;
 }
 
 .correction.correct {
@@ -1759,12 +1759,6 @@ select:disabled {
   text-transform: uppercase;
 }
 
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(0.5rem);
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -1856,4 +1850,84 @@ select:disabled {
   from {
     transform: translateX(100%);
   }
+}
+
+/*
+ * Bubbles: entering a page or a screen, its elements pop in one after the other, swell a little
+ * and settle. Only the scale, translate and opacity properties are animated, never transform,
+ * so an element's own transform (centring, pressing) is left alone; the delay comes from --i,
+ * the element's rank, and the fill mode keeps nothing once the animation is over.
+ */
+
+:root {
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --bubble-step: 65ms;
+}
+
+@keyframes bubble {
+  from {
+    opacity: 0;
+    scale: 0.82;
+    translate: 0 12px;
+  }
+
+  60% {
+    opacity: 1;
+    scale: 1.035;
+    translate: 0 -2px;
+  }
+
+  to {
+    opacity: 1;
+    scale: 1;
+    translate: 0 0;
+  }
+}
+
+:is(
+    .screen > *,
+    .screen > app-block-list > *,
+    .choices > li,
+    .question-actions,
+    .screen-nav > *,
+    .resume-card,
+    .session-grid > li,
+    .grid-chapter-head,
+    .cards > li,
+    .bilan-stat,
+    .page h1,
+    .page h2
+  ) {
+  animation: bubble 0.45s var(--spring) backwards;
+  animation-delay: calc(min(var(--i, 0), 14) * var(--bubble-step));
+}
+
+/* The rank of each element among its siblings. */
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(2) { --i: 1; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(3) { --i: 2; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(4) { --i: 3; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(5) { --i: 4; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(6) { --i: 5; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(7) { --i: 6; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(8) { --i: 7; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(n + 9) { --i: 8; }
+
+/* The choices of a question come after its statement, the buttons after the choices. */
+.choices > li {
+  animation-delay: calc((3 + min(var(--i, 0), 6)) * var(--bubble-step));
+}
+
+.question-actions {
+  animation-delay: calc(8 * var(--bubble-step));
+}
+
+.screen-nav > * {
+  animation-delay: calc((6 + var(--i, 0)) * var(--bubble-step));
+}
+
+/* The path pops in once, node after node, when the session opens. */
+.path-node,
+.path-sign {
+  animation: bubble 0.45s var(--spring) backwards;
+  animation-delay: calc(min(var(--i, 0), 24) * 35ms);
 }

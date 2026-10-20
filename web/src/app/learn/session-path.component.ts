@@ -46,6 +46,8 @@ interface PathZone {
   signY: number;
   /** A title too long for one line takes two. */
   lines: 1 | 2;
+  /** Its rank among the elements of the path, for the order in which they pop in. */
+  order: number;
 }
 
 const WIDTH = 288;
@@ -93,7 +95,7 @@ const FIRST_NODE = 52;
         <path class="path-line" [attr.d]="layout().line"></path>
       </svg>
       @for (zone of layout().zones; track $index) {
-        <div [class]="'path-sign ' + zone.kind + (zone.lines === 2 ? ' two-lines' : '')" [style.top.px]="zone.signY">
+        <div [class]="'path-sign ' + zone.kind + (zone.lines === 2 ? ' two-lines' : '')" [style.top.px]="zone.signY" [style.--i]="zone.order">
           @switch (zone.kind) {
             @case ('warmup') {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"></path></svg>
@@ -117,6 +119,7 @@ const FIRST_NODE = 52;
           [class]="'path-node ' + node.kind + ' ' + node.state + ' label-' + node.side"
           [style.left.px]="node.x"
           [style.top.px]="node.y"
+          [style.--i]="node.index"
           [disabled]="node.state === 'locked'"
           [attr.aria-current]="node.state === 'current' ? 'step' : null"
           [attr.aria-label]="node.label"
@@ -210,7 +213,7 @@ export class SessionPathComponent {
         const title = this.partTitle(plan, screen.part);
         const lines = visibleLength(title) > SIGN_CHARACTERS ? 2 : 1;
         const signY = y + (lines - 1) * (SIGN_LINE / 2);
-        zones.push({ kind, title, top: y - SIGN_STEP / 2, height: 0, signY, lines });
+        zones.push({ kind, title, top: y - SIGN_STEP / 2, height: 0, signY, lines, order: index });
         stops.push({ x: CENTRE, y: signY });
         y += SIGN_STEP + (lines - 1) * SIGN_LINE;
         swing = 0;

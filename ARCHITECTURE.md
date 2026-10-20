@@ -263,6 +263,10 @@ web/src/app/
   interface. Each subject has its colour (`subjectColor()`), set as `--subject` on the page.
   The header shows the level, the experience and the streak (`StatsService`); each answer
   shows the experience it earned.
+- **Bubbles**: entering a page or a screen, its elements pop in one after the other (the
+  `bubble` keyframes, a rank `--i` per element). They animate `scale`, `translate` and
+  `opacity`, never `transform`, so that centring and pressing are left alone; nothing moves when
+  the system asks for reduced motion.
 - **Light and dark** themes from CSS variables, following the system unless the learner chose.
 
 ---

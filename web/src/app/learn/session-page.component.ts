@@ -58,8 +58,9 @@ import { SidePanelComponent } from './side-panel.component';
           <progress [max]="plan().screens.length - 1" [value]="index()"></progress>
         </div>
 
-        <article [class]="'screen screen-' + screen().kind">
-          @switch (screen().kind) {
+        @for (shown of [screen()]; track index()) {
+        <article [class]="'screen screen-' + shown.kind">
+          @switch (shown.kind) {
             @case ('start') {
               <p class="eyebrow">
                 {{ current.chapterTitle }} ·
@@ -118,11 +119,12 @@ import { SidePanelComponent } from './side-panel.component';
               @if (timed() && !run.started()) {
                 <p class="frame warning">{{ 'timed.notStarted' | transloco }}</p>
               } @else {
-                <app-block-list [blocks]="screen().blocks" />
+                <app-block-list [blocks]="shown.blocks" />
               }
             }
           }
         </article>
+        }
 
         <nav class="screen-nav">
           @if (index() > 0) {
