@@ -47,7 +47,8 @@ You answer **once**. Right away, the right answer turns green, yours red if it w
 **Why** box explains. Before answering, the **Hint** button reveals some help, then more,
 without giving the answer away.
 
-Every answer earns experience, even a wrong one, and your streak of days grows when you study.
+Every answer earns experience, even a wrong one, and your streak of days grows when you study
+(except in this guide, which does not count).
 Reviews and mock exams are timed; in a mock exam, the corrections come at the end.
 
 ::::mcq{#g3-a2 multiple=true}

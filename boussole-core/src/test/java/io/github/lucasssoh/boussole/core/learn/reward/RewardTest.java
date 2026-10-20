@@ -43,15 +43,19 @@ class RewardTest {
 
         private static final ZoneId PARIS = ZoneId.of("Europe/Paris");
         private final List<AttemptRecord> history = new ArrayList<>();
-        private final List<Instant> finished = new ArrayList<>();
+        private final List<SessionFinishedRecord> finished = new ArrayList<>();
 
         private StudyStats statsOn(String day) {
             Clock clock = Clock.fixed(Instant.parse(day + "T20:00:00Z"), PARIS);
-            return new ReadStudyStats(new History(history, finished), clock).read();
+            return new ReadStudyStats(new History(history, finished), RewardedSubjects.allBut("guide"), clock).read();
         }
 
         private void answer(String exercise, String at, Verdict verdict) {
-            history.add(new AttemptRecord("oc", exercise, Instant.parse(at), verdict));
+            answer("oc", exercise, at, verdict);
+        }
+
+        private void answer(String subject, String exercise, String at, Verdict verdict) {
+            history.add(new AttemptRecord(subject, exercise, Instant.parse(at), verdict));
         }
 
         @Test
@@ -59,9 +63,18 @@ class RewardTest {
             answer("s34-a1", "2026-10-20T08:00:00Z", Verdict.WRONG);
             answer("s34-a1", "2026-10-21T08:00:00Z", Verdict.CORRECT);
             answer("s34-a2", "2026-10-21T08:05:00Z", Verdict.CORRECT);
-            finished.add(Instant.parse("2026-10-21T09:00:00Z"));
+            finished.add(new SessionFinishedRecord("oc", Instant.parse("2026-10-21T09:00:00Z")));
 
             assertThat(statsOn("2026-10-21").xp()).isEqualTo(5 + 5 + 10 + 20);
+        }
+
+        @Test
+        void a_subject_left_out_of_the_rewards_earns_nothing_and_keeps_no_streak() {
+            answer("guide", "g1-q1", "2026-10-21T08:00:00Z", Verdict.CORRECT);
+            finished.add(new SessionFinishedRecord("guide", Instant.parse("2026-10-21T09:00:00Z")));
+
+            assertThat(statsOn("2026-10-21").xp()).isZero();
+            assertThat(statsOn("2026-10-21").streakDays()).isZero();
         }
 
         @Test
@@ -77,7 +90,7 @@ class RewardTest {
         }
     }
 
-    private record History(List<AttemptRecord> attempts, List<Instant> finished) implements ProgressRepository {
+    private record History(List<AttemptRecord> attempts, List<SessionFinishedRecord> finished) implements ProgressRepository {
         @Override public ExerciseProgress exercise(ExerciseKey key) { return ExerciseProgress.NONE; }
         @Override public Map<String, ExerciseProgress> exercises(String subject) { return Map.of(); }
         @Override public void saveExercise(ExerciseKey key, ExerciseProgress progress, Instant at) { }
@@ -85,7 +98,7 @@ class RewardTest {
         @Override public void saveSessionFinished(SessionKey key, Instant at, Duration spent) { }
         @Override public Set<String> finishedSessions(String subject) { return Set.of(); }
         @Override public List<AttemptRecord> attemptHistory() { return attempts; }
-        @Override public List<Instant> sessionsFinishedAt() { return finished; }
+        @Override public List<SessionFinishedRecord> sessionsFinished() { return finished; }
         @Override public Optional<LastActivity> lastActivity(String subject) { return Optional.empty(); }
     }
 }

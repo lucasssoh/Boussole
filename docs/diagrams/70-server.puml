@@ -13,6 +13,7 @@ class BoussoleServer <<@SpringBootApplication>> {
 class ServerSettings <<record>> {
   port : int
   subjects : Supplier<List<Path>>
+  guide : Optional<Path>
   database : Path
   language : Optional<String>
   freeNavigation : boolean

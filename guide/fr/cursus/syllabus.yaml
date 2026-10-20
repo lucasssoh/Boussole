@@ -1,7 +1,7 @@
 status: approved
 chapters:
   - id: boussole
-    title: Bien démarrer avec Boussole
+    title: Prendre Boussole en main
     dir: 01-boussole
     sessions:
       - id: g1

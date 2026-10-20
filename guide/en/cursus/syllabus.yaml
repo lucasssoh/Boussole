@@ -1,7 +1,7 @@
 status: approved
 chapters:
   - id: boussole
-    title: Getting started with Boussole
+    title: Getting to know Boussole
     dir: 01-boussole
     sessions:
       - id: g1

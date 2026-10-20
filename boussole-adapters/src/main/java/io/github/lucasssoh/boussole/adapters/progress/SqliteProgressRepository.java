@@ -7,6 +7,7 @@ import io.github.lucasssoh.boussole.core.learn.progress.LastActivity;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import io.github.lucasssoh.boussole.core.learn.reward.AttemptRecord;
+import io.github.lucasssoh.boussole.core.learn.reward.SessionFinishedRecord;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -130,12 +131,12 @@ public final class SqliteProgressRepository implements ProgressRepository {
     }
 
     @Override
-    public List<Instant> sessionsFinishedAt() {
-        return query("SELECT at FROM session_finished ORDER BY at", statement -> {
-            List<Instant> found = new ArrayList<>();
+    public List<SessionFinishedRecord> sessionsFinished() {
+        return query("SELECT subject, at FROM session_finished ORDER BY at, id", statement -> {
+            List<SessionFinishedRecord> found = new ArrayList<>();
             try (ResultSet rows = statement.executeQuery()) {
                 while (rows.next()) {
-                    found.add(Instant.parse(rows.getString(1)));
+                    found.add(new SessionFinishedRecord(rows.getString("subject"), Instant.parse(rows.getString("at"))));
                 }
             }
             return found;

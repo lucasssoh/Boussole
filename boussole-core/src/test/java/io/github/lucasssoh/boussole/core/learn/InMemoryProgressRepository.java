@@ -1,5 +1,6 @@
 package io.github.lucasssoh.boussole.core.learn;
 
+import io.github.lucasssoh.boussole.core.learn.reward.SessionFinishedRecord;
 import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
@@ -24,7 +25,7 @@ final class InMemoryProgressRepository implements ProgressRepository {
     private final Set<SessionKey> finished = new HashSet<>();
     private final Map<String, LastActivity> last = new HashMap<>();
     private final List<AttemptRecord> history = new ArrayList<>();
-    private final List<Instant> finishedAt = new ArrayList<>();
+    private final List<SessionFinishedRecord> finishedAt = new ArrayList<>();
 
     @Override
     public ExerciseProgress exercise(ExerciseKey key) {
@@ -47,7 +48,7 @@ final class InMemoryProgressRepository implements ProgressRepository {
     public void saveSessionFinished(SessionKey key, Instant at, Duration spent) {
         finished.add(key);
         last.put(key.subject(), new LastActivity(at, Optional.of(key.session()), true));
-        finishedAt.add(at);
+        finishedAt.add(new SessionFinishedRecord(key.subject(), at));
     }
 
     @Override
@@ -62,7 +63,7 @@ final class InMemoryProgressRepository implements ProgressRepository {
     }
 
     @Override
-    public List<Instant> sessionsFinishedAt() {
+    public List<SessionFinishedRecord> sessionsFinished() {
         return List.copyOf(finishedAt);
     }
 

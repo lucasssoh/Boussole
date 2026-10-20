@@ -468,6 +468,22 @@ a:focus-visible {
   font-size: 1.15rem;
 }
 
+/* The guide stands apart from the subjects: the logo of Boussole instead of a colour dot. */
+.guide-card .card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.guide-card .card-title::before {
+  display: none;
+}
+
+.guide-logo {
+  width: 1.9rem;
+  height: 1.9rem;
+}
+
 .card-text,
 .card-meta {
   color: var(--muted);

@@ -19,7 +19,9 @@ import { QuestionState } from './question-state';
         {{ (verdict() ? 'verdict.' + verdict() : 'question.solutionTitle') | transloco }}
       </span>
       @if (state().result(); as result) {
-        <span class="xp-pill">+{{ result.xpGained }} XP</span>
+        @if (result.xpGained > 0) {
+          <span class="xp-pill">+{{ result.xpGained }} XP</span>
+        }
       }
     </div>
     <ng-content select="[expected]" />

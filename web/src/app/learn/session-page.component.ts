@@ -87,10 +87,12 @@ import { SidePanelComponent } from './side-panel.component';
             @case ('end') {
               <h1>{{ 'session.endTitle' | transloco }}</h1>
               <div class="bilan-stats">
-                <div class="bilan-stat xp">
-                  <strong>+{{ run.xpEarned() }} XP</strong>
-                  <span>{{ 'session.xpEarned' | transloco }}</span>
-                </div>
+                @if (run.xpEarned() > 0) {
+                  <div class="bilan-stat xp">
+                    <strong>+{{ run.xpEarned() }} XP</strong>
+                    <span>{{ 'session.xpEarned' | transloco }}</span>
+                  </div>
+                }
                 <div class="bilan-stat right">
                   <strong>{{ run.rightFirstTime() }} / {{ run.answered() }}</strong>
                   <span>{{ 'session.firstTime' | transloco }}</span>

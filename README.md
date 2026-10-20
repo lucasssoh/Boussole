@@ -29,8 +29,9 @@ flowchart LR
   T -. "approve the plan" .-> A
 ```
 
-Boussole itself never calls an AI and needs no account. Opened with no subject yet, it shows a
-short guide, itself a Boussole subject ([`guide/`](guide)), that walks through all of this.
+Boussole itself never calls an AI and needs no account. A short guide, itself a Boussole subject
+([`guide/`](guide)), walks through all of this: it is where a new Boussole opens, and it stays
+apart on the home page to come back to.
 
 ## Documentation
 

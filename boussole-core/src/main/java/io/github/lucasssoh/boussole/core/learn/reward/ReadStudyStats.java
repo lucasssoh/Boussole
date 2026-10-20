@@ -9,21 +9,30 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-/** Experience, level and streak, computed from the history of attempts and finished sessions. */
+/**
+ * Experience, level and streak, computed from the history of attempts and finished sessions of
+ * the subjects that are rewarded.
+ */
 public final class ReadStudyStats {
 
     private final ProgressRepository progress;
+    private final RewardedSubjects rewarded;
     private final Clock clock;
 
-    public ReadStudyStats(ProgressRepository progress, Clock clock) {
+    public ReadStudyStats(ProgressRepository progress, RewardedSubjects rewarded, Clock clock) {
         this.progress = progress;
+        this.rewarded = rewarded;
         this.clock = clock;
     }
 
     public StudyStats read() {
-        List<AttemptRecord> attempts = progress.attemptHistory();
-        List<Instant> finished = progress.sessionsFinishedAt();
-        int xp = xpOf(attempts) + finished.size() * XpRules.SESSION_FINISHED;
+        List<AttemptRecord> attempts = progress.attemptHistory().stream()
+                .filter(attempt -> rewarded.rewards(attempt.subject()))
+                .toList();
+        long finished = progress.sessionsFinished().stream()
+                .filter(session -> rewarded.rewards(session.subject()))
+                .count();
+        int xp = xpOf(attempts) + (int) finished * XpRules.SESSION_FINISHED;
         Set<LocalDate> days = new TreeSet<>();
         attempts.forEach(attempt -> days.add(day(attempt.at())));
         LocalDate today = LocalDate.now(clock);

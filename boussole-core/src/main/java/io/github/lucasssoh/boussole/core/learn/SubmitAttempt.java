@@ -9,6 +9,7 @@ import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
 import io.github.lucasssoh.boussole.format.model.block.McqBlock;
+import io.github.lucasssoh.boussole.core.learn.reward.RewardedSubjects;
 import io.github.lucasssoh.boussole.core.learn.reward.XpRules;
 import java.time.Clock;
 import java.util.Optional;
@@ -19,11 +20,13 @@ public final class SubmitAttempt {
     private final CourseLookup lookup;
     private final ProgressRepository progress;
     private final QuestionChecker checker = new QuestionChecker();
+    private final RewardedSubjects rewarded;
     private final Clock clock;
 
-    public SubmitAttempt(ContentRepository content, ProgressRepository progress, Clock clock) {
+    public SubmitAttempt(ContentRepository content, ProgressRepository progress, RewardedSubjects rewarded, Clock clock) {
         this.lookup = new CourseLookup(content);
         this.progress = progress;
+        this.rewarded = rewarded;
         this.clock = clock;
     }
 
@@ -38,6 +41,7 @@ public final class SubmitAttempt {
         ExerciseProgress after = before.withAttempt(result.verdict());
         progress.saveExercise(key, after, clock.instant());
         progress.recordAttempt(key, session, result.verdict(), clock.instant());
-        return new AttemptOutcome(result, after, XpRules.forAttempt(before.attempts() == 0, result.verdict()));
+        int xp = rewarded.rewards(key.subject()) ? XpRules.forAttempt(before.attempts() == 0, result.verdict()) : 0;
+        return new AttemptOutcome(result, after, xp);
     }
 }

@@ -122,10 +122,11 @@ localhost (another site pointed at 127.0.0.1) and a change without the `X-Bousso
 form posted from another site). It also serves the interface, any other path answering with its
 `index.html`.
 
-The guide shown to a Boussole with no subject is an ordinary subject, written in the course
-format under `guide/<language>/` and copied into the jar. `BundledGuide` installs it into the
-data folder at start, and `ServeCommand` lists it only while the configuration has no subject;
-`GuideSubjectTest` keeps both languages valid.
+The guide to Boussole is an ordinary subject, written in the course format under
+`guide/<language>/` and copied into the jar. `BundledGuide` installs it into the data folder at
+start, and `ServerSettings.guide` lists it after the learner's subjects, always: the home page
+shows it apart and resumes it only while there is no other subject. It earns no experience and
+keeps no streak (`RewardedSubjects`, in the core). `GuideSubjectTest` keeps both languages valid.
 
 ### `boussole-cli`
 

@@ -6,7 +6,7 @@ import io.github.lucasssoh.boussole.adapters.config.BoussolePaths;
 import io.github.lucasssoh.boussole.server.BoussoleServer;
 import io.github.lucasssoh.boussole.server.guide.BundledGuide;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Optional;
 import java.util.Locale;
 import io.github.lucasssoh.boussole.server.RunningServer;
 import io.github.lucasssoh.boussole.server.ServerSettings;
@@ -37,20 +37,16 @@ public final class ServeCommand implements Callable<Integer> {
         Path guide = BundledGuide.install(paths.data().resolve("guide"), read.language().orElse(Locale.getDefault().getLanguage()));
         RunningServer server = BoussoleServer.start(new ServerSettings(
                 port != null ? port : read.port(),
-                () -> subjectsOrGuide(config.read().subjects(), guide),
+                () -> config.read().subjects(),
+                Optional.of(guide),
                 paths.database(),
                 read.language(),
                 read.freeNavigation()));
         new ServerPidFile(BoussolePaths.forCurrentUser().serverPid()).writeCurrent();
         spec.commandLine().getOut().println("Boussole runs on " + server.url() + " (Ctrl+C to stop).");
         if (read.subjects().isEmpty()) {
-            spec.commandLine().getOut().println("No subject yet: the guide to Boussole shows until boussole open <folder> adds one.");
+            spec.commandLine().getOut().println("No subject yet: start with the guide to Boussole, then boussole open <folder> adds one.");
         }
         return 0;
-    }
-
-    /** A Boussole with no subject of its own shows its guide, which steps aside at the first subject. */
-    private static List<Path> subjectsOrGuide(List<Path> subjects, Path guide) {
-        return subjects.isEmpty() ? List.of(guide) : subjects;
     }
 }

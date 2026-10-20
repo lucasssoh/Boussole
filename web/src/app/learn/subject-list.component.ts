@@ -10,7 +10,8 @@ import { SessionGridComponent } from './session-grid.component';
 
 /**
  * The home page: where to resume, on top (the session in progress in the subject studied last,
- * or the first session of a subject not started yet), then every subject with its progress.
+ * or the first session of a subject not started yet), then every subject with its progress, and
+ * apart, the guide to Boussole, which is never what to resume once the learner has a subject.
  */
 @Component({
   selector: 'app-subject-list',
@@ -43,7 +44,7 @@ import { SessionGridComponent } from './session-grid.component';
           </div>
         }
       }
-      @if (learn.subjects(); as subjects) {
+      @if (ownSubjects(); as subjects) {
         <h2>{{ 'home.title' | transloco }}</h2>
         @if (subjects.length === 0) {
           <p class="frame note">{{ 'home.empty' | transloco }}</p>
@@ -65,15 +66,37 @@ import { SessionGridComponent } from './session-grid.component';
           }
         </ul>
       }
+      @if (guides().length > 0) {
+        <h2>{{ 'home.guideTitle' | transloco }}</h2>
+        <ul class="cards">
+          @for (guide of guides(); track guide.id) {
+            <li>
+              <a class="card guide-card subject-scope" [routerLink]="['/subjects', guide.id]" [attr.lang]="guide.lang">
+                <span class="card-title"><img src="favicon.svg" alt="" class="guide-logo" /> {{ guide.name }}</span>
+                <span class="card-text">{{ 'home.guideText' | transloco }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      }
     </main>
   `,
 })
 export class SubjectListComponent {
   protected readonly learn = inject(LearnFacade);
 
-  /** The subject studied last that has a session to resume, else the first one that has. */
+  /** The learner's own subjects, the guide left out; undefined until they are loaded. */
+  protected readonly ownSubjects = computed(() => this.learn.subjects()?.filter((subject) => !subject.guide));
+
+  protected readonly guides = computed(() => (this.learn.subjects() ?? []).filter((subject) => subject.guide));
+
+  /**
+   * The subject studied last that has a session to resume, else the first one that has; the
+   * guide only while the learner has no subject of their own.
+   */
   protected readonly resume = computed<CourseSummary | undefined>(() => {
-    const subjects = (this.learn.subjects() ?? []).filter((subject) => subject.resume !== null);
+    const own = this.ownSubjects() ?? [];
+    const subjects = (own.length > 0 ? own : this.guides()).filter((subject) => subject.resume !== null);
     return [...subjects].sort((a, b) => (b.lastStudied ?? '').localeCompare(a.lastStudied ?? ''))[0];
   });
 

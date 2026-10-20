@@ -49,7 +49,7 @@ elle était fausse, et un encadré **Pourquoi** explique. Avant de répondre, le
 dévoile une aide, puis une autre, sans donner la réponse.
 
 Chaque réponse rapporte de l'expérience, même fausse, et ta série de jours avance quand tu
-étudies. Les révisions et les examens blancs sont chronométrés ; dans un examen blanc, la
+étudies (sauf dans ce guide, qui ne compte pas). Les révisions et les examens blancs sont chronométrés ; dans un examen blanc, la
 correction n'arrive qu'à la fin.
 
 ::::mcq{#g3-a2 multiple=true}

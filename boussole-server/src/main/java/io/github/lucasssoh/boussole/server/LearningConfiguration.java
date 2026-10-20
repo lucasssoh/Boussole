@@ -13,6 +13,8 @@ import io.github.lucasssoh.boussole.core.learn.RevealSolution;
 import io.github.lucasssoh.boussole.core.learn.SubmitAttempt;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 import io.github.lucasssoh.boussole.core.learn.reward.ReadStudyStats;
+import io.github.lucasssoh.boussole.core.learn.reward.RewardedSubjects;
+import io.github.lucasssoh.boussole.server.guide.BundledGuide;
 import java.time.Clock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,12 +25,18 @@ class LearningConfiguration {
 
     @Bean
     ContentRepository contentRepository(ServerSettings settings) {
-        return new FileContentRepository(settings.subjects());
+        return new FileContentRepository(settings::subjectsWithGuide);
     }
 
     @Bean
     ProgressRepository progressRepository(ServerSettings settings) {
         return new SqliteProgressRepository(SqliteDatabase.open(settings.database()));
+    }
+
+    /** The guide built into Boussole is there to be read again: it earns no experience. */
+    @Bean
+    RewardedSubjects rewardedSubjects() {
+        return RewardedSubjects.allBut(BundledGuide.SUBJECT);
     }
 
     @Bean
@@ -52,8 +60,8 @@ class LearningConfiguration {
     }
 
     @Bean
-    SubmitAttempt submitAttempt(ContentRepository content, ProgressRepository progress, Clock clock) {
-        return new SubmitAttempt(content, progress, clock);
+    SubmitAttempt submitAttempt(ContentRepository content, ProgressRepository progress, RewardedSubjects rewarded, Clock clock) {
+        return new SubmitAttempt(content, progress, rewarded, clock);
     }
 
     @Bean
@@ -67,12 +75,12 @@ class LearningConfiguration {
     }
 
     @Bean
-    ReadStudyStats readStudyStats(ProgressRepository progress, Clock clock) {
-        return new ReadStudyStats(progress, clock);
+    ReadStudyStats readStudyStats(ProgressRepository progress, RewardedSubjects rewarded, Clock clock) {
+        return new ReadStudyStats(progress, rewarded, clock);
     }
 
     @Bean
-    FinishSession finishSession(ContentRepository content, ProgressRepository progress, Clock clock) {
-        return new FinishSession(content, progress, clock);
+    FinishSession finishSession(ContentRepository content, ProgressRepository progress, RewardedSubjects rewarded, Clock clock) {
+        return new FinishSession(content, progress, rewarded, clock);
     }
 }

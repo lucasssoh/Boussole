@@ -8,6 +8,7 @@ import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
 import io.github.lucasssoh.boussole.core.learn.progress.LastActivity;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import io.github.lucasssoh.boussole.core.learn.reward.AttemptRecord;
+import io.github.lucasssoh.boussole.core.learn.reward.SessionFinishedRecord;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
@@ -60,7 +61,7 @@ class SqliteProgressRepositoryTest {
         repository().saveSessionFinished(new SessionKey("oc", "s34"), NOW.plusSeconds(60), Duration.ofMinutes(40));
 
         assertThat(repository().attemptHistory()).extracting(AttemptRecord::verdict).containsExactly(Verdict.WRONG, Verdict.CORRECT);
-        assertThat(repository().sessionsFinishedAt()).containsExactly(NOW.plusSeconds(60));
+        assertThat(repository().sessionsFinished()).containsExactly(new SessionFinishedRecord("oc", NOW.plusSeconds(60)));
     }
 
     @Test

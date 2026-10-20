@@ -8,6 +8,8 @@ export const EN = {
     title: 'Your subjects',
     empty: 'No subject yet. Run boussole open <folder> on a folder of course documents.',
     progress: '{{written}} of {{planned}} sessions written · {{finished}} finished',
+    guideTitle: 'The guide',
+    guideText: 'Read it again whenever you like: it does not count in your experience.',
   },
   kind: { lesson: 'Lesson', review: 'Review', exam: 'Mock exam' },
   course: {

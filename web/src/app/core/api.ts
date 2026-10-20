@@ -14,6 +14,8 @@ export interface CourseSummary {
   /** When the learner last answered or finished something here, ISO 8601. */
   lastStudied: string | null;
   resume: ResumePoint | null;
+  /** The guide built into Boussole: shown apart, and it earns no experience. */
+  guide: boolean;
 }
 
 /** The session to resume in a subject: the one in progress, or else the next one. */
@@ -34,6 +36,8 @@ export interface Course {
   chapters: Chapter[];
   lexicon: LexiconTerm[];
   resume: ResumePoint | null;
+  /** The guide built into Boussole: shown apart, and it earns no experience. */
+  guide: boolean;
 }
 
 export interface Chapter {

@@ -7,8 +7,8 @@ terms: [agent, skill, cursus, plan]
 ---
 
 Bienvenue ! Ce petit guide est lui-même une matière Boussole : tu y avances écran par écran, tu
-réponds aux questions, et la carte à gauche montre où tu en es. Il s'efface dès que tu ajoutes
-ta première matière.
+réponds aux questions, et la carte à gauche montre où tu en es. Il reste à part sur l'accueil,
+pour y revenir quand tu oublies, et ne compte pas dans ton expérience.
 
 ## Du document au cours {#chaine}
 

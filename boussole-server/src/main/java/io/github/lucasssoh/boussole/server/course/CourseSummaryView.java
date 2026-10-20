@@ -3,8 +3,9 @@ package io.github.lucasssoh.boussole.server.course;
 import io.github.lucasssoh.boussole.core.learn.CourseOverview;
 import io.github.lucasssoh.boussole.format.model.Course;
 import io.github.lucasssoh.boussole.format.model.SyllabusChapter;
+import io.github.lucasssoh.boussole.server.guide.BundledGuide;
 
-/** A subject in the list of subjects. */
+/** A subject in the list of subjects; {@code guide} marks the guide built into Boussole. */
 record CourseSummaryView(
         String id,
         String name,
@@ -14,7 +15,8 @@ record CourseSummaryView(
         int written,
         int finished,
         String lastStudied,
-        ResumeView resume) {
+        ResumeView resume,
+        boolean guide) {
 
     static CourseSummaryView of(CourseOverview overview) {
         Course course = overview.course();
@@ -27,6 +29,7 @@ record CourseSummaryView(
                 course.sessions().size(),
                 overview.finishedSessions().size(),
                 overview.lastStudied().map(Object::toString).orElse(null),
-                ResumeView.of(overview).orElse(null));
+                ResumeView.of(overview).orElse(null),
+                course.subject().id().equals(BundledGuide.SUBJECT));
     }
 }

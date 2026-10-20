@@ -4,6 +4,7 @@ import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import java.time.Duration;
 import java.time.Instant;
 import io.github.lucasssoh.boussole.core.learn.reward.AttemptRecord;
+import io.github.lucasssoh.boussole.core.learn.reward.SessionFinishedRecord;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,8 +31,8 @@ public interface ProgressRepository {
     /** Every attempt, in every subject, oldest first. */
     List<AttemptRecord> attemptHistory();
 
-    /** When each session was finished, in every subject. */
-    List<Instant> sessionsFinishedAt();
+    /** Each session finished, in every subject, oldest first. */
+    List<SessionFinishedRecord> sessionsFinished();
 
     /** The last attempt or finished session in a subject, if the learner has started it. */
     Optional<LastActivity> lastActivity(String subject);

@@ -31,7 +31,7 @@ class ServerApiTest {
     @BeforeAll
     static void start() {
         server = BoussoleServer.start(new ServerSettings(
-                0, () -> List.of(Path.of("../examples/reseaux")), data.resolve("state.db"), Optional.empty(), false));
+                0, () -> List.of(Path.of("../examples/reseaux")), Optional.empty(), data.resolve("state.db"), Optional.empty(), false));
     }
 
     @AfterAll

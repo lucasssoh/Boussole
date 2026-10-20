@@ -7,8 +7,8 @@ terms: [agent, skill, cursus, plan]
 ---
 
 Welcome! This short guide is itself a Boussole subject: you go through it screen by screen, you
-answer the questions, and the map on the left shows where you are. It steps aside as soon as
-you add your first subject.
+answer the questions, and the map on the left shows where you are. It stays apart on the home
+page, to come back to when you forget, and does not count in your experience.
 
 ## From documents to a course {#chain}
 

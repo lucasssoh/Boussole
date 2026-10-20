@@ -59,7 +59,7 @@ package "learn.progress" {
     +recordAttempt(ExerciseKey, session, Verdict, Instant)
     +lastActivity(subject) : Optional<LastActivity>
     +attemptHistory() : List<AttemptRecord>
-    +sessionsFinishedAt() : List<Instant>
+    +sessionsFinished() : List<SessionFinishedRecord>
   }
   class LastActivity <<record>>
   class SessionProgress <<record>> {
@@ -95,6 +95,11 @@ package "learn.reward" {
     +{static} of(xp) : Level
   }
   class AttemptRecord <<record>>
+  class SessionFinishedRecord <<record>>
+  class RewardedSubjects <<record>> {
+    excluded : Set<String>
+    +rewards(subject) : boolean
+  }
 }
 
 package "learn.check" {
@@ -143,6 +148,9 @@ CourseOverviews ..> LastActivity : resume
 CourseOverviews ..> SessionProgress : per session
 ReadStudyStats --> ProgressRepository : history
 ReadStudyStats ..> XpRules
+ReadStudyStats --> RewardedSubjects : rewarded
+SubmitAttempt --> RewardedSubjects : rewarded
+FinishSession --> RewardedSubjects : rewarded
 ReadStudyStats ..> StudyStats
 StudyStats --> Level
 SubmitAttempt ..> XpRules : xp gained

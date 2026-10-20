@@ -9,7 +9,7 @@ reveal hints one at a time, show a solution once it is allowed, and record a fin
 `ContentRepository` and `ProgressRepository`, implemented in `boussole-adapters`.
 
 ```java
-SubmitAttempt submit = new SubmitAttempt(content, progress, Clock.systemDefaultZone());
+SubmitAttempt submit = new SubmitAttempt(content, progress, RewardedSubjects.all(), Clock.systemDefaultZone());
 AttemptOutcome outcome = submit.submit(new ExerciseKey("oc", "s34-a1"), new ChoicesResponse(Set.of(1)));
 outcome.result().verdict();   // CORRECT, PARTLY or WRONG
 ```

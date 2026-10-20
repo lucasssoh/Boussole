@@ -9,6 +9,7 @@ import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionProgress;
+import io.github.lucasssoh.boussole.core.learn.reward.RewardedSubjects;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -28,8 +29,8 @@ class LearningTest {
 
     @Test
     void an_attempt_is_checked_and_recorded() {
-        AttemptOutcome first = new SubmitAttempt(content, progress, clock).submit(MAC_BITS, new ValueResponse("6"), Optional.empty());
-        AttemptOutcome second = new SubmitAttempt(content, progress, clock).submit(MAC_BITS, new ValueResponse("48"), Optional.empty());
+        AttemptOutcome first = new SubmitAttempt(content, progress, RewardedSubjects.all(), clock).submit(MAC_BITS, new ValueResponse("6"), Optional.empty());
+        AttemptOutcome second = new SubmitAttempt(content, progress, RewardedSubjects.all(), clock).submit(MAC_BITS, new ValueResponse("48"), Optional.empty());
 
         assertThat(first.result().verdict()).isEqualTo(Verdict.WRONG);
         assertThat(first.xpGained()).isEqualTo(5);
@@ -39,12 +40,25 @@ class LearningTest {
     }
 
     @Test
+    void a_subject_left_out_of_the_rewards_is_still_followed_but_earns_nothing() {
+        RewardedSubjects notReseaux = RewardedSubjects.allBut("reseaux");
+
+        AttemptOutcome outcome = new SubmitAttempt(content, progress, notReseaux, clock).submit(MAC_BITS, new ValueResponse("48"), Optional.empty());
+        int finished = new FinishSession(content, progress, notReseaux, clock).finish(new SessionKey("reseaux", "s11"), Duration.ofMinutes(52));
+
+        assertThat(outcome.xpGained()).isZero();
+        assertThat(outcome.progress().solved()).isTrue();
+        assertThat(finished).isZero();
+        assertThat(new OpenCourse(content, progress).open("reseaux").finishedSessions()).containsExactly("s11");
+    }
+
+    @Test
     void the_solution_waits_for_a_first_attempt() {
         RevealSolution solution = new RevealSolution(content, progress);
 
         assertThatThrownBy(() -> solution.reveal(MAC_BITS)).isInstanceOf(LearningRuleException.class);
 
-        new SubmitAttempt(content, progress, clock).submit(MAC_BITS, new ValueResponse("6"), Optional.empty());
+        new SubmitAttempt(content, progress, RewardedSubjects.all(), clock).submit(MAC_BITS, new ValueResponse("6"), Optional.empty());
         assertThat(solution.reveal(MAC_BITS).solution()).isPresent();
     }
 
@@ -66,7 +80,7 @@ class LearningTest {
 
     @Test
     void a_session_brings_the_exercises_it_asks_again() {
-        new SubmitAttempt(content, progress, clock).submit(new ExerciseKey("reseaux", "s11-a2"), new ChoicesResponse(Set.of(1)), Optional.empty());
+        new SubmitAttempt(content, progress, RewardedSubjects.all(), clock).submit(new ExerciseKey("reseaux", "s11-a2"), new ChoicesResponse(Set.of(1)), Optional.empty());
 
         OpenedSession review = new OpenSession(content, progress).open("reseaux", "r19");
 
@@ -76,7 +90,7 @@ class LearningTest {
 
     @Test
     void a_finished_session_shows_in_the_course() {
-        new FinishSession(content, progress, clock).finish(new SessionKey("reseaux", "s11"), Duration.ofMinutes(52));
+        new FinishSession(content, progress, RewardedSubjects.all(), clock).finish(new SessionKey("reseaux", "s11"), Duration.ofMinutes(52));
 
         assertThat(new OpenCourse(content, progress).open("reseaux").finishedSessions()).containsExactly("s11");
     }
@@ -85,7 +99,7 @@ class LearningTest {
     void the_course_resumes_in_the_session_the_learner_answered_in_last() {
         assertThat(new OpenCourse(content, progress).open("reseaux").resume()).contains("s11");
 
-        new SubmitAttempt(content, progress, clock)
+        new SubmitAttempt(content, progress, RewardedSubjects.all(), clock)
                 .submit(new ExerciseKey("reseaux", "s11-a2"), new ChoicesResponse(Set.of(1)), Optional.of("r19"));
         CourseOverview overview = new OpenCourse(content, progress).open("reseaux");
 
@@ -95,8 +109,8 @@ class LearningTest {
 
     @Test
     void the_course_says_how_far_the_learner_is_in_each_session() {
-        new SubmitAttempt(content, progress, clock).submit(new ExerciseKey("reseaux", "s11-a1"), new ValueResponse("48"), Optional.empty());
-        new SubmitAttempt(content, progress, clock).submit(new ExerciseKey("reseaux", "s11-a2"), new ChoicesResponse(Set.of(0)), Optional.empty());
+        new SubmitAttempt(content, progress, RewardedSubjects.all(), clock).submit(new ExerciseKey("reseaux", "s11-a1"), new ValueResponse("48"), Optional.empty());
+        new SubmitAttempt(content, progress, RewardedSubjects.all(), clock).submit(new ExerciseKey("reseaux", "s11-a2"), new ChoicesResponse(Set.of(0)), Optional.empty());
 
         CourseOverview overview = new OpenCourse(content, progress).open("reseaux");
 
@@ -106,15 +120,15 @@ class LearningTest {
 
     @Test
     void a_finished_session_is_not_resumed() {
-        new SubmitAttempt(content, progress, clock).submit(new ExerciseKey("reseaux", "r19-q1"), new ChoicesResponse(Set.of(1)), Optional.of("r19"));
-        new FinishSession(content, progress, clock).finish(new SessionKey("reseaux", "r19"), Duration.ofMinutes(5));
+        new SubmitAttempt(content, progress, RewardedSubjects.all(), clock).submit(new ExerciseKey("reseaux", "r19-q1"), new ChoicesResponse(Set.of(1)), Optional.of("r19"));
+        new FinishSession(content, progress, RewardedSubjects.all(), clock).finish(new SessionKey("reseaux", "r19"), Duration.ofMinutes(5));
 
         assertThat(new OpenCourse(content, progress).open("reseaux").resume()).contains("s11");
     }
 
     @Test
     void an_unknown_exercise_is_not_found() {
-        assertThatThrownBy(() -> new SubmitAttempt(content, progress, clock)
+        assertThatThrownBy(() -> new SubmitAttempt(content, progress, RewardedSubjects.all(), clock)
                 .submit(new ExerciseKey("reseaux", "nope"), new ValueResponse("1"), Optional.empty()))
                 .isInstanceOf(ContentNotFoundException.class);
     }

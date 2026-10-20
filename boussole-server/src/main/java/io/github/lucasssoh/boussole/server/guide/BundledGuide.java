@@ -14,11 +14,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 /**
- * The guide to Boussole, a subject shipped inside it (repository folder {@code guide/}), shown
- * while the learner has no subject of their own. It is copied out of the jar at each start, so
- * that it follows the version of Boussole, in English or in French.
+ * The guide to Boussole, a subject shipped inside it (repository folder {@code guide/}), always
+ * shown apart from the learner's subjects so that they can come back to it. It is copied out of
+ * the jar at each start, so that it follows the version of Boussole, in English or in French.
  */
 public final class BundledGuide {
+
+    /** The ID of the guide's subject, the same in every language. */
+    public static final String SUBJECT = "boussole-guide";
 
     private static final String ROOT = "boussole-guide/";
     private static final List<String> LANGUAGES = List.of("en", "fr");
