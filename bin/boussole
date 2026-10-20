@@ -1,0 +1,10 @@
+#!/bin/sh
+# Runs Boussole from a built checkout (mvn package). Link it into your PATH:
+#   ln -s "$PWD/bin/boussole" ~/.local/bin/boussole
+here=$(dirname "$(readlink -f "$0")")
+jar="$here/../boussole-cli/target/boussole.jar"
+if [ ! -f "$jar" ]; then
+    echo "boussole: $jar is missing, run 'mvn package' first" >&2
+    exit 2
+fi
+exec java -jar "$jar" "$@"

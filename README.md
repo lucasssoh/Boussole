@@ -40,3 +40,10 @@ Requires Java 25 and Maven 3.9 (Node is downloaded by the build).
 ```
 mvn verify
 ```
+
+Then link the launcher into your `PATH` and check a subject folder:
+
+```
+ln -s "$PWD/bin/boussole" ~/.local/bin/boussole
+boussole validate examples/reseaux
+```
