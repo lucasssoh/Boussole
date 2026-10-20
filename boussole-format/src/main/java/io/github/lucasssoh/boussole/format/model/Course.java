@@ -8,7 +8,8 @@ import java.util.stream.Stream;
 
 /**
  * A whole subject as read from its folder. The learner's profile is empty when the subject has
- * no {@code learner.yaml}: the course then follows the default teaching contract.
+ * no {@code learner.yaml}: the course then follows the default teaching contract. The record of
+ * its documents is empty until {@code cursus/sources.yaml} is written.
  */
 public record Course(
         Path root,
@@ -16,6 +17,7 @@ public record Course(
         CourseSyllabus syllabus,
         CourseLexicon lexicon,
         Optional<LearnerProfile> learner,
+        Optional<CourseSources> sources,
         List<CourseSession> sessions) {
 
     public Stream<Block> blocks() {

@@ -13,7 +13,7 @@ import picocli.CommandLine.Command;
         mixinStandardHelpOptions = true,
         versionProvider = ManifestVersion.class,
         description = "Turn your course documents into a course, and plan when to study it.",
-        subcommands = {OpenCommand.class, ServeCommand.class, StopCommand.class, InitCommand.class, ValidateCommand.class})
+        subcommands = {OpenCommand.class, ServeCommand.class, StopCommand.class, InitCommand.class, ValidateCommand.class, SourcesCommand.class})
 public final class BoussoleCommand {
 
     public static void main(String[] args) {

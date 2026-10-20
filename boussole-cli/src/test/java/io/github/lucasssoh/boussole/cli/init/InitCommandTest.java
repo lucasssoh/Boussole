@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.lucasssoh.boussole.cli.BoussoleCommand;
 import io.github.lucasssoh.boussole.format.SubjectInspector;
+import io.github.lucasssoh.boussole.format.diagnostic.Diagnostic;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -49,7 +51,9 @@ class InitCommandTest {
 
         assertThat(Files.readString(folder.resolve("subject.yaml")))
                 .isEqualTo("format: 1\nid: l-mc\nname: \"L&MC\"\nlang: fr\nsources: \".\"\n");
-        assertThat(new SubjectInspector().inspect(folder).diagnostics()).isEmpty();
+        // Valid, with one thing to do: take the documents into the course and record them.
+        assertThat(new SubjectInspector().inspect(folder).diagnostics()).extracting(Diagnostic::code)
+                .containsExactly(DiagnosticCode.F033);
         assertThat(folder.resolve("AGENTS.md")).content().contains("documents are in this folder: every file outside `cursus/`");
         assertThat(out.toString()).contains("Created  subject.yaml (id l-mc, lang fr, documents in .)", "how you learn best");
     }

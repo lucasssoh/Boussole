@@ -73,6 +73,11 @@ chapters:
 - Leave `status: proposed`. **Only the learner approves**: you set `approved` only after they
   explicitly chose to approve (§4).
 
+Then write `cursus/sources.yaml` (`.boussole/FORMAT.md` §8): one entry per document, `used`
+with the chapters that draw on it, `ignored` or `pending` with a note for the others. Take each
+`sha256` from `boussole sources .` (same program as `boussole validate .`); never compute it
+yourself. From then on, Boussole tells you when a document arrives or changes (`sources-update`).
+
 Then run `boussole validate .` and fix every error (see the `cursus-fix` skill).
 
 ## 4. Stop and present

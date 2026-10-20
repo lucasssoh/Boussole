@@ -11,6 +11,10 @@ package "cli" {
   class BoussoleCommand <<@Command boussole>> {
     +{static} main(String[])
   }
+  class SourcesCommand <<@Command sources>> {
+    folder : Path
+    all : boolean
+  }
   class ValidateCommand <<@Command validate>> {
     folder : Path
     errorsOnly : boolean
@@ -94,6 +98,7 @@ BoussoleCommand --> ServeCommand : subcommand
 BoussoleCommand --> StopCommand : subcommand
 BoussoleCommand --> InitCommand : subcommand
 BoussoleCommand --> ValidateCommand : subcommand
+BoussoleCommand --> SourcesCommand : subcommand
 BoussoleCommand --> ManifestVersion
 ValidateCommand --> SubjectInspector : inspects
 ValidateCommand ..> YoutubeOEmbedCatalog : --check-videos

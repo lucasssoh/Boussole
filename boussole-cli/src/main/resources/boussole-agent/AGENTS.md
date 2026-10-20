@@ -15,10 +15,16 @@ To build or change the course, follow the skills in `.boussole/skills/`. **Read 
 | Build a review or a mock exam (`kind: review` or `exam`) | `.boussole/skills/exam-build/SKILL.md` |
 | Add terms to the lexicon | `.boussole/skills/lexique-build/SKILL.md` |
 | Add videos | `.boussole/skills/video-find/SKILL.md` |
+| Take in documents that arrived or changed | `.boussole/skills/sources-update/SKILL.md` |
 | Fix what the validator reports | `.boussole/skills/cursus-fix/SKILL.md` |
 
 Where to start:
 
+- **First, every time**: run `boussole validate .`. Once the course has a plan (chapters in
+  `cursus/syllabus.yaml`), if it reports `F033`, `F034` or `F035` (a document arrived, changed or
+  went), or the learner says they added documents, follow **sources-update** before anything
+  else: the course must follow the documents. Before there is a plan, **cursus-plan** records
+  the documents itself.
 - No `learner.yaml` → **learner-profile** first, right after the learner's first request; then
   carry on with that request.
 - `cursus/syllabus.yaml` has no chapter → **cursus-plan**.
@@ -44,3 +50,4 @@ Rules:
   ```
 
   Run it after every change, until it ends without error, before saying a task is done.
+  `boussole sources .` is the same command with `sources` in place of `validate`.

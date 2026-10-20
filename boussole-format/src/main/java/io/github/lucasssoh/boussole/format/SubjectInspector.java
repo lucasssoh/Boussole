@@ -36,7 +36,7 @@ public final class SubjectInspector {
         DiagnosticCollector diagnostics = new DiagnosticCollector();
         Optional<Course> course = CourseLoader.load(subjectFolder, diagnostics);
         course.ifPresent(found -> validator.validate(new ValidationContext(
-                found, new FolderSourceDocuments(subjectFolder.resolve(found.subject().sourcesDir())), videos), diagnostics));
+                found, new FolderSourceDocuments(subjectFolder.resolve(found.subject().sourcesDir()), subjectFolder), videos), diagnostics));
         return new InspectionReport(course, diagnostics.list().stream().sorted(BY_PLACE).toList());
     }
 }

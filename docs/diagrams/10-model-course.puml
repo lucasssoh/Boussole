@@ -10,6 +10,7 @@ title boussole-format — the course model (package model, model.part)
 class Course <<record>> {
   root : Path
   learner : Optional<LearnerProfile>
+  sources : Optional<CourseSources>
   +blocks() : Stream<Block>
   +sessionId(SyllabusChapter, SyllabusSession) : SessionId
 }
@@ -48,6 +49,19 @@ class CourseLexicon <<record>> {
 class LexiconTerm <<record>> {
   id, term, definition : String
   aliases, see : List<String>
+}
+class CourseSources <<record>>
+class SourceEntry <<record>> {
+  file : String
+  sha256 : Optional<String>
+  chapters : List<String>
+  note : String
+  +isPattern() : boolean
+}
+enum SourceStatus {
+  USED
+  IGNORED
+  PENDING
 }
 class LearnerProfile <<record>> {
   background, notes : String
@@ -89,6 +103,9 @@ Course *-- "1" CourseSubject : subject
 Course *-- "1" CourseSyllabus : syllabus
 Course *-- "1" CourseLexicon : lexicon
 Course *-- "0..1" LearnerProfile : learner
+Course *-- "0..1" CourseSources : sources
+CourseSources *-- "*" SourceEntry : entries
+SourceEntry --> SourceStatus : status
 Course *-- "*" CourseSession : sessions read
 CourseSyllabus *-- "*" SyllabusChapter : chapters
 CourseSyllabus --> SyllabusStatus : status

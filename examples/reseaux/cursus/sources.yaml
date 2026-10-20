@@ -1,0 +1,7 @@
+# The documents of sources/, and what the course did with each. Written by the agent;
+# boussole validate warns when a document arrives, changes or goes (skill sources-update).
+- file: Reseaux_Cours_Intro_2026.pdf
+  sha256: 568f4ac1b5b3b33bf1926ae1b6b4685ea45c0abde23b22340d84220c94581ec4
+  status: used
+  chapters: [couche-reseau]
+  note: Transparents de l'introduction, cours du 8 septembre.

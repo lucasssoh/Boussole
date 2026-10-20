@@ -30,6 +30,7 @@ package "load" {
   class CourseSyllabusReader
   class CourseLexiconReader
   class LearnerProfileReader
+  class CourseSourcesReader
   class SessionFileReader
   class SourceReferenceReader
 }
@@ -79,6 +80,8 @@ CourseLoader --> CourseSubjectReader : subject.yaml
 CourseLoader --> CourseSyllabusReader : syllabus.yaml
 CourseLoader --> CourseLexiconReader : lexique.yaml
 CourseLoader --> LearnerProfileReader : learner.yaml
+CourseLoader --> CourseSourcesReader : cursus/sources.yaml
+CourseSourcesReader --> YamlMap
 CourseLoader --> SessionFileReader : each session file
 CourseSyllabusReader --> SourceReferenceReader
 SessionFileReader --> SourceReferenceReader

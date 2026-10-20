@@ -6,6 +6,7 @@ import io.github.lucasssoh.boussole.format.model.Course;
 import io.github.lucasssoh.boussole.format.model.LearnerProfile;
 import io.github.lucasssoh.boussole.format.model.CourseLexicon;
 import io.github.lucasssoh.boussole.format.model.CourseSession;
+import io.github.lucasssoh.boussole.format.model.CourseSources;
 import io.github.lucasssoh.boussole.format.model.SyllabusSession;
 import io.github.lucasssoh.boussole.format.model.CourseSubject;
 import io.github.lucasssoh.boussole.format.model.CourseSyllabus;
@@ -32,9 +33,10 @@ public final class CourseLoader {
         CourseSyllabus syllabus = CourseSyllabusReader.read(files, diagnostics);
         CourseLexicon lexicon = CourseLexiconReader.read(files, diagnostics);
         Optional<LearnerProfile> learner = LearnerProfileReader.read(files, diagnostics);
-        Course withoutSessions = new Course(root, subject.get(), syllabus, lexicon, learner, List.of());
+        Optional<CourseSources> sources = CourseSourcesReader.read(files, diagnostics);
+        Course withoutSessions = new Course(root, subject.get(), syllabus, lexicon, learner, sources, List.of());
         return Optional.of(new Course(
-                root, subject.get(), syllabus, lexicon, learner, sessions(withoutSessions, files, diagnostics)));
+                root, subject.get(), syllabus, lexicon, learner, sources, sessions(withoutSessions, files, diagnostics)));
     }
 
     private static List<CourseSession> sessions(Course course, SubjectFolderFiles files, DiagnosticCollector diagnostics) {

@@ -31,6 +31,7 @@ public final class SubjectFixture {
     private Optional<String> syllabusYaml = Optional.empty();
     private Optional<String> lexiconYaml = Optional.empty();
     private Optional<String> learnerYaml = Optional.empty();
+    private Optional<String> sourcesYaml = Optional.empty();
     private Optional<VideoCatalog> videos = Optional.empty();
 
     private SubjectFixture(Path root) {
@@ -94,6 +95,17 @@ public final class SubjectFixture {
         return this;
     }
 
+    public SubjectFixture sources(String yaml) {
+        this.sourcesYaml = Optional.of(yaml);
+        return this;
+    }
+
+    /** A document of the sources folder that is not a PDF, with the given content. */
+    public SubjectFixture document(String name, String content) {
+        write("sources/" + name, content);
+        return this;
+    }
+
     public SubjectFixture pdf(String name, int pages) {
         try (PDDocument document = new PDDocument()) {
             for (int page = 0; page < pages; page++) {
@@ -117,6 +129,7 @@ public final class SubjectFixture {
         write("cursus/syllabus.yaml", syllabusYaml.orElseGet(this::syllabus));
         lexiconYaml.ifPresent(yaml -> write("cursus/lexique.yaml", yaml));
         learnerYaml.ifPresent(yaml -> write("learner.yaml", yaml));
+        sourcesYaml.ifPresent(yaml -> write("cursus/sources.yaml", yaml));
         sessions.forEach((id, content) -> content.ifPresent(text -> write("cursus/" + DIR + "/" + id + ".md", text)));
         return new SubjectInspector(Validator.standard(), videos).inspect(root);
     }

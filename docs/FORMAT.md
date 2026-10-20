@@ -33,6 +33,7 @@ configuration (see `ARCHITECTURE.md`, *Configuration*).
 └── cursus/
     ├── syllabus.yaml         # chapters and sessions, in order
     ├── lexique.yaml          # the terms of the subject
+    ├── sources.yaml          # what the course did with each document (§8)
     ├── assets/               # images used by sessions
     └── <chapter dir>/
         └── <session file>.md
@@ -370,6 +371,9 @@ chapter.
 | `F027` | error | An attribute unknown to its directive or exercise type, a required one missing, or a value that cannot be used. |
 | `F030` | error | `ref`, `term`, `prerequisites` or `see` pointing to an ID that does not exist. |
 | `F031` | error | `pdf` or `sources` naming a file absent from `sources/`, or a page past the end. |
+| `F033` | warning | A document of the sources folder that `cursus/sources.yaml` does not list, or lists as `pending`; or documents and no `cursus/sources.yaml` at all (§8). |
+| `F034` | warning | A document whose SHA-256 differs from the one `cursus/sources.yaml` recorded: it changed since the course used it. |
+| `F035` | warning | A document `cursus/sources.yaml` lists that is no longer in the sources folder. |
 | `F032` | warning | `video` that YouTube does not know (checked only with `--check-videos`). |
 | `P001` | warning | A notion without exercise or `mcq`. |
 | `P002` | warning | A notion with more than one `example`. |
@@ -424,7 +428,43 @@ Any other field is an error (`F001`), to catch misspellings.
 
 ---
 
-## 8. Versions
+## 8. `cursus/sources.yaml`
+
+Documents arrive during the year: the slides of the next lecture, a new tutorial sheet, a
+corrected version, a past exam. `cursus/sources.yaml` records what the course did with each
+document of the sources folder, so that Boussole can say what is new and what changed
+(`F033`–`F035`), instead of relying on anyone's memory.
+
+```yaml
+- file: oc08-s06-Dualite.pdf
+  sha256: 9c1e…            # of the document as the course used it
+  status: used
+  chapters: [dualite]
+  note: Transparents du cours 6.
+- file: "Annales/**"
+  status: pending
+  note: Pour l'examen blanc, quand les chapitres seront écrits.
+- file: Planning_TD.pdf
+  status: ignored
+  note: Administratif.
+```
+
+| Field | Required | Meaning |
+|---|---|---|
+| `file` | yes | A document, relative to the sources folder, or a glob pattern (`Annales/**`, `TD*.pdf`) for several. |
+| `sha256` | no | The SHA-256 of the document when the course used it. Without it, a change goes unnoticed. Not for a pattern. |
+| `status` | no | `used` (default): taken into the course. `ignored`: deliberately left out. `pending`: seen, to be taken in later. |
+| `chapters` | no | IDs of the chapters that draw on it. |
+| `note` | no | What it is, or why it is ignored or pending. |
+
+A document is any file of the sources folder with one of these extensions: `pdf`, `ppt`, `pptx`,
+`odp`, `doc`, `docx`, `odt`, `md`, `txt`, `tex`, `zip`, `png`, `jpg`, `jpeg`; hidden files and
+folders are not. When the sources folder is the subject folder itself (`sources: .`), the files of
+the course (`cursus/`, `subject.yaml`, `learner.yaml`, `AGENTS.md`, `CLAUDE.md`) are not documents.
+An entry naming the file exactly wins over a pattern. `boussole sources <subject folder>` lists
+what is new, changed, pending or gone, with the entries to add and their SHA-256.
+
+## 9. Versions
 
 `format: 1` is this document. A change that makes existing courses invalid increments the
 version; Boussole keeps reading older versions, or tells exactly what to change.

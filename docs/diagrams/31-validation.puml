@@ -34,6 +34,7 @@ package "validate" {
     class FillGapsRule <<F023>>
     class ReferenceRule <<F030>>
     class SourceFileRule <<F031>>
+    class SourceInventoryRule <<F033-F035>>
     class VideoExistsRule <<F032>>
     class NotionExerciseRule <<P001>>
     class SingleExampleRule <<P002>>
@@ -53,8 +54,13 @@ package "source" {
   interface SourceDocuments {
     +exists(file) : boolean
     +pageCount(file) : OptionalInt
+    +documents() : List<String>
+    +sha256(file) : Optional<String>
   }
   class FolderSourceDocuments
+  class SourceInventory <<helpers>> {
+    +{static} compare(sources, documents) : List<SourceState>
+  }
 }
 
 
@@ -74,6 +80,8 @@ ValidationRule <|.. McqChoicesRule
 ValidationRule <|.. FillGapsRule
 ValidationRule <|.. ReferenceRule
 ValidationRule <|.. SourceFileRule
+ValidationRule <|.. SourceInventoryRule
+SourceInventoryRule ..> SourceInventory
 ValidationRule <|.. VideoExistsRule
 ValidationRule <|.. NotionExerciseRule
 ValidationRule <|.. SingleExampleRule

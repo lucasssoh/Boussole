@@ -133,6 +133,7 @@ picocli. One class per command.
 | `boussole stop` | Stops the server. |
 | `boussole init SUBJECT_DIR` | Creates `subject.yaml`, `cursus/` and the agent instructions. |
 | `boussole validate SUBJECT_DIR [--check-videos]` | Runs the validator. |
+| `boussole sources SUBJECT_DIR [--all]` | Lists the documents against `cursus/sources.yaml`: new, changed, pending, gone, with the entries to add. |
 | `boussole remind EVENT` (V2) | Shows the reminder of an event (called by system timers). |
 | `boussole import-legacy …` (planned) | Imports the former Markdown sessions and Boussole settings. |
 
@@ -309,6 +310,7 @@ The skills shipped in `skills/`:
 | `exam-build` | Reviews and mock exams: as many questions as the time allows, mostly MCQs, mirroring the past exams. |
 | `lexique-build` | Terms and definitions for a learner who has never seen them. |
 | `video-find` | Videos per notion, kept only if `boussole validate --check-videos` accepts them. |
+| `sources-update` | Takes the documents that arrive or change into the course: new sessions with new IDs, never a renumbering; records each in `cursus/sources.yaml`. |
 | `cursus-fix` | Runs `boussole validate` and fixes until there is no error. |
 
 `boussole init` installs them in the subject folder:
