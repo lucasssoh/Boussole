@@ -8,13 +8,15 @@ description: Write one session of a Boussole course from the approved syllabus a
 Prerequisites: `cursus/syllabus.yaml` has `status: approved`. Write the sessions **in the order of
 the syllabus**: each warmup asks about the previous session of the same subject.
 
-Read first: `.boussole/FORMAT.md` (the format), the syllabus entry of the session (title,
-duration, goal, file), the pages of the sources it draws on, `cursus/lexique.yaml`, and the
-previous session's file.
+Read first: `learner.yaml` (how this learner learns: it shapes everything below),
+`.boussole/FORMAT.md` (the format), the syllabus entry of the session (title, duration, goal,
+file), the pages of the sources it draws on, `cursus/lexique.yaml`, and the previous session's
+file. If `learner.yaml` is missing, follow the `learner-profile` skill first.
 
 ## The teaching contract
 
-The learner understands by **doing**, not by reading. Every session follows this shape:
+The learner understands by **doing**, not by reading. Every session follows this shape, adjusted
+by `learner.yaml` as the table after it says:
 
 1. **Warmup** (`:::::warmup`, 5 minutes, first): two or three quick questions on the
    **previous session of the same subject** — the learner may have studied something else in
@@ -24,20 +26,34 @@ The learner understands by **doing**, not by reading. Every session follows this
    For each notion, in this order:
    1. `:::recall` of the terms and prerequisites the notion needs, **just before** it needs
       them, for a learner who may have forgotten or never seen them.
-   2. The explanation: short, concrete, grounded in the sources. Introduce each term of the
+   2. The explanation: concrete, grounded in the sources. Introduce each term of the
       lexicon on first use with `:term[…]{id=…}`. Point to the source page with
       `::pdf[…]{src=… page=…}`.
    3. **One** `:::example`, fully worked, step by step. One example per notion, never more:
       further cases become exercises.
    4. **Right away**, one or two exercises or qcms of the **same kind** as the example
       (« À toi »), with hints.
-3. **Checkpoint** (`:::::checkpoint`): three to five questions on the whole session. Passing it
-   means the session's goal is reached.
-4. **Practice** (`:::::practice`, last, optional): longer exercises, closer to the exam, often
-   taken from the tutorial sheets or past exams of the sources (say so in the statement).
+3. **Closing**, as `closing` asks: a **checkpoint** (`:::::checkpoint`), three to five questions
+   on the whole session, passing it means the goal is reached; and/or a **practice**
+   (`:::::practice`, last), exercises closer to the exam, often taken from the tutorial sheets
+   or past exams of the sources (say so in the statement).
+
+How `learner.yaml` changes this shape (without the file, use the defaults):
+
+| Field | Value | The session |
+|---|---|---|
+| `quick_check` | `true` | right after each explanation, **before** the example, a short `qcm` (one or two questions, 1 minute) on what was just explained |
+| `order` | `try-first` | after the explanation (and the quick check), the exercise comes **before** the example; the example then shows the method, so the learner compares |
+| `closing` | `quiz` *(default)* | end with a `:::::checkpoint` |
+| | `exercise` | end with a `:::::practice` holding at least one `exercise`, the last part of the session |
+| | `both` | a checkpoint, then a practice with at least one exercise |
+| `explanations` | `concise` / `detailed` | a few sentences per idea / every step spelled out, with an intuition before the formal statement |
+| `goal` | `top`, `understand` | more practice, closer to exam level or deeper; `pass`: the essentials, exam-style |
+| `background` | text | what to recall or explain from scratch, and what can be taken as known |
+| `videos` | `none` | no video; `many`: one per notion where a good one exists |
 
 Keep the session within its planned duration: count about 15 minutes per notion, 5 for the
-warmup and 10 for the checkpoint.
+warmup and 10 for the closing.
 
 ## Writing rules
 

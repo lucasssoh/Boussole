@@ -46,6 +46,12 @@ skill can be checked that way. Use `free` for reasoning that cannot.
 - Each wrong choice gets feedback (`  > …` under it) that says **why it is wrong** and what to
   look at, without giving the right answer away.
 
+## Quick checks
+
+When `learner.yaml` has `quick_check: true`, each notion asks a short `qcm` right after its
+explanation: one or two questions answerable in a minute, on the idea just explained, not on
+calculation. Its ID follows the « À toi » numbering (`<session>-a1`…).
+
 ## Hints in tiers
 
 Two or three `:::hint`, from vague to precise:

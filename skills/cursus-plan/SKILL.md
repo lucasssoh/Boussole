@@ -8,25 +8,28 @@ description: Read a learner's course documents and propose the syllabus of a Bou
 You turn the documents in the subject's sources folder into `cursus/syllabus.yaml`. You do **not**
 write sessions here: the learner approves the plan first.
 
-## 1. Know the subject
+## 1. Know the subject and the learner
 
-1. Read `subject.yaml`. `sources` names the folder of documents (`.` means the subject folder
+1. If there is no `learner.yaml`, follow the `learner-profile` skill first. Its
+   `session_minutes` sets the usual length of a session, its `background` tells which
+   prerequisites to plan for, and its `goal` how much exam practice to plan.
+2. Read `subject.yaml`. `sources` names the folder of documents (`.` means the subject folder
    itself). Never modify, move or rename anything in it.
-2. List every document there. For each one, note its kind (lecture notes, slides, tutorial
+3. List every document there. For each one, note its kind (lecture notes, slides, tutorial
    sheet, lab, past exam, project brief) and its number of pages.
-3. Read them all. If you cannot read a PDF directly, extract its text with
+4. Read them all. If you cannot read a PDF directly, extract its text with
    `pdftotext -layout <file> -`. Read the **past exams** and **tutorial sheets** with special
    care: they show what the learner will be asked to do.
-4. Check `lang` in `subject.yaml`: it must be the language of the documents (BCP 47: `fr`,
+5. Check `lang` in `subject.yaml`: it must be the language of the documents (BCP 47: `fr`,
    `en`…). Correct it if it is not.
 
 ## 2. Cut the course
 
 - **Chapters follow the teacher's order**, not your own idea of the topic. One chapter is
   usually one part of the lecture notes.
-- **A session is 45 to 90 minutes** of active work for someone who discovers the topic: reading,
-  one worked example per notion, then exercises. Count about 15 minutes per notion. When in
-  doubt, cut smaller.
+- **A session lasts about `session_minutes`** of `learner.yaml` (60 by default) of active work
+  for someone who discovers the topic: reading, one worked example per notion, then exercises.
+  Count about 15 minutes per notion. When in doubt, cut smaller.
 - **Each session has one goal**, a sentence starting with a verb, that the learner can check:
   "Compute the network address of a host from its mask", not "Understand IPv4".
 - **Do not assume earlier courses are known.** If a document relies on a notion the learner may

@@ -8,6 +8,7 @@ the [course format](../docs/FORMAT.md) and an `AGENTS.md` that tells any agent w
 
 | Skill | Role |
 |---|---|
+| [`learner-profile`](learner-profile/SKILL.md) | Asks the learner how they learn best, and writes `learner.yaml`. |
 | [`cursus-plan`](cursus-plan/SKILL.md) | Reads the sources and proposes the syllabus, then stops for the learner. |
 | [`seance-write`](seance-write/SKILL.md) | Writes one session. |
 | [`exercise-author`](exercise-author/SKILL.md) | Writes exercises and qcms that teach, with answers that are right. |

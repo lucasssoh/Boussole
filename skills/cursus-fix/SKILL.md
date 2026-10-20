@@ -35,5 +35,6 @@ are about the teaching contract and matter to the learner.
 | F030 | reference to an ID that does not exist | add the term to the lexicon, or fix the ID |
 | F031 | source file or page not found | use the exact file name in the sources folder and a real page |
 | P001–P005 | teaching contract | add the exercise, keep one example, move warmup/practice, add hints, list terms |
+| P006, P007 | the session does not follow `learner.yaml` | close it as `closing` asks; add the quick qcm before the example |
 
 Never "fix" an error by deleting content the learner needs, and never edit the sources folder.

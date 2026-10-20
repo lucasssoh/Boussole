@@ -5,7 +5,8 @@ description: Add YouTube videos beside the notions of a Boussole session, only v
 
 # Add videos
 
-A video is optional. Add one only where seeing something move or drawn helps more than text:
+A video is optional, and `videos` in `learner.yaml` says how many the learner wants: `none`
+means none at all. Add one only where seeing something move or drawn helps more than text:
 an algorithm step by step, a protocol exchange, a geometric construction.
 
 ## Rules
