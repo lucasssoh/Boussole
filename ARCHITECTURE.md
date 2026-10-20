@@ -69,18 +69,26 @@ The domain. Organised by feature:
 
 ```
 core/
-├── learn/       exercises, attempts, hints, mastery, spaced repetition
+├── learn/       studying: use cases, ports
+│   ├── check/      responses and how each kind of question checks them
+│   └── progress/   attempts, hints revealed, sessions finished
 ├── plan/        scheduled events, the planner, commands with undo   (V2)
-├── reminder/    reminder rules and planning of reminders            (V2)
-└── shared/      IDs, time, localized text, domain events
+└── reminder/    reminder rules and planning of reminders            (V2)
 ```
 
-It declares **ports**, the interfaces it needs from the outside world: `ContentRepository`,
-`ProgressRepository`, `EventRepository`, `ReminderScheduler`, `Clock`, `DomainEventPublisher`.
+It declares **ports**, the interfaces it needs from the outside world: `ContentRepository` and
+`ProgressRepository` today; `EventRepository`, `ReminderScheduler` and `DomainEventPublisher`
+with the planner. Time comes from a `java.time.Clock`.
 
 Each thing the application does is a **use case**, one class with one public method:
-`SubmitAttempt`, `RevealNextHint`, `RevealSolution`, `OpenSession`, `PlanWeek`, `MoveEvent`…
-The list of use case classes is the list of features.
+`ListCourses`, `OpenCourse`, `OpenSession`, `SubmitAttempt`, `RevealNextHint`,
+`RevealSolution`, `FinishSession`; later `PlanWeek`, `MoveEvent`… The list of use case classes
+is the list of features.
+
+A response is a sealed `LearnerResponse` (choices, a value, gaps, an order, pairs, a self
+grade). `QuestionChecker` hands it to the `ResponseChecker` of the question's kind, which
+returns a `CheckResult`: a `Verdict` (correct, partly, wrong) and each part judged, never the
+expected value.
 
 ### `boussole-adapters`
 
@@ -88,17 +96,26 @@ The implementations of the ports:
 
 | Port | Adapter |
 |---|---|
-| `ContentRepository` | `FileContentRepository`: reads subjects with `boussole-format`, watches the folders and reloads on change |
-| `ProgressRepository`, `EventRepository` | `Sqlite…Repository`: JDBC, schema migrated with Flyway |
-| `ReminderScheduler` | `SystemdReminderScheduler`, `LaunchdReminderScheduler`, `WindowsTaskReminderScheduler` |
-| `VideoChecker` | `YoutubeOEmbedChecker` |
+| `ContentRepository` | `FileContentRepository`: reads the folders of `config.yaml` with `boussole-format`, each again only when one of its course files changed (no watcher: a fingerprint of the files, compared on each request) |
+| `ProgressRepository`, later `EventRepository` | `Sqlite…Repository`: plain JDBC; `SqliteDatabase` runs the migrations of `db/V*.sql` once each, counted by `PRAGMA user_version` |
+| `ReminderScheduler` (V2) | `SystemdReminderScheduler`, `LaunchdReminderScheduler`, `WindowsTaskReminderScheduler` |
+| `VideoCatalog` (of `boussole-format`) | `YoutubeOEmbedCatalog` |
+
+`config/` reads and writes `config.yaml` (`BoussoleConfigFile`, which adds a folder without
+touching the rest of the file) and knows the per-user folders (`BoussolePaths`).
 
 ### `boussole-server`
 
 Spring Boot. Controllers turn HTTP into use case calls and nothing more. Spring wires the
-adapters into the use cases here, and only here. The OpenAPI description of the API is
-generated (springdoc) and the TypeScript client of `web/` is generated from it, so the Java
-and TypeScript types cannot drift apart.
+adapters into the use cases here (`LearningConfiguration`), and only here. What the browser
+receives are `…View` records; `BlockViewMapper` builds the blocks of a session and leaves out
+every answer, hint not yet revealed and solution. Their TypeScript twins are in
+`web/src/app/core/api.ts`.
+
+The server listens on 127.0.0.1 only. `LocalRequestFilter` refuses a `Host` other than
+localhost (another site pointed at 127.0.0.1) and a change without the `X-Boussole` header (a
+form posted from another site). It also serves the interface, any other path answering with its
+`index.html`.
 
 ### `boussole-cli`
 
@@ -106,16 +123,21 @@ picocli. One class per command.
 
 | Command | Does |
 |---|---|
-| `boussole serve` | Starts the server. |
-| `boussole open [PATH]` | Starts the server if it is not running, then opens the browser on `PATH`. |
-| `boussole remind EVENT` | Shows the reminder of an event (called by system timers). |
+| `boussole open [SUBJECT_DIR]` | Starts the server in the background if it is not running, then opens the browser, on the subject when one is given (added to `config.yaml` the first time). |
+| `boussole serve` | Runs the server in the terminal, until Ctrl+C. |
+| `boussole stop` | Stops the server. |
 | `boussole init SUBJECT_DIR` | Creates `subject.yaml`, `cursus/` and the agent instructions. |
 | `boussole validate SUBJECT_DIR [--check-videos]` | Runs the validator. |
-| `boussole import-legacy …` | Imports the former Markdown sessions and Boussole settings. |
+| `boussole remind EVENT` (V2) | Shows the reminder of an event (called by system timers). |
+| `boussole import-legacy …` (planned) | Imports the former Markdown sessions and Boussole settings. |
+
+`spring-boot-maven-plugin` packages the commands, the server and the interface as one
+executable `boussole.jar`.
 
 ### `web/`
 
-Angular, built by `frontend-maven-plugin` into the server's static resources. See §5.
+Angular, built and tested by `frontend-maven-plugin` during the build of `boussole-server`,
+into its resources. See §5.
 
 ### `skills/`
 
@@ -134,15 +156,15 @@ A pattern is used where it solves a real problem, and the class name says which 
 | Ports and adapters | between `core` and `adapters` | the domain knows neither Spring, nor SQLite, nor systemd |
 | Use case | `core/*/` | one action = one class |
 | Repository | ports of `core` | data access behind an interface |
-| Strategy | `AnswerParser` and `AnswerChecker` per exercise type; `ReminderScheduler` per OS | add a case without touching the others |
+| Strategy | `AnswerParser` per exercise type; `ResponseChecker` per kind of question; `ReminderScheduler` per OS | add a case without touching the others |
 | Template method | `LineAnswerParser`: each answer type only says how a line reads and what the lines make | the reading loop and its error handling exist once |
-| Registry + factory | `DirectiveParserRegistry`, `AnswerParserRegistry`; `BLOCK_RENDERERS` in `web/` | a new block type is a new class, registered |
-| Sealed interface + exhaustive `switch` | `Block`, `ScheduledEvent` | the compiler lists every place a new type must be handled |
+| Registry + factory | `DirectiveParserRegistry`, `AnswerParserRegistry` | a new directive or exercise type is a new class, registered |
+| Sealed interface + exhaustive `switch` | `Block`, `Answer`, `Expectation`, `LearnerResponse`, `BlockView`, `ScheduledEvent`; in `web/`, the `@switch` of `BlockListComponent` on the block type | the compiler lists every place a new type must be handled |
 | Composite | `Validator` of `ValidationRule`s | one rule per file, tested alone |
 | Command | planning actions (`MoveEvent`, `PinEvent`…) | undo and history |
 | Observer (domain events) | `EventChanged` → `ReminderSync` | planning does not know reminders exist |
-| Value object | `EventId`, `ExerciseId`, `TimeSlot`, `LocalizedText`, `Offset` | no bare `String` or `long` travelling around |
-| Facade | one per feature in `web/` | components talk to one service |
+| Value object | `ExerciseKey`, `SessionKey`, `Rational`; later `EventId`, `TimeSlot`, `Offset` | no bare `String` or `long` travelling around |
+| Facade | `LearnFacade` in `web/`, one per feature | components talk to one service |
 
 ---
 
@@ -190,34 +212,50 @@ rather than with the estimate alone.
 
 ```
 web/src/app/
-├── core/        injectable services: generated API client, I18nService, ThemeService
-├── learn/       course tree, session player, side panel (video, PDF)
-│   └── blocks/  one component per block type, found through BLOCK_RENDERERS
-├── library/     PDF reader (pdf.js), search, plain Markdown reading
+├── core/        BoussoleApi and the types of the API (api.ts), language, theme
+├── i18n/        the interface in English and French, compiled in
+├── learn/       subjects, course outline, session player, side panel (video, PDF)
+│   ├── blocks/     BlockListComponent and one component per kind of block
+│   └── question/   MCQ and exercises, sharing QuestionState and QuestionFooterComponent
 ├── plan/        today, week, deadlines, quick add                        (V2)
-└── shared/      KaTeX, Mermaid, code highlighting, lexicon tooltips
+└── shared/      Markdown (markdown-it, KaTeX, :term, :pdf, gaps), Mermaid
 ```
+
+- **The session player** shows the outline of the course, the session, and beside it the video
+  or the document opened (the browser's own PDF viewer, at the page). A lesson ends with
+  *I have finished this session*; a review or a mock exam starts with its countdown and ends
+  with the number of questions right at the first attempt. `SessionRun` measures the time
+  spent while the page is visible.
+- **A question** owns a `QuestionState`: attempt, next hint, solution once allowed (after an
+  attempt, or at once for a free exercise). A fill exercise places its fields where the
+  statement has `[[N]]` (`FillGaps`).
 
 - **Standalone components and signals.** State lives in services, exposed as signals; no NgRx.
 - **Container and presentational components.** A container gets data from its feature's
   facade; a presentational component only has inputs and outputs.
 - **Translations** with Transloco, so the language changes without reloading. The interface is
-  in English and French; course content keeps its own language.
+  in English and French (the learner's choice, else `language:` of `config.yaml`, else the
+  browser's); course content keeps its own language.
+- **Light and dark** themes from CSS variables, following the system unless the learner chose.
 
 ---
 
 ## 6. HTTP API (excerpt)
 
-Answers, hints and solutions never reach the browser before they are asked for:
+Answers, hints and solutions never reach the browser before they are asked for. Under
+`/api/subjects/{subject}`:
 
 ```
-GET  /api/subjects                              subjects and progress
-GET  /api/sessions/{id}                         blocks; exercises without answers
-POST /api/exercises/{id}/attempts               { correct, feedback }, recorded
-POST /api/exercises/{id}/hints/next             the next hint, recorded
-GET  /api/exercises/{id}/solution               only after an attempt
-GET  /api/sources/{subject}/{file}              a learner's document (PDF)
-GET  /api/events/stream                         SSE: content reloaded, reminders
+GET  /api/subjects                       subjects and how far the learner is
+GET  …                                   chapters, sessions (written, finished), lexicon
+GET  …/sessions/{session}                parts and blocks; questions without answers
+POST …/sessions/{session}/finish         { spentSeconds }
+POST …/exercises/{id}/attempts           verdict and each part judged, recorded
+POST …/exercises/{id}/hints              the next hint, recorded
+GET  …/exercises/{id}/solution           after an attempt (at once for a free exercise)
+GET  …/files/{path}                      a file of the subject folder: PDFs, images
+GET  /api/server                         lets boussole open recognise a running Boussole
+POST /api/server/stop                    boussole stop
 ```
 
 ---
@@ -314,20 +352,20 @@ On macOS and Windows the equivalent per-user folders are used.
 | | |
 |---|---|
 | Java | 25 (LTS), Maven multi-module |
-| Server | Spring Boot 3, springdoc-openapi |
-| Persistence | SQLite (xerial JDBC), Flyway |
+| Server | Spring Boot 4 |
+| Persistence | SQLite (xerial JDBC), migrations run by `SqliteDatabase` |
 | Course files | own line-based parser for the structure, SnakeYAML Engine, PDFBox for page counts; Markdown rendered by markdown-it in `web/` |
 | CLI | picocli |
-| Interface | Angular (standalone components, signals), Transloco, pdf.js, KaTeX, Mermaid |
-| Tests | JUnit 6, AssertJ, ArchUnit; Vitest and Playwright for `web/` |
+| Interface | Angular 22 (standalone components, signals), Transloco, markdown-it, KaTeX, Mermaid |
+| Tests | JUnit 6, AssertJ, ArchUnit; Vitest for `web/` |
 
 ---
 
 ## 11. Roadmap
 
-1. `boussole-format`: model, parser, validator, tested on `examples/`.
-2. Server and session player: blocks, exercises, hints, video, PDF.
-3. Skills and `boussole init`, tried on a full subject.
+1. ✓ `boussole-format`: model, parser, validator, tested on `examples/`.
+2. ✓ Server and session player: blocks, exercises, hints, video, PDF.
+3. ✓ Skills and `boussole init`, tried on a full subject (OC, 25 sessions).
 4. `boussole import-legacy`.
 5. V2: scheduled events, planner, reminders, timetable (iCal).
 6. V3: spaced repetition, notes and highlights, code exercises, statistics.

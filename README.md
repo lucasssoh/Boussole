@@ -4,7 +4,8 @@ Turn your own course documents into a real course — lessons, quizzes, exercise
 go, hints in tiers, videos and PDFs beside the text — and plan when to study it. Everything runs
 on your machine.
 
-> Status: design. Nothing is usable yet. See the [roadmap](ARCHITECTURE.md#11-roadmap).
+> Status: the course format, the agent skills and the session player work. Planning and
+> reminders come next. See the [roadmap](ARCHITECTURE.md#11-roadmap).
 
 ## How it works
 
@@ -13,7 +14,8 @@ on your machine.
 3. Ask your agent (Claude Code, Codex, Gemini CLI…) to build the course. It proposes a syllabus,
    you approve it, it writes the sessions in the [Boussole format](docs/FORMAT.md) and checks
    them with `boussole validate`.
-4. `boussole open` and study in your browser.
+4. `boussole open <folder>` and study in your browser: quizzes and exercises are checked as you
+   answer, hints come one at a time, videos and your PDFs open beside the text.
 
 Boussole itself never calls an AI and needs no account.
 
@@ -41,9 +43,16 @@ Requires Java 25 and Maven 3.9 (Node is downloaded by the build).
 mvn verify
 ```
 
-Then link the launcher into your `PATH` and check a subject folder:
+Then link the launcher into your `PATH`, and open the example subject:
 
 ```
 ln -s "$PWD/bin/boussole" ~/.local/bin/boussole
-boussole validate examples/reseaux
+boussole open examples/reseaux
 ```
+
+`boussole open` starts the server in the background (it listens on this machine only, port
+7420) and adds the folder to `~/.config/boussole/config.yaml`; `boussole stop` stops it. Your
+progress is kept in `~/.local/share/boussole/state.db`.
+
+To work on the interface, run `boussole serve`, then `npm start` in `web/`
+(http://localhost:4200, calls to `/api` go to the server).

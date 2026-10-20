@@ -1,0 +1,90 @@
+@startuml 70-server
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam nodesep 40
+skinparam ranksep 50
+hide empty members
+hide circle
+title boussole-server — the HTTP API
+
+class BoussoleServer <<@SpringBootApplication>> {
+  +{static} start(ServerSettings) : RunningServer
+}
+class ServerSettings <<record>> {
+  port : int
+  subjects : Supplier<List<Path>>
+  database : Path
+  language : Optional<String>
+}
+class RunningServer <<record>>
+class LearningConfiguration <<@Configuration>>
+
+package "course" {
+  class CourseController <<GET /api/subjects…>>
+  class CourseSummaryView <<record>>
+  class CourseView <<record>>
+}
+package "session" {
+  class SessionController <<…/sessions/{id}>>
+  class SessionView <<record>>
+  class "SessionView.PartView" as PartView <<record>>
+}
+package "exercise" {
+  class ExerciseController <<…/exercises/{id}>>
+  interface AttemptRequest <<sealed, JSON kind>>
+  class AttemptView <<record>>
+  class HintView <<record>>
+  class SolutionView <<record>>
+}
+package "files" {
+  class SubjectFileController <<…/files/**>>
+}
+package "block" {
+  class BlockViewMapper {
+    +blocks(List<Block>) : List<BlockView>
+  }
+  interface BlockView <<sealed, JSON type>>
+  interface InputView <<sealed, JSON kind>>
+  class HintsView <<record>>
+  class ProgressView <<record>>
+  class SeededShuffle <<helpers>>
+}
+package "api" {
+  class ServerController <<GET /api/server, POST stop>>
+  class ApiExceptionHandler <<@RestControllerAdvice>>
+}
+package "web" {
+  class LocalRequestFilter <<filter>>
+  class InterfaceConfiguration <<serves web/>>
+}
+
+package "boussole-core" as core {
+}
+
+BoussoleServer ..> ServerSettings
+BoussoleServer ..> RunningServer
+LearningConfiguration ..> core : adapters into use cases
+CourseController --> core
+SessionController --> core
+ExerciseController --> core
+SubjectFileController --> core
+SessionController ..> SessionView
+SessionView *-- PartView : parts
+PartView ..> BlockViewMapper
+ExerciseController ..> AttemptRequest : body
+ExerciseController ..> AttemptView
+ExerciseController ..> HintView
+ExerciseController ..> SolutionView
+HintView ..> BlockViewMapper
+SolutionView ..> BlockViewMapper
+BlockViewMapper ..> BlockView : no answers
+BlockView --> InputView : exercise input
+BlockView --> HintsView : revealed only
+BlockView --> ProgressView
+BlockViewMapper ..> SeededShuffle : order, match, choices
+
+note bottom of LocalRequestFilter
+  Host must be localhost; a change (POST)
+  needs the X-Boussole header.
+end note
+@enduml

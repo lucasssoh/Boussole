@@ -1,0 +1,141 @@
+@startuml 50-core-learn
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam nodesep 40
+skinparam ranksep 50
+hide empty members
+hide circle
+title boussole-core — studying a course (packages learn, learn.check, learn.progress)
+
+package "learn" {
+  interface ContentRepository <<port>> {
+    +courses() : List<Course>
+    +course(String) : Optional<Course>
+  }
+  class ListCourses <<use case>> {
+    +list() : List<CourseOverview>
+  }
+  class OpenCourse <<use case>> {
+    +open(subject) : CourseOverview
+  }
+  class OpenSession <<use case>> {
+    +open(subject, session) : OpenedSession
+  }
+  class SubmitAttempt <<use case>> {
+    +submit(ExerciseKey, LearnerResponse) : AttemptOutcome
+  }
+  class RevealNextHint <<use case>> {
+    +reveal(ExerciseKey) : RevealedHint
+  }
+  class RevealSolution <<use case>> {
+    +reveal(ExerciseKey) : RevealedSolution
+  }
+  class FinishSession <<use case>> {
+    +finish(SessionKey, Duration)
+  }
+  class CourseLookup
+  class CourseQuestions <<helpers>>
+  class CourseOverview <<record>>
+  class OpenedSession <<record>>
+  class AttemptOutcome <<record>>
+  class RevealedHint <<record>>
+  class RevealedSolution <<record>>
+  class ContentNotFoundException
+  class LearningRuleException
+}
+
+package "learn.progress" {
+  interface ProgressRepository <<port>> {
+    +exercise(ExerciseKey) : ExerciseProgress
+    +exercises(subject) : Map<String, ExerciseProgress>
+    +saveExercise(ExerciseKey, ExerciseProgress, Instant)
+    +saveSessionFinished(SessionKey, Instant, Duration)
+    +finishedSessions(subject) : Set<String>
+  }
+  class ExerciseProgress <<record>> {
+    attempts : int
+    lastVerdict : Optional<Verdict>
+    solved : boolean
+    hintsRevealed : int
+    +solutionUnlocked() : boolean
+  }
+  class ExerciseKey <<record>>
+  class SessionKey <<record>>
+}
+
+package "learn.check" {
+  class QuestionChecker {
+    +check(McqBlock, LearnerResponse) : CheckResult
+    +check(ExerciseBlock, LearnerResponse) : CheckResult
+  }
+  interface "ResponseChecker<E, R>" as ResponseChecker {
+    +responseType() : Class<R>
+    +check(E, R) : CheckResult
+    +checkResponse(E, LearnerResponse) : CheckResult
+  }
+  class McqResponseChecker
+  class SingleAnswerResponseChecker
+  class FillAnswerResponseChecker
+  class OrderAnswerResponseChecker
+  class MatchAnswerResponseChecker
+  class SelfGradeResponseChecker
+  class ExpectationMatcher <<helpers>> {
+    +{static} matches(Expectation, String) : boolean
+  }
+  class ExpectationText <<helpers>>
+  interface LearnerResponse <<sealed>>
+  class ChoicesResponse <<record>>
+  class ValueResponse <<record>>
+  class GapsResponse <<record>>
+  class OrderResponse <<record>>
+  class MatchResponse <<record>>
+  class SelfGradeResponse <<record>>
+  class CheckResult <<record>> {
+    verdict : Verdict
+    items : List<CheckedItem>
+  }
+  class CheckedItem <<record>>
+  enum Verdict {
+    CORRECT
+    PARTLY
+    WRONG
+  }
+}
+
+ListCourses --> ContentRepository
+ListCourses --> ProgressRepository
+OpenCourse --> CourseLookup
+OpenSession --> CourseLookup
+SubmitAttempt --> CourseLookup
+RevealNextHint --> CourseLookup
+RevealSolution --> CourseLookup
+FinishSession --> CourseLookup
+CourseLookup --> ContentRepository : content
+CourseLookup ..> CourseQuestions
+SubmitAttempt --> QuestionChecker : checker
+SubmitAttempt --> ProgressRepository : progress
+RevealNextHint --> ProgressRepository
+RevealSolution --> ProgressRepository
+FinishSession --> ProgressRepository
+OpenSession ..> OpenedSession
+SubmitAttempt ..> AttemptOutcome
+ProgressRepository ..> ExerciseProgress
+QuestionChecker --> ResponseChecker : one per kind
+ResponseChecker <|.. McqResponseChecker
+ResponseChecker <|.. SingleAnswerResponseChecker
+ResponseChecker <|.. FillAnswerResponseChecker
+ResponseChecker <|.. OrderAnswerResponseChecker
+ResponseChecker <|.. MatchAnswerResponseChecker
+ResponseChecker <|.. SelfGradeResponseChecker
+SingleAnswerResponseChecker ..> ExpectationMatcher
+FillAnswerResponseChecker ..> ExpectationMatcher
+LearnerResponse <|.. ChoicesResponse
+LearnerResponse <|.. ValueResponse
+LearnerResponse <|.. GapsResponse
+LearnerResponse <|.. OrderResponse
+LearnerResponse <|.. MatchResponse
+LearnerResponse <|.. SelfGradeResponse
+ResponseChecker ..> CheckResult
+CheckResult *-- CheckedItem : items
+CheckResult --> Verdict
+@enduml

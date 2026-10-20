@@ -6,3 +6,7 @@ web/.angular/
 .idea/
 .vscode/
 .DS_Store
+.project
+.settings/
+.classpath
+.factorypath

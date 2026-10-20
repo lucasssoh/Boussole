@@ -1,7 +1,7 @@
 package io.github.lucasssoh.boussole.cli.init;
 
+import io.github.lucasssoh.boussole.adapters.config.BoussolePaths;
 import java.nio.file.Path;
-import java.util.Optional;
 
 /** Where the learner keeps the profile reused by every new subject. */
 final class LearnerProfiles {
@@ -11,10 +11,6 @@ final class LearnerProfiles {
 
     /** {@code $XDG_CONFIG_HOME/boussole/learner.yaml}, or {@code ~/.config/boussole/learner.yaml}. */
     static Path usual() {
-        Path config = Optional.ofNullable(System.getenv("XDG_CONFIG_HOME"))
-                .filter(value -> !value.isBlank())
-                .map(Path::of)
-                .orElseGet(() -> Path.of(System.getProperty("user.home"), ".config"));
-        return config.resolve("boussole").resolve("learner.yaml");
+        return BoussolePaths.forCurrentUser().learnerProfile();
     }
 }

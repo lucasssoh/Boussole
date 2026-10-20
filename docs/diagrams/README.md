@@ -13,7 +13,11 @@ readable; the overview says where each area sits.
 | [Parsing: answers](21-parsing-answers.svg) | how each exercise type reads its answer |
 | [Loading](30-loading.svg) | reading a subject folder: YAML files, sessions, diagnostics |
 | [Validation](31-validation.svg) | the rules that check a whole course |
-| [CLI](40-cli.svg) | `boussole validate` and `boussole init` |
+| [CLI](40-cli.svg) | `boussole open`, `serve`, `stop`, `validate` and `init` |
+| [Core: studying](50-core-learn.svg) | the use cases, the ports, and how responses are checked |
+| [Adapters](60-adapters.svg) | subject folders, SQLite, `config.yaml`, YouTube |
+| [Server](70-server.svg) | the HTTP API and the views it sends, answers left out |
+| [Interface](80-web.svg) | the Angular pages, blocks and questions |
 
 To see them: open an `.svg` in a browser, or this page on GitHub. To edit them, any PlantUML
 editor works (the PlantUML extension of VS Code or IntelliJ shows a live preview).

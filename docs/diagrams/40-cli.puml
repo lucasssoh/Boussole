@@ -5,7 +5,7 @@ skinparam nodesep 40
 skinparam ranksep 50
 hide empty members
 hide circle
-title boussole-cli — the boussole command (packages cli, cli.init)
+title boussole-cli — the boussole command (packages cli, cli.init, cli.serve)
 
 package "cli" {
   class BoussoleCommand <<@Command boussole>> {
@@ -14,6 +14,7 @@ package "cli" {
   class ValidateCommand <<@Command validate>> {
     folder : Path
     errorsOnly : boolean
+    checkVideos : boolean
     +call() : Integer
   }
   class ReportPrinter {
@@ -29,6 +30,33 @@ package "cli" {
     jar : Optional<Path>
     +{static} current() : Launcher
     +validateCommand() : String
+    +commandLine(String...) : Optional<List<String>>
+  }
+}
+
+package "cli.serve" {
+  class OpenCommand <<@Command open>> {
+    folder : Path
+    +call() : Integer
+  }
+  class ServeCommand <<@Command serve>> {
+    port : Integer
+    +call() : Integer
+  }
+  class StopCommand <<@Command stop>> {
+    +call() : Integer
+  }
+  class ServerProbe {
+    ~isBoussole() : boolean
+    ~portTaken() : boolean
+    ~waitUntilUp(Duration) : boolean
+    ~stop()
+  }
+  class BackgroundServer {
+    ~{static} start(Path log) : Optional<Process>
+  }
+  class BrowserOpener {
+    ~{static} open(String url) : boolean
   }
 }
 
@@ -39,62 +67,53 @@ package "cli.init" {
     profile : Path
     +call() : Integer
   }
-  class SubjectScaffold {
-    ~create(Settings, InitReport)
-    ~copyProfile(Path, InitReport)
-    ~sources(String) : String
-  }
-  class "SubjectScaffold.Settings" as Settings <<record>>
-  class AgentKitInstaller {
-    ~install(sources, validateCommand, InitReport)
-  }
-  class AgentKit <<resources>> {
-    ~SKILLS : List<String>
-    ~skill(name) / format()
-    ~agentsBlock(sources, validate)
-  }
-  class MarkedBlock {
-    ~{static} upsert(Optional<String>, String) : String
-  }
-  class SubjectFolder {
-    ~exists / read / write / copy
-    ~holdsPdfs() : boolean
-  }
-  class InitReport {
-    ~add(Action, String)
-  }
-  class Slug {
-    ~{static} of(String) : String
-  }
+  class SubjectScaffold
+  class AgentKitInstaller
+  class AgentKit <<resources>>
+  class MarkedBlock
+  class SubjectFolder
+  class InitReport
+  class Slug
   class LearnerProfiles {
     ~{static} usual() : Path
   }
 }
 
 class SubjectInspector <<boussole-format>>
+class YoutubeOEmbedCatalog <<boussole-adapters>>
+class BoussoleConfigFile <<boussole-adapters>>
+class BoussolePaths <<boussole-adapters>>
+class BoussoleServer <<boussole-server>>
 
-BoussoleCommand --> ValidateCommand : subcommand
+BoussoleCommand --> OpenCommand : subcommand
+BoussoleCommand --> ServeCommand : subcommand
+BoussoleCommand --> StopCommand : subcommand
 BoussoleCommand --> InitCommand : subcommand
+BoussoleCommand --> ValidateCommand : subcommand
 BoussoleCommand --> ManifestVersion
 ValidateCommand --> SubjectInspector : inspects
+ValidateCommand ..> YoutubeOEmbedCatalog : --check-videos
 ValidateCommand --> ReportPrinter : prints
 ValidateCommand ..> ExitCode
+OpenCommand --> BoussoleConfigFile : adds the subject
+OpenCommand --> ServerProbe : running?
+OpenCommand --> BackgroundServer : else starts
+OpenCommand --> BrowserOpener
+BackgroundServer --> Launcher : java -jar … serve
+StopCommand --> ServerProbe
+ServeCommand --> BoussoleServer : starts
+ServeCommand --> BoussoleConfigFile
+ServeCommand ..> BoussolePaths : state.db
 InitCommand --> SubjectScaffold : 1. subject files
 InitCommand --> AgentKitInstaller : 2. agent kit
 InitCommand --> Launcher : validate command
 InitCommand ..> LearnerProfiles : usual profile
+LearnerProfiles ..> BoussolePaths
 SubjectScaffold --> SubjectFolder
-SubjectScaffold ..> Settings
 SubjectScaffold ..> Slug
 AgentKitInstaller --> SubjectFolder
 AgentKitInstaller --> AgentKit : skills, format
 AgentKitInstaller --> MarkedBlock : AGENTS.md
 SubjectScaffold ..> InitReport
 AgentKitInstaller ..> InitReport
-
-note bottom of AgentKit
-  skills/ and docs/FORMAT.md of the
-  repository, copied into the jar
-  at build time (boussole-agent/).
-end note
 @enduml

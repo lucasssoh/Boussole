@@ -1,0 +1,84 @@
+@startuml 80-web
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam nodesep 40
+skinparam ranksep 50
+hide empty members
+hide circle
+title web/ — the Angular interface
+
+package "core" {
+  class BoussoleApi <<service>>
+  class boussoleHeaderInterceptor <<interceptor>>
+  class LanguageService <<service>>
+  class ThemeService <<service>>
+  class "api.ts" as Api <<types of the HTTP API>>
+}
+
+package "learn" {
+  class LearnFacade <<facade>> {
+    subjects, course, session, panel : Signal
+  }
+  class SessionRun <<per session page>> {
+    spentSeconds, remainingSeconds : Signal
+    +record(question, verdict)
+  }
+  class SubjectListComponent <<page />>
+  class CoursePageComponent <<page subjects/:subject>>
+  class SessionPageComponent <<page …/sessions/:session>>
+  class CourseOutlineComponent
+  class SidePanelComponent <<video or PDF>>
+}
+
+package "learn.blocks" {
+  class BlockListComponent <<@switch on block.type>>
+  class ProseBlockComponent
+  class VideoBlockComponent
+  class PdfBlockComponent
+}
+
+package "learn.question" {
+  class McqBlockComponent
+  class ExerciseBlockComponent
+  class QuestionFooterComponent <<check, hints, solution>>
+  class QuestionHeaderComponent
+  class QuestionState {
+    progress, result, hints, solution : Signal
+    +attempt(AttemptRequest)
+    +nextHint()
+    +showSolution()
+  }
+  class FillGaps <<fields in the statement>>
+}
+
+package "shared" {
+  class MarkdownRenderer <<markdown-it + KaTeX>>
+  class RichTextComponent
+  class "drawMermaidDiagrams()" as Mermaid
+}
+
+SubjectListComponent --> LearnFacade
+CoursePageComponent --> LearnFacade
+SessionPageComponent --> LearnFacade
+SessionPageComponent *-- SessionRun : provides
+SessionPageComponent --> BlockListComponent : parts
+SessionPageComponent --> SidePanelComponent
+LearnFacade --> BoussoleApi
+BlockListComponent --> ProseBlockComponent
+BlockListComponent --> VideoBlockComponent
+BlockListComponent --> PdfBlockComponent
+BlockListComponent --> McqBlockComponent
+BlockListComponent --> ExerciseBlockComponent
+McqBlockComponent *-- QuestionState
+ExerciseBlockComponent *-- QuestionState
+ExerciseBlockComponent *-- FillGaps
+McqBlockComponent --> QuestionFooterComponent
+ExerciseBlockComponent --> QuestionFooterComponent
+QuestionState --> BoussoleApi
+QuestionState ..> SessionRun : first verdicts
+ProseBlockComponent --> MarkdownRenderer
+ProseBlockComponent ..> FillGaps : mounts fields
+ProseBlockComponent ..> Mermaid
+VideoBlockComponent ..> LearnFacade : opens panel
+PdfBlockComponent ..> LearnFacade : opens panel
+@enduml

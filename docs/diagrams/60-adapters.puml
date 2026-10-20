@@ -1,0 +1,70 @@
+@startuml 60-adapters
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam nodesep 40
+skinparam ranksep 50
+hide empty members
+hide circle
+title boussole-adapters — files, SQLite, configuration, YouTube
+
+package "content" {
+  class FileContentRepository {
+    folders : Supplier<List<Path>>
+  }
+  class SubjectFolderCache {
+    ~course() : Optional<Course>
+  }
+  class CourseFilesFingerprint <<helpers>> {
+    ~{static} of(Path) : long
+  }
+}
+
+package "progress" {
+  class SqliteProgressRepository
+  class SqliteDatabase {
+    +{static} open(Path) : SqliteDatabase
+    ~connect() : Connection
+  }
+}
+
+package "config" {
+  class BoussoleConfigFile {
+    +read() : BoussoleConfig
+    +addSubject(Path) : boolean
+  }
+  class BoussoleConfig <<record>> {
+    language : Optional<String>
+    port : int
+    subjects : List<Path>
+  }
+  class BoussolePaths <<record>> {
+    config, data, state : Path
+    +configFile() / learnerProfile()
+    +database() / serverLog()
+  }
+}
+
+package "video" {
+  class YoutubeOEmbedCatalog
+}
+
+interface ContentRepository <<boussole-core port>>
+interface ProgressRepository <<boussole-core port>>
+interface VideoCatalog <<boussole-format>>
+class CourseLoader <<boussole-format>>
+
+ContentRepository <|.. FileContentRepository
+FileContentRepository *-- SubjectFolderCache : one per folder
+SubjectFolderCache ..> CourseFilesFingerprint : changed?
+SubjectFolderCache ..> CourseLoader : reads again
+ProgressRepository <|.. SqliteProgressRepository
+SqliteProgressRepository --> SqliteDatabase : database
+VideoCatalog <|.. YoutubeOEmbedCatalog
+BoussoleConfigFile ..> BoussoleConfig : reads
+BoussoleConfigFile ..> BoussolePaths : forCurrentUser()
+
+note bottom of SqliteDatabase
+  Migrations in db/V*.sql, run once each,
+  counted by PRAGMA user_version.
+end note
+@enduml

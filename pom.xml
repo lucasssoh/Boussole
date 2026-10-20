@@ -22,6 +22,9 @@
 
     <modules>
         <module>boussole-format</module>
+        <module>boussole-core</module>
+        <module>boussole-adapters</module>
+        <module>boussole-server</module>
         <module>boussole-cli</module>
     </modules>
 
@@ -31,6 +34,10 @@
 
         <snakeyaml-engine.version>2.10</snakeyaml-engine.version>
         <pdfbox.version>3.0.8</pdfbox.version>
+        <sqlite-jdbc.version>3.53.4.0</sqlite-jdbc.version>
+        <spring-boot.version>4.1.1</spring-boot.version>
+        <archunit.version>1.5.1</archunit.version>
+        <node.version>v22.23.1</node.version>
         <picocli.version>4.7.7</picocli.version>
         <junit.version>6.0.3</junit.version>
         <assertj.version>3.27.7</assertj.version>
@@ -52,6 +59,31 @@
                 <groupId>io.github.lucasssoh.boussole</groupId>
                 <artifactId>boussole-format</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.lucasssoh.boussole</groupId>
+                <artifactId>boussole-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.lucasssoh.boussole</groupId>
+                <artifactId>boussole-adapters</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xerial</groupId>
+                <artifactId>sqlite-jdbc</artifactId>
+                <version>${sqlite-jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.lucasssoh.boussole</groupId>
+                <artifactId>boussole-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tngtech.archunit</groupId>
+                <artifactId>archunit-junit5</artifactId>
+                <version>${archunit.version}</version>
             </dependency>
             <dependency>
                 <groupId>info.picocli</groupId>
@@ -83,6 +115,7 @@
                     <configuration>
                         <compilerArgs>
                             <arg>-Xlint:all</arg>
+                            <arg>-parameters</arg>
                         </compilerArgs>
                     </configuration>
                 </plugin>
@@ -97,9 +130,14 @@
                     <version>3.3.1</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.6.1</version>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.eirslett</groupId>
+                    <artifactId>frontend-maven-plugin</artifactId>
+                    <version>2.0.2</version>
                 </plugin>
             </plugins>
         </pluginManagement>

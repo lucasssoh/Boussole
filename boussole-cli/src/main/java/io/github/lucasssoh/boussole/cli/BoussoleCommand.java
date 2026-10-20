@@ -1,6 +1,9 @@
 package io.github.lucasssoh.boussole.cli;
 
 import io.github.lucasssoh.boussole.cli.init.InitCommand;
+import io.github.lucasssoh.boussole.cli.serve.OpenCommand;
+import io.github.lucasssoh.boussole.cli.serve.ServeCommand;
+import io.github.lucasssoh.boussole.cli.serve.StopCommand;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -10,10 +13,18 @@ import picocli.CommandLine.Command;
         mixinStandardHelpOptions = true,
         versionProvider = ManifestVersion.class,
         description = "Turn your course documents into a course, and plan when to study it.",
-        subcommands = {InitCommand.class, ValidateCommand.class})
+        subcommands = {OpenCommand.class, ServeCommand.class, StopCommand.class, InitCommand.class, ValidateCommand.class})
 public final class BoussoleCommand {
 
     public static void main(String[] args) {
-        System.exit(new CommandLine(new BoussoleCommand()).execute(args));
+        int status = new CommandLine(new BoussoleCommand()).execute(args);
+        if (!isServe(args)) {
+            System.exit(status);
+        }
+    }
+
+    /** {@code serve} returns once the server is up; the server then keeps the program running. */
+    private static boolean isServe(String[] args) {
+        return args.length > 0 && args[0].equals("serve");
     }
 }

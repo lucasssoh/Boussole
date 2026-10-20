@@ -1,9 +1,13 @@
 package io.github.lucasssoh.boussole.cli;
 
 import io.github.lucasssoh.boussole.format.InspectionReport;
+import io.github.lucasssoh.boussole.adapters.video.YoutubeOEmbedCatalog;
 import io.github.lucasssoh.boussole.format.SubjectInspector;
+import io.github.lucasssoh.boussole.format.validate.Validator;
+import io.github.lucasssoh.boussole.format.validate.VideoCatalog;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Model.CommandSpec;
@@ -30,6 +34,9 @@ final class ValidateCommand implements Callable<Integer> {
     @Option(names = "--errors-only", description = "Leave warnings out.")
     private boolean errorsOnly;
 
+    @Option(names = "--check-videos", description = "Also ask YouTube whether each video exists (needs the network).")
+    private boolean checkVideos;
+
     @Spec
     private CommandSpec spec;
 
@@ -39,7 +46,8 @@ final class ValidateCommand implements Callable<Integer> {
             spec.commandLine().getErr().println("boussole: " + folder + " is not a folder");
             return ExitCode.UNUSABLE;
         }
-        InspectionReport report = new SubjectInspector().inspect(folder);
+        Optional<VideoCatalog> videos = checkVideos ? Optional.of(new YoutubeOEmbedCatalog()) : Optional.empty();
+        InspectionReport report = new SubjectInspector(Validator.standard(), videos).inspect(folder);
         new ReportPrinter(spec.commandLine().getOut(), folder, errorsOnly).print(report);
         return report.hasErrors() ? ExitCode.PROBLEMS : ExitCode.OK;
     }

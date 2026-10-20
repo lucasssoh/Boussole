@@ -15,63 +15,72 @@ package "boussole-cli" as cli {
   package "cli.init" as initpkg {
     class InitCommand
   }
+  package "cli.serve" as servepkg {
+    class OpenCommand
+    class ServeCommand
+  }
+}
+
+package "boussole-server" as server {
+  class BoussoleServer <<Spring Boot>>
+  package "course, session, exercise, files" as controllers {
+  }
+  package "block" as views {
+  }
+}
+
+package "boussole-adapters" as adapters {
+  package "content" as content {
+  }
+  package "progress" as progress {
+  }
+  package "config" as config {
+  }
+  package "video" as video {
+  }
+}
+
+package "boussole-core" as core {
+  package "learn" as learn {
+  }
+  package "learn.check" as check {
+  }
+  package "learn.progress" as lprogress {
+  }
 }
 
 package "boussole-format" as format {
   class SubjectInspector <<entry point>>
-  package "load" as load {
-  }
-  package "parse" as parse {
-    package "parse.directive" as directive {
-    }
-    package "parse.answer" as panswer {
-    }
-  }
-  package "validate" as validate {
-    package "validate.rule" as rule {
-    }
+  package "load, parse, validate" as reading {
   }
   package "model" as model {
-    package "model.part" as part {
-    }
-    package "model.block" as block {
-    }
-    package "model.answer" as manswer {
-    }
-    package "model.expectation" as expectation {
-    }
   }
-  package "diagnostic" as diagnostic {
-  }
-  package "yaml" as yaml {
-  }
-  package "source" as source {
-  }
+}
+
+package "web/ (Angular)" as web {
 }
 
 clipkg --> SubjectInspector : boussole validate
 initpkg --> SubjectInspector : checks the new subject
-SubjectInspector --> load : 1. read
-SubjectInspector --> validate : 2. check
-load --> parse : session bodies
-load --> yaml
-parse --> model : builds
-load --> model : builds
-validate --> model : reads
-validate --> source : PDF pages
-rule ..> diagnostic : reports
-load ..> diagnostic : reports
-parse ..> diagnostic : reports
-manswer --> expectation
+servepkg --> BoussoleServer : starts
+servepkg --> config : config.yaml
+web ..> controllers : HTTP /api
+BoussoleServer --> controllers
+controllers --> learn : use cases
+controllers --> views : answers left out
+learn --> check : checks responses
+learn --> lprogress : ProgressRepository (port)
+learn --> model : reads
+content ..|> learn : ContentRepository
+progress ..|> lprogress : SqliteProgressRepository
+content --> reading : CourseLoader
+video ..|> reading : VideoCatalog
+SubjectInspector --> reading
+reading --> model : builds
 
 note right of format
-  No framework: plain Java 25,
-  SnakeYAML Engine, PDFBox.
-  Dependencies point down only.
-end note
-
-note left of cli
-  Planned: boussole-core, boussole-adapters,
-  boussole-server and web/ (Angular).
+  format and core use no framework.
+  Dependencies point down only
+  (checked by ArchUnit).
 end note
 @enduml
