@@ -13,15 +13,20 @@ taught**, **checkable by Boussole**, and **right**.
 | The learner must… | Type |
 |---|---|
 | compute a value | `numeric` (with `unit`, and `tolerance` when rounding is expected) |
-| name a concept, give a word, a short expression | `text`, with every accepted spelling |
-| complete a formula, an address, a sentence | `fill` with gaps `[[1]]`, `[[2]]` |
+| give a precise word, keyword or short string | `text`, with every accepted spelling |
+| complete a proof, an algorithm, an equation, a definition | `fill` with **choice gaps** (`3: choice *right \| wrong \| other`), and typed gaps only for precise values |
+| complete an address, a table, a short calculation | `fill` with typed or number gaps (`2: number 62`) |
 | put steps or layers in order | `order` |
 | associate two lists | `match` |
 | choose between options, spot a misconception | `qcm` |
 | prove, model, design, explain | `free`: the learner compares with the solution |
 
 Prefer a type Boussole can check (`numeric`, `text`, `fill`, `order`, `match`, `qcm`) when the
-skill can be checked that way. Use `free` for reasoning that cannot.
+skill can be checked that way. **Never ask the learner to type a formula** (LaTeX in a web field
+is painful and unreliable to check): turn a proof, an algorithm or an equation into a `fill`
+where each missing step is a choice among plausible ones, the wrong options being real mistakes.
+Typed answers are short and precise: a value, a keyword, an address. Use `free` only for
+reasoning nothing else can check, such as writing a whole model.
 
 ## Statements
 

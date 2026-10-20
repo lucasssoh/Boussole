@@ -24,7 +24,8 @@ Each question takes an estimated time at a normal pace: **choosing** an answer i
 | `qcm`, one answer | 1 |
 | `qcm`, `multiple=true` | 1.5 |
 | `order`, `match` | 2 |
-| `numeric`, `text`, `fill` | 3 |
+| `numeric`, `text` | 3 |
+| `fill` | 1 per typed gap, 0.5 per choice gap (at least 1) |
 | `free` | 8 |
 
 A question that needs more (a long calculation, a whole problem) says so with `minutes=N`. Add
@@ -35,8 +36,10 @@ Example: a 20-minute review → 14 single-choice qcms and 2 numeric exercises (1
 
 ## 2. Choose the questions
 
-- **Mostly qcms**: in a given time they cover the most ground. Build answers (`numeric`, `fill`,
-  `free`) where the real exam asks for them, or where choosing would give the answer away.
+- **Mostly qcms and fills**: in a given time they cover the most ground. A proof, an algorithm or
+  a calculation from the exam becomes a `fill` with choice gaps for its steps and a number gap
+  for its result. Typed answers stay short and precise (a value, a keyword); `free` only when the
+  real exam asks for a written answer nothing else can check.
 - **Cover every goal** of the sessions concerned at least once, weighted by how much of the
   course each takes.
 - **Review**: reuse the lessons' questions with `::ref{id=…}` (retrieving what was learnt is what
