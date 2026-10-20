@@ -25,6 +25,9 @@ import { QuestionState } from './question-state';
         <button type="button" class="primary" [disabled]="question.busy() || !ready()" (click)="check.emit()">
           {{ 'question.check' | transloco }}
         </button>
+        @if (incomplete() && !ready()) {
+          <span class="note incomplete">{{ 'question.incomplete' | transloco }}</span>
+        }
       }
       @if (question.isFree && !question.solution()) {
         <button type="button" class="primary" [disabled]="question.busy()" (click)="question.showSolution()">
@@ -51,5 +54,7 @@ export class QuestionFooterComponent {
   readonly checkable = input(true);
   /** Whether the response is complete enough to be sent. */
   readonly ready = input(true);
+  /** The response has several fields: say why it cannot be sent yet. */
+  readonly incomplete = input(false);
   readonly check = output<void>();
 }

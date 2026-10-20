@@ -72,6 +72,7 @@ export const FR: Translations = {
   },
   question: {
     check: 'Vérifier',
+    incomplete: 'Remplis chaque case avant de vérifier.',
     hint: 'Indice',
     hintCount: 'Indice {{number}} sur {{total}}',
     why: 'Pourquoi',

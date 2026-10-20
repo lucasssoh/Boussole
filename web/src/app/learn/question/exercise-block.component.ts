@@ -107,7 +107,7 @@ type SelfGrade = 'got_it' | 'partly' | 'not_yet';
             }
           }
 
-          <app-question-footer [state]="state()" [checkable]="checkable()" [ready]="ready()" (check)="check()" />
+          <app-question-footer [state]="state()" [checkable]="checkable()" [ready]="ready()" [incomplete]="['fill', 'match'].includes(exercise().input.kind)" (check)="check()" />
 
           @if (input.kind === 'free' && state().solution()) {
             <div class="self-grade">
@@ -189,9 +189,11 @@ export class ExerciseBlockComponent {
       case 'text':
         return this.typed().trim() !== '';
       case 'fill':
-        return this.fill()?.values() !== undefined && Object.values(this.fill()!.values()).some((value) => value.trim() !== '');
-      case 'match':
-        return Object.keys(this.pairs()).length > 0;
+        return this.fill()?.complete() ?? false;
+      case 'match': {
+        const input = this.exercise().input;
+        return input.kind === 'match' && input.lefts.every((left) => (this.pairs()[left] ?? '') !== '');
+      }
       default:
         return true;
     }

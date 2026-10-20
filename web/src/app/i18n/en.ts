@@ -70,6 +70,7 @@ export const EN = {
   },
   question: {
     check: 'Check',
+    incomplete: 'Fill in every box before checking.',
     hint: 'Hint',
     hintCount: 'Hint {{number}} of {{total}}',
     why: 'Why',
