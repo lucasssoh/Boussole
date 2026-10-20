@@ -1729,33 +1729,92 @@ a.session-card:active {
 .order-list {
   display: grid;
   gap: 0.5rem;
-  padding-left: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.order-list li {
-  padding: 0.4rem 0.7rem;
-  border: 3px solid var(--line);
+/* Each line wears its own colour (--tone), kept wherever it goes, so that the eye follows it. */
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.6rem;
+  border: 3px solid color-mix(in srgb, var(--tone) 45%, var(--surface));
+  border-left-width: 8px;
+  border-left-color: var(--tone);
   border-radius: 14px;
-  background: var(--surface);
+  background: color-mix(in srgb, var(--tone) 9%, var(--surface));
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--tone) 35%, var(--surface));
   font-weight: 800;
+  cursor: grab;
+  touch-action: none;
 }
 
-.order-list li.correct {
+.order-item.locked {
+  cursor: default;
+  box-shadow: none;
+}
+
+.order-grip {
+  flex: none;
+  color: var(--tone);
+}
+
+.order-rank {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+  background: var(--tone);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 900;
+}
+
+.order-text {
+  flex: 1;
+}
+
+.order-item.correct {
   border-color: var(--correct-strong);
   background: var(--correct-bg);
 }
 
-.order-list li.wrong {
+.order-item.wrong {
   border-color: var(--wrong-strong);
   background: var(--wrong-bg);
 }
 
 .order-buttons {
-  margin-right: 0.5rem;
+  flex: none;
+  display: flex;
+  gap: 0.2rem;
 }
 
 .order-buttons button {
   padding: 0 0.5rem;
+}
+
+/* Dragging: the line follows the pointer, lifted; its place shows as a dashed gap. */
+.order-item.cdk-drag-preview {
+  box-sizing: border-box;
+  cursor: grabbing;
+  box-shadow: 0 12px 24px rgb(0 0 0 / 0.18);
+  transform-origin: center;
+}
+
+.order-item.cdk-drag-placeholder {
+  opacity: 0.35;
+  border-style: dashed;
+  box-shadow: none;
+}
+
+.order-list.cdk-drop-list-dragging .order-item:not(.cdk-drag-placeholder),
+.order-item.cdk-drag-animating {
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
 }
 
 .match-table {

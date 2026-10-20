@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, computed, effect, forwardRef, inject, input, signal } from '@angular/core';
+import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -15,6 +16,9 @@ import { QuestionFooterComponent } from './question-footer.component';
 import { QuestionHeaderComponent } from './question-header.component';
 import { QuestionState } from './question-state';
 
+/** The colours of the lines to put in order: told apart by hue, each one readable on its tint. */
+const ORDER_TONES = ['#1c7ed6', '#e8590c', '#2b8a3e', '#ae3ec9', '#f08c00', '#0c8599', '#e03131', '#5f3dc4'];
+
 type SelfGrade = 'got_it' | 'partly' | 'not_yet';
 
 /**
@@ -24,7 +28,7 @@ type SelfGrade = 'got_it' | 'partly' | 'not_yet';
  */
 @Component({
   selector: 'app-exercise-block',
-  imports: [IconComponent, RichTextComponent, FormsModule, TranslocoPipe, QuestionFooterComponent, QuestionCorrectionComponent, QuestionHeaderComponent, forwardRef(() => BlockListComponent)],
+  imports: [IconComponent, RichTextComponent, FormsModule, CdkDropList, CdkDrag, TranslocoPipe, QuestionFooterComponent, QuestionCorrectionComponent, QuestionHeaderComponent, forwardRef(() => BlockListComponent)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let question = exercise();
@@ -55,17 +59,22 @@ type SelfGrade = 'got_it' | 'partly' | 'not_yet';
               </p>
             }
             @case ('order') {
-              <ol class="order-list">
+              <ol class="order-list" cdkDropList [cdkDropListDisabled]="locked" (cdkDropListDropped)="drop($event)">
                 @for (item of order(); track item; let first = $first, last = $last, index = $index) {
                   @let mark = corrected ? state().item(index) : undefined;
-                  <li [class.correct]="mark?.correct === true" [class.wrong]="mark?.correct === false">
+                  <li class="order-item" cdkDrag cdkDragLockAxis="y" [cdkDragDisabled]="locked" [style.--tone]="tone(item)"
+                      [class.locked]="locked" [class.correct]="mark?.correct === true" [class.wrong]="mark?.correct === false">
+                    @if (!locked) {
+                      <app-icon class="order-grip" name="grip" />
+                    }
+                    <span class="order-rank">{{ index + 1 }}</span>
+                    <app-rich-text class="order-text" [text]="item" />
                     @if (!locked) {
                       <span class="order-buttons">
                         <button type="button" class="quiet" [disabled]="first" [attr.aria-label]="'question.moveUp' | transloco" (click)="move(index, -1)"><app-icon name="arrow-up" /></button>
                         <button type="button" class="quiet" [disabled]="last" [attr.aria-label]="'question.moveDown' | transloco" (click)="move(index, 1)"><app-icon name="arrow-down" /></button>
                       </span>
                     }
-                    <app-rich-text [text]="item" />
                   </li>
                 }
               </ol>
@@ -204,6 +213,20 @@ export class ExerciseBlockComponent {
 
   protected verdictIs(verdict: string): boolean {
     return this.state().verdict() === verdict;
+  }
+
+  /** Each line keeps its own colour wherever it is moved, so that the eye can follow it. */
+  protected tone(item: string): string {
+    const input = this.exercise().input;
+    const rank = input.kind === 'order' ? input.items.indexOf(item) : 0;
+    return ORDER_TONES[Math.max(rank, 0) % ORDER_TONES.length];
+  }
+
+  /** A line dragged with the mouse, or a finger, to its new place. */
+  protected drop(event: CdkDragDrop<unknown>): void {
+    const items = [...this.order()];
+    moveItemInArray(items, event.previousIndex, event.currentIndex);
+    this.state().order.set(items);
   }
 
   protected move(index: number, step: number): void {
