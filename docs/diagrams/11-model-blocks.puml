@@ -1,0 +1,110 @@
+@startuml 11-model-blocks
+!include style.iuml
+title boussole-format — the blocks of a session (package model.block)
+
+interface Block <<sealed>> {
+  +position() : Position
+}
+class Prose <<record>> {
+  markdown : String
+}
+interface InlineDirective <<sealed>>
+class TermMention <<record>> {
+  text : String
+  id : Optional<String>
+}
+class PdfMention <<record>> {
+  label : String
+}
+class Example <<record>> {
+  label : String
+}
+class Recall <<record>>
+class Callout <<record>>
+enum CalloutKind {
+  NOTE
+  TIP
+  WARNING
+}
+class Video <<record>> {
+  label, youtubeId : String
+  start, end : Optional<Duration>
+}
+class PdfRef <<record>> {
+  label : String
+}
+class Exercise <<record>> {
+  id : String
+  minutes : OptionalInt
+}
+enum ExerciseType {
+  NUMERIC
+  TEXT
+  FILL
+  ORDER
+  MATCH
+  FREE
+}
+class Qcm <<record>> {
+  id : String
+  multiple : boolean
+  minutes : OptionalInt
+}
+class Choice <<record>> {
+  text : String
+  correct : boolean
+  feedback : Optional<String>
+}
+class Hint <<record>>
+class Solution <<record>>
+class ExerciseRef <<record>> {
+  id : String
+}
+class Blocks <<utility>> {
+  +{static} walk(List<Block>) : Stream<Block>
+}
+class QuestionTime <<utility>> {
+  +{static} minutes(Exercise) : double
+  +{static} minutes(Qcm) : double
+}
+class SourceRef <<record>>
+interface Answer <<sealed>>
+note bottom of Answer : see 12-model-answers
+
+Block <|.. Prose
+Block <|.. Example
+Block <|.. Recall
+Block <|.. Callout
+Block <|.. Video
+Block <|.. PdfRef
+Block <|.. Exercise
+Block <|.. Qcm
+Block <|.. ExerciseRef
+
+Prose *-- "*" InlineDirective
+InlineDirective <|.. TermMention
+InlineDirective <|.. PdfMention
+PdfMention --> SourceRef
+PdfRef --> SourceRef
+
+Example o-- "*" Block : content
+Recall o-- "*" Block : content
+Callout o-- "*" Block : content
+Callout --> CalloutKind
+
+Exercise --> ExerciseType
+Exercise o-- "*" Block : statement
+Exercise *-- "0..1" Answer
+Exercise *-- "*" Hint
+Exercise *-- "0..1" Solution
+Qcm o-- "*" Block : statement
+Qcm *-- "2..*" Choice
+Qcm *-- "*" Hint
+Qcm *-- "0..1" Solution
+Hint o-- "*" Block
+Solution o-- "*" Block
+
+Blocks ..> Block : walks nested
+QuestionTime ..> Exercise
+QuestionTime ..> Qcm
+@enduml

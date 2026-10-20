@@ -1,0 +1,72 @@
+@startuml 00-overview
+!include style.iuml
+title Boussole — modules and packages
+
+package "boussole-cli" as cli {
+  package "cli" as clipkg {
+    class BoussoleCommand
+    class ValidateCommand
+  }
+  package "cli.init" as initpkg {
+    class InitCommand
+  }
+}
+
+package "boussole-format" as format {
+  class SubjectInspector <<entry point>>
+  package "load" as load {
+  }
+  package "parse" as parse {
+    package "parse.directive" as directive {
+    }
+    package "parse.answer" as panswer {
+    }
+  }
+  package "validate" as validate {
+    package "validate.rule" as rule {
+    }
+  }
+  package "model" as model {
+    package "model.part" as part {
+    }
+    package "model.block" as block {
+    }
+    package "model.answer" as manswer {
+    }
+    package "model.expectation" as expectation {
+    }
+  }
+  package "diagnostic" as diagnostic {
+  }
+  package "yaml" as yaml {
+  }
+  package "source" as source {
+  }
+}
+
+clipkg --> SubjectInspector : validate
+initpkg --> SubjectInspector : checks the result
+SubjectInspector --> load
+SubjectInspector --> validate
+load --> parse : session bodies
+load --> yaml
+parse --> model : builds
+load --> model : builds
+validate --> model : reads
+validate --> source : PDF pages
+rule ..> diagnostic : reports
+load ..> diagnostic : reports
+parse ..> diagnostic : reports
+manswer --> expectation
+
+note right of format
+  No framework: plain Java 25,
+  SnakeYAML Engine, PDFBox.
+  Dependencies point down only.
+end note
+
+note bottom of clipkg
+  Planned: boussole-core, boussole-adapters,
+  boussole-server and web/ (Angular).
+end note
+@enduml

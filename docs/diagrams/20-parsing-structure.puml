@@ -1,0 +1,123 @@
+@startuml 20-parsing-structure
+!include style.iuml
+title boussole-format — reading a session file: structure and directives (load, parse, parse.directive)
+
+class SessionReader <<load>> {
+  +{static} read(text, file, Diagnostics) : Session
+}
+class SessionBodyParser {
+  +{static} parse(lines, firstLine, file, Diagnostics) : List<Part>
+}
+
+package "parse" {
+  class ParseContext {
+    +position(int) : Position
+    +report(Code, int, String)
+    +blocks(List<RawNode>, parent) : List<Block>
+    +attributes(directive, source, required, optional, line) : Optional<Attributes>
+    +answerParsers() : AnswerParsers
+  }
+  class RawTreeBuilder {
+    ~build(lines, firstLine) : List<RawNode>
+  }
+  class CodeFence {
+    ~isCode(String) : boolean
+  }
+  class DirectiveLine <<record>> {
+    name, label, attributes : String
+    colons : int
+  }
+  interface RawNode <<sealed>>
+  class "RawNode.Text" as RText <<record>>
+  class "RawNode.Heading" as RHeading <<record>>
+  class "RawNode.Leaf" as RLeaf <<record>>
+  class "RawNode.Container" as RContainer <<record>>
+  class PartAssembler {
+    ~assemble(List<RawNode>) : List<Part>
+  }
+  class BlockBuilder {
+    ~build(List<RawNode>, parent) : List<Block>
+  }
+  class InlineScanner {
+    ~prose(RawNode.Text) : Prose
+  }
+  class AttributeParser {
+    ~{static} parse(String) : Attributes
+  }
+  class Attributes <<record>> {
+    +text(name) / required(name)
+    +positiveInteger(name) / flag(name)
+  }
+  class InvalidAttributeException
+}
+
+package "parse.directive" {
+  class DirectiveRegistry {
+    +{static} standard() : DirectiveRegistry
+    +find(name) : Optional<DirectiveParser>
+  }
+  interface DirectiveParser <<strategy>> {
+    +spec() : DirectiveSpec
+    +parse(Directive, ParseContext) : Optional<Block>
+  }
+  class DirectiveSpec <<record>> {
+    name : String
+    required, optional, parents : Set<String>
+  }
+  enum DirectiveKind {
+    CONTAINER
+    LEAF
+  }
+  class Directive <<record>>
+  class Parents <<constants>>
+  class ExampleParser
+  class RecallParser
+  class CalloutParser
+  class VideoParser
+  class PdfParser
+  class RefParser
+  class ExerciseParser
+  class QcmParser
+  class ExerciseParts <<record>>
+  class ChoiceReader
+}
+
+class AnswerParsers <<see 21-parsing-answers>>
+
+SessionReader --> SessionBodyParser : body
+SessionBodyParser --> RawTreeBuilder : 1. lines to tree
+SessionBodyParser --> PartAssembler : 2. tree to parts
+RawTreeBuilder --> CodeFence
+RawTreeBuilder --> DirectiveLine
+RawTreeBuilder ..> RawNode : builds
+RawNode <|.. RText
+RawNode <|.. RHeading
+RawNode <|.. RLeaf
+RawNode <|.. RContainer
+PartAssembler --> ParseContext
+ParseContext *-- BlockBuilder
+ParseContext *-- AnswerParsers
+BlockBuilder --> DirectiveRegistry
+BlockBuilder --> InlineScanner
+ParseContext ..> AttributeParser
+AttributeParser ..> Attributes
+Attributes ..> InvalidAttributeException : throws
+
+DirectiveRegistry o-- "*" DirectiveParser
+DirectiveParser --> DirectiveSpec
+DirectiveSpec --> DirectiveKind
+DirectiveParser ..> Directive
+DirectiveParser <|.. ExampleParser
+DirectiveParser <|.. RecallParser
+DirectiveParser <|.. CalloutParser
+DirectiveParser <|.. VideoParser
+DirectiveParser <|.. PdfParser
+DirectiveParser <|.. RefParser
+DirectiveParser <|.. ExerciseParser
+DirectiveParser <|.. QcmParser
+ExerciseParser --> ExerciseParts
+QcmParser --> ExerciseParts
+QcmParser --> ChoiceReader
+ExerciseParser --> AnswerParsers : answer by type
+
+@enduml

@@ -1,0 +1,66 @@
+@startuml 21-parsing-answers
+!include style.iuml
+title boussole-format — reading the answer of an exercise (parse.answer)
+
+class ExerciseParser <<parse.directive>>
+class ParseContext <<parse>>
+package "parse.answer" {
+  class AnswerParsers {
+    +{static} standard() : AnswerParsers
+    +forType(ExerciseType) : Optional<AnswerParser>
+  }
+  interface AnswerParser <<strategy>> {
+    +type() : ExerciseType
+    +attributes() : Set<String>
+    +parse(lines, Attributes, ParseContext) : Optional<Answer>
+  }
+  abstract class LineAnswerParser<T> <<template method>> {
+    +parse(...) : Optional<Answer> {final}
+    #{abstract} readLine(AnswerLine, ...) : Optional<T>
+    #{abstract} assemble(List<T>, ...) : Optional<Answer>
+    #minimumItems() : int
+  }
+  class NumericAnswerParser
+  class TextAnswerParser
+  class FillAnswerParser
+  class OrderAnswerParser
+  class MatchAnswerParser
+  class ExpectationReader {
+    ~{static} read(text, strict, line, ctx) : Optional<Expectation>
+    ~{static} text(alternatives, ...) : Optional<TextExpectation>
+  }
+  class Numbers
+  class AcceptedTexts
+  class AnswerLine <<record>>
+}
+
+ExerciseParser --> ParseContext
+ParseContext *-- AnswerParsers
+ExerciseParser --> AnswerParsers : answer by type
+AnswerParsers o-- "*" AnswerParser
+AnswerParser <|.. LineAnswerParser
+LineAnswerParser <|-- NumericAnswerParser
+LineAnswerParser <|-- TextAnswerParser
+LineAnswerParser <|-- FillAnswerParser
+LineAnswerParser <|-- OrderAnswerParser
+LineAnswerParser <|-- MatchAnswerParser
+LineAnswerParser ..> AnswerLine
+FillAnswerParser --> ExpectationReader : each gap
+TextAnswerParser --> ExpectationReader
+NumericAnswerParser --> Numbers
+ExpectationReader --> Numbers
+ExpectationReader --> AcceptedTexts
+
+note right of LineAnswerParser
+  Template method: parse() reads each line
+  with readLine(), stops at the first bad
+  one, checks minimumItems(), then calls
+  assemble(). Subclasses only say how a
+  line reads and what the lines make.
+end note
+note bottom of ExpectationReader
+  1: answer | other   → TextExpectation
+  2: number 3/4 ±0.01 → NumberExpectation
+  3: choice *right | wrong → ChoiceExpectation
+end note
+@enduml

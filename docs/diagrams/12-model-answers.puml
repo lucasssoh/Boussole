@@ -1,0 +1,76 @@
+@startuml 12-model-answers
+!include style.iuml
+title boussole-format — what exercises accept (model.answer, model.expectation)
+
+package "model.answer" {
+  interface Answer <<sealed>>
+  class SingleAnswer <<record>>
+  class FillAnswer <<record>>
+  class Gap <<record>> {
+    number : int
+  }
+  class OrderAnswer <<record>> {
+    items : List<String>
+  }
+  class MatchAnswer <<record>>
+  class MatchPair <<record>> {
+    left, right : String
+  }
+}
+
+package "model.expectation" {
+  interface Expectation <<sealed>> {
+    +isChosen() : boolean
+  }
+  class TextExpectation <<record>> {
+    strict : boolean
+  }
+  class NumberExpectation <<record>> {
+    unit : Optional<String>
+  }
+  class ChoiceExpectation <<record>> {
+    options : List<String>
+    correct : int
+    +correctOption() : String
+  }
+  interface AcceptedText <<sealed>>
+  class "AcceptedText.Exact" as Exact <<record>> {
+    text : String
+  }
+  class "AcceptedText.Matching" as Matching <<record>> {
+    pattern : Pattern
+  }
+  class Rational <<record>> {
+    numerator, denominator : BigInteger
+    +{static} parse(String) : Optional<Rational>
+    +subtract(Rational) : Rational
+    +divide(Rational) : Rational
+    +abs() : Rational
+    +compareTo(Rational) : int
+  }
+}
+
+Answer <|.. SingleAnswer
+Answer <|.. FillAnswer
+Answer <|.. OrderAnswer
+Answer <|.. MatchAnswer
+SingleAnswer *-- "1" Expectation : numeric, text
+FillAnswer *-- "1..*" Gap
+Gap *-- "1" Expectation : typed, number or choice
+MatchAnswer *-- "2..*" MatchPair
+
+Expectation <|.. TextExpectation
+Expectation <|.. NumberExpectation
+Expectation <|.. ChoiceExpectation
+TextExpectation *-- "1..*" AcceptedText
+AcceptedText <|.. Exact
+AcceptedText <|.. Matching
+NumberExpectation *-- "1..*" Rational : values
+NumberExpectation *-- "1" Rational : tolerance
+
+note bottom of Expectation
+  One value the learner gives.
+  A numeric or text exercise expects one,
+  a fill exercise one per gap.
+end note
+@enduml

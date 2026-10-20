@@ -1,0 +1,95 @@
+@startuml 40-cli
+!include style.iuml
+title boussole-cli — the boussole command (packages cli, cli.init)
+
+package "cli" {
+  class BoussoleCommand <<@Command boussole>> {
+    +{static} main(String[])
+  }
+  class ValidateCommand <<@Command validate>> {
+    folder : Path
+    errorsOnly : boolean
+    +call() : Integer
+  }
+  class ReportPrinter {
+    ~print(InspectionReport)
+  }
+  class ExitCode <<constants>> {
+    OK = 0
+    PROBLEMS = 1
+    UNUSABLE = 2
+  }
+  class ManifestVersion <<IVersionProvider>>
+  class Launcher <<record>> {
+    jar : Optional<Path>
+    +{static} current() : Launcher
+    +validateCommand() : String
+  }
+}
+
+package "cli.init" {
+  class InitCommand <<@Command init>> {
+    folder : Path
+    id, name, lang, sources : String
+    profile : Path
+    +call() : Integer
+  }
+  class SubjectScaffold {
+    ~create(Settings, InitReport)
+    ~copyProfile(Path, InitReport)
+    ~sources(String) : String
+  }
+  class "SubjectScaffold.Settings" as Settings <<record>>
+  class AgentKitInstaller {
+    ~install(sources, validateCommand, InitReport)
+  }
+  class AgentKit <<resources>> {
+    ~SKILLS : List<String>
+    ~skill(name) / format()
+    ~agentsBlock(sources, validate)
+  }
+  class MarkedBlock {
+    ~{static} upsert(Optional<String>, String) : String
+  }
+  class SubjectFolder {
+    ~exists / read / write / copy
+    ~holdsPdfs() : boolean
+  }
+  class InitReport {
+    ~add(Action, String)
+  }
+  class Slug {
+    ~{static} of(String) : String
+  }
+  class LearnerProfiles {
+    ~{static} usual() : Path
+  }
+}
+
+class SubjectInspector <<boussole-format>>
+
+BoussoleCommand --> ValidateCommand : subcommand
+BoussoleCommand --> InitCommand : subcommand
+BoussoleCommand --> ManifestVersion
+ValidateCommand --> SubjectInspector
+ValidateCommand --> ReportPrinter
+ValidateCommand ..> ExitCode
+InitCommand --> SubjectScaffold
+InitCommand --> AgentKitInstaller
+InitCommand --> Launcher
+InitCommand ..> LearnerProfiles
+SubjectScaffold --> SubjectFolder
+SubjectScaffold ..> Settings
+SubjectScaffold ..> Slug
+AgentKitInstaller --> SubjectFolder
+AgentKitInstaller --> AgentKit
+AgentKitInstaller --> MarkedBlock : AGENTS.md
+SubjectScaffold ..> InitReport
+AgentKitInstaller ..> InitReport
+
+note bottom of AgentKit
+  skills/ and docs/FORMAT.md of the
+  repository, copied into the jar
+  at build time (boussole-agent/).
+end note
+@enduml

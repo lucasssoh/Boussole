@@ -1,0 +1,88 @@
+@startuml 31-validation
+!include style.iuml
+left to right direction
+title boussole-format — checking a whole course (validate, validate.rule, source)
+
+class SubjectInspector <<entry point>>
+class Diagnostics <<diagnostic>>
+class Course <<model>>
+package "validate" {
+  class Validator <<composite>> {
+    +{static} standard() : Validator
+    +validate(ValidationContext, Diagnostics)
+  }
+  interface ValidationRule {
+    +check(ValidationContext, Diagnostics)
+  }
+  class ValidationContext <<record>> {
+    videos : Optional<VideoCatalog>
+  }
+  interface VideoCatalog {
+    +exists(youtubeId) : boolean
+  }
+  package "validate.rule" {
+    class DuplicateIdRule <<F003>>
+    class IdSyntaxRule <<F004>>
+    class SessionIdMatchRule <<F010>>
+    class MissingSessionFileRule <<F011>>
+    class QcmChoicesRule <<F022>>
+    class FillGapsRule <<F023>>
+    class ReferenceRule <<F030>>
+    class SourceFileRule <<F031>>
+    class VideoExistsRule <<F032>>
+    class NotionExerciseRule <<P001>>
+    class SingleExampleRule <<P002>>
+    class PartOrderRule <<P003>>
+    class HintPresenceRule <<P004>>
+    class DeclaredTermsRule <<P005>>
+    class ClosingRule <<P006>>
+    class QuickCheckRule <<P007>>
+    class TimedSessionFitRule <<P008>>
+    class TimedSessionContentRule <<P009>>
+    class "CourseIds, Notions, Terms,\nIdSeen, TimedSessions" as RuleHelpers <<helpers>>
+  }
+}
+
+package "source" {
+  interface SourceDocuments {
+    +exists(file) : boolean
+    +pageCount(file) : OptionalInt
+  }
+  class FolderSourceDocuments
+}
+
+
+SubjectInspector --> Validator
+SubjectInspector ..> FolderSourceDocuments : creates
+ValidationContext --> Course
+Validator o-- "*" ValidationRule
+ValidationRule ..> ValidationContext
+ValidationContext --> SourceDocuments
+ValidationContext --> VideoCatalog
+SourceDocuments <|.. FolderSourceDocuments
+ValidationRule <|.. DuplicateIdRule
+ValidationRule <|.. IdSyntaxRule
+ValidationRule <|.. SessionIdMatchRule
+ValidationRule <|.. MissingSessionFileRule
+ValidationRule <|.. QcmChoicesRule
+ValidationRule <|.. FillGapsRule
+ValidationRule <|.. ReferenceRule
+ValidationRule <|.. SourceFileRule
+ValidationRule <|.. VideoExistsRule
+ValidationRule <|.. NotionExerciseRule
+ValidationRule <|.. SingleExampleRule
+ValidationRule <|.. PartOrderRule
+ValidationRule <|.. HintPresenceRule
+ValidationRule <|.. DeclaredTermsRule
+ValidationRule <|.. ClosingRule
+ValidationRule <|.. QuickCheckRule
+ValidationRule <|.. TimedSessionFitRule
+ValidationRule <|.. TimedSessionContentRule
+ValidationRule ..> Diagnostics : reports
+ValidationRule ..> Diagnostics : reports
+note bottom of RuleHelpers
+  Errors a file shows on its own are
+  reported while it is read (load, parse);
+  the rules check what needs the whole course.
+end note
+@enduml

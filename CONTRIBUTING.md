@@ -127,6 +127,9 @@ Versions follow `MAJOR.MINOR.PATCH`.
 - A change to the interface is checked in a browser, with a screenshot in light and dark mode,
   in English and French.
 - New interface text exists in both languages.
+- A class added, removed or renamed, or a relation between classes changed, is reflected in
+  [`docs/diagrams/`](docs/diagrams/README.md), rendered with `docs/diagrams/render.sh`, in the
+  same commit.
 
 ## AI agents
 

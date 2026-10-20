@@ -8,6 +8,8 @@ a SQLite database.
 This document says where things are and why. Each module also has a short README saying what it
 does and what it does not do.
 
+Class diagrams of every module are in [`docs/diagrams/`](docs/diagrams/README.md).
+
 ---
 
 ## 1. Overview

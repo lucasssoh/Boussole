@@ -1,0 +1,96 @@
+@startuml 30-loading
+!include style.iuml
+title boussole-format — reading a subject folder (entry point, load, yaml, diagnostic)
+
+class Validator <<see 31-validation>>
+class SubjectInspector <<entry point>> {
+  +inspect(Path) : InspectionReport
+}
+class InspectionReport <<record>> {
+  course : Optional<Course>
+  diagnostics : List<Diagnostic>
+  +hasErrors() : boolean
+  +errors() / warnings()
+  +withCode(Code)
+}
+
+package "load" {
+  class SubjectLoader {
+    +{static} load(Path, Diagnostics) : Optional<Course>
+  }
+  class SubjectFiles {
+    ~exists(name) / read(name)
+  }
+  class SubjectReader
+  class SyllabusReader
+  class LexiconReader
+  class LearnerProfileReader
+  class SessionReader
+  class SourceRefs
+}
+
+package "yaml" {
+  class YamlMap {
+    +{static} parse(text, YamlSource) : Optional<YamlMap>
+    +{static} parseList(text, YamlSource) : List<YamlMap>
+    +text / requiredText / integer / flag
+    +texts / maps / positionOf
+    +reportUnknownKeys(Set<String>)
+  }
+  class "YamlMap.YamlSource" as YamlSource <<record>> {
+    fileName : String
+    firstLine : int
+  }
+}
+
+package "diagnostic" {
+  class Diagnostics {
+    +report(Code, Position, String)
+    +list() : List<Diagnostic>
+  }
+  class Diagnostic <<record>> {
+    message : String
+    +isError() : boolean
+  }
+  enum Code {
+    F001 … F032
+    P001 … P009
+    +severity() : Severity
+  }
+  enum Severity {
+    ERROR
+    WARNING
+  }
+  class Position <<record>> {
+    file : String
+    line : int
+  }
+}
+
+SubjectInspector --> SubjectLoader : 1. read
+SubjectInspector ..> InspectionReport : returns
+SubjectLoader --> SubjectFiles
+SubjectLoader --> SubjectReader
+SubjectLoader --> SyllabusReader
+SubjectLoader --> LexiconReader
+SubjectLoader --> LearnerProfileReader
+SubjectLoader --> SessionReader
+SyllabusReader --> SourceRefs
+SessionReader --> SourceRefs
+SubjectReader --> YamlMap
+SyllabusReader --> YamlMap
+LexiconReader --> YamlMap
+LearnerProfileReader --> YamlMap
+SessionReader --> YamlMap : front matter
+YamlMap --> YamlSource
+
+
+Diagnostics *-- "*" Diagnostic
+Diagnostic --> Code
+Diagnostic --> Position
+Code --> Severity
+SubjectLoader ..> Diagnostics : reports
+
+
+SubjectInspector --> Validator : 2. check
+@enduml
