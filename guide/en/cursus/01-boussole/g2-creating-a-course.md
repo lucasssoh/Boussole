@@ -12,14 +12,15 @@ terms: [agent, plan, validator]
 
 ## Preparing the folder {#folder}
 
-A subject is **a folder**: put your documents in it as you like, in sub-folders per lecture or
-per week if you prefer. Then, in a terminal:
+A course is **a folder**: put your documents in it as you like, in sub-folders if you prefer.
+Not only a school subject: a software manual, a company guide or a programming language make
+good courses too. Then, in a terminal:
 
 ```
 boussole init ~/courses/Optimisation
 ```
 
-Boussole adds `subject.yaml` (the name and language of the subject), the `cursus/` folder that
+Boussole adds `subject.yaml` (the name and language of the course), the `cursus/` folder that
 will hold the course, and the instructions for your :term[agent]{id=agent} (`AGENTS.md`,
 `.boussole/`). It never touches your documents.
 

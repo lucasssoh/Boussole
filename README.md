@@ -11,7 +11,8 @@ on your machine.
 
 ## How it works
 
-1. Put your documents (lecture notes, slides, past exams) in a subject folder.
+1. Put your documents in a folder: lecture notes, slides and past exams, but also a software
+   manual, a company guide or the documentation of a programming language.
 2. `boussole init <folder>` installs instructions for AI agents next to them.
 3. Ask your agent (Claude Code, Codex, Gemini CLI…) to build the course. It proposes a syllabus,
    you approve it, it writes the sessions in the [Boussole format](docs/FORMAT.md) and checks
@@ -29,7 +30,7 @@ flowchart LR
   T -. "approve the plan" .-> A
 ```
 
-Boussole itself never calls an AI and needs no account. A short guide, itself a Boussole subject
+Boussole itself never calls an AI and needs no account. A short guide, itself a Boussole course
 ([`guide/`](guide)), walks through all of this: it is where a new Boussole opens, and it stays
 apart on the home page to come back to.
 

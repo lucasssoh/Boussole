@@ -1,12 +1,12 @@
 /** The interface in English. French has the same keys (fr.ts). */
 export const EN = {
   app: {
-    home: 'Subjects',
+    home: 'Courses',
     unreachable: 'Boussole cannot reach its server. Run boussole open to start it.',
   },
   home: {
-    title: 'Your subjects',
-    empty: 'No subject yet. Run boussole open <folder> on a folder of course documents.',
+    title: 'Your courses',
+    empty: 'No course yet. Run boussole open <folder> on a folder of documents: lecture notes, a manual, documentation…',
     progress: '{{written}} of {{planned}} sessions written · {{finished}} finished',
     guideTitle: 'The guide',
     guideText: 'Read it again whenever you like: it does not count in your experience.',
@@ -82,7 +82,7 @@ export const EN = {
     solved: 'solved',
     reused: 'Asked again',
     minutes: '{{minutes}} min',
-    unreadable: 'The answer of this exercise cannot be read: run boussole validate on the subject.',
+    unreadable: 'The answer of this exercise cannot be read: run boussole validate on the course.',
     moveUp: 'Move up',
     moveDown: 'Move down',
     failed: 'The server refused: {{message}}',

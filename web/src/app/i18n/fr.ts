@@ -3,12 +3,12 @@ import { Translations } from './en';
 /** L'interface en français. */
 export const FR: Translations = {
   app: {
-    home: 'Matières',
+    home: 'Cours',
     unreachable: 'Boussole ne joint pas son serveur. Lance boussole open pour le démarrer.',
   },
   home: {
-    title: 'Tes matières',
-    empty: "Aucune matière pour l'instant. Lance boussole open <dossier> sur un dossier de supports de cours.",
+    title: 'Tes cours',
+    empty: "Aucun cours pour l'instant. Lance boussole open <dossier> sur un dossier de documents : supports de cours, manuel, documentation…",
     progress: '{{written}} séances écrites sur {{planned}} · {{finished}} terminées',
     guideTitle: 'Le guide',
     guideText: "À relire quand tu veux : il ne compte pas dans ton expérience.",
@@ -84,7 +84,7 @@ export const FR: Translations = {
     solved: 'réussi',
     reused: 'Déjà vu',
     minutes: '{{minutes}} min',
-    unreadable: 'La réponse de cet exercice est illisible : lance boussole validate sur la matière.',
+    unreadable: 'La réponse de cet exercice est illisible : lance boussole validate sur le cours.',
     moveUp: 'Monter',
     moveDown: 'Descendre',
     failed: 'Le serveur a refusé : {{message}}',

@@ -15,7 +15,7 @@
 - id: cursus
   term: Cursus
   definition: >
-    Le dossier `cursus/` d'une matière : le plan (`syllabus.yaml`), les séances, le lexique. Tout
+    Le dossier `cursus/` d'un cours : le plan (`syllabus.yaml`), les séances, le lexique. Tout
     ce que Boussole t'affiche vient de là.
 
 - id: plan

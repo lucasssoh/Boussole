@@ -44,7 +44,7 @@ l'agent.
 
 ## Ajouter un document {#ajouter}
 
-Ajoute simplement le fichier dans le dossier de la matière, puis lance ton
+Ajoute simplement le fichier dans le dossier du cours, puis lance ton
 :term[agent]{id=agent} comme d'habitude. Il commence toujours par le validateur : il voit le
 nouveau document, le lit, et l'intègre. Il **ajoute** des séances avec de nouveaux numéros, sans
 renuméroter ni réécrire ce que tu as déjà étudié, et te demande ton accord si le plan change.

@@ -60,7 +60,7 @@ flowchart LR
 ```
 
 Boussole does not write the course. Your :term[AI agent]{id=agent} writes it, following the
-skills. The course goes into the :term[course folder]{id=cursus}, and Boussole shows it.
+skills. The course goes into the :term[cursus folder]{id=cursus}, and Boussole shows it.
 
 ::::mcq{#g1-a1}
 Who writes the sessions and quizzes of your course?

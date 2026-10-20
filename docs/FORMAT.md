@@ -22,6 +22,8 @@ Principles:
 
 ## 1. Layout of a subject
 
+A *subject* is the format's name for one course of any kind: a school subject, but also a
+software manual, a company guide or a programming language. The interface calls it a course.
 A subject sits next to the learner's own documents. Its folder is declared in Boussole's
 configuration (see `ARCHITECTURE.md`, *Configuration*).
 

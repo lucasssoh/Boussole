@@ -42,7 +42,7 @@ The numbers follow the order of the text: new, changed, gone, twice.
 
 ## Adding a document {#adding}
 
-Just add the file to the subject folder, then start your :term[agent]{id=agent} as usual. It
+Just add the file to the folder of the course, then start your :term[agent]{id=agent} as usual. It
 always starts with the validator: it sees the new document, reads it and takes it in. It **adds**
 sessions with new numbers, never renumbering or rewriting what you have studied, and asks for
 your approval if the plan changes.

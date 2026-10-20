@@ -16,7 +16,7 @@
   term: Course folder
   aliases: [cursus]
   definition: >
-    The `cursus/` folder of a subject: the plan (`syllabus.yaml`), the sessions, the lexicon.
+    The `cursus/` folder of a course: the plan (`syllabus.yaml`), the sessions, the lexicon.
     Everything Boussole shows you comes from there.
 
 - id: plan

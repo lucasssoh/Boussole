@@ -10,10 +10,10 @@ chapters:
         goal: Dire qui fait quoi entre tes documents, ton agent et Boussole.
         file: g1-ce-qu-est-boussole.md
       - id: g2
-        title: Créer une matière
+        title: Créer un cours
         duration: 15
         goal: Transformer un dossier de documents en cours, de la commande à la première séance.
-        file: g2-creer-une-matiere.md
+        file: g2-creer-un-cours.md
       - id: g3
         title: Étudier une séance
         duration: 15

@@ -12,14 +12,15 @@ terms: [agent, plan, validateur]
 
 ## Préparer le dossier {#dossier}
 
-Une matière, c'est **un dossier** : tu y ranges tes documents comme tu veux, en sous-dossiers par
-cours ou par semaine si tu préfères. Puis, dans un terminal :
+Un cours, c'est **un dossier** : tu y ranges tes documents comme tu veux, en sous-dossiers si tu
+préfères. Pas forcément une matière d'école : un manuel de logiciel, un guide d'entreprise ou un
+langage de programmation font aussi de bons cours. Puis, dans un terminal :
 
 ```
 boussole init ~/cours/Optimisation
 ```
 
-Boussole y ajoute `subject.yaml` (le nom et la langue de la matière), le dossier `cursus/` qui
+Boussole y ajoute `subject.yaml` (le nom et la langue du cours), le dossier `cursus/` qui
 recevra le cours, et les instructions pour ton :term[agent]{id=agent} (`AGENTS.md`,
 `.boussole/`). Il ne touche jamais à tes documents.
 

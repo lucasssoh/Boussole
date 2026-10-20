@@ -45,7 +45,7 @@ public final class ServeCommand implements Callable<Integer> {
         new ServerPidFile(BoussolePaths.forCurrentUser().serverPid()).writeCurrent();
         spec.commandLine().getOut().println("Boussole runs on " + server.url() + " (Ctrl+C to stop).");
         if (read.subjects().isEmpty()) {
-            spec.commandLine().getOut().println("No subject yet: start with the guide to Boussole, then boussole open <folder> adds one.");
+            spec.commandLine().getOut().println("No course yet: start with the guide to Boussole, then boussole open <folder> adds one.");
         }
         return 0;
     }
