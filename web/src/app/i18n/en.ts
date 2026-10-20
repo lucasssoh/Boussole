@@ -2,8 +2,6 @@
 export const EN = {
   app: {
     home: 'Subjects',
-    theme: { auto: 'Theme: system', light: 'Theme: light', dark: 'Theme: dark' },
-    otherLanguage: 'Français',
     unreachable: 'Boussole cannot reach its server. Run boussole open to start it.',
   },
   home: {
@@ -83,6 +81,13 @@ export const EN = {
     moveUp: 'Move up',
     moveDown: 'Move down',
     failed: 'The server refused: {{message}}',
+  },
+  settings: {
+    title: 'Settings',
+    theme: 'Theme',
+    language: 'Language',
+    themes: { auto: 'System', light: 'Light', dark: 'Dark' },
+    languages: { en: 'English', fr: 'Français' },
   },
   stats: {
     level: 'Level {{level}}',

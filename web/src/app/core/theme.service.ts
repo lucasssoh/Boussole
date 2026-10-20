@@ -20,6 +20,10 @@ export class ThemeService {
     });
   }
 
+  set(choice: ThemeChoice): void {
+    this.choice.set(choice);
+  }
+
   next(): void {
     const order: ThemeChoice[] = ['auto', 'light', 'dark'];
     this.choice.set(order[(order.indexOf(this.choice()) + 1) % order.length]);

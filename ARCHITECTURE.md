@@ -217,7 +217,7 @@ rather than with the estimate alone.
 
 ```
 web/src/app/
-├── core/        BoussoleApi and the types of the API (api.ts), language, theme
+├── core/        BoussoleApi and the types of the API (api.ts), language, theme, settings drawer
 ├── i18n/        the interface in English and French, compiled in
 ├── learn/       subjects, course outline, session player, side panel (video, PDF)
 │   ├── blocks/     BlockListComponent and one component per kind of block
@@ -237,7 +237,8 @@ web/src/app/
   of the session drawn as a path (`SessionPathComponent`): a node per screen, winding down through
   a zone per part (warm-up, each notion, checkpoint, practice, each its own tint), opened by a
   sign on the line; the component computes every position, and zones and line are one SVG; the
-  path slides to keep the current screen in the middle, and is never scrolled by hand; green once seen, the colour of its verdict for a question, locked
+  path scrolls back to the current screen at each change of screen, and may be scrolled by hand,
+  its scroll bar on the left; green once seen, the colour of its verdict for a question, locked
   while a question before it waits for an answer; and the video or the document opened (the
   browser's own PDF viewer, at the page). The screen is in the address and, for the next
   visit, in this browser; `SessionRun` keeps the answers of the sitting. A lesson ends with

@@ -12,6 +12,7 @@ package "core" {
   class boussoleHeaderInterceptor <<interceptor>>
   class LanguageService <<service>>
   class ThemeService <<service>>
+  class SettingsDrawerComponent <<gear: theme, language>>
   class StatsService <<service>> {
     stats : Signal
   }

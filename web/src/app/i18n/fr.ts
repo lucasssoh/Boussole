@@ -4,8 +4,6 @@ import { Translations } from './en';
 export const FR: Translations = {
   app: {
     home: 'Matières',
-    theme: { auto: 'Thème : système', light: 'Thème : clair', dark: 'Thème : sombre' },
-    otherLanguage: 'English',
     unreachable: 'Boussole ne joint pas son serveur. Lance boussole open pour le démarrer.',
   },
   home: {
@@ -85,6 +83,13 @@ export const FR: Translations = {
     moveUp: 'Monter',
     moveDown: 'Descendre',
     failed: 'Le serveur a refusé : {{message}}',
+  },
+  settings: {
+    title: 'Réglages',
+    theme: 'Thème',
+    language: 'Langue',
+    themes: { auto: 'Système', light: 'Clair', dark: 'Sombre' },
+    languages: { en: 'English', fr: 'Français' },
   },
   stats: {
     level: 'Niveau {{level}}',

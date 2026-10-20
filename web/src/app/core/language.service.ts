@@ -27,10 +27,9 @@ export class LanguageService {
     }
   }
 
-  toggle(): void {
-    const next = this.current() === 'fr' ? 'en' : 'fr';
-    storeValue('language', next);
-    this.apply(next);
+  set(language: InterfaceLanguage): void {
+    storeValue('language', language);
+    this.apply(language);
   }
 
   private apply(language: InterfaceLanguage): void {

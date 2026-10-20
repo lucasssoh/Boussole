@@ -614,19 +614,19 @@ a.session-card:active {
 
 .player {
   display: grid;
-  grid-template-columns: 18rem minmax(0, 1fr);
+  grid-template-columns: 19rem minmax(0, 1fr);
   min-height: calc(100vh - 3.5rem);
 }
 
 .player.with-panel {
-  grid-template-columns: 16rem minmax(0, 1fr) minmax(22rem, 42vw);
+  grid-template-columns: 19rem minmax(0, 1fr) minmax(22rem, 38vw);
 }
 
 .session {
   padding: 1.5rem 1.5rem 0;
 }
 
-/* The path never scrolls by hand: it slides to keep the current screen in the middle. */
+/* The path follows the current screen, and the learner may scroll it too. */
 .session-path {
   position: sticky;
   top: 3.5rem;
@@ -637,11 +637,16 @@ a.session-card:active {
   overflow: hidden;
 }
 
+/* The path scrolls by hand too, its scroll bar on the left (direction: rtl), the track inside left to right. */
 .path-viewport {
   position: relative;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  direction: rtl;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--subject) 40%, var(--surface)) transparent;
   mask-image: linear-gradient(#000 calc(100% - 2.5rem), transparent);
 }
 
@@ -676,7 +681,7 @@ a.session-card:active {
 .path-track {
   position: relative;
   width: 288px;
-  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  direction: ltr;
 }
 
 .path-map {
@@ -1767,5 +1772,88 @@ select:disabled {
   *::after {
     animation: none !important;
     transition: none !important;
+  }
+}
+
+/* Settings: a drawer on the right, opened by the gear */
+
+.gear {
+  min-width: 44px;
+  color: var(--muted);
+}
+
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  background: rgb(0 0 0 / 0.25);
+  box-shadow: none;
+}
+
+.drawer-backdrop:active {
+  transform: none;
+}
+
+.settings-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 51;
+  display: grid;
+  align-content: start;
+  gap: 1.25rem;
+  width: min(20rem, 90vw);
+  padding: 1rem 1.25rem;
+  background: var(--surface);
+  border-left: 2px solid var(--line);
+  box-shadow: -8px 0 24px rgb(0 0 0 / 0.18);
+  animation: drawer-in 0.2s ease-out;
+}
+
+.drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.drawer-head h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.settings-drawer fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.settings-drawer legend {
+  margin-bottom: 0.5rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.choice-row {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 0.5rem;
+}
+
+.choice-row button {
+  padding: 0.4rem 0.5rem;
+  font-size: 0.92rem;
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
   }
 }

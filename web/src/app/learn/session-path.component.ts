@@ -6,10 +6,12 @@ import {
   Injector,
   afterNextRender,
   computed,
+  effect,
   inject,
   input,
   output,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -82,8 +84,8 @@ const FIRST_NODE = 52;
         · {{ 'session.spent' | transloco: { minutes: spentMinutes() } }}
       </p>
     </div>
-    <div class="path-viewport" #viewport [class.moved]="offset() > 0">
-    <div class="path-track" [style.height.px]="layout().height" [style.transform]="'translateY(' + -offset() + 'px)'">
+    <div class="path-viewport" #viewport [class.moved]="scrolled()" (scroll)="onScroll()">
+    <div class="path-track" [style.height.px]="layout().height">
       <svg class="path-map" [attr.width]="width" [attr.height]="layout().height" aria-hidden="true">
         @for (zone of layout().zones; track $index) {
           <rect [attr.class]="'zone ' + zone.kind" [attr.x]="inset" [attr.y]="zone.top" [attr.width]="width - 2 * inset" [attr.height]="zone.height" rx="28"></rect>
@@ -226,11 +228,14 @@ export class SessionPathComponent {
   private readonly viewport = viewChild.required<ElementRef<HTMLElement>>('viewport');
   private readonly viewportHeight = signal(0);
 
+  /** Whether the path is scrolled down: the top then fades. */
+  protected readonly scrolled = signal(false);
+
   /**
-   * How far the path is moved up: the current node stays in the middle of the column, and the
-   * path follows it on each Next or Previous. The learner never scrolls it by hand.
+   * Where the path scrolls to keep the current node in the middle of the column. The learner may
+   * scroll it by hand; on the next change of screen it comes back to the current node.
    */
-  protected readonly offset = computed(() => {
+  private readonly target = computed(() => {
     const layout = this.layout();
     const height = this.viewportHeight();
     const node = layout.nodes.find((found) => found.index === this.current());
@@ -247,6 +252,14 @@ export class SessionPathComponent {
       observer.observe(viewport);
       inject(DestroyRef).onDestroy(() => observer.disconnect());
     }, { injector: this.injector });
+    effect(() => {
+      const top = this.target();
+      untracked(() => this.viewport().nativeElement.scrollTo({ top, behavior: 'smooth' }));
+    });
+  }
+
+  protected onScroll(): void {
+    this.scrolled.set(this.viewport().nativeElement.scrollTop > 0);
   }
 
   private state(screen: SessionScreen, index: number): NodeState {

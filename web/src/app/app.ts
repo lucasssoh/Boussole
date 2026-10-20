@@ -3,12 +3,11 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ServerSettingsService } from './core/server-settings.service';
 import { StatsService } from './core/stats.service';
-import { LanguageService } from './core/language.service';
-import { ThemeService } from './core/theme.service';
+import { SettingsDrawerComponent } from './core/settings-drawer.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, TranslocoPipe],
+  imports: [RouterOutlet, RouterLink, TranslocoPipe, SettingsDrawerComponent],
   template: `
     <header class="top-bar">
       <a class="brand" routerLink="/">
@@ -31,16 +30,13 @@ import { ThemeService } from './core/theme.service';
         </div>
       }
       <nav class="top-actions">
-        <button type="button" class="quiet" (click)="language.toggle()">{{ 'app.otherLanguage' | transloco }}</button>
-        <button type="button" class="quiet" (click)="theme.next()">{{ 'app.theme.' + theme.choice() | transloco }}</button>
+        <app-settings-drawer />
       </nav>
     </header>
     <router-outlet />
   `,
 })
 export class App {
-  protected readonly theme = inject(ThemeService);
-  protected readonly language = inject(LanguageService);
   protected readonly stats = inject(StatsService);
 
   constructor() {
