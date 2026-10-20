@@ -3,17 +3,17 @@ import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { RichTextComponent } from '../shared/rich-text.component';
 import { subjectColor } from '../shared/subject-color';
-import { CourseOutlineComponent } from './course-outline.component';
+import { SessionGridComponent } from './session-grid.component';
 import { LearnFacade } from './learn.facade';
 
 /** A subject: its plan, and its lexicon. */
 @Component({
   selector: 'app-course-page',
-  imports: [RichTextComponent, RouterLink, CourseOutlineComponent, TranslocoPipe],
+  imports: [RichTextComponent, RouterLink, SessionGridComponent, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'subject-scope', '[style.--subject]': 'color()' },
   template: `
-    <main class="page narrow">
+    <main class="page wide">
       @if (learn.unreachable()) {
         <p class="frame warning">{{ 'app.unreachable' | transloco }}</p>
       }
@@ -34,7 +34,7 @@ import { LearnFacade } from './learn.facade';
               <p class="note">{{ 'course.allDone' | transloco }}</p>
             }
             <h2>{{ 'course.sessions' | transloco }}</h2>
-            <app-course-outline [course]="course" [detailed]="true" />
+            <app-session-grid [course]="course" [resume]="course.resume?.id ?? null" />
             @if (course.lexicon.length > 0) {
               <details class="lexicon">
                 <summary>{{ 'course.lexicon' | transloco }} ({{ course.lexicon.length }})</summary>

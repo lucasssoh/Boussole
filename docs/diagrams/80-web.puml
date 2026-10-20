@@ -39,7 +39,7 @@ package "learn" {
   }
   class "sessionPlan()" as SessionPlan <<start, explanation, example, question…, end>>
   class SessionPathComponent <<the session as a path of nodes>>
-  class CourseOutlineComponent <<plan of a subject>>
+  class SessionGridComponent <<the sessions as a grid, by chapter>>
   class SidePanelComponent <<video or PDF>>
 }
 

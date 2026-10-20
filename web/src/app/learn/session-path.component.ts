@@ -254,8 +254,10 @@ export class SessionPathComponent {
     if (index > this.reachable()) {
       return 'locked';
     }
-    const verdict = screen.question ? this.run.verdicts().get(screen.question.id) : undefined;
-    return verdict ?? (this.run.seen().has(index) ? 'done' : 'open');
+    if (screen.question) {
+      return this.run.verdicts().get(screen.question.id) ?? earlierVerdict(screen) ?? 'open';
+    }
+    return this.run.seen().has(index) ? 'done' : 'open';
   }
 
   private partTitle(plan: SessionPlan, part: number): string {
@@ -267,6 +269,12 @@ export class SessionPathComponent {
     const key = screen.kind === 'question' ? (screen.question?.type === 'mcq' ? 'mcq' : 'exercise') : screen.kind;
     return this.transloco.translate(`screen.${key}`);
   }
+}
+
+/** The verdict of a question answered in an earlier sitting, as the server keeps it. */
+function earlierVerdict(screen: SessionScreen): Verdict | undefined {
+  const question = screen.blocks.find((block) => (block.type === 'mcq' || block.type === 'exercise') && block.id === screen.question?.id);
+  return question?.type === 'mcq' || question?.type === 'exercise' ? (question.progress.lastVerdict ?? undefined) : undefined;
 }
 
 /** A smooth line through the given points, top to bottom. */

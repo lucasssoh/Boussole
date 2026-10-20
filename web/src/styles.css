@@ -37,13 +37,14 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
-    --bg: #14122b;
-    --surface: #1e1b3d;
-    --surface-2: #262252;
-    --text: #ecebff;
-    --muted: #a7a2d0;
-    --line: #2f2a5c;
+    --bg: #0f1c1f;
+    --surface: #172a2e;
+    --surface-2: #1e353a;
+    --text: #e3f2ee;
+    --muted: #94b3ac;
+    --line: #29454b;
     --brand: #63e6be;
+    --on-subject: #ffffff;
     --correct: #8ce99a;
     --correct-strong: #51cf66;
     --correct-bg: rgb(81 207 102 / 0.14);
@@ -62,13 +63,14 @@
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #14122b;
-  --surface: #1e1b3d;
-  --surface-2: #262252;
-  --text: #ecebff;
-  --muted: #a7a2d0;
-  --line: #2f2a5c;
+  --bg: #0f1c1f;
+  --surface: #172a2e;
+  --surface-2: #1e353a;
+  --text: #e3f2ee;
+  --muted: #94b3ac;
+  --line: #29454b;
   --brand: #63e6be;
+  --on-subject: #ffffff;
   --correct: #8ce99a;
   --correct-strong: #51cf66;
   --correct-bg: rgb(81 207 102 / 0.14);
@@ -97,20 +99,24 @@
 .subject-scope {
   --subject-soft: color-mix(in srgb, var(--subject) 14%, var(--surface));
   --subject-deep: color-mix(in srgb, var(--subject) 72%, black);
+  /* The subject colour for text and icons: on a dark ground it is lightened to stay readable. */
+  --subject-ink: var(--subject);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']),
   :root:not([data-theme='light']) .subject-scope {
-    --subject-soft: color-mix(in srgb, var(--subject) 24%, var(--surface));
-    --subject-deep: color-mix(in srgb, var(--subject) 55%, black);
+    --subject-soft: color-mix(in srgb, var(--subject) 20%, var(--surface));
+    --subject-deep: color-mix(in srgb, var(--subject) 50%, black);
+    --subject-ink: color-mix(in srgb, var(--subject) 45%, white);
   }
 }
 
 :root[data-theme='dark'],
 :root[data-theme='dark'] .subject-scope {
-  --subject-soft: color-mix(in srgb, var(--subject) 24%, var(--surface));
-  --subject-deep: color-mix(in srgb, var(--subject) 55%, black);
+  --subject-soft: color-mix(in srgb, var(--subject) 20%, var(--surface));
+  --subject-deep: color-mix(in srgb, var(--subject) 50%, black);
+  --subject-ink: color-mix(in srgb, var(--subject) 45%, white);
 }
 
 body {
@@ -121,7 +127,7 @@ body {
 }
 
 a {
-  color: var(--subject);
+  color: var(--subject-ink);
   font-weight: 700;
 }
 
@@ -183,7 +189,7 @@ a.button:active {
 
 button.primary,
 a.button.primary {
-  border-color: var(--subject);
+  border-color: var(--subject-ink);
   background: var(--subject);
   box-shadow: 0 5px 0 var(--subject-deep);
   color: var(--on-subject);
@@ -202,8 +208,11 @@ button.quiet {
   box-shadow: none;
 }
 
+/* Relief means "you can press this": what cannot be pressed (now) is flat. */
 button:disabled {
   opacity: 0.45;
+  box-shadow: none;
+  transform: translateY(4px);
   cursor: default;
 }
 
@@ -354,7 +363,7 @@ a:focus-visible {
 
 .eyebrow {
   margin: 0;
-  color: var(--subject);
+  color: var(--subject-ink);
   font-size: 0.8rem;
   font-weight: 900;
   letter-spacing: 0.07em;
@@ -391,8 +400,7 @@ a:focus-visible {
   padding: 1.5rem 1.75rem;
   border: 3px solid var(--subject);
   border-radius: 24px;
-  background: var(--surface);
-  box-shadow: 0 6px 0 var(--subject-deep);
+  background: var(--subject-soft);
 }
 
 .resume-card h1 {
@@ -432,7 +440,7 @@ a:focus-visible {
 }
 
 .card:hover {
-  border-color: var(--subject);
+  border-color: var(--subject-ink);
   box-shadow: 0 6px 0 var(--subject-deep);
 }
 
@@ -462,56 +470,125 @@ a:focus-visible {
   font-size: 0.95rem;
 }
 
-/* Subject page */
+/* Subject page and home: the sessions as a grid */
 
-.outline-chapter h3 {
-  margin: 1.5rem 0 0.5rem;
+.wide {
+  max-width: 72rem;
+  margin: 0 auto;
 }
 
-.outline-chapter ol {
+.grid-chapter-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1.75rem 0 0.75rem;
+}
+
+.grid-chapter-head h3 {
+  margin: 0;
+}
+
+.grid-count {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.session-grid {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 0.4rem;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 1rem;
 }
 
-.outline-chapter li {
-  padding: 0.6rem 0.9rem;
-  border: 2px solid var(--line);
-  border-radius: 14px;
-  background: var(--surface);
-}
-
-.outline-chapter li a,
-.outline-chapter .unwritten {
+.session-grid li {
   display: flex;
-  gap: 0.6rem;
+}
+
+.session-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 1rem 1.1rem 1.1rem;
+  border: 3px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
   color: var(--text);
   text-decoration: none;
-  font-weight: 800;
+  font-weight: 600;
 }
 
-.outline-chapter .unwritten {
-  color: var(--muted);
+a.session-card {
+  box-shadow: 0 5px 0 var(--line);
+  transition: transform 0.08s, box-shadow 0.08s;
 }
 
-.outline-chapter li.finished {
+a.session-card:hover {
+  border-color: color-mix(in srgb, var(--subject) 60%, var(--line));
+}
+
+a.session-card:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--line);
+}
+
+.session-card.finished {
   border-color: var(--correct-strong);
   background: var(--correct-bg);
+  box-shadow: 0 5px 0 var(--correct);
 }
 
-.outline-chapter li.finished .outline-mark {
-  color: var(--correct);
+.session-card.resume {
+  border-color: var(--subject-ink);
+  background: var(--subject-soft);
+  box-shadow: 0 5px 0 var(--subject-deep);
 }
 
-.outline-meta,
-.outline-goal {
-  display: block;
-  margin-left: 1.6rem;
+.session-card.unwritten {
+  border-style: dashed;
+  background: transparent;
   color: var(--muted);
-  font-size: 0.9rem;
-  font-weight: 600;
+}
+
+.session-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.session-mark {
+  color: var(--correct);
+  font-weight: 900;
+}
+
+.session-card.resume .session-mark {
+  color: var(--subject-ink);
+}
+
+.session-time {
+  margin-left: auto;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.session-card-title {
+  font-weight: 900;
+  font-size: 1.02rem;
+  line-height: 1.3;
+}
+
+.session-card-goal {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.88rem;
 }
 
 .lexicon {
@@ -616,7 +693,7 @@ a:focus-visible {
 .zone.notion,
 .path-sign.notion {
   --zone: var(--subject-soft);
-  --sign: var(--subject);
+  --sign: var(--subject-ink);
 }
 
 .zone.notion-alt,
@@ -683,7 +760,6 @@ a:focus-visible {
   border: 3px solid var(--sign);
   border-radius: 999px;
   background: var(--surface);
-  box-shadow: 0 4px 0 var(--sign);
   color: var(--sign);
   font-size: 0.85rem;
   font-weight: 900;
@@ -737,6 +813,7 @@ a:focus-visible {
 
 .path-node:disabled {
   opacity: 1;
+  transform: none;
 }
 
 .path-dot {
@@ -751,7 +828,7 @@ a:focus-visible {
   border: 3px solid color-mix(in srgb, var(--subject) 45%, var(--surface));
   background: var(--surface);
   box-shadow: 0 5px 0 color-mix(in srgb, var(--subject) 45%, var(--surface));
-  color: var(--subject);
+  color: var(--subject-ink);
   font-weight: 900;
   font-size: 1.3rem;
   transform: translate(-50%, -50%);
@@ -806,14 +883,14 @@ a:focus-visible {
 .path-node.current .path-dot {
   width: 66px;
   height: 66px;
-  border-color: var(--subject);
+  border-color: var(--subject-ink);
   background: var(--subject);
   box-shadow: 0 6px 0 var(--subject-deep), 0 0 0 8px color-mix(in srgb, var(--subject) 22%, transparent);
   color: var(--on-subject);
 }
 
 .path-node.current .path-label {
-  color: var(--subject);
+  color: var(--subject-ink);
 }
 
 .path-node.current.label-right .path-label {
@@ -826,7 +903,8 @@ a:focus-visible {
 
 .path-node.locked .path-dot {
   border-color: var(--line);
-  box-shadow: 0 5px 0 var(--line);
+  border-style: dashed;
+  box-shadow: none;
   color: var(--muted);
 }
 
@@ -865,7 +943,7 @@ a:focus-visible {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--subject);
+  color: var(--subject-ink);
 }
 
 .screen-count {
@@ -1008,12 +1086,12 @@ a:focus-visible {
 }
 
 .bilan-stat.xp {
-  border-color: var(--subject);
+  border-color: var(--subject-ink);
   background: var(--subject-soft);
 }
 
 .bilan-stat.xp strong {
-  color: var(--subject);
+  color: var(--subject-ink);
 }
 
 .bilan-stat.right strong {
@@ -1332,7 +1410,7 @@ a:focus-visible {
 }
 
 .media-card.active {
-  border-color: var(--subject);
+  border-color: var(--subject-ink);
   box-shadow: 0 4px 0 var(--subject-deep);
 }
 
@@ -1353,7 +1431,7 @@ a:focus-visible {
 }
 
 .media-action {
-  color: var(--subject);
+  color: var(--subject-ink);
   font-weight: 900;
 }
 
@@ -1422,11 +1500,11 @@ a:focus-visible {
 .choices input {
   width: 1.2rem;
   height: 1.2rem;
-  accent-color: var(--subject);
+  accent-color: var(--subject-ink);
 }
 
 .choices li.picked:not(.correct):not(.wrong) {
-  border-color: var(--subject);
+  border-color: var(--subject-ink);
   background: var(--subject-soft);
   box-shadow: 0 5px 0 var(--subject);
 }
@@ -1434,19 +1512,27 @@ a:focus-visible {
 .choices li.correct {
   border-color: var(--correct-strong);
   background: var(--correct-bg);
-  box-shadow: 0 5px 0 var(--correct-strong);
   animation: pop 0.3s ease-out;
 }
 
 .choices li.wrong {
   border-color: var(--wrong-strong);
   background: var(--wrong-bg);
-  box-shadow: 0 5px 0 var(--wrong-strong);
   animation: shake 0.35s ease-in-out;
 }
 
 .question.corrected .choices li:not(.correct):not(.wrong) {
   opacity: 0.55;
+}
+
+/* Answered: the choices can no longer be pressed, so they lose their relief. */
+.question.corrected .choices li,
+.choices li:has(input:disabled) {
+  box-shadow: none;
+}
+
+.choices li:has(input:disabled) label {
+  cursor: default;
 }
 
 .feedback {
@@ -1649,7 +1735,7 @@ select:disabled {
   padding: 0.15rem 0.75rem;
   border-radius: 999px;
   background: var(--surface);
-  color: var(--subject);
+  color: var(--subject-ink);
   font-weight: 900;
   font-size: 0.9rem;
 }

@@ -1,5 +1,6 @@
 import { Injectable, OnDestroy, computed, signal } from '@angular/core';
 import { SessionKind, Verdict } from '../core/api';
+import { storeValue, storedText } from '../core/local-preferences';
 import { QuestionState } from './question/question-state';
 
 /**
@@ -29,8 +30,9 @@ export class SessionRun implements OnDestroy {
   readonly verdicts = this.firstVerdicts.asReadonly();
   /** The experience earned in this sitting. */
   readonly xpEarned = signal(0);
-  /** The screens seen in this sitting, by index. */
+  /** The screens seen, by index: in this sitting, and in earlier ones on this browser. */
   readonly seen = signal<ReadonlySet<number>>(new Set());
+  private seenKey: string | null = null;
   /** An exam shows its corrections when the time is up or the learner ends it; other sessions, after each answer. */
   readonly correctionsOpen = computed(() => this.kind() !== 'exam' || this.timeIsUp() || this.ended());
   /** An exam gives no hint. */
@@ -38,12 +40,13 @@ export class SessionRun implements OnDestroy {
   readonly rightFirstTime = computed(() => [...this.firstVerdicts().values()].filter((verdict) => verdict === 'correct').length);
 
   /** A lesson starts at once; a review or an exam when the learner says so, with its countdown. */
-  begin(kind: SessionKind, minutes: number): void {
+  begin(kind: SessionKind, minutes: number, subject: string, session: string): void {
+    this.seenKey = `seen.${subject}.${session}`;
     this.kind.set(kind);
     this.spent.set(0);
     this.firstVerdicts.set(new Map());
     this.questions.clear();
-    this.seen.set(new Set());
+    this.seen.set(new Set(storedNumbers(this.seenKey)));
     this.xpEarned.set(0);
     this.ended.set(false);
     this.allowedSeconds.set(kind === 'lesson' ? null : minutes * 60);
@@ -53,6 +56,9 @@ export class SessionRun implements OnDestroy {
   see(screen: number): void {
     if (!this.seen().has(screen)) {
       this.seen.set(new Set(this.seen()).add(screen));
+      if (this.seenKey) {
+        storeValue(this.seenKey, [...this.seen()].join(','));
+      }
     }
   }
 
@@ -94,4 +100,11 @@ export class SessionRun implements OnDestroy {
       this.spent.update((seconds) => seconds + 1);
     }
   }
+}
+
+function storedNumbers(key: string): number[] {
+  return storedText(key)
+    .split(',')
+    .map(Number)
+    .filter((value) => Number.isInteger(value) && value >= 0);
 }

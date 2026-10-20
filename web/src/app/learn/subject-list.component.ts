@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, untracked } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { CourseSummary } from '../core/api';
 import { RichTextComponent } from '../shared/rich-text.component';
 import { subjectColor } from '../shared/subject-color';
 import { LearnFacade } from './learn.facade';
+import { SessionGridComponent } from './session-grid.component';
 
 /**
  * The home page: where to resume, on top (the session in progress in the subject studied last,
@@ -12,10 +13,10 @@ import { LearnFacade } from './learn.facade';
  */
 @Component({
   selector: 'app-subject-list',
-  imports: [RouterLink, TranslocoPipe, RichTextComponent],
+  imports: [RouterLink, TranslocoPipe, RichTextComponent, SessionGridComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <main class="page narrow">
+    <main class="page wide">
       @if (learn.unreachable()) {
         <p class="frame warning">{{ 'app.unreachable' | transloco }}</p>
       }
@@ -32,6 +33,13 @@ import { LearnFacade } from './learn.facade';
               {{ (subject.lastStudied ? 'course.resume' : 'course.start') | transloco }} →
             </a>
           </section>
+        }
+      }
+      @if (resumeChapter(); as chapter) {
+        @if (learn.course(); as course) {
+          <div class="subject-scope" [style.--subject]="color(course.id)" [attr.lang]="course.lang">
+            <app-session-grid [course]="course" [chapters]="[chapter]" [resume]="course.resume?.id ?? null" />
+          </div>
         }
       }
       @if (learn.subjects(); as subjects) {
@@ -70,7 +78,23 @@ export class SubjectListComponent {
 
   protected readonly color = subjectColor;
 
+  /** The chapter of the session to resume, whose sessions show under it. */
+  protected readonly resumeChapter = computed(() => {
+    const course = this.learn.course();
+    const subject = this.resume();
+    if (!course || !subject || course.id !== subject.id || !course.resume) {
+      return undefined;
+    }
+    return course.chapters.find((chapter) => chapter.sessions.some((entry) => entry.id === course.resume!.id));
+  });
+
   constructor() {
     void this.learn.loadSubjects().catch(() => undefined);
+    effect(() => {
+      const subject = this.resume();
+      if (subject) {
+        untracked(() => void this.learn.openCourse(subject.id).catch(() => undefined));
+      }
+    });
   }
 }

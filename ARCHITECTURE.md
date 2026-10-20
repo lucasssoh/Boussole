@@ -227,7 +227,9 @@ web/src/app/
 ```
 
 - **The home page** puts on top the session to resume (in the subject studied last: the session
-  answered in last, unless finished, else the next one), then every subject with its progress.
+  answered in last, unless finished, else the next one), the sessions of its chapter, then every
+  subject with its progress. A subject's page shows all its sessions as a grid, chapter by
+  chapter (`SessionGridComponent`).
 - **The session player** shows **one screen at a time**, never the whole session
   (`sessionPlan()`): the goal, then within each part (warm-up, each notion, checkpoint,
   practice) the explanation, the worked example and each question on a screen of their own,
@@ -256,7 +258,7 @@ web/src/app/
 - **Translations** with Transloco, so the language changes without reloading. The interface is
   in English and French (the learner's choice, else `language:` of `config.yaml`, else the
   browser's); course content keeps its own language.
-- **The look**: rounded, colourful, buttons in relief, the Nunito font bundled with the
+- **The look**: rounded, colourful; relief marks what can be pressed, and only that, the Nunito font bundled with the
   interface. Each subject has its colour (`subjectColor()`), set as `--subject` on the page.
   The header shows the level, the experience and the streak (`StatsService`); each answer
   shows the experience it earned.

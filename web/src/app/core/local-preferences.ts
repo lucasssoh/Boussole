@@ -9,6 +9,15 @@ export function storedValue<T extends string>(key: string, allowed: readonly T[]
   }
 }
 
+/** Free text kept in this browser, empty when there is none. */
+export function storedText(key: string): string {
+  try {
+    return localStorage.getItem(`boussole.${key}`) ?? '';
+  } catch {
+    return '';
+  }
+}
+
 export function storeValue(key: string, value: string): void {
   try {
     localStorage.setItem(`boussole.${key}`, value);

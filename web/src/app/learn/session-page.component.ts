@@ -208,7 +208,7 @@ export class SessionPageComponent {
           () => {
             const opened = this.learn.session();
             if (opened) {
-              this.run.begin(opened.kind, opened.duration);
+              this.run.begin(opened.kind, opened.duration, opened.subject, opened.id);
               this.resumeStoredScreen(opened.kind === 'lesson');
             }
           },
