@@ -5,6 +5,8 @@ description: Write one session of a Boussole course from the approved syllabus a
 
 # Write one session
 
+For lessons (`kind: lesson`, the default). Reviews and exams are built with `exam-build`.
+
 Prerequisites: `cursus/syllabus.yaml` has `status: approved`. Write the sessions **in the order of
 the syllabus**: each warmup asks about the previous session of the same subject.
 

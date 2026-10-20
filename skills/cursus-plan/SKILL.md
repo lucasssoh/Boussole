@@ -38,7 +38,12 @@ write sessions here: the learner approves the plan first.
   never have studied (a proof technique, a probability law, a programming idiom), plan a
   session for it before the first one that needs it, in the chapter where it is first needed.
 - **Tutorial sheets and past exams are not chapters.** Their exercises go into the sessions of
-  the notions they train; a final chapter may gather exam-style practice.
+  the notions they train.
+- **Plan timed sessions too** (`kind`, see `.boussole/FORMAT.md` §3): a **review**
+  (`kind: review`, 10 to 20 minutes) at the end of each chapter, and **mock exams**
+  (`kind: exam`) before each real exam, as long as the real one (from the past exams, or ask the
+  learner). Their `duration` is the time allowed, not an estimate. They are built with the
+  `exam-build` skill.
 - A project brief gets its own chapter, cut into sessions by the steps of the project.
 
 ## 3. Write the syllabus
