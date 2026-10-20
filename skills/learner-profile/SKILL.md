@@ -31,7 +31,7 @@ answer instead ("Other"): use it as the learner's own words.
 | Header | Question | Options (default first) |
 |---|---|---|
 | Goal | What do you aim for in this subject? | A good grade · Pass · Among the best · Understand deeply |
-| Length | How long should a study session be? | 60 min · 45 min · 30 min · 90 min |
+| Size | How much should a session hold, timed at a normal pace? (You may go faster or slower; a session ends with its closing, not with a timer.) | About 60 min · About 45 min · About 30 min · About 90 min |
 | Explaining | How should notions be explained? | Short, to the point · Detailed, step by step |
 | Order | For each notion, what comes first? | A worked example, then I try · I try first, then the example |
 
@@ -54,7 +54,9 @@ can answer in one line (`1: … 2b 3c …`) or reply "defaults":
 
 1. **What have you studied so far** in this field, and what feels shaky? (free answer)
 2. **Your goal**: a) pass b) a good grade *(default)* c) among the best d) understand deeply
-3. **Length of a session**: a) 30 min b) 45 min c) 60 min *(default)* d) 90 min
+3. **Size of a session**, timed at a normal pace (you may go faster or slower; a session ends
+   with its closing, not with a timer): a) about 30 min b) about 45 min c) about 60 min *(default)*
+   d) about 90 min
 4. **Explanations**: a) short, to the point *(default)* b) detailed, step by step
 5. **For each notion**: a) see a worked example, then try *(default)* b) try first, then the example
 6. **A short quiz right after each point**: a) yes b) no *(default)*
@@ -80,7 +82,7 @@ notes: >
   Retains better with a quick quiz after each point.
 ```
 
-Map each answer to its field: goal → `goal` (`good`, `pass`, `top`, `understand`), length →
+Map each answer to its field: goal → `goal` (`good`, `pass`, `top`, `understand`), size →
 `session_minutes`, explanations → `explanations`, order → `order`, quick quiz → `quick_check`,
 closing → `closing` (`quiz`, `exercise`, `both`), videos → `videos` (`some`, `none`, `many`); the
 learner's starting point and own words → `background` and `notes`. Then run

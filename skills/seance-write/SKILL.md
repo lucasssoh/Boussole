@@ -52,8 +52,10 @@ How `learner.yaml` changes this shape (without the file, use the defaults):
 | `background` | text | what to recall or explain from scratch, and what can be taken as known |
 | `videos` | `none` | no video; `many`: one per notion where a good one exists |
 
-Keep the session within its planned duration: count about 15 minutes per notion, 5 for the
-warmup and 10 for the closing.
+Size the content to the planned `duration`, timed at a normal pace: about 15 minutes per notion,
+5 for the warmup and 10 for the closing. It is an estimate, not a limit: **never cut a notion or
+the closing to fit a time**; if the content clearly exceeds the duration, tell the learner the
+session should be split, and propose how.
 
 ## Writing rules
 

@@ -100,7 +100,7 @@ chapters:
 | `chapters[].sources` | no | Files of `sources/` this chapter is built from. |
 | `sessions[].id` | yes | Slug, unique in the chapter. |
 | `sessions[].title` | yes | Display title. The session file has no `#` title of its own. |
-| `sessions[].duration` | yes | Planned minutes, 15 to 120. |
+| `sessions[].duration` | yes | Estimated minutes of work at a normal pace, 15 to 120. An estimate of the content, not a time limit: a session ends with its closing. |
 | `sessions[].goal` | yes | One sentence: what the learner can do at the end. |
 | `sessions[].file` | yes | File in the chapter folder. It may not exist yet while the course is being written. |
 
@@ -366,7 +366,7 @@ notes: >
 |---|---|---|---|
 | `background` | text | empty | What the learner has studied, and what feels shaky. |
 | `goal` | `pass`, `good`, `top`, `understand` | `good` | How much practice, and how close to the exam. |
-| `session_minutes` | 15 to 120 | `60` | Usual length of a session when planning. |
+| `session_minutes` | 15 to 120 | `60` | Usual size of a session when planning, timed at a normal pace. |
 | `explanations` | `concise`, `detailed` | `concise` | How much an explanation spells out. |
 | `order` | `example-first`, `try-first` | `example-first` | Whether a notion's exercise comes after its example, or before. |
 | `quick_check` | `true`, `false` | `false` | A short `qcm` right after each notion's explanation, before its example. |

@@ -27,9 +27,11 @@ write sessions here: the learner approves the plan first.
 
 - **Chapters follow the teacher's order**, not your own idea of the topic. One chapter is
   usually one part of the lecture notes.
-- **A session lasts about `session_minutes`** of `learner.yaml` (60 by default) of active work
-  for someone who discovers the topic: reading, one worked example per notion, then exercises.
-  Count about 15 minutes per notion. When in doubt, cut smaller.
+- **A session holds about `session_minutes`** of `learner.yaml` (60 by default) of active work,
+  **timed at a normal pace** for someone who discovers the topic: reading, one worked example per
+  notion, then exercises. Count about 15 minutes per notion. It is an estimate of content, not a
+  time limit: the learner goes faster or slower depending on the day, and the session ends with
+  its closing. When in doubt, cut smaller.
 - **Each session has one goal**, a sentence starting with a verb, that the learner can check:
   "Compute the network address of a host from its mask", not "Understand IPv4".
 - **Do not assume earlier courses are known.** If a document relies on a notion the learner may
@@ -70,7 +72,7 @@ Then run `boussole validate .` and fix every error (see the `cursus-fix` skill).
 
 ## 4. Stop and present
 
-Show the learner a table: chapter, session, duration, goal, and the pages of the sources each
+Show the learner a table: chapter, session, estimated duration, goal, and the pages of the sources each
 session draws on. Give the total number of sessions and hours. Point out what you were unsure
 of: notions you added because a prerequisite seemed missing, parts of the documents you left
 out and why.

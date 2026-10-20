@@ -171,6 +171,11 @@ ScheduledEvent ─► ReminderPolicy ─► ReminderPlanner ─► ReminderSched
   and an *Open* action running `boussole open <link>`.
 - Without a supported scheduler, reminders are shown only while the interface is open.
 
+**Durations are estimates.** The `duration` of a session is its content timed at a normal pace;
+a session ends with its closing, never with a timer. The player records the time actually spent,
+and the planner (V2) plans with the learner's measured pace, which varies from day to day,
+rather than with the estimate alone.
+
 ---
 
 ## 5. Interface (`web/`)
