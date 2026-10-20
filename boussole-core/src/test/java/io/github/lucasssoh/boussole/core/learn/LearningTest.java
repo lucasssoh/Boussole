@@ -12,6 +12,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 
@@ -26,8 +27,8 @@ class LearningTest {
 
     @Test
     void an_attempt_is_checked_and_recorded() {
-        AttemptOutcome first = new SubmitAttempt(content, progress, clock).submit(MAC_BITS, new ValueResponse("6"));
-        AttemptOutcome second = new SubmitAttempt(content, progress, clock).submit(MAC_BITS, new ValueResponse("48"));
+        AttemptOutcome first = new SubmitAttempt(content, progress, clock).submit(MAC_BITS, new ValueResponse("6"), Optional.empty());
+        AttemptOutcome second = new SubmitAttempt(content, progress, clock).submit(MAC_BITS, new ValueResponse("48"), Optional.empty());
 
         assertThat(first.result().verdict()).isEqualTo(Verdict.WRONG);
         assertThat(second.progress().attempts()).isEqualTo(2);
@@ -40,7 +41,7 @@ class LearningTest {
 
         assertThatThrownBy(() -> solution.reveal(MAC_BITS)).isInstanceOf(LearningRuleException.class);
 
-        new SubmitAttempt(content, progress, clock).submit(MAC_BITS, new ValueResponse("6"));
+        new SubmitAttempt(content, progress, clock).submit(MAC_BITS, new ValueResponse("6"), Optional.empty());
         assertThat(solution.reveal(MAC_BITS).solution()).isPresent();
     }
 
@@ -62,7 +63,7 @@ class LearningTest {
 
     @Test
     void a_session_brings_the_exercises_it_asks_again() {
-        new SubmitAttempt(content, progress, clock).submit(new ExerciseKey("reseaux", "s11-a2"), new ChoicesResponse(Set.of(1)));
+        new SubmitAttempt(content, progress, clock).submit(new ExerciseKey("reseaux", "s11-a2"), new ChoicesResponse(Set.of(1)), Optional.empty());
 
         OpenedSession review = new OpenSession(content, progress).open("reseaux", "r19");
 
@@ -78,9 +79,29 @@ class LearningTest {
     }
 
     @Test
+    void the_course_resumes_in_the_session_the_learner_answered_in_last() {
+        assertThat(new OpenCourse(content, progress).open("reseaux").resume()).contains("s11");
+
+        new SubmitAttempt(content, progress, clock)
+                .submit(new ExerciseKey("reseaux", "s11-a2"), new ChoicesResponse(Set.of(1)), Optional.of("r19"));
+        CourseOverview overview = new OpenCourse(content, progress).open("reseaux");
+
+        assertThat(overview.resume()).contains("r19");
+        assertThat(overview.lastStudied()).contains(clock.instant());
+    }
+
+    @Test
+    void a_finished_session_is_not_resumed() {
+        new SubmitAttempt(content, progress, clock).submit(new ExerciseKey("reseaux", "r19-q1"), new ChoicesResponse(Set.of(1)), Optional.of("r19"));
+        new FinishSession(content, progress, clock).finish(new SessionKey("reseaux", "r19"), Duration.ofMinutes(5));
+
+        assertThat(new OpenCourse(content, progress).open("reseaux").resume()).contains("s11");
+    }
+
+    @Test
     void an_unknown_exercise_is_not_found() {
         assertThatThrownBy(() -> new SubmitAttempt(content, progress, clock)
-                .submit(new ExerciseKey("reseaux", "nope"), new ValueResponse("1")))
+                .submit(new ExerciseKey("reseaux", "nope"), new ValueResponse("1"), Optional.empty()))
                 .isInstanceOf(ContentNotFoundException.class);
     }
 }

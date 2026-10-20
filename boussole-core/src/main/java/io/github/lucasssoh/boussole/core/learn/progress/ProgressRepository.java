@@ -1,8 +1,10 @@
 package io.github.lucasssoh.boussole.core.learn.progress;
 
+import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /** Where the learner's progress is kept (port). */
@@ -15,8 +17,14 @@ public interface ProgressRepository {
 
     void saveExercise(ExerciseKey key, ExerciseProgress progress, Instant at);
 
+    /** Keeps an attempt in the history, with the session it was given in. */
+    void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, Instant at);
+
     void saveSessionFinished(SessionKey key, Instant at, Duration spent);
 
     /** The IDs of the sessions of a subject finished at least once. */
     Set<String> finishedSessions(String subject);
+
+    /** The last attempt or finished session in a subject, if the learner has started it. */
+    Optional<LastActivity> lastActivity(String subject);
 }

@@ -26,6 +26,9 @@ export class SessionRun implements OnDestroy {
   });
   readonly timeIsUp = computed(() => this.remainingSeconds() === 0);
   readonly answered = computed(() => this.firstVerdicts().size);
+  readonly verdicts = this.firstVerdicts.asReadonly();
+  /** The screens seen in this sitting, by index. */
+  readonly seen = signal<ReadonlySet<number>>(new Set());
   /** An exam shows its corrections when the time is up or the learner ends it; other sessions, after each answer. */
   readonly correctionsOpen = computed(() => this.kind() !== 'exam' || this.timeIsUp() || this.ended());
   /** An exam gives no hint. */
@@ -38,9 +41,16 @@ export class SessionRun implements OnDestroy {
     this.spent.set(0);
     this.firstVerdicts.set(new Map());
     this.questions.clear();
+    this.seen.set(new Set());
     this.ended.set(false);
     this.allowedSeconds.set(kind === 'lesson' ? null : minutes * 60);
     this.started.set(kind === 'lesson');
+  }
+
+  see(screen: number): void {
+    if (!this.seen().has(screen)) {
+      this.seen.set(new Set(this.seen()).add(screen));
+    }
   }
 
   end(): void {

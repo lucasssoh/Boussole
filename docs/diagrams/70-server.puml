@@ -23,6 +23,7 @@ package "course" {
   class CourseController <<GET /api/subjects…>>
   class CourseSummaryView <<record>>
   class CourseView <<record>>
+  class ResumeView <<record>>
 }
 package "session" {
   class SessionController <<…/sessions/{id}>>
@@ -71,6 +72,7 @@ CourseController --> core
 SessionController --> core
 ExerciseController --> core
 SubjectFileController --> core
+CourseController ..> ResumeView : session to resume
 SessionController ..> SessionView
 SessionView *-- PartView : parts
 PartView ..> BlockViewMapper

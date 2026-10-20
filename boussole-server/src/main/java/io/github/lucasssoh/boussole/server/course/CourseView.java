@@ -18,7 +18,8 @@ record CourseView(
         String description,
         String sourcesDir,
         List<ChapterView> chapters,
-        List<TermView> lexicon) {
+        List<TermView> lexicon,
+        ResumeView resume) {
 
     static CourseView of(CourseOverview overview) {
         Course course = overview.course();
@@ -32,7 +33,8 @@ record CourseView(
                 course.syllabus().chapters().stream()
                         .map(chapter -> ChapterView.of(chapter, written, overview.finishedSessions()))
                         .toList(),
-                course.lexicon().terms().stream().map(TermView::of).toList());
+                course.lexicon().terms().stream().map(TermView::of).toList(),
+                ResumeView.of(overview).orElse(null));
     }
 
     record ChapterView(String id, String title, List<SessionEntryView> sessions) {

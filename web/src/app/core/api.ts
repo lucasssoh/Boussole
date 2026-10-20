@@ -11,6 +11,18 @@ export interface CourseSummary {
   planned: number;
   written: number;
   finished: number;
+  /** When the learner last answered or finished something here, ISO 8601. */
+  lastStudied: string | null;
+  resume: ResumePoint | null;
+}
+
+/** The session to resume in a subject: the one in progress, or else the next one. */
+export interface ResumePoint {
+  id: string;
+  title: string;
+  kind: SessionKind;
+  duration: number;
+  chapterTitle: string;
 }
 
 export interface Course {
@@ -21,6 +33,7 @@ export interface Course {
   sourcesDir: string;
   chapters: Chapter[];
   lexicon: LexiconTerm[];
+  resume: ResumePoint | null;
 }
 
 export interface Chapter {

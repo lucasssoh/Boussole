@@ -3,6 +3,7 @@ package io.github.lucasssoh.boussole.adapters.progress;
 import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
+import io.github.lucasssoh.boussole.core.learn.progress.LastActivity;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import java.sql.Connection;
@@ -17,7 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-/** The learner's progress in SQLite. Each attempt is also kept in a history, for statistics to come. */
+/** The learner's progress in SQLite, and the history of attempts, each with the session it was given in. */
 public final class SqliteProgressRepository implements ProgressRepository {
 
     private static final String COLUMNS = "exercise, attempts, last_verdict, solved, hints_revealed";
@@ -56,7 +57,6 @@ public final class SqliteProgressRepository implements ProgressRepository {
 
     @Override
     public void saveExercise(ExerciseKey key, ExerciseProgress progress, Instant at) {
-        boolean newAttempt = progress.attempts() > exercise(key).attempts();
         query("""
                 INSERT INTO exercise_progress (subject, exercise, attempts, last_verdict, solved, hints_revealed, updated_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -73,15 +73,18 @@ public final class SqliteProgressRepository implements ProgressRepository {
             statement.setString(7, at.toString());
             return statement.executeUpdate();
         });
-        if (newAttempt && progress.lastVerdict().isPresent()) {
-            query("INSERT INTO attempt (subject, exercise, at, verdict) VALUES (?, ?, ?, ?)", statement -> {
-                statement.setString(1, key.subject());
-                statement.setString(2, key.exercise());
-                statement.setString(3, at.toString());
-                statement.setString(4, progress.lastVerdict().get().name());
-                return statement.executeUpdate();
-            });
-        }
+    }
+
+    @Override
+    public void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, Instant at) {
+        query("INSERT INTO attempt (subject, exercise, session, at, verdict) VALUES (?, ?, ?, ?, ?)", statement -> {
+            statement.setString(1, key.subject());
+            statement.setString(2, key.exercise());
+            statement.setString(3, session.orElse(null));
+            statement.setString(4, at.toString());
+            statement.setString(5, verdict.name());
+            return statement.executeUpdate();
+        });
     }
 
     @Override
@@ -106,6 +109,25 @@ public final class SqliteProgressRepository implements ProgressRepository {
                 }
             }
             return found;
+        });
+    }
+
+    @Override
+    public Optional<LastActivity> lastActivity(String subject) {
+        return query("""
+                SELECT at, session, 0 AS finished FROM attempt WHERE subject = ?
+                UNION ALL
+                SELECT at, session, 1 FROM session_finished WHERE subject = ?
+                ORDER BY at DESC LIMIT 1
+                """, statement -> {
+            statement.setString(1, subject);
+            statement.setString(2, subject);
+            try (ResultSet rows = statement.executeQuery()) {
+                return rows.next()
+                        ? Optional.of(new LastActivity(Instant.parse(rows.getString("at")),
+                                Optional.ofNullable(rows.getString("session")), rows.getInt("finished") == 1))
+                        : Optional.<LastActivity>empty();
+            }
         });
     }
 

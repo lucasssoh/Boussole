@@ -7,11 +7,13 @@ import io.github.lucasssoh.boussole.core.learn.RevealSolution;
 import io.github.lucasssoh.boussole.core.learn.SubmitAttempt;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.server.block.BlockViewMapper;
+import java.util.Optional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -31,9 +33,13 @@ class ExerciseController {
     }
 
     @PostMapping("/attempts")
-    AttemptView attempt(@PathVariable String subject, @PathVariable String exercise, @RequestBody AttemptRequest request) {
+    AttemptView attempt(
+            @PathVariable String subject,
+            @PathVariable String exercise,
+            @RequestParam Optional<String> session,
+            @RequestBody AttemptRequest request) {
         ExerciseKey key = new ExerciseKey(subject, exercise);
-        AttemptOutcome outcome = submitAttempt.submit(key, request.toResponse());
+        AttemptOutcome outcome = submitAttempt.submit(key, request.toResponse(), session);
         return AttemptView.of(outcome, SolutionView.of(revealSolution.reveal(key), mapper(subject)));
     }
 

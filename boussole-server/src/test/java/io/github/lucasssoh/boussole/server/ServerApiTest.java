@@ -100,6 +100,13 @@ class ServerApiTest {
     }
 
     @Test
+    void the_subject_resumes_in_the_session_answered_in() throws Exception {
+        post("/api/subjects/reseaux/exercises/s11-a1/attempts?session=r19", "{\"kind\":\"value\",\"value\":\"48\"}");
+
+        assertThat(get("/api/subjects/reseaux").body()).contains("\"resume\":{\"id\":\"r19\"");
+    }
+
+    @Test
     void a_finished_session_shows_in_the_course() throws Exception {
         assertThat(post("/api/subjects/reseaux/sessions/s11/finish", "{\"spentSeconds\":3000}").statusCode()).isEqualTo(204);
         assertThat(get("/api/subjects/reseaux").body()).contains("\"id\":\"s11\"", "\"finished\":true");

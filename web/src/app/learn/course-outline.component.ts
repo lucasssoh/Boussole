@@ -15,7 +15,7 @@ import { Course } from '../core/api';
         <h3><app-rich-text [text]="chapter.title" /></h3>
         <ol>
           @for (entry of chapter.sessions; track entry.id) {
-            <li [class.current]="entry.id === current()" [class.finished]="entry.finished">
+            <li [class.finished]="entry.finished">
               @if (entry.written) {
                 <a [routerLink]="['/subjects', course().id, 'sessions', entry.id]">
                   <span class="outline-mark" aria-hidden="true">{{ entry.finished ? '✓' : '○' }}</span>
@@ -46,7 +46,6 @@ import { Course } from '../core/api';
 })
 export class CourseOutlineComponent {
   readonly course = input.required<Course>();
-  readonly current = input<string | null>(null);
   /** With kind, duration and goal of each session, as on the course page. */
   readonly detailed = input(false);
 }

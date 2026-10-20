@@ -21,17 +21,19 @@ package "learn" {
   }
   class SessionRun <<per session page>> {
     spentSeconds, remainingSeconds : Signal
+    seen, verdicts : Signal
     +question(id, create) : QuestionState
     +record(question, verdict)
   }
   class SubjectListComponent <<page />>
   class CoursePageComponent <<page subjects/:subject>>
-  class SessionPageComponent <<page …/sessions/:session?page=N>> {
-    pageIndex, revealed : Signal
-    +next() / previous()
+  class SessionPageComponent <<page …/sessions/:session?screen=N>> {
+    index, screen : Signal
+    +goTo(index)
   }
-  class "sessionPages()" as SessionPages <<one page per part, steps end at a question>>
-  class CourseOutlineComponent
+  class "sessionPlan()" as SessionPlan <<start, explanation, example, question…, end>>
+  class SessionOutlineComponent <<plan of the session>>
+  class CourseOutlineComponent <<plan of a subject>>
   class SidePanelComponent <<video or PDF>>
 }
 
@@ -69,8 +71,9 @@ SubjectListComponent --> LearnFacade
 CoursePageComponent --> LearnFacade
 SessionPageComponent --> LearnFacade
 SessionPageComponent *-- SessionRun : provides
-SessionPageComponent ..> SessionPages : pages
-SessionPageComponent --> BlockListComponent : revealed steps
+SessionPageComponent ..> SessionPlan : screens
+SessionPageComponent --> SessionOutlineComponent
+SessionPageComponent --> BlockListComponent : the screen shown
 SessionRun o-- QuestionState : kept for the sitting
 SessionPageComponent --> SidePanelComponent
 LearnFacade --> BoussoleApi

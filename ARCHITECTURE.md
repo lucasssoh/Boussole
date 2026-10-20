@@ -221,12 +221,16 @@ web/src/app/
 └── shared/      Markdown (markdown-it, KaTeX, :term, :pdf, gaps), Mermaid
 ```
 
-- **The session player** shows the outline of the course, the session, and beside it the video
-  or the document opened (the browser's own PDF viewer, at the page). The session comes **one
-  page per part** (warm-up, each notion, checkpoint, practice), never all at once, and each page
-  is **revealed step by step**: a step ends with a question, *Continue* shows the next one
-  (`sessionPages()`). The page number is in the address; *Previous* shows a page whole, with
-  the answers given, which `SessionRun` keeps for the sitting. A lesson ends with
+- **The home page** puts on top the session to resume (in the subject studied last: the session
+  answered in last, unless finished, else the next one), then every subject with its progress.
+- **The session player** shows **one screen at a time**, never the whole session
+  (`sessionPlan()`): the goal, then within each part (warm-up, each notion, checkpoint,
+  practice) the explanation, the worked example and each question on a screen of their own,
+  then a closing screen. *Previous* and *Next* (or ← →) move between them. Beside it, the plan
+  of the session (`SessionOutlineComponent`): its parts, the screens of the current one, what
+  has been seen and how each question went; and the video or the document opened (the
+  browser's own PDF viewer, at the page). The screen is in the address and, for the next
+  visit, in this browser; `SessionRun` keeps the answers of the sitting. A lesson ends with
   *I have finished this session*; a review or a mock exam starts with its countdown and ends
   with the number of questions right at the first attempt. `SessionRun` measures the time
   spent while the page is visible.
@@ -254,11 +258,11 @@ Answers, hints and solutions never reach the browser before they are asked for. 
 `/api/subjects/{subject}`:
 
 ```
-GET  /api/subjects                       subjects and how far the learner is
+GET  /api/subjects                       subjects, how far the learner is, the session to resume
 GET  …                                   chapters, sessions (written, finished), lexicon
 GET  …/sessions/{session}                parts and blocks; questions without answers
 POST …/sessions/{session}/finish         { spentSeconds }
-POST …/exercises/{id}/attempts           verdict, each part judged and the correction, recorded
+POST …/exercises/{id}/attempts?session=  verdict, each part judged and the correction, recorded
 POST …/exercises/{id}/hints              the next hint, recorded
 GET  …/exercises/{id}/solution           after an attempt (at once for a free exercise)
 GET  …/files/{path}                      a file of the subject folder: PDFs, images

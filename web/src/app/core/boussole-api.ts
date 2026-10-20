@@ -37,8 +37,10 @@ export class BoussoleApi {
     return this.post(`/api/subjects/${enc(subject)}/sessions/${enc(session)}/finish`, { spentSeconds });
   }
 
-  attempt(subject: string, exercise: string, request: AttemptRequest): Promise<AttemptResult> {
-    return this.post(`${exercisePath(subject, exercise)}/attempts`, request);
+  /** {@code session}: the session the learner answers in, so that the subject resumes there. */
+  attempt(subject: string, exercise: string, request: AttemptRequest, session: string | null): Promise<AttemptResult> {
+    const query = session ? `?session=${enc(session)}` : '';
+    return this.post(`${exercisePath(subject, exercise)}/attempts${query}`, request);
   }
 
   nextHint(subject: string, exercise: string): Promise<RevealedHint> {

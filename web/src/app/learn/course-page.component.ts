@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { RichTextComponent } from '../shared/rich-text.component';
@@ -22,12 +22,14 @@ import { LearnFacade } from './learn.facade';
             @if (course.description) {
               <p class="lead">{{ course.description }}</p>
             }
-            @if (nextSession(); as next) {
+            @if (course.resume; as next) {
               <p>
                 <a class="button primary" [routerLink]="['/subjects', course.id, 'sessions', next.id]">
-                  {{ 'course.continue' | transloco }} : <app-rich-text [text]="next.title" />
+                  {{ 'course.resume' | transloco }} : <app-rich-text [text]="next.title" /> →
                 </a>
               </p>
+            } @else {
+              <p class="note">{{ 'course.allDone' | transloco }}</p>
             }
             <h2>{{ 'course.sessions' | transloco }}</h2>
             <app-course-outline [course]="course" [detailed]="true" />
@@ -51,10 +53,6 @@ import { LearnFacade } from './learn.facade';
 export class CoursePageComponent {
   readonly subject = input.required<string>();
   protected readonly learn = inject(LearnFacade);
-
-  /** The first written session not finished yet, in the order of the syllabus. */
-  protected readonly nextSession = computed(() =>
-    this.learn.course()?.chapters.flatMap((chapter) => chapter.sessions).find((entry) => entry.written && !entry.finished));
 
   constructor() {
     effect(() => void this.learn.openCourse(this.subject()).catch(() => undefined));

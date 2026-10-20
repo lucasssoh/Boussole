@@ -45,6 +45,7 @@ export class QuestionState {
   constructor(
     private readonly api: BoussoleApi,
     private readonly subject: string,
+    private readonly session: string | null,
     readonly id: string,
     progress: QuestionProgress,
     hints: QuestionHints,
@@ -64,7 +65,7 @@ export class QuestionState {
 
   async attempt(request: AttemptRequest): Promise<void> {
     await this.call(async () => {
-      const result = await this.api.attempt(this.subject, this.id, request);
+      const result = await this.api.attempt(this.subject, this.id, request, this.session);
       this.result.set(result);
       this.solution.set(result.solution);
       this.progress.set(result.progress);

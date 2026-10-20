@@ -10,6 +10,7 @@ import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
 import io.github.lucasssoh.boussole.format.model.block.McqBlock;
 import java.time.Clock;
+import java.util.Optional;
 
 /** Checks the learner's response to an exercise and records the attempt. */
 public final class SubmitAttempt {
@@ -25,7 +26,8 @@ public final class SubmitAttempt {
         this.clock = clock;
     }
 
-    public AttemptOutcome submit(ExerciseKey key, LearnerResponse response) {
+    /** {@code session} is the session the learner answers in, which may ask a question of another session again. */
+    public AttemptOutcome submit(ExerciseKey key, LearnerResponse response, Optional<String> session) {
         CheckResult result = switch (lookup.question(key)) {
             case McqBlock mcq -> checker.check(mcq, response);
             case ExerciseBlock exercise -> checker.check(exercise, response);
@@ -33,6 +35,7 @@ public final class SubmitAttempt {
         };
         ExerciseProgress after = progress.exercise(key).withAttempt(result.verdict());
         progress.saveExercise(key, after, clock.instant());
+        progress.recordAttempt(key, session, result.verdict(), clock.instant());
         return new AttemptOutcome(result, after);
     }
 }

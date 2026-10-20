@@ -22,7 +22,7 @@ package "learn" {
     +open(subject, session) : OpenedSession
   }
   class SubmitAttempt <<use case>> {
-    +submit(ExerciseKey, LearnerResponse) : AttemptOutcome
+    +submit(ExerciseKey, LearnerResponse, session) : AttemptOutcome
   }
   class RevealNextHint <<use case>> {
     +reveal(ExerciseKey) : RevealedHint
@@ -35,7 +35,12 @@ package "learn" {
   }
   class CourseLookup
   class CourseQuestions <<helpers>>
-  class CourseOverview <<record>>
+  class CourseOverview <<record>> {
+    finishedSessions : Set<String>
+    lastStudied : Optional<Instant>
+    resume : Optional<String>
+  }
+  class CourseOverviews
   class OpenedSession <<record>>
   class AttemptOutcome <<record>>
   class RevealedHint <<record>>
@@ -51,7 +56,10 @@ package "learn.progress" {
     +saveExercise(ExerciseKey, ExerciseProgress, Instant)
     +saveSessionFinished(SessionKey, Instant, Duration)
     +finishedSessions(subject) : Set<String>
+    +recordAttempt(ExerciseKey, session, Verdict, Instant)
+    +lastActivity(subject) : Optional<LastActivity>
   }
+  class LastActivity <<record>>
   class ExerciseProgress <<record>> {
     attempts : int
     lastVerdict : Optional<Verdict>
@@ -103,7 +111,10 @@ package "learn.check" {
 }
 
 ListCourses --> ContentRepository
-ListCourses --> ProgressRepository
+ListCourses --> CourseOverviews
+OpenCourse --> CourseOverviews
+CourseOverviews ..> LastActivity : resume
+CourseOverviews --> ProgressRepository
 OpenCourse --> CourseLookup
 OpenSession --> CourseLookup
 SubmitAttempt --> CourseLookup

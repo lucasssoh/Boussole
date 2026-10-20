@@ -299,29 +299,10 @@ progress {
 
 .player {
   display: grid;
-  grid-template-columns: 17rem minmax(0, 1fr);
   min-height: calc(100vh - 3rem);
 }
 
-.player.with-panel {
-  grid-template-columns: 15rem minmax(0, 1fr) minmax(22rem, 42vw);
-}
 
-.outline {
-  position: sticky;
-  top: 3rem;
-  align-self: start;
-  max-height: calc(100vh - 3rem);
-  overflow-y: auto;
-  padding: 1rem;
-  border-right: 1px solid var(--line);
-  font-size: 0.92rem;
-}
-
-.outline-course {
-  font-weight: 700;
-  text-decoration: none;
-}
 
 .session {
   padding: 1.5rem 1.5rem 5rem;
@@ -375,10 +356,6 @@ progress {
   .player,
   .player.with-panel {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .outline {
-    display: none;
   }
 
   .side-panel {
@@ -846,101 +823,233 @@ progress {
   width: 6.5em;
 }
 
-/* Session pages */
+/* Session screens */
 
-.session-header.compact h1 {
-  font-size: 1.3rem;
+.player {
+  grid-template-columns: 18rem minmax(0, 1fr);
 }
 
-.stepper {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
+.player.with-panel {
+  grid-template-columns: 16rem minmax(0, 1fr) minmax(22rem, 42vw);
+}
+
+.session-outline {
+  position: sticky;
+  top: 3rem;
+  align-self: start;
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  padding: 1rem;
+  border-right: 1px solid var(--line);
+  font-size: 0.92rem;
+}
+
+.outline-back {
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.outline-session {
+  margin: 0.75rem 0 0.25rem;
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+
+.outline-time {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.outline-parts,
+.outline-screens {
   list-style: none;
-  margin: 1rem 0 0;
+  margin: 0;
   padding: 0;
 }
 
-.stepper button {
+.outline-screens {
+  margin: 0.15rem 0 0.4rem 1.4rem;
+}
+
+.session-outline button {
   display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  max-width: 14rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 999px;
-  color: var(--muted);
-  font-size: 0.85rem;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  text-align: left;
+  line-height: 1.4;
 }
 
-.stepper .step-title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.stepper li:not(.current) .step-title {
-  display: none;
-}
-
-.stepper .step-number {
-  display: inline-grid;
-  place-items: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  font-weight: 700;
-}
-
-.stepper li.seen .step-number {
-  background: var(--correct-bg);
-  border-color: var(--correct);
-  color: var(--correct);
-}
-
-.stepper li.current button {
-  color: var(--text);
+.session-outline button:hover {
   background: var(--surface-2);
 }
 
-.stepper li.current .step-number {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-text);
+.outline-part {
+  font-weight: 600;
 }
 
-.step.new {
-  animation: reveal 0.35s ease-out;
+.outline-parts > li.current > .outline-part {
+  color: var(--accent);
 }
 
-@keyframes reveal {
-  from {
-    opacity: 0;
-    transform: translateY(0.5rem);
-  }
+.session-outline .mark {
+  flex: 0 0 1rem;
+  text-align: center;
+  color: var(--muted);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .step.new {
-    animation: none;
-  }
+.outline-parts > li.done > .outline-part .mark,
+.outline-screens li.seen .mark,
+.outline-screens li.correct .mark {
+  color: var(--correct);
 }
 
-.pager {
+.outline-screens li.wrong .mark {
+  color: var(--wrong);
+}
+
+.outline-screens li.partly .mark {
+  color: var(--partly);
+}
+
+.outline-screens li.current button {
+  background: var(--surface-2);
+  font-weight: 600;
+}
+
+.outline-screens li.unseen button {
+  color: var(--muted);
+}
+
+.screen-bar {
+  position: sticky;
+  top: 3rem;
+  z-index: 10;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 2rem;
+  gap: 0.25rem 0.75rem;
+  max-width: var(--content-width);
+  margin: -1.5rem auto 1rem;
+  padding: 0.6rem 0 0.4rem;
+  background: var(--bg);
+  font-size: 0.9rem;
 }
 
-.pager .primary {
+.screen-where {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.screen-count {
+  color: var(--muted);
+}
+
+.screen-bar progress {
+  flex-basis: 100%;
+  height: 4px;
+}
+
+.screen-bar .timer {
+  position: static;
+  margin: 0;
+  padding: 0.1rem 0.6rem;
+}
+
+.outline-toggle {
+  display: none;
+}
+
+.screen {
+  max-width: var(--content-width);
+  min-height: 50vh;
+  margin: 0 auto;
+}
+
+.screen-start h1,
+.screen-end h1 {
+  margin-top: 1.5rem;
+}
+
+.screen-nav {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  max-width: var(--content-width);
+  margin: 2rem auto 0;
+  padding: 0.75rem 0;
+  background: linear-gradient(transparent, var(--bg) 35%);
+}
+
+.screen-nav .primary {
   margin-left: auto;
 }
 
-.pager-count {
+.resume-card {
+  margin: 1rem 0 2rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--accent);
+  background: var(--surface);
+}
+
+.resume-card h1 {
+  margin: 0.25rem 0;
+}
+
+.resume-meta {
   color: var(--muted);
-  font-size: 0.85rem;
+}
+
+@media (max-width: 1100px) {
+  .player,
+  .player.with-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .session-outline {
+    display: none;
+  }
+
+  .player.outline-open .session-outline {
+    display: block;
+    position: fixed;
+    inset: 3rem auto 0 0;
+    z-index: 35;
+    width: min(20rem, 85vw);
+    max-height: none;
+    background: var(--surface);
+    box-shadow: 8px 0 24px rgb(0 0 0 / 0.2);
+  }
+
+  .outline-toggle {
+    display: inline-block;
+  }
+
+  .outline-backdrop {
+    position: fixed;
+    inset: 3rem 0 0 0;
+    z-index: 34;
+    border: 0;
+    border-radius: 0;
+    background: rgb(0 0 0 / 0.3);
+  }
+}
+
+.outline-backdrop {
+  display: none;
+}
+
+.player.outline-open .outline-backdrop {
+  display: block;
 }
 
 /* Correction beside an answered question */

@@ -6,14 +6,14 @@ import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 public final class OpenCourse {
 
     private final CourseLookup lookup;
-    private final ProgressRepository progress;
+    private final CourseOverviews overviews;
 
     public OpenCourse(ContentRepository content, ProgressRepository progress) {
         this.lookup = new CourseLookup(content);
-        this.progress = progress;
+        this.overviews = new CourseOverviews(progress);
     }
 
     public CourseOverview open(String subject) {
-        return new CourseOverview(lookup.course(subject), progress.finishedSessions(subject));
+        return overviews.of(lookup.course(subject));
     }
 }

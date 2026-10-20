@@ -1,14 +1,17 @@
 package io.github.lucasssoh.boussole.core.learn;
 
+import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
+import io.github.lucasssoh.boussole.core.learn.progress.LastActivity;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,6 +19,7 @@ final class InMemoryProgressRepository implements ProgressRepository {
 
     private final Map<ExerciseKey, ExerciseProgress> exercises = new HashMap<>();
     private final Set<SessionKey> finished = new HashSet<>();
+    private final Map<String, LastActivity> last = new HashMap<>();
 
     @Override
     public ExerciseProgress exercise(ExerciseKey key) {
@@ -37,6 +41,17 @@ final class InMemoryProgressRepository implements ProgressRepository {
     @Override
     public void saveSessionFinished(SessionKey key, Instant at, Duration spent) {
         finished.add(key);
+        last.put(key.subject(), new LastActivity(at, Optional.of(key.session()), true));
+    }
+
+    @Override
+    public void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, Instant at) {
+        last.put(key.subject(), new LastActivity(at, session, false));
+    }
+
+    @Override
+    public Optional<LastActivity> lastActivity(String subject) {
+        return Optional.ofNullable(last.get(subject));
     }
 
     @Override

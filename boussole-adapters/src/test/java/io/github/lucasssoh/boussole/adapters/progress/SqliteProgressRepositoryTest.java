@@ -5,10 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
+import io.github.lucasssoh.boussole.core.learn.progress.LastActivity;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -37,6 +39,17 @@ class SqliteProgressRepositoryTest {
         assertThat(repository().exercise(KEY)).isEqualTo(progress);
         assertThat(repository().exercises("oc")).containsOnlyKeys("s34-a1");
         assertThat(repository().exercises("reseaux")).isEmpty();
+    }
+
+    @Test
+    void knows_the_last_thing_done_in_a_subject() {
+        assertThat(repository().lastActivity("oc")).isEmpty();
+
+        repository().recordAttempt(KEY, Optional.of("s39"), Verdict.WRONG, NOW);
+        assertThat(repository().lastActivity("oc")).contains(new LastActivity(NOW, Optional.of("s39"), false));
+
+        repository().saveSessionFinished(new SessionKey("oc", "s39"), NOW.plusSeconds(60), Duration.ofMinutes(40));
+        assertThat(repository().lastActivity("oc")).contains(new LastActivity(NOW.plusSeconds(60), Optional.of("s39"), true));
     }
 
     @Test
