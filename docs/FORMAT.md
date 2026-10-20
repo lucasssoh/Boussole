@@ -108,6 +108,8 @@ The full ID of a session is `<subject>.<chapter>.<session>`, for example
 
 ## 4. `cursus/lexique.yaml`
 
+Optional: a subject may have no lexicon yet.
+
 ```yaml
 - id: mac
   term: Adresse MAC
@@ -171,25 +173,30 @@ The body must not contain a level-1 heading (`#`): the title comes from the syll
 A session is read top to bottom in this order:
 
 1. `:::warmup` — optional, first. Five minutes on the previous session of the **same subject**.
-2. **Notions** — each level-2 heading with an ID is a notion:
-   `## Ce que la couche 3 apporte {#couche3}`. A notion runs until the next level-2 heading.
+2. **Notions** — each level-2 heading is a notion and carries an ID:
+   `## Ce que la couche 3 apporte {#couche3}`. A notion runs until the next level-2 heading or
+   section. Notion IDs are unique in their session.
    Inside it: the explanation, **one** `:::example`, then at least one `:::exercise` or `:::qcm`
    (the learner's « À toi »).
 3. `:::checkpoint` — optional. A short quiz on the whole session; passing it validates the
    session.
 4. `:::practice` — optional, last. Longer final exercises.
 
-Level-3 headings and below are free inside a notion.
+Text before the first notion is an introduction. Level-3 headings and below are free inside
+a notion.
 
 ### 5.4 Directive syntax
 
 | Kind | Syntax | Example |
 |---|---|---|
 | Container | `:::name[label]{attributes}` … `:::` | `:::example[Ce que vaut la hiérarchie]` |
-| Leaf (one line) | `::name[label]{attributes}` | `::video[Masques en 5 min]{youtube=abc123 start=2:10}` |
+| Leaf (one line) | `::name[label]{attributes}` | `::video[Neural networks]{youtube=aircAruvnKk start=2:10}` |
 | Inline (in a sentence) | `:name[text]{attributes}` | `les :term[adresses MAC]{id=mac} sont plates` |
 
-- Attributes: `{key=value key2="value with spaces" #id}`; `#x` is short for `id=x`.
+- Container and leaf directives sit on their own line, starting at its first column. Inside
+  fenced code, nothing is a directive.
+- Attributes: `{key=value key2="value with spaces" #id}`; `#x` is short for `id=x`; a bare
+  `key` means `key=true`. Each attribute is given once.
 - A container inside another one uses **more colons on the outside**, one more per level, and
   closes with the same number: `:::hint` (3) inside `::::exercise` (4) inside `:::::warmup` (5).
   A closing line closes the innermost open container that has that many colons.
@@ -203,10 +210,24 @@ Level-3 headings and below are free inside a notion.
 | `recall` | container | A reminder of a term or prerequisite, just before it is needed. |
 | `note`, `tip`, `warning` | container | Callouts. |
 | `term` | inline | Hover definition from the lexicon. `{id=…}` is optional when the text equals a term or alias. |
-| `video` | leaf | YouTube video beside the text. `youtube=<video id>` required; `start`, `end` as `m:ss` or seconds. The label is the caption. |
+| `video` | leaf | YouTube video beside the text. `youtube=<11-character video id>` required; `start`, `end` as seconds, `m:ss` or `h:mm:ss`. The label is the caption. |
 | `pdf` | leaf or inline | Opens a file of `sources/` beside the text. `src=<file>` required; `page=N` optional. |
 
 Images use plain Markdown (`![caption](../assets/route.png)`).
+
+Where each directive may appear:
+
+| Directive | Allowed in |
+|---|---|
+| `warmup`, `checkpoint`, `practice` | the top level of a session only |
+| `exercise`, `qcm` | a notion, an introduction, a section |
+| `example` | a notion, an introduction, a section |
+| `recall` | the same, and `hint`, `solution` |
+| `note`, `tip`, `warning` | the same as `recall`, and `example`, `recall` |
+| `video`, `pdf` | anywhere except `answer` |
+| `ref` | `warmup`, `checkpoint`, `practice` |
+| `answer` | `exercise` |
+| `hint`, `solution` | `exercise`, `qcm` |
 
 ### 5.6 Exercises
 
@@ -246,14 +267,14 @@ Une adresse MAC s'écrit avec 6 octets, comme `3c:52:82:1a:9f:04`.
 |---|---|---|
 | `numeric` | One value per line. Decimal point, or a fraction `3/4`. | Attribute `tolerance` (absolute, default `0`). Attribute `unit` is displayed, not typed. The learner may use a comma. |
 | `text` | One accepted answer per line. A line starting with `re:` is a regular expression. | Trimmed, spaces collapsed, case ignored. `strict=true` keeps case. |
-| `fill` | One line per gap: `1: answer | other accepted answer`. The statement marks gaps with `[[1]]`, `[[2]]`… | Each gap checked like `text`. |
-| `order` | An ordered list, in the right order. | Items are shown shuffled. |
-| `match` | One line per pair: `left => right`. | Right-hand sides are shown shuffled. |
+| `fill` | One line per gap: `1: answer \| other accepted answer`, alternatives separated by a `\|` between spaces. The statement marks gaps with `[[1]]`, `[[2]]`… | Each gap checked like `text`. |
+| `order` | A list (`1. item` or `- item`), in the right order, at least two items. | Items are shown shuffled. |
+| `match` | One line per pair: `left => right`, at least two pairs. | Right-hand sides are shown shuffled. |
 | `free` | No `answer` part. | The learner writes, reads the solution, then grades themself: *got it / partly / not yet*. For proofs and models. |
 
 #### Multiple choice
 
-A `qcm` is an exercise whose choices are a task list. A blockquote indented under a choice is
+A `qcm` is an exercise whose choices are a task list, at the end of its statement. A blockquote indented under a choice is
 the feedback shown when the learner picks it. `multiple=true` means several choices are right
 and the interface says so.
 
@@ -288,19 +309,22 @@ elsewhere in the subject. This is how a warmup asks again a question of the prev
 
 | Code | Level | Rule |
 |---|---|---|
-| `F001` | error | `subject.yaml` missing, unreadable, or a required field is missing. |
+| `F001` | error | A YAML file or front matter is missing, unreadable, or lacks a required field or has an invalid one (`subject.yaml`, `syllabus.yaml`, `lexique.yaml`, a session's front matter). |
 | `F002` | error | `format` is not a version this Boussole knows. |
 | `F003` | error | Duplicate ID (chapter, session, notion, exercise, term). |
 | `F004` | error | ID with characters other than `a-z`, `0-9`, `-`. |
 | `F010` | error | A session file's `id` does not match the syllabus. |
 | `F011` | warning | A session listed in an approved syllabus has no file yet. |
 | `F012` | error | A level-1 heading in a session body. |
-| `F020` | error | Unknown directive, or unknown attribute on a known directive. |
-| `F021` | error | Exercise without `id`, without `solution`, or with the wrong number of `answer` parts for its type. |
-| `F022` | error | `qcm` with no ticked choice, or several without `multiple=true`. |
+| `F013` | error | A level-2 heading without an ID. |
+| `F020` | error | Unknown directive, a directive of the wrong kind (`:::video`), or in a place it is not allowed (§5.5). |
+| `F021` | error | Exercise or qcm without exactly one `solution`; exercise with the wrong number of `answer` parts for its type; an `answer` that is empty or whose lines do not follow its type. |
+| `F022` | error | `qcm` with fewer than two choices, no ticked choice, several without `multiple=true`, or text after its choices. |
 | `F023` | error | `fill` gaps in the statement and in the answer do not match. |
 | `F024` | error | `numeric` answer that is not a number. |
-| `F025` | error | `text` answer with an invalid regular expression. |
+| `F025` | error | `text` or `fill` answer with an invalid regular expression. |
+| `F026` | error | A container never closed, or a closing line with no open container of as many colons. |
+| `F027` | error | An attribute unknown to its directive or exercise type, a required one missing, or a value that cannot be used. |
 | `F030` | error | `ref`, `term`, `prerequisites` or `see` pointing to an ID that does not exist. |
 | `F031` | error | `pdf` or `sources` naming a file absent from `sources/`, or a page past the end. |
 | `F032` | warning | `video` that YouTube does not know (checked only with `--check-videos`). |

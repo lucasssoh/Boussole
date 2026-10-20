@@ -41,13 +41,22 @@ Spring, no JDBC, no HTTP. ArchUnit tests fail the build if this is broken.
 Knows the course format and nothing else, so it can be used on its own (the validator agents
 run is this module).
 
-- **Model**: immutable `record`s. `Subject`, `Syllabus`, `Chapter`, `Session`, `Notion`,
-  `Term`, and `Block`, a `sealed interface` (`Prose`, `Example`, `Recall`, `Callout`, `Video`,
-  `PdfRef`, `Exercise`, `Qcm`, `ExerciseRef`, `Warmup`, `Checkpoint`, `Practice`).
-- **Parsing**: commonmark-java plus a directive extension. Each directive has a `BlockParser`;
-  `BlockParserRegistry` maps a directive name to its parser.
-- **Validation**: `Validator` runs a list of `ValidationRule`s, one class per rule code of
-  `FORMAT.md` §6, each returning `Diagnostic`s.
+- **Model**: immutable `record`s. A `Course` holds the `Subject`, its `Syllabus` (`Chapter`s
+  of `SessionEntry`s), its `Lexicon` of `Term`s, and the `Session`s read. A session is a list of
+  `Part`s (`TextPart`, `Warmup`, `Notion`, `Checkpoint`, `Practice`), each a list of `Block`s.
+  `Part`, `Block` and `Answer` are sealed interfaces.
+- **Loading**: `SubjectLoader` reads the YAML files (SnakeYAML Engine, through `YamlMap`, which
+  knows the line of every value) and each session file through `SessionReader`.
+- **Parsing**: the structure of a session body is line-based, so Boussole parses it itself, in
+  two steps. `RawTreeBuilder` turns lines into containers, one-line directives, headings and
+  text, skipping fenced code; `BlockBuilder` checks each directive's kind, place and attributes,
+  then hands it to its `DirectiveParser`, found in the `DirectiveRegistry`. Exercise answers are
+  read by one `AnswerParser` per exercise type. Prose stays Markdown source: the interface
+  renders it.
+- **Validation**: what a file shows on its own is reported while it is read; what needs the
+  whole course is checked by the `Validator`, which runs a list of `ValidationRule`s, one class
+  per diagnostic code of `FORMAT.md` §6. `SubjectInspector` does both and returns an
+  `InspectionReport`.
 
 ### `boussole-core`
 
@@ -120,8 +129,8 @@ A pattern is used where it solves a real problem, and the class name says which 
 | Ports and adapters | between `core` and `adapters` | the domain knows neither Spring, nor SQLite, nor systemd |
 | Use case | `core/*/` | one action = one class |
 | Repository | ports of `core` | data access behind an interface |
-| Strategy | `AnswerChecker` per exercise type; `ReminderScheduler` per OS | add a case without touching the others |
-| Registry + factory | `BlockParserRegistry`; `BLOCK_RENDERERS` in `web/` | a new block type is a new class, registered |
+| Strategy | `AnswerParser` and `AnswerChecker` per exercise type; `ReminderScheduler` per OS | add a case without touching the others |
+| Registry + factory | `DirectiveRegistry`, `AnswerParsers`; `BLOCK_RENDERERS` in `web/` | a new block type is a new class, registered |
 | Sealed interface + exhaustive `switch` | `Block`, `ScheduledEvent` | the compiler lists every place a new type must be handled |
 | Composite | `Validator` of `ValidationRule`s | one rule per file, tested alone |
 | Command | planning actions (`MoveEvent`, `PinEvent`…) | undo and history |
@@ -271,7 +280,7 @@ On macOS and Windows the equivalent per-user folders are used.
 | Java | 25 (LTS), Maven multi-module |
 | Server | Spring Boot 3, springdoc-openapi |
 | Persistence | SQLite (xerial JDBC), Flyway |
-| Markdown | commonmark-java with a directive extension |
+| Course files | own line-based parser for the structure, SnakeYAML Engine, PDFBox for page counts; Markdown rendered by markdown-it in `web/` |
 | CLI | picocli |
 | Interface | Angular (standalone components, signals), Transloco, pdf.js, KaTeX, Mermaid |
 | Tests | JUnit 5, AssertJ, ArchUnit; Vitest and Playwright for `web/` |
