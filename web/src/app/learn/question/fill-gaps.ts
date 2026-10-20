@@ -1,5 +1,6 @@
 import { WritableSignal } from '@angular/core';
 import { CheckedItem, FillGapInput } from '../../core/api';
+import { iconSvg } from '../../shared/icon.component';
 
 /**
  * The fields of a fill exercise, placed where its statement has [[N]]: a drop-down list for a
@@ -87,7 +88,11 @@ export class FillGaps {
       holder.classList.toggle('wrong', mark?.correct === false);
       holder.querySelector('.expected')?.remove();
       if (this.expected[key] !== undefined && mark?.correct !== true) {
-        holder.append(Object.assign(document.createElement('span'), { className: 'expected', textContent: ` → ${this.expected[key]}` }));
+        const expected = document.createElement('span');
+        expected.className = 'expected';
+        expected.innerHTML = iconSvg('arrow-right', 14);
+        expected.append(` ${this.expected[key]}`);
+        holder.append(expected);
       }
     }
   }

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { IconComponent } from '../../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { PdfBlockView } from '../../core/api';
 import { LearnFacade } from '../learn.facade';
@@ -6,11 +7,11 @@ import { LearnFacade } from '../learn.facade';
 /** A page of the learner's documents, opened beside the text. */
 @Component({
   selector: 'app-pdf-block',
-  imports: [TranslocoPipe],
+  imports: [IconComponent, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button type="button" class="media-card pdf" [class.active]="active()" (click)="open()">
-      <span class="media-icon" aria-hidden="true">📄</span>
+      <span class="media-icon"><app-icon name="document" [size]="26" /></span>
       <span class="media-text">
         <span class="media-action">
           {{ 'block.open' | transloco }}

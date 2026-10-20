@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { IconComponent } from '../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { storedValue, storeValue } from '../core/local-preferences';
 import { ServerSettingsService } from '../core/server-settings.service';
@@ -23,7 +24,7 @@ import { SidePanelComponent } from './side-panel.component';
  */
 @Component({
   selector: 'app-session-page',
-  imports: [RichTextComponent, RouterLink, TranslocoPipe, BlockListComponent, SessionPathComponent, SidePanelComponent],
+  imports: [IconComponent, RichTextComponent, RouterLink, TranslocoPipe, BlockListComponent, SessionPathComponent, SidePanelComponent],
   providers: [SessionRun],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -49,10 +50,10 @@ import { SidePanelComponent } from './side-panel.component';
 
       <main class="session" [attr.lang]="learn.course()?.lang">
         <div class="screen-bar">
-          <button type="button" class="quiet outline-toggle" (click)="outlineOpen.set(!outlineOpen())">☰ {{ 'session.plan' | transloco }}</button>
+          <button type="button" class="quiet outline-toggle" (click)="outlineOpen.set(!outlineOpen())"><app-icon name="menu" /> {{ 'session.plan' | transloco }}</button>
           <span class="screen-where"><app-rich-text [text]="where()" /></span>
           @if (timed() && run.started()) {
-            <span class="timer" [class.over]="run.timeIsUp()" role="timer">⏱ {{ remaining() }}</span>
+            <span class="timer" [class.over]="run.timeIsUp()" role="timer"><app-icon name="timer" /> {{ remaining() }}</span>
           }
           <span class="screen-count">{{ index() + 1 }} / {{ plan().screens.length }}</span>
           <progress [max]="plan().screens.length - 1" [value]="index()"></progress>
@@ -109,9 +110,9 @@ import { SidePanelComponent } from './side-panel.component';
                 <p class="verdict correct">{{ 'session.finished' | transloco: { minutes: finishedIn() } }}</p>
               }
               <nav class="session-nav">
-                <a [routerLink]="['/subjects', current.subject]">← {{ learn.course()?.name }}</a>
+                <a [routerLink]="['/subjects', current.subject]"><app-icon name="arrow-left" /> {{ learn.course()?.name }}</a>
                 @if (current.next) {
-                  <a class="next" [routerLink]="['/subjects', current.subject, 'sessions', current.next]">{{ 'session.next' | transloco }} →</a>
+                  <a class="next" [routerLink]="['/subjects', current.subject, 'sessions', current.next]">{{ 'session.next' | transloco }} <app-icon name="arrow-right" /></a>
                 }
               </nav>
             }
@@ -128,16 +129,16 @@ import { SidePanelComponent } from './side-panel.component';
 
         <nav class="screen-nav">
           @if (index() > 0) {
-            <button type="button" (click)="goTo(index() - 1)">← {{ 'session.previousScreen' | transloco }}</button>
+            <button type="button" (click)="goTo(index() - 1)"><app-icon name="arrow-left" /> {{ 'session.previousScreen' | transloco }}</button>
           }
           @if (screen().kind === 'start' && timed() && !run.started()) {
-            <button type="button" class="primary" (click)="run.start(); goTo(1)">{{ 'timed.start' | transloco }} →</button>
+            <button type="button" class="primary" (click)="run.start(); goTo(1)">{{ 'timed.start' | transloco }} <app-icon name="arrow-right" /></button>
           } @else if (index() < plan().screens.length - 1) {
             @if (index() >= gate()) {
               <span class="gate-note">{{ 'session.answerFirst' | transloco }}</span>
             }
             <button type="button" class="primary" [disabled]="index() >= gate()" (click)="goTo(index() + 1)">
-              {{ (screen().kind === 'start' ? 'session.begin' : 'session.nextScreen') | transloco }} →
+              {{ (screen().kind === 'start' ? 'session.begin' : 'session.nextScreen') | transloco }} <app-icon name="arrow-right" />
             </button>
           }
         </nav>
@@ -242,7 +243,7 @@ export class SessionPageComponent {
     scrollTo({ top: 0 });
   }
 
-  /** → and ← change screen, unless the learner is typing. */
+  /** The right and left arrow keys change screen, unless the learner is typing. */
   protected onKey(event: KeyboardEvent): void {
     const target = event.target as HTMLElement;
     if (event.altKey || event.ctrlKey || event.metaKey || target.closest('input, textarea, select, [contenteditable]')) {

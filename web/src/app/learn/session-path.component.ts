@@ -15,6 +15,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { IconComponent } from '../shared/icon.component';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Session, Verdict } from '../core/api';
 import { RichTextComponent } from '../shared/rich-text.component';
@@ -73,13 +74,13 @@ const FIRST_NODE = 52;
  */
 @Component({
   selector: 'app-session-path',
-  imports: [RouterLink, TranslocoPipe, RichTextComponent],
+  imports: [IconComponent, RouterLink, TranslocoPipe, RichTextComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'session-path' },
   template: `
     @let current = session();
     <div class="path-head">
-      <a class="path-back" [routerLink]="['/subjects', current.subject]">← {{ learn.course()?.name }}</a>
+      <a class="path-back" [routerLink]="['/subjects', current.subject]"><app-icon name="arrow-left" /> {{ learn.course()?.name }}</a>
       <h2 class="path-title"><app-rich-text [text]="current.title" /></h2>
       <p class="path-time">
         {{ (current.kind === 'lesson' ? 'course.estimate' : 'course.timed') | transloco: { minutes: current.duration } }}

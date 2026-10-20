@@ -46,9 +46,9 @@ final class ReportPrinter {
         int errors = report.errors().size();
         int warnings = report.warnings().size();
         if (errors == 0 && warnings == 0) {
-            return "✓ " + folder + ": no problem, " + sessions + ".";
+            return folder + ": no problem, " + sessions + ".";
         }
-        return (errors == 0 ? "✓ " : "✗ ") + folder + ": " + count(errors, "error") + ", " + count(warnings, "warning")
+        return folder + ": " + count(errors, "error") + ", " + count(warnings, "warning")
                 + "; " + sessions + ".";
     }
 

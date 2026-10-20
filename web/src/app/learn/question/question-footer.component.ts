@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, forwardRef, input, output } from '@angular/core';
+import { IconComponent } from '../../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { BlockListComponent } from '../blocks/block-list.component';
 import { QuestionState } from './question-state';
@@ -9,7 +10,7 @@ import { QuestionState } from './question-state';
  */
 @Component({
   selector: 'app-question-footer',
-  imports: [TranslocoPipe, forwardRef(() => BlockListComponent)],
+  imports: [IconComponent, TranslocoPipe, forwardRef(() => BlockListComponent)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let question = state();
@@ -32,7 +33,7 @@ import { QuestionState } from './question-state';
       }
       @if (question.hintsLeft()) {
         <button type="button" [disabled]="question.busy()" (click)="question.nextHint()">
-          💡 {{ 'question.hint' | transloco }} ({{ question.hints().length + 1 }}/{{ question.hintTotal }})
+          <app-icon name="hint" /> {{ 'question.hint' | transloco }} ({{ question.hints().length + 1 }}/{{ question.hintTotal }})
         </button>
       }
       @if (question.result() && !question.correctionShown()) {

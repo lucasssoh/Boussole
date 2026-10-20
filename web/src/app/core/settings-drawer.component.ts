@@ -1,12 +1,17 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { IconComponent } from '../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { LANGUAGES, LanguageService } from './language.service';
 import { ThemeChoice, ThemeService } from './theme.service';
 
-/** The gear of the header: a small panel pulled down under it, with the theme and the language. */
+/**
+ * The gear of the header: a small panel pulled down under it, with the theme and the language.
+ * Opening, the panel comes first and its contents pop in one after the other; closing, they go
+ * in the reverse order (--o) and the panel last.
+ */
 @Component({
   selector: 'app-settings-drawer',
-  imports: [TranslocoPipe],
+  imports: [IconComponent, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:keydown.escape)': 'open.set(false)' },
   template: `
@@ -26,25 +31,25 @@ import { ThemeChoice, ThemeService } from './theme.service';
     @if (open()) {
       <button type="button" class="drawer-backdrop" tabindex="-1" [attr.aria-label]="'panel.close' | transloco" (click)="open.set(false)"></button>
       <aside id="settings-drawer" class="settings-drawer" animate.leave="leaving" role="dialog" [attr.aria-label]="'settings.title' | transloco">
-        <div class="drawer-head">
+        <div class="drawer-head pop" style="--i: 1; --o: 8">
           <h2>{{ 'settings.title' | transloco }}</h2>
-          <button type="button" class="quiet" [attr.aria-label]="'panel.close' | transloco" (click)="open.set(false)">✕</button>
+          <button type="button" class="quiet" [attr.aria-label]="'panel.close' | transloco" (click)="open.set(false)"><app-icon name="close" /></button>
         </div>
         <fieldset>
-          <legend>{{ 'settings.theme' | transloco }}</legend>
+          <legend class="pop" style="--i: 2; --o: 7">{{ 'settings.theme' | transloco }}</legend>
           <div class="choice-row">
             @for (choice of themes; track choice) {
-              <button type="button" [class.primary]="theme.choice() === choice" [attr.aria-pressed]="theme.choice() === choice" (click)="theme.set(choice)">
+              <button type="button" class="pop" [style.--i]="3 + $index" [style.--o]="6 - $index" [class.primary]="theme.choice() === choice" [attr.aria-pressed]="theme.choice() === choice" (click)="theme.set(choice)">
                 {{ 'settings.themes.' + choice | transloco }}
               </button>
             }
           </div>
         </fieldset>
         <fieldset>
-          <legend>{{ 'settings.language' | transloco }}</legend>
+          <legend class="pop" style="--i: 6; --o: 3">{{ 'settings.language' | transloco }}</legend>
           <div class="choice-row">
             @for (code of languages; track code) {
-              <button type="button" [class.primary]="language.current() === code" [attr.aria-pressed]="language.current() === code" (click)="language.set(code)">
+              <button type="button" class="pop" [style.--i]="7 + $index" [style.--o]="2 - $index" [class.primary]="language.current() === code" [attr.aria-pressed]="language.current() === code" (click)="language.set(code)">
                 {{ 'settings.languages.' + code | transloco }}
               </button>
             }

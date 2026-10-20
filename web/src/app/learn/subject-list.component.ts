@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, untracked } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { IconComponent } from '../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { CourseSummary } from '../core/api';
 import { RichTextComponent } from '../shared/rich-text.component';
@@ -13,7 +14,7 @@ import { SessionGridComponent } from './session-grid.component';
  */
 @Component({
   selector: 'app-subject-list',
-  imports: [RouterLink, TranslocoPipe, RichTextComponent, SessionGridComponent],
+  imports: [IconComponent, RouterLink, TranslocoPipe, RichTextComponent, SessionGridComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <main class="page wide">
@@ -30,7 +31,7 @@ import { SessionGridComponent } from './session-grid.component';
               {{ (next.kind === 'lesson' ? 'course.estimate' : 'course.timed') | transloco: { minutes: next.duration } }}
             </p>
             <a class="button primary" [routerLink]="['/subjects', subject.id, 'sessions', next.id]">
-              {{ (subject.lastStudied ? 'course.resume' : 'course.start') | transloco }} →
+              {{ (subject.lastStudied ? 'course.resume' : 'course.start') | transloco }} <app-icon name="arrow-right" />
             </a>
           </section>
         }

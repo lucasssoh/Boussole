@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { IconComponent } from '../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { RichTextComponent } from '../shared/rich-text.component';
 import { subjectColor } from '../shared/subject-color';
@@ -9,7 +10,7 @@ import { LearnFacade } from './learn.facade';
 /** A subject: its plan, and its lexicon. */
 @Component({
   selector: 'app-course-page',
-  imports: [RichTextComponent, RouterLink, SessionGridComponent, TranslocoPipe],
+  imports: [IconComponent, RichTextComponent, RouterLink, SessionGridComponent, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'subject-scope', '[style.--subject]': 'color()' },
   template: `
@@ -27,7 +28,7 @@ import { LearnFacade } from './learn.facade';
             @if (course.resume; as next) {
               <p>
                 <a class="button primary" [routerLink]="['/subjects', course.id, 'sessions', next.id]">
-                  {{ 'course.resume' | transloco }} : <app-rich-text [text]="next.title" /> →
+                  {{ 'course.resume' | transloco }} : <app-rich-text [text]="next.title" /> <app-icon name="arrow-right" />
                 </a>
               </p>
             } @else {

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { IconComponent } from '../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Chapter, Course } from '../core/api';
 import { RichTextComponent } from '../shared/rich-text.component';
@@ -10,7 +11,7 @@ import { RichTextComponent } from '../shared/rich-text.component';
  */
 @Component({
   selector: 'app-session-grid',
-  imports: [RouterLink, TranslocoPipe, RichTextComponent],
+  imports: [IconComponent, RouterLink, TranslocoPipe, RichTextComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @for (chapter of shown(); track chapter.id) {
@@ -30,7 +31,13 @@ import { RichTextComponent } from '../shared/rich-text.component';
                   [routerLink]="['/subjects', course().id, 'sessions', entry.id]"
                 >
                   <span class="session-card-top">
-                    <span class="session-mark" aria-hidden="true">{{ entry.finished ? '✓' : entry.id === resume() ? '▶' : '' }}</span>
+                    <span class="session-mark">
+                      @if (entry.finished) {
+                        <app-icon name="check" />
+                      } @else if (entry.id === resume()) {
+                        <app-icon name="play" />
+                      }
+                    </span>
                     <span class="tag" [class]="entry.kind">{{ 'kind.' + entry.kind | transloco }}</span>
                     <span class="session-time">
                       {{ (entry.kind === 'lesson' ? 'course.estimate' : 'course.timed') | transloco: { minutes: entry.duration } }}

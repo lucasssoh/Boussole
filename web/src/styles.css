@@ -1319,14 +1319,66 @@ a.session-card:active {
   cursor: help;
 }
 
+/*
+ * The definition of a term: on hover the bubble comes first, then the term, then its definition;
+ * leaving, they go in the reverse order and the bubble last. Transitions, not display, so that
+ * leaving animates too; the delays differ between showing and hiding.
+ */
 .term-tip {
-  display: none;
+  display: grid;
+  gap: 0.2rem;
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  scale: 0.6;
+  translate: 0 -6px;
+  transform-origin: top left;
+  pointer-events: none;
+  transition:
+    opacity 0.15s ease-in 0.16s,
+    scale 0.15s ease-in 0.16s,
+    translate 0.15s ease-in 0.16s,
+    visibility 0s linear 0.31s;
+}
+
+.term-tip > * {
+  display: block;
+  opacity: 0;
+  translate: 0 6px;
+  transition: opacity 0.1s ease-in, translate 0.1s ease-in;
+}
+
+.term-tip > .tip-term {
+  color: var(--subject-ink);
+  transition-delay: 0.06s;
 }
 
 .term:hover > .term-tip,
 .term:focus > .term-tip {
-  display: block;
-  position: absolute;
+  visibility: visible;
+  opacity: 1;
+  scale: 1;
+  translate: 0 0;
+  transition:
+    opacity 0.2s ease-out,
+    scale 0.3s var(--spring),
+    translate 0.3s var(--spring),
+    visibility 0s;
+}
+
+.term:hover > .term-tip > *,
+.term:focus > .term-tip > * {
+  opacity: 1;
+  translate: 0 0;
+  transition: opacity 0.2s ease-out 0.12s, translate 0.3s var(--spring) 0.12s;
+}
+
+.term:hover > .term-tip > .tip-definition,
+.term:focus > .term-tip > .tip-definition {
+  transition-delay: 0.2s;
+}
+
+.term-tip {
   left: 0;
   top: 100%;
   z-index: 40;
@@ -1337,7 +1389,7 @@ a.session-card:active {
   border: 2px solid var(--subject);
   border-radius: 14px;
   background: var(--surface);
-  box-shadow: 0 6px 0 var(--subject-soft);
+  box-shadow: 0 10px 24px rgb(0 0 0 / 0.14);
   color: var(--text);
   font-size: 0.92rem;
   font-weight: 600;
@@ -1828,9 +1880,23 @@ app-settings-drawer {
   rotate: 45deg;
 }
 
-/* Closing: Angular keeps the panel until this animation ends (animate.leave). */
+.settings-drawer .pop {
+  animation: bubble 0.4s var(--spring) backwards;
+  animation-delay: calc(80ms + var(--i, 0) * 40ms);
+}
+
+/*
+ * Closing: the contents leave in the reverse order, then the panel. Angular keeps the panel until
+ * its own animation, the longest, ends (animate.leave).
+ */
 .settings-drawer.leaving {
   animation: pull-up 0.18s ease-in forwards;
+  animation-delay: 300ms;
+}
+
+.settings-drawer.leaving .pop {
+  animation: bubble-out 0.16s ease-in forwards;
+  animation-delay: calc(var(--o, 0) * 30ms);
 }
 
 .drawer-head {
@@ -1875,6 +1941,14 @@ app-settings-drawer {
   font-size: 0.92rem;
 }
 
+@keyframes bubble-out {
+  to {
+    opacity: 0;
+    scale: 0.8;
+    translate: 0 -6px;
+  }
+}
+
 @keyframes pull-down {
   from {
     opacity: 0;
@@ -1889,4 +1963,99 @@ app-settings-drawer {
     scale: 0.6 0.2;
     translate: 0 -10px;
   }
+}
+
+/*
+ * Bubbles: entering a page or a screen, its elements pop in one after the other, swell a little
+ * and settle. Only the scale, translate and opacity properties are animated, never transform,
+ * so an element's own transform (centring, pressing) is left alone; the delay comes from --i,
+ * the element's rank, and the fill mode keeps nothing once the animation is over.
+ */
+
+:root {
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --bubble-step: 65ms;
+}
+
+@keyframes bubble {
+  from {
+    opacity: 0;
+    scale: 0.82;
+    translate: 0 12px;
+  }
+
+  60% {
+    opacity: 1;
+    scale: 1.035;
+    translate: 0 -2px;
+  }
+
+  to {
+    opacity: 1;
+    scale: 1;
+    translate: 0 0;
+  }
+}
+
+:is(
+    .screen > *,
+    .screen > app-block-list > *,
+    .choices > li,
+    .question-actions,
+    .screen-nav > *,
+    .resume-card,
+    .session-grid > li,
+    .grid-chapter-head,
+    .cards > li,
+    .bilan-stat,
+    .page h1,
+    .page h2
+  ) {
+  animation: bubble 0.45s var(--spring) backwards;
+  animation-delay: calc(min(var(--i, 0), 14) * var(--bubble-step));
+}
+
+/* The rank of each element among its siblings. */
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(2) { --i: 1; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(3) { --i: 2; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(4) { --i: 3; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(5) { --i: 4; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(6) { --i: 5; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(7) { --i: 6; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(8) { --i: 7; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(n + 9) { --i: 8; }
+
+/* The choices of a question come after its statement, the buttons after the choices. */
+.choices > li {
+  animation-delay: calc((3 + min(var(--i, 0), 6)) * var(--bubble-step));
+}
+
+.question-actions {
+  animation-delay: calc(8 * var(--bubble-step));
+}
+
+.screen-nav > * {
+  animation-delay: calc((6 + var(--i, 0)) * var(--bubble-step));
+}
+
+/* The path pops in once, node after node, when the session opens. */
+.path-node,
+.path-sign {
+  animation: bubble 0.45s var(--spring) backwards;
+  animation-delay: calc(min(var(--i, 0), 24) * 35ms);
+}
+
+/* Icons: inline, in the colour of the text, sitting on its baseline. */
+.icon-host {
+  display: inline-flex;
+  vertical-align: -0.2em;
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.pdf-link .icon {
+  margin-right: 0.25rem;
+  vertical-align: -0.2em;
 }

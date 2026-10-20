@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { IconComponent } from '../../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { VideoBlockView } from '../../core/api';
 import { LearnFacade } from '../learn.facade';
@@ -6,13 +7,13 @@ import { LearnFacade } from '../learn.facade';
 /** A video, opened beside the text so the learner can read and watch at once. */
 @Component({
   selector: 'app-video-block',
-  imports: [TranslocoPipe],
+  imports: [IconComponent, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button type="button" class="media-card" [class.active]="active()" (click)="open()">
       <img [src]="thumbnail()" alt="" loading="lazy" />
       <span class="media-text">
-        <span class="media-action">▶ {{ 'block.watch' | transloco }}{{ segment() }}</span>
+        <span class="media-action"><app-icon name="play" /> {{ 'block.watch' | transloco }}{{ segment() }}</span>
         <span>{{ video().label }}</span>
       </span>
     </button>

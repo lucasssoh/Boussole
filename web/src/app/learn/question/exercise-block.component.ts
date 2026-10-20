@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, computed, effect, forwardRef, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { IconComponent } from '../../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { RichTextComponent } from '../../shared/rich-text.component';
 import { AttemptRequest, ExerciseBlockView } from '../../core/api';
@@ -23,7 +24,7 @@ type SelfGrade = 'got_it' | 'partly' | 'not_yet';
  */
 @Component({
   selector: 'app-exercise-block',
-  imports: [RichTextComponent, FormsModule, TranslocoPipe, QuestionFooterComponent, QuestionCorrectionComponent, QuestionHeaderComponent, forwardRef(() => BlockListComponent)],
+  imports: [IconComponent, RichTextComponent, FormsModule, TranslocoPipe, QuestionFooterComponent, QuestionCorrectionComponent, QuestionHeaderComponent, forwardRef(() => BlockListComponent)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let question = exercise();
@@ -60,8 +61,8 @@ type SelfGrade = 'got_it' | 'partly' | 'not_yet';
                   <li [class.correct]="mark?.correct === true" [class.wrong]="mark?.correct === false">
                     @if (!locked) {
                       <span class="order-buttons">
-                        <button type="button" class="quiet" [disabled]="first" [attr.aria-label]="'question.moveUp' | transloco" (click)="move(index, -1)">↑</button>
-                        <button type="button" class="quiet" [disabled]="last" [attr.aria-label]="'question.moveDown' | transloco" (click)="move(index, 1)">↓</button>
+                        <button type="button" class="quiet" [disabled]="first" [attr.aria-label]="'question.moveUp' | transloco" (click)="move(index, -1)"><app-icon name="arrow-up" /></button>
+                        <button type="button" class="quiet" [disabled]="last" [attr.aria-label]="'question.moveDown' | transloco" (click)="move(index, 1)"><app-icon name="arrow-down" /></button>
                       </span>
                     }
                     <app-rich-text [text]="item" />
@@ -133,7 +134,7 @@ type SelfGrade = 'got_it' | 'partly' | 'not_yet';
                   @if (expected?.kind === 'pairs') {
                     <ul class="expected-list">
                       @for (pair of expected.pairs; track $index) {
-                        <li><app-rich-text [text]="pair[0]" /> → <app-rich-text [text]="pair[1]" /></li>
+                        <li><app-rich-text [text]="pair[0]" /> <app-icon name="arrow-right" [size]="14" /> <app-rich-text [text]="pair[1]" /></li>
                       }
                     </ul>
                   }

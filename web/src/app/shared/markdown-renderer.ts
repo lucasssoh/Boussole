@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import MarkdownItCallable, { type MarkdownIt, type RendererRule, type StateInline } from 'markdown-it';
 import katexPlugin from '@vscode/markdown-it-katex';
+import { iconSvg } from './icon.component';
 
 /** What a piece of Markdown is rendered against: the folder its relative links and images start from. */
 export interface MarkdownContext {
@@ -96,7 +97,7 @@ function renderDirective(meta: DirectiveMeta, markdown: MarkdownIt): string {
   if (meta.name === 'term') {
     return `<span class="term" tabindex="0" data-term-id="${escape(meta.attributes['id'] ?? '')}" data-term-text="${escape(meta.text)}">${text}</span>`;
   }
-  return `<button type="button" class="pdf-link" data-pdf-src="${escape(meta.attributes['src'] ?? '')}" data-pdf-page="${escape(meta.attributes['page'] ?? '')}">📄 ${text}</button>`;
+  return `<button type="button" class="pdf-link" data-pdf-src="${escape(meta.attributes['src'] ?? '')}" data-pdf-page="${escape(meta.attributes['page'] ?? '')}">${iconSvg('document', 16)}<span class="pdf-label">${text}</span></button>`;
 }
 
 /** Images and links relative to the session file, such as ../assets/figure.svg, resolve against its folder. */

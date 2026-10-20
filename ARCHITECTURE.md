@@ -267,6 +267,8 @@ web/src/app/
   `bubble` keyframes, a rank `--i` per element). They animate `scale`, `translate` and
   `opacity`, never `transform`, so that centring and pressing are left alone; nothing moves when
   the system asks for reduced motion.
+- **Icons** are SVG paths of `shared/icon.component.ts` (`<app-icon name="…">`, or `iconSvg()` in
+  markup built outside templates). No emoji or pictographic character anywhere in the code.
 - **Light and dark** themes from CSS variables, following the system unless the learner chose.
 
 ---
@@ -375,7 +377,8 @@ On macOS and Windows the equivalent per-user folders are used.
 7. **Tests**: JUnit 6 and AssertJ. The parser is tested on reference files
    (`examples/` and `boussole-format/src/test/resources`); each validation rule has its own test
    class; ArchUnit checks the module dependencies.
-8. Code, comments, commits and documentation in English. Commits, versions and releases follow
+8. No emoji in the code, the interface or the command output: icons are SVG (§5), words say the rest.
+9. Code, comments, commits and documentation in English. Commits, versions and releases follow
    [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ---

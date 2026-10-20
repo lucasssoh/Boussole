@@ -31,7 +31,7 @@ class ValidateCommandTest {
         int status = run("validate", Path.of("..", "examples", "reseaux").toString());
 
         assertThat(status).isZero();
-        assertThat(out.toString()).isEqualTo("✓ ../examples/reseaux: no problem, 2 of 2 sessions written.\n");
+        assertThat(out.toString()).isEqualTo("../examples/reseaux: no problem, 2 of 2 sessions written.\n");
     }
 
     @Test
@@ -54,7 +54,7 @@ class ValidateCommandTest {
         assertThat(status).isEqualTo(1);
         assertThat(out.toString()).isEqualTo(dir + "/cursus/01-ch/s1.md:5: error F020 unknown directive `exemple`\n"
                 + dir + "/cursus/syllabus.yaml:8: warning F011 session `s2` is not written yet: cursus/01-ch/s2.md\n"
-                + "✗ " + dir + ": 1 error, 1 warning; 1 of 2 sessions written.\n");
+                + dir + ": 1 error, 1 warning; 1 of 2 sessions written.\n");
     }
 
     @Test
@@ -63,7 +63,7 @@ class ValidateCommandTest {
         write("cursus/syllabus.yaml", "status: approved\nchapters:\n  - {id: ch, title: C, dir: 01-ch, sessions: [{id: s1, title: Un, duration: 60, goal: Faire., file: s1.md}]}\n");
 
         assertThat(run("validate", "--errors-only", dir.toString())).isZero();
-        assertThat(out.toString()).startsWith("✓ ").contains("0 errors, 1 warning");
+        assertThat(out.toString()).startsWith(dir.toString()).contains("0 errors, 1 warning");
     }
 
     @Test

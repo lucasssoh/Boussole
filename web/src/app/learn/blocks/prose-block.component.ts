@@ -37,7 +37,7 @@ export class ProseBlockComponent {
       const page = Number(link.dataset['pdfPage']);
       this.learn.panel.set({
         kind: 'pdf',
-        label: link.textContent?.replace('📄', '').trim() ?? '',
+        label: link.querySelector('.pdf-label')?.textContent?.trim() ?? '',
         path: this.learn.sourcePath(link.dataset['pdfSrc'] ?? ''),
         page: Number.isInteger(page) && page > 0 ? page : null,
       });
@@ -51,7 +51,8 @@ export class ProseBlockComponent {
         const tip = document.createElement('span');
         tip.className = 'term-tip';
         tip.setAttribute('role', 'tooltip');
-        tip.innerHTML = `<strong>${this.renderer.renderInline(term.term)}</strong> : ${this.renderer.renderInline(term.definition)}`;
+        tip.innerHTML = `<strong class="tip-term">${this.renderer.renderInline(term.term)}</strong>`
+          + `<span class="tip-definition">${this.renderer.renderInline(term.definition)}</span>`;
         element.append(tip);
         element.setAttribute('aria-description', term.definition);
       }

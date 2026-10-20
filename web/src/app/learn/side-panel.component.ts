@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { IconComponent } from '../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { LearnFacade } from './learn.facade';
 
 /** The video or the document opened beside the text. */
 @Component({
   selector: 'app-side-panel',
-  imports: [TranslocoPipe],
+  imports: [IconComponent, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'side-panel' },
   template: `
@@ -16,7 +17,7 @@ import { LearnFacade } from './learn.facade';
         @if (newTabUrl(); as url) {
           <a [href]="url" target="_blank" rel="noopener">{{ 'panel.newTab' | transloco }}</a>
         }
-        <button type="button" class="quiet" (click)="learn.panel.set(null)">{{ 'panel.close' | transloco }} ✕</button>
+        <button type="button" class="quiet" (click)="learn.panel.set(null)">{{ 'panel.close' | transloco }} <app-icon name="close" /></button>
       </div>
       @if (frameUrl(); as url) {
         <iframe
