@@ -24,6 +24,9 @@ boussole sources .
 prints the entries to add to `cursus/sources.yaml`, SHA-256 included. Never compute or invent a
 SHA-256 yourself: copy it from there.
 
+The sources folder is searched **with all its sub-folders**: a folder per lecture or per week
+is fine. Your own folders (`cursus/`, `.boussole/`) are never documents.
+
 No `cursus/sources.yaml` yet, on a course already planned? Then every document shows as new.
 Write the file first (§4) for what the course **already** uses, from the `sources` of the
 chapters and sessions; mark `ignored` what it deliberately leaves out (use a pattern for a whole
@@ -43,6 +46,8 @@ Read it (for a PDF, `pdftotext -layout <file> -`). Decide what it is, one docume
 | a duplicate, an administrative paper, something off the subject | `status: ignored`, with a `note` saying why |
 | useful later, but not now (next semester, a project) | `status: pending`, with a `note` |
 | gone (F035) | if sessions cite it (`sources`, `::pdf`), point them to the document that replaces it, else remove the entry |
+| the same document as another one, in another place (F036) | keep the one the teacher's folder structure puts in its place, point sessions to it, mark the copies `ignored` with a note naming the one kept |
+| notes or sheets **generated earlier** (by an AI, by you, by another tool), not the teacher's | help, never authority: check them against the teacher's documents, prefer the teacher's wording; `used` with a note saying they are generated, or `ignored` if the course covers them already |
 
 ## 3. Change the plan without breaking it
 

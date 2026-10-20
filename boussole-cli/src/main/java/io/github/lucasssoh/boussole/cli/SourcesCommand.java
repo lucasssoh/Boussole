@@ -60,6 +60,13 @@ final class SourcesCommand implements Callable<Integer> {
         states.stream()
                 .filter(state -> all || toDo.contains(state))
                 .forEach(state -> out.printf("  %-8s %s%n", state.state().name().toLowerCase(Locale.ROOT), state.file()));
+        List<List<String>> duplicates = SourceInventory.duplicates(course.get().sources(),
+                new FolderSourceDocuments(folder.resolve(sourcesDir), folder));
+        if (!duplicates.isEmpty()) {
+            out.println();
+            out.println("The same document in several places (keep one, mark the others ignored):");
+            duplicates.forEach(same -> out.println("  " + String.join("  =  ", same)));
+        }
         List<SourceState> toWrite = states.stream()
                 .filter(state -> state.state() == State.NEW || state.state() == State.CHANGED)
                 .toList();

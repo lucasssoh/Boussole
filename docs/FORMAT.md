@@ -374,6 +374,7 @@ chapter.
 | `F033` | warning | A document of the sources folder that `cursus/sources.yaml` does not list, or lists as `pending`; or documents and no `cursus/sources.yaml` at all (§8). |
 | `F034` | warning | A document whose SHA-256 differs from the one `cursus/sources.yaml` recorded: it changed since the course used it. |
 | `F035` | warning | A document `cursus/sources.yaml` lists that is no longer in the sources folder. |
+| `F036` | warning | The same document (same SHA-256) in several places of the sources folder, more than one not `ignored`. |
 | `F032` | warning | `video` that YouTube does not know (checked only with `--check-videos`). |
 | `P001` | warning | A notion without exercise or `mcq`. |
 | `P002` | warning | A notion with more than one `example`. |
@@ -457,7 +458,7 @@ document of the sources folder, so that Boussole can say what is new and what ch
 | `chapters` | no | IDs of the chapters that draw on it. |
 | `note` | no | What it is, or why it is ignored or pending. |
 
-A document is any file of the sources folder with one of these extensions: `pdf`, `ppt`, `pptx`,
+A document is any file of the sources folder, sub-folders included, with one of these extensions: `pdf`, `ppt`, `pptx`,
 `odp`, `doc`, `docx`, `odt`, `md`, `txt`, `tex`, `zip`, `png`, `jpg`, `jpeg`; hidden files and
 folders are not. When the sources folder is the subject folder itself (`sources: .`), the files of
 the course (`cursus/`, `subject.yaml`, `learner.yaml`, `AGENTS.md`, `CLAUDE.md`) are not documents.

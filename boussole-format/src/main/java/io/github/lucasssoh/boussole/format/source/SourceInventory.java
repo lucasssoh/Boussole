@@ -8,11 +8,14 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.Optional;
 
 /**
- * Compares the documents of the sources folder with {@code cursus/sources.yaml}: which are new,
- * which changed since the course used them, which wait to be taken in, which are gone. The
+ * Compares the documents of the sources folder, all its sub-folders included, with
+ * {@code cursus/sources.yaml}: which are new, which changed since the course used them, which
+ * wait to be taken in, which are gone, which are the same document in several places. The
  * validator reports from it, and {@code boussole sources} prints it for the agent.
  */
 public final class SourceInventory {
@@ -52,6 +55,25 @@ public final class SourceInventory {
                 .filter(entry -> !entry.isPattern() && !documents.exists(entry.file()))
                 .forEach(entry -> states.add(new SourceState(entry.file(), State.GONE, Optional.empty(), Optional.of(entry))));
         return List.copyOf(states);
+    }
+
+    /**
+     * Documents that are byte for byte the same, in several places of the sources folder, and
+     * that the course has not settled yet: more than one of them is not {@code ignored}.
+     */
+    public static List<List<String>> duplicates(Optional<CourseSources> sources, SourceDocuments documents) {
+        List<SourceEntry> entries = sources.map(CourseSources::entries).orElse(List.of());
+        Map<String, List<String>> bySha = new TreeMap<>();
+        for (String file : documents.documents()) {
+            documents.sha256(file).ifPresent(sha -> bySha.computeIfAbsent(sha, key -> new ArrayList<>()).add(file));
+        }
+        return bySha.values().stream()
+                .filter(files -> files.size() > 1)
+                .filter(files -> files.stream()
+                        .filter(file -> entryFor(file, entries).map(SourceEntry::status).orElse(SourceStatus.USED) != SourceStatus.IGNORED)
+                        .count() > 1)
+                .map(List::copyOf)
+                .toList();
     }
 
     /** The entry naming a file exactly comes first; else the first pattern matching it. */

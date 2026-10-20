@@ -81,6 +81,41 @@ class SourceInventoryRuleTest {
     }
 
     @Test
+    void theSameDocumentInTwoPlacesIsReported() {
+        var report = SubjectFixture.in(dir)
+                .document("cours.md", "cours")
+                .document("copie/cours (1).md", "cours")
+                .sources("- file: cours.md\n- file: \"copie/**\"\n")
+                .inspect();
+
+        assertThat(report.withCode(DiagnosticCode.F036)).singleElement()
+                .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("`copie/cours (1).md`", "`cours.md`"));
+    }
+
+    @Test
+    void aDuplicateIgnoredIsSettled() {
+        var report = SubjectFixture.in(dir)
+                .document("cours.md", "cours")
+                .document("copie/cours.md", "cours")
+                .sources("- file: cours.md\n- file: \"copie/**\"\n  status: ignored\n  note: copie\n")
+                .inspect();
+
+        assertThat(report.withCode(DiagnosticCode.F036)).isEmpty();
+    }
+
+    @Test
+    void subFoldersAreSearched() {
+        var report = SubjectFixture.in(dir)
+                .document("cours.md", "cours")
+                .document("td/semaine-3/td3.md", "td")
+                .sources("- file: cours.md\n")
+                .inspect();
+
+        assertThat(report.withCode(DiagnosticCode.F033)).singleElement()
+                .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("`td/semaine-3/td3.md`"));
+    }
+
+    @Test
     void anUnknownStatusIsAnError() {
         var report = SubjectFixture.in(dir).sources("- file: cours.md\n  status: done\n").inspect();
 

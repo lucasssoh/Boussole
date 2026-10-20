@@ -21,8 +21,8 @@ To build or change the course, follow the skills in `.boussole/skills/`. **Read 
 Where to start:
 
 - **First, every time**: run `boussole validate .`. Once the course has a plan (chapters in
-  `cursus/syllabus.yaml`), if it reports `F033`, `F034` or `F035` (a document arrived, changed or
-  went), or the learner says they added documents, follow **sources-update** before anything
+  `cursus/syllabus.yaml`), if it reports `F033` to `F036` (a document arrived, changed,
+  went, or sits in two places), or the learner says they added documents, follow **sources-update** before anything
   else: the course must follow the documents. Before there is a plan, **cursus-plan** records
   the documents itself.
 - No `learner.yaml` → **learner-profile** first, right after the learner's first request; then

@@ -34,7 +34,7 @@ package "validate" {
     class FillGapsRule <<F023>>
     class ReferenceRule <<F030>>
     class SourceFileRule <<F031>>
-    class SourceInventoryRule <<F033-F035>>
+    class SourceInventoryRule <<F033-F036>>
     class VideoExistsRule <<F032>>
     class NotionExerciseRule <<P001>>
     class SingleExampleRule <<P002>>
@@ -60,6 +60,7 @@ package "source" {
   class FolderSourceDocuments
   class SourceInventory <<helpers>> {
     +{static} compare(sources, documents) : List<SourceState>
+    +{static} duplicates(sources, documents) : List<List<String>>
   }
 }
 

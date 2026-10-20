@@ -11,7 +11,8 @@ import io.github.lucasssoh.boussole.format.validate.ValidationRule;
 import java.util.List;
 
 /**
- * F033, F034, F035: the documents of the sources folder match {@code cursus/sources.yaml}. A
+ * F033 to F036: the documents of the sources folder match {@code cursus/sources.yaml}, and the
+ * same document is not taken twice from two places. A
  * document arrives during the year, one changes, one is removed: the course has to follow, and
  * these warnings say where.
  */
@@ -24,6 +25,11 @@ public final class SourceInventoryRule implements ValidationRule {
     public void check(ValidationContext context, DiagnosticCollector diagnostics) {
         Course course = context.course();
         List<SourceState> states = SourceInventory.compare(course.sources(), context.sources());
+        for (List<String> same : SourceInventory.duplicates(course.sources(), context.sources())) {
+            diagnostics.report(DiagnosticCode.F036, SourcePosition.fileOnly(SOURCES), "the same document is in several places: "
+                    + String.join(", ", same.stream().map(file -> "`" + file + "`").toList())
+                    + "; keep one and mark the others `ignored`");
+        }
         if (course.sources().isEmpty()) {
             if (!states.isEmpty()) {
                 diagnostics.report(DiagnosticCode.F033, course.subject().position(), states.size()

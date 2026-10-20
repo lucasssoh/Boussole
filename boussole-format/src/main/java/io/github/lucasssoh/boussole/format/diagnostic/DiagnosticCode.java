@@ -30,6 +30,7 @@ public enum DiagnosticCode {
     F033(WARNING, "document not yet taken into the course"),
     F034(WARNING, "document changed since the course used it"),
     F035(WARNING, "document listed but gone"),
+    F036(WARNING, "same document in several places"),
     P001(WARNING, "notion without exercise"),
     P002(WARNING, "notion with several examples"),
     P003(WARNING, "warmup not first, or practice not last"),
