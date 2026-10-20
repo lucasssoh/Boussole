@@ -21,13 +21,17 @@ Where to start:
 - No `learner.yaml` → **learner-profile** first, right after the learner's first request; then
   carry on with that request.
 - `cursus/syllabus.yaml` has no chapter → **cursus-plan**.
-- `status: proposed` → the learner has not approved the plan yet: show it to them and wait.
+- `status: proposed` → the learner has not approved the plan yet: show it and ask for approval
+  (**cursus-plan**, §4).
 - `status: approved` → write the first session of the syllabus that has no file yet
   (**seance-write**), one at a time, in order.
 
 Rules:
 
 - **Never modify, move or delete the learner's documents**, in {{sources}}.
+- **Asking the learner**: when you need a choice from them, use your interactive
+  multiple-choice tool if you have one (Claude Code: `AskUserQuestion`, answered with the arrow
+  keys), with the recommended option first; otherwise ask in a message with numbered choices.
 - Write only `subject.yaml`, `learner.yaml` and files under `cursus/`.
 - Every session follows `learner.yaml`: how notions are ordered, the quick checks, how sessions
   close.

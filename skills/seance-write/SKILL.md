@@ -78,4 +78,5 @@ lexicon, the `lexique-build` skill. Videos are optional: the `video-find` skill.
 
 1. Run `boussole validate .` and fix every error and warning of your session (`cursus-fix`).
 2. Tell the learner what the session covers, its exercise count, and anything in the sources
-   you were unsure how to explain.
+   you were unsure how to explain. When several sessions are to be written, ask whether to go
+   on with the next one (interactive tool if you have one: *Next session*, *Stop here*).

@@ -63,7 +63,8 @@ chapters:
   `s12`… where the tens digit is the chapter's rank, so they stay short and sortable.
 - **Never change the ID of a session that already has a file**: the learner's progress is
   stored against it. Add, reorder or retitle instead.
-- Leave `status: proposed`. **Only the learner sets `approved`.**
+- Leave `status: proposed`. **Only the learner approves**: you set `approved` only after they
+  explicitly chose to approve (§4).
 
 Then run `boussole validate .` and fix every error (see the `cursus-fix` skill).
 
@@ -74,5 +75,10 @@ session draws on. Give the total number of sessions and hours. Point out what yo
 of: notions you added because a prerequisite seemed missing, parts of the documents you left
 out and why.
 
-Ask the learner to read it, change it if they wish, and set `status: approved`. Do not write any
-session before that.
+Then ask for approval. With an interactive question tool (Claude Code: `AskUserQuestion`), ask
+"Do you approve this plan?" with the options *Approve*, *Change something*, *Not now*; without
+one, ask the same in a message. On *Approve*, set `status: approved` and say so. On *Change
+something*, apply their changes, show the plan again and ask again. On *Not now*, stop: they can
+also edit `cursus/syllabus.yaml` themselves and set `status: approved`.
+
+Do not write any session before the plan is approved.
