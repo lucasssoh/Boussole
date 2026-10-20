@@ -18,6 +18,8 @@ interface PathNode {
   /** The centre of the node. */
   x: number;
   y: number;
+  /** Where its label goes: towards the centre of the path, so that it stays inside the zone. */
+  side: 'left' | 'right';
 }
 
 interface PathZone {
@@ -27,14 +29,21 @@ interface PathZone {
   height: number;
   /** The centre of its sign, on the line. */
   signY: number;
+  /** A title too long for one line takes two. */
+  lines: 1 | 2;
 }
 
 const WIDTH = 288;
 const CENTRE = WIDTH / 2;
 /** Nodes zigzag on either side of the centre, so that the line winds evenly. */
 const SWING = [-44, 44];
-const NODE_STEP = 96;
-const SIGN_STEP = 62;
+const NODE_STEP = 84;
+const SIGN_STEP = 64;
+const SIGN_LINE = 22;
+/** Room for a title on one line, in average characters, inside the sign's padding and icon. */
+const SIGN_CHARACTERS = 26;
+/** How far the zone reaches below the centre of its last node: the node, its relief, a margin. */
+const ZONE_BOTTOM = 52;
 const ZONE_GAP = 18;
 const ZONE_INSET = 10;
 
@@ -66,7 +75,7 @@ const ZONE_INSET = 10;
         <path class="path-line" [attr.d]="layout().line"></path>
       </svg>
       @for (zone of layout().zones; track $index) {
-        <div [class]="'path-sign ' + zone.kind" [style.top.px]="zone.signY">
+        <div [class]="'path-sign ' + zone.kind + (zone.lines === 2 ? ' two-lines' : '')" [style.top.px]="zone.signY">
           @switch (zone.kind) {
             @case ('warmup') {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"></path></svg>
@@ -87,7 +96,7 @@ const ZONE_INSET = 10;
       @for (node of layout().nodes; track node.index) {
         <button
           type="button"
-          [class]="'path-node ' + node.kind + ' ' + node.state"
+          [class]="'path-node ' + node.kind + ' ' + node.state + ' label-' + node.side"
           [style.left.px]="node.x"
           [style.top.px]="node.y"
           [disabled]="node.state === 'locked'"
@@ -164,7 +173,8 @@ export class SessionPathComponent {
     let swing = 0;
     let notions = 0;
     const place = (screen: SessionScreen, index: number, x: number) => {
-      nodes.push({ index, kind: screen.kind, label: this.label(screen), state: this.state(screen, index), x, y });
+      const side = x > CENTRE ? 'left' : 'right';
+      nodes.push({ index, kind: screen.kind, label: this.label(screen), state: this.state(screen, index), x, y, side });
       stops.push({ x, y });
       y += NODE_STEP;
     };
@@ -178,16 +188,18 @@ export class SessionPathComponent {
       if (part.screens[0] === index) {
         const kind = zoneKind(part.part.kind, notions);
         notions += part.part.kind === 'notion' ? 1 : 0;
-        const top = y - SIGN_STEP / 2;
-        zones.push({ kind, title: this.partTitle(plan, screen.part), top, height: 0, signY: y });
-        stops.push({ x: CENTRE, y });
-        y += SIGN_STEP;
+        const title = this.partTitle(plan, screen.part);
+        const lines = visibleLength(title) > SIGN_CHARACTERS ? 2 : 1;
+        const signY = y + (lines - 1) * (SIGN_LINE / 2);
+        zones.push({ kind, title, top: y - SIGN_STEP / 2, height: 0, signY, lines });
+        stops.push({ x: CENTRE, y: signY });
+        y += SIGN_STEP + (lines - 1) * SIGN_LINE;
         swing = 0;
       }
       place(screen, index, CENTRE + SWING[swing++ % SWING.length]);
       if (part.screens[part.screens.length - 1] === index) {
         const zone = zones[zones.length - 1];
-        zone.height = y - NODE_STEP + 62 - zone.top;
+        zone.height = y - NODE_STEP + ZONE_BOTTOM - zone.top;
         y += ZONE_GAP;
       }
     });
@@ -236,6 +248,11 @@ function curveThrough(points: { x: number; y: number }[]): string {
     line += ` C ${from.x} ${middle}, ${to.x} ${middle}, ${to.x} ${to.y}`;
   }
   return line;
+}
+
+/** The length a title shows with, counting a formula ($…$) by about half its source. */
+function visibleLength(title: string): number {
+  return title.replace(/\$([^$]*)\$/g, (_, formula: string) => 'x'.repeat(Math.ceil(formula.replace(/[\\{}^_]/g, '').length * 0.7))).length;
 }
 
 /** The ambience of a part: notions alternate two tints, so that two notions in a row stay apart. */
