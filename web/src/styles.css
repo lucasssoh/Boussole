@@ -421,18 +421,34 @@ a:focus-visible {
   gap: 0.5rem;
   height: 100%;
   padding: 1.1rem 1.25rem;
-  border: 2px solid var(--line);
-  border-top: 8px solid var(--subject);
+  border: 3px solid color-mix(in srgb, var(--subject) 35%, var(--surface));
   border-radius: var(--radius);
   background: var(--surface);
-  box-shadow: 0 4px 0 var(--line);
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--subject) 35%, var(--surface));
   color: var(--text);
   text-decoration: none;
   font-weight: 600;
+  transition: transform 0.08s, box-shadow 0.08s;
 }
 
 .card:hover {
   border-color: var(--subject);
+  box-shadow: 0 6px 0 var(--subject-deep);
+}
+
+.card:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 var(--subject-deep);
+}
+
+.card-title::before {
+  content: '';
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.8rem;
+  margin-right: 0.5rem;
+  border-radius: 50%;
+  background: var(--subject);
 }
 
 .card-title {
