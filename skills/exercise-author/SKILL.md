@@ -28,6 +28,9 @@ where each missing step is a choice among plausible ones, the wrong options bein
 Typed answers are short and precise: a value, a keyword, an address. Use `free` only for
 reasoning nothing else can check, such as writing a whole model.
 
+Options of a choice gap and right-hand sides of a `match` show in drop-down lists, which cannot
+draw maths: write them in plain text with Unicode (`≤`, `x₁`, `u²`), never `$…$`.
+
 ## Statements
 
 - One clear question. Give every value needed, in the units of the course.

@@ -304,6 +304,11 @@ value, a keyword, an address), never a formula to write in LaTeX. A proof, an al
 equation is asked as a `fill` whose gaps are mostly **choices**: the learner completes the
 reasoning by picking each missing step.
 
+The options of a choice gap and the right-hand sides of a `match` are shown in drop-down lists,
+which cannot show maths: write them in plain text, with Unicode symbols where needed (`≤`, `x₁`,
+`u²`), never `$…$`. Statements, MCQ choices, `order` items and left-hand sides of a `match` may
+hold maths.
+
 #### Multiple choice
 
 A `mcq` is an exercise whose choices are a task list, at the end of its statement. A blockquote indented under a choice is
