@@ -24,8 +24,8 @@ import { ThemeChoice, ThemeService } from './theme.service';
       </svg>
     </button>
     @if (open()) {
-      <button type="button" class="drawer-backdrop" [attr.aria-label]="'panel.close' | transloco" (click)="open.set(false)"></button>
-      <aside id="settings-drawer" class="settings-drawer" role="dialog" [attr.aria-label]="'settings.title' | transloco">
+      <button type="button" class="drawer-backdrop" animate.leave="leaving" [attr.aria-label]="'panel.close' | transloco" (click)="open.set(false)"></button>
+      <aside id="settings-drawer" class="settings-drawer" animate.leave="leaving" role="dialog" [attr.aria-label]="'settings.title' | transloco">
         <div class="drawer-head">
           <h2>{{ 'settings.title' | transloco }}</h2>
           <button type="button" class="quiet" [attr.aria-label]="'panel.close' | transloco" (click)="open.set(false)">✕</button>

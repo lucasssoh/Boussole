@@ -1785,6 +1785,7 @@ select:disabled {
   border-radius: 0;
   background: rgb(0 0 0 / 0.25);
   box-shadow: none;
+  animation: fade-in 0.25s ease-out;
 }
 
 .drawer-backdrop:active {
@@ -1805,7 +1806,16 @@ select:disabled {
   background: var(--surface);
   border-left: 2px solid var(--line);
   box-shadow: -8px 0 24px rgb(0 0 0 / 0.18);
-  animation: drawer-in 0.2s ease-out;
+  animation: drawer-in 0.28s var(--spring);
+}
+
+/* Closing: Angular keeps the drawer until this animation ends (animate.leave). */
+.settings-drawer.leaving {
+  animation: drawer-out 0.2s ease-in forwards;
+}
+
+.drawer-backdrop.leaving {
+  animation: fade-out 0.2s ease-in forwards;
 }
 
 .drawer-head {
@@ -1848,7 +1858,25 @@ select:disabled {
 
 @keyframes drawer-in {
   from {
-    transform: translateX(100%);
+    translate: 100% 0;
+  }
+}
+
+@keyframes drawer-out {
+  to {
+    translate: 100% 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
   }
 }
 
