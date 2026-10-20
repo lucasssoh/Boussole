@@ -35,6 +35,9 @@ public final class InitCommand implements Callable<Integer> {
     @Option(names = "--lang", description = "Language of the documents, as en, fr… (default: the system's).")
     private String lang = Locale.getDefault().getLanguage();
 
+    @Option(names = "--profile", paramLabel = "FILE", description = "The learner's usual profile, copied when the subject has no learner.yaml (default: ${DEFAULT-VALUE}).")
+    private Path profile = LearnerProfiles.usual();
+
     @Option(names = "--sources", description = "Folder of the documents, relative to FOLDER (default: sources/ if it exists, else FOLDER itself when it holds PDFs).", defaultValue = "")
     private String sources;
 
@@ -51,13 +54,14 @@ public final class InitCommand implements Callable<Integer> {
         SubjectScaffold scaffold = new SubjectScaffold(subject);
         InitReport report = new InitReport();
         scaffold.create(new SubjectScaffold.Settings(id, name, lang, sources), report);
+        scaffold.copyProfile(profile, report);
         new AgentKitInstaller(subject).install(scaffold.sources(sources), Launcher.current().validateCommand(), report);
 
         var out = spec.commandLine().getOut();
         report.lines().forEach(out::println);
         out.println();
         out.println("Next: open an AI agent in " + folder + " and ask it to build the course.");
-        out.println("It starts with the cursus-plan skill, and asks you to approve the plan before writing sessions.");
+        out.println("It first asks how you learn best (unless learner.yaml exists), then proposes a plan for you to approve.");
         out.flush();
         return 0;
     }

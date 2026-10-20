@@ -216,6 +216,7 @@ The skills shipped in `skills/`:
 
 | Skill | Role |
 |---|---|
+| `learner-profile` | Asks the learner a few multiple-choice questions on how they learn, and writes `learner.yaml`. |
 | `cursus-plan` | Reads `sources/`, writes `syllabus.yaml` with `status: proposed`, and stops for the learner. |
 | `seance-write` | Writes one session following `FORMAT.md`, in the language of the sources. |
 | `exercise-author` | Exercises and QCMs: feedback for each wrong choice, hints in tiers, answers recomputed. |
@@ -231,6 +232,7 @@ The skills shipped in `skills/`:
 | `AGENTS.md` | shared | only the block between `boussole:start` and `boussole:end` is replaced; the rest is the learner's |
 | `CLAUDE.md` | shared | an `@AGENTS.md` line is added once, since Claude Code reads `CLAUDE.md` rather than `AGENTS.md` |
 | `subject.yaml`, `cursus/syllabus.yaml` | the course | created when missing, never overwritten |
+| `learner.yaml` | the learner | copied from `$XDG_CONFIG_HOME/boussole/learner.yaml` when missing and that file exists, never overwritten |
 
 `AGENTS.md` gives the exact command that runs the validator of this installation
 (`java -jar …/boussole.jar validate .`), so agents run the right version even when another

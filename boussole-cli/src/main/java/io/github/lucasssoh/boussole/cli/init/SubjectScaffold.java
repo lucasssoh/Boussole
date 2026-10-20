@@ -1,6 +1,8 @@
 package io.github.lucasssoh.boussole.cli.init;
 
 import io.github.lucasssoh.boussole.cli.init.InitReport.Action;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Creates {@code subject.yaml} and an empty proposed syllabus, so that the folder is a valid
@@ -10,6 +12,7 @@ final class SubjectScaffold {
 
     static final String SUBJECT = "subject.yaml";
     static final String SYLLABUS = "cursus/syllabus.yaml";
+    static final String LEARNER = "learner.yaml";
     private static final String SOURCES = "sources";
 
     private final SubjectFolder folder;
@@ -36,6 +39,16 @@ final class SubjectScaffold {
         } else {
             folder.write(SYLLABUS, "status: proposed\nchapters: []\n");
             report.add(Action.CREATED, SYLLABUS + " (proposed, no chapter yet)");
+        }
+    }
+
+    /** Copies the learner's usual profile into the subject, unless it has its own. */
+    void copyProfile(Path profile, InitReport report) {
+        if (folder.exists(LEARNER)) {
+            report.add(Action.KEPT, LEARNER);
+        } else if (Files.isRegularFile(profile)) {
+            folder.copy(profile, LEARNER);
+            report.add(Action.CREATED, LEARNER + " (copied from " + profile + ")");
         }
     }
 

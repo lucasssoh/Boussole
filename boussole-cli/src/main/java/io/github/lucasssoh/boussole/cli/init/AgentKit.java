@@ -14,7 +14,7 @@ final class AgentKit {
 
     /** Every skill of {@code skills/}; a test keeps this list in step with the folder. */
     static final List<String> SKILLS =
-            List.of("cursus-plan", "seance-write", "exercise-author", "lexique-build", "video-find", "cursus-fix");
+            List.of("learner-profile", "cursus-plan", "seance-write", "exercise-author", "lexique-build", "video-find", "cursus-fix");
 
     private static final String ROOT = "/boussole-agent/";
 

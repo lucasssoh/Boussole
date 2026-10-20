@@ -47,6 +47,16 @@ final class SubjectFolder {
         }
     }
 
+    void copy(Path source, String name) {
+        try {
+            Path target = root.resolve(name);
+            Files.createDirectories(target.getParent());
+            Files.copy(source, target);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
     /** Whether the folder itself holds PDF documents. */
     boolean holdsPdfs() {
         try (Stream<Path> files = Files.list(root)) {

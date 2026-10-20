@@ -9,6 +9,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
@@ -27,11 +30,14 @@ class InitCommandTest {
     private int init(Path folder, String... options) {
         CommandLine command = new CommandLine(new BoussoleCommand());
         command.setOut(new PrintWriter(out));
-        String[] args = new String[options.length + 2];
-        args[0] = "init";
-        System.arraycopy(options, 0, args, 1, options.length);
-        args[args.length - 1] = folder.toString();
-        return command.execute(args);
+        boolean profileGiven = Arrays.asList(options).contains("--profile");
+        List<String> args = new ArrayList<>(List.of("init"));
+        if (!profileGiven) {
+            args.addAll(List.of("--profile", parent.resolve("no-profile.yaml").toString()));
+        }
+        args.addAll(List.of(options));
+        args.add(folder.toString());
+        return command.execute(args.toArray(String[]::new));
     }
 
     @Test
@@ -45,7 +51,7 @@ class InitCommandTest {
                 .isEqualTo("format: 1\nid: l-mc\nname: \"L&MC\"\nlang: fr\nsources: \".\"\n");
         assertThat(new SubjectInspector().inspect(folder).diagnostics()).isEmpty();
         assertThat(folder.resolve("AGENTS.md")).content().contains("documents are in this folder: every file outside `cursus/`");
-        assertThat(out.toString()).contains("Created  subject.yaml (id l-mc, lang fr, documents in .)", "cursus-plan");
+        assertThat(out.toString()).contains("Created  subject.yaml (id l-mc, lang fr, documents in .)", "how you learn best");
     }
 
     @Test
@@ -88,6 +94,21 @@ class InitCommandTest {
                 .startsWith("# Mes notes\n\nÀ garder.\n\n" + MarkedBlock.START);
         assertThat(folder.resolve("CLAUDE.md")).content().isEqualTo("@AGENTS.md\n\nRéponds en français.\n");
         assertThat(out.toString()).contains("Kept     subject.yaml", "Kept     CLAUDE.md");
+    }
+
+    @Test
+    void theUsualProfileIsCopiedUnlessTheSubjectHasOne() throws IOException {
+        Path profile = Files.writeString(parent.resolve("learner.yaml"), "quick_check: true\nclosing: both\n");
+        Path fresh = folder("fresh");
+        Path own = folder("own");
+        Files.writeString(own.resolve("learner.yaml"), "closing: quiz\n");
+
+        init(fresh, "--lang", "fr", "--profile", profile.toString());
+        init(own, "--lang", "fr", "--profile", profile.toString());
+
+        assertThat(fresh.resolve("learner.yaml")).content().isEqualTo("quick_check: true\nclosing: both\n");
+        assertThat(own.resolve("learner.yaml")).content().isEqualTo("closing: quiz\n");
+        assertThat(new SubjectInspector().inspect(fresh).diagnostics()).isEmpty();
     }
 
     @Test
