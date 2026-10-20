@@ -217,7 +217,7 @@ rather than with the estimate alone.
 
 ```
 web/src/app/
-├── core/        BoussoleApi and the types of the API (api.ts), language, theme, settings drawer
+├── core/        BoussoleApi and the types of the API (api.ts), language, theme, settings panel
 ├── i18n/        the interface in English and French, compiled in
 ├── learn/       subjects, course outline, session player, side panel (video, PDF)
 │   ├── blocks/     BlockListComponent and one component per kind of block

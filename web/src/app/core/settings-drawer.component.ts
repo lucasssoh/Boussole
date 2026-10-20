@@ -3,7 +3,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { LANGUAGES, LanguageService } from './language.service';
 import { ThemeChoice, ThemeService } from './theme.service';
 
-/** The gear of the header: a small drawer on the right with the theme and the language. */
+/** The gear of the header: a small panel pulled down under it, with the theme and the language. */
 @Component({
   selector: 'app-settings-drawer',
   imports: [TranslocoPipe],
@@ -24,7 +24,7 @@ import { ThemeChoice, ThemeService } from './theme.service';
       </svg>
     </button>
     @if (open()) {
-      <button type="button" class="drawer-backdrop" animate.leave="leaving" [attr.aria-label]="'panel.close' | transloco" (click)="open.set(false)"></button>
+      <button type="button" class="drawer-backdrop" tabindex="-1" [attr.aria-label]="'panel.close' | transloco" (click)="open.set(false)"></button>
       <aside id="settings-drawer" class="settings-drawer" animate.leave="leaving" role="dialog" [attr.aria-label]="'settings.title' | transloco">
         <div class="drawer-head">
           <h2>{{ 'settings.title' | transloco }}</h2>
