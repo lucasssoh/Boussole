@@ -26,13 +26,20 @@ export class QuestionState {
   /** The response as the learner is writing it, kept with the question rather than its component. */
   readonly picked = signal<ReadonlySet<number>>(new Set());
   readonly value = signal('');
-  readonly order = signal<string[]>([]);
+  readonly order: WritableSignal<string[]>;
   readonly pairs = signal<Readonly<Record<string, string>>>({});
   readonly gaps = signal<Readonly<Record<number, string>>>({});
   readonly error = signal<string | null>(null);
 
-  readonly hintsLeft = computed(() => this.hints().length < this.hintTotal);
-  readonly solutionAllowed = computed(() => this.freeSolution || this.progress().attempts > 0);
+  /** The learner answers once; the question is then closed for this sitting. */
+  readonly answered = computed(() => this.result() !== null);
+  readonly hintsLeft = computed(
+    () => !this.answered() && this.hints().length < this.hintTotal && (this.run?.hintsAllowed() ?? true),
+  );
+  /** The correction shows right after the answer, except in an exam, where it waits for the end. */
+  readonly correctionShown = computed(
+    () => this.solution() !== null && (this.isFree || (this.answered() && (this.run?.correctionsOpen() ?? true))),
+  );
 
   /** Starts from what the server knows: attempts made, hints already revealed. */
   constructor(
@@ -42,8 +49,10 @@ export class QuestionState {
     progress: QuestionProgress,
     hints: QuestionHints,
     private readonly run: SessionRun | null,
-    private readonly freeSolution = false,
+    readonly isFree = false,
+    shuffledItems: string[] = [],
   ) {
+    this.order = signal([...shuffledItems]);
     this.progress = signal(progress);
     this.hints = signal(hints.revealed);
     this.hintTotal = hints.total;
@@ -57,6 +66,7 @@ export class QuestionState {
     await this.call(async () => {
       const result = await this.api.attempt(this.subject, this.id, request);
       this.result.set(result);
+      this.solution.set(result.solution);
       this.progress.set(result.progress);
       this.run?.record(this.id, result.verdict);
     });
@@ -69,6 +79,7 @@ export class QuestionState {
     });
   }
 
+  /** A free exercise is compared with its solution before the learner grades it. */
   async showSolution(): Promise<void> {
     await this.call(async () => this.solution.set(await this.api.solution(this.subject, this.id)));
   }

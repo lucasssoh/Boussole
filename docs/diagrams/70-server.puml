@@ -32,7 +32,10 @@ package "session" {
 package "exercise" {
   class ExerciseController <<…/exercises/{id}>>
   interface AttemptRequest <<sealed, JSON kind>>
-  class AttemptView <<record>>
+  class AttemptView <<record>> {
+    verdict, items, progress
+    solution : SolutionView
+  }
   class HintView <<record>>
   class SolutionView <<record>>
 }
@@ -73,6 +76,7 @@ SessionView *-- PartView : parts
 PartView ..> BlockViewMapper
 ExerciseController ..> AttemptRequest : body
 ExerciseController ..> AttemptView
+AttemptView --> SolutionView : the correction
 ExerciseController ..> HintView
 ExerciseController ..> SolutionView
 HintView ..> BlockViewMapper

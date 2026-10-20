@@ -1,5 +1,6 @@
 package io.github.lucasssoh.boussole.server.exercise;
 
+import io.github.lucasssoh.boussole.core.learn.AttemptOutcome;
 import io.github.lucasssoh.boussole.core.learn.OpenCourse;
 import io.github.lucasssoh.boussole.core.learn.RevealNextHint;
 import io.github.lucasssoh.boussole.core.learn.RevealSolution;
@@ -31,7 +32,9 @@ class ExerciseController {
 
     @PostMapping("/attempts")
     AttemptView attempt(@PathVariable String subject, @PathVariable String exercise, @RequestBody AttemptRequest request) {
-        return AttemptView.of(submitAttempt.submit(new ExerciseKey(subject, exercise), request.toResponse()));
+        ExerciseKey key = new ExerciseKey(subject, exercise);
+        AttemptOutcome outcome = submitAttempt.submit(key, request.toResponse());
+        return AttemptView.of(outcome, SolutionView.of(revealSolution.reveal(key), mapper(subject)));
     }
 
     @PostMapping("/hints")

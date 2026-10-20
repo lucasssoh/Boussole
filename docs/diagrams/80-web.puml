@@ -45,14 +45,16 @@ package "learn.blocks" {
 package "learn.question" {
   class McqBlockComponent
   class ExerciseBlockComponent
-  class QuestionFooterComponent <<check, hints, solution>>
+  class QuestionFooterComponent <<hints, then one answer>>
+  class QuestionCorrectionComponent <<why, beside the question>>
   class QuestionHeaderComponent
   class QuestionState {
     progress, result, hints, solution : Signal
     picked, value, order, pairs, gaps : Signal
     +attempt(AttemptRequest)
     +nextHint()
-    +showSolution()
+    +showSolution() : free exercise
+    answered, correctionShown : Signal
   }
   class FillGaps <<fields in the statement>>
 }
@@ -82,6 +84,8 @@ ExerciseBlockComponent *-- QuestionState
 ExerciseBlockComponent *-- FillGaps
 McqBlockComponent --> QuestionFooterComponent
 ExerciseBlockComponent --> QuestionFooterComponent
+McqBlockComponent --> QuestionCorrectionComponent
+ExerciseBlockComponent --> QuestionCorrectionComponent
 QuestionState --> BoussoleApi
 QuestionState ..> SessionRun : first verdicts
 ProseBlockComponent --> MarkdownRenderer

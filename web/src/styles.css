@@ -942,3 +942,76 @@ progress {
   color: var(--muted);
   font-size: 0.85rem;
 }
+
+/* Correction beside an answered question */
+
+.session {
+  container-type: inline-size;
+}
+
+.question {
+  container-type: inline-size;
+  transition: margin 0.2s ease-out;
+}
+
+.question.corrected {
+  margin-inline: calc((min(100cqi - 3rem, 72rem) - 100%) / -2);
+}
+
+.question-body {
+  display: grid;
+  gap: 1rem;
+}
+
+@container (min-width: 52rem) {
+  .question.corrected .question-body {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    align-items: start;
+  }
+}
+
+.correction {
+  display: block;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  border-left: 4px solid var(--correct);
+  background: var(--correct-bg);
+}
+
+.question.corrected .choices li:not(.correct):not(.wrong) {
+  opacity: 0.65;
+}
+
+.choices li.correct label::after {
+  content: ' ✓';
+  color: var(--correct);
+  font-weight: 700;
+}
+
+.choices li.wrong label::after {
+  content: ' ✗';
+  color: var(--wrong);
+  font-weight: 700;
+}
+
+.choices li.picked:not(.correct):not(.wrong) {
+  border-color: var(--accent);
+}
+
+input:disabled,
+select:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.verdict.saved {
+  color: var(--muted);
+  background: var(--surface-2);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .question {
+    transition: none;
+  }
+}

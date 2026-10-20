@@ -119,7 +119,9 @@ import { SidePanelComponent } from './side-panel.component';
                   <p class="score">{{ 'timed.score' | transloco: { correct: run.rightFirstTime(), total: run.answered() } }}</p>
                 }
                 @if (finishedIn() === null) {
-                  <button type="button" class="primary" (click)="finish()">{{ 'session.finish' | transloco }}</button>
+                  <button type="button" class="primary" (click)="finish()">
+                    {{ (current.kind === 'exam' ? 'session.endExam' : 'session.finish') | transloco }}
+                  </button>
                 } @else {
                   <p class="verdict correct">{{ 'session.finished' | transloco: { minutes: finishedIn() } }}</p>
                 }
@@ -183,7 +185,9 @@ export class SessionPageComponent {
         void this.learn.openSession(subject, session).then(
           () => {
             const opened = this.learn.session();
-            this.run.begin(opened && opened.kind !== 'lesson' ? opened.duration : null);
+            if (opened) {
+              this.run.begin(opened.kind, opened.duration);
+            }
           },
           () => undefined,
         );
@@ -233,6 +237,7 @@ export class SessionPageComponent {
 
   protected async finish(): Promise<void> {
     const seconds = this.run.spentSeconds();
+    this.run.end();
     await this.learn.finishSession(seconds);
     this.finishedIn.set(Math.max(1, Math.round(seconds / 60)));
   }

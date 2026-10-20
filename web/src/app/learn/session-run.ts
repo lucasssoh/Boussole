@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy, computed, signal } from '@angular/core';
-import { Verdict } from '../core/api';
+import { SessionKind, Verdict } from '../core/api';
 import { QuestionState } from './question/question-state';
 
 /**
@@ -14,7 +14,10 @@ export class SessionRun implements OnDestroy {
   private readonly timer = setInterval(() => this.tick(), 1000);
   private readonly questions = new Map<string, QuestionState>();
 
+  readonly kind = signal<SessionKind>('lesson');
   readonly started = signal(false);
+  /** The learner ended the session (in an exam, before the time is up). */
+  readonly ended = signal(false);
   readonly allowedSeconds = signal<number | null>(null);
   readonly spentSeconds = this.spent.asReadonly();
   readonly remainingSeconds = computed(() => {
@@ -23,15 +26,25 @@ export class SessionRun implements OnDestroy {
   });
   readonly timeIsUp = computed(() => this.remainingSeconds() === 0);
   readonly answered = computed(() => this.firstVerdicts().size);
+  /** An exam shows its corrections when the time is up or the learner ends it; other sessions, after each answer. */
+  readonly correctionsOpen = computed(() => this.kind() !== 'exam' || this.timeIsUp() || this.ended());
+  /** An exam gives no hint. */
+  readonly hintsAllowed = computed(() => this.kind() !== 'exam');
   readonly rightFirstTime = computed(() => [...this.firstVerdicts().values()].filter((verdict) => verdict === 'correct').length);
 
-  /** A lesson starts at once; a timed session when the learner says so. */
-  begin(timedMinutes: number | null): void {
+  /** A lesson starts at once; a review or an exam when the learner says so, with its countdown. */
+  begin(kind: SessionKind, minutes: number): void {
+    this.kind.set(kind);
     this.spent.set(0);
     this.firstVerdicts.set(new Map());
     this.questions.clear();
-    this.allowedSeconds.set(timedMinutes === null ? null : timedMinutes * 60);
-    this.started.set(timedMinutes === null);
+    this.ended.set(false);
+    this.allowedSeconds.set(kind === 'lesson' ? null : minutes * 60);
+    this.started.set(kind === 'lesson');
+  }
+
+  end(): void {
+    this.ended.set(true);
   }
 
   start(): void {

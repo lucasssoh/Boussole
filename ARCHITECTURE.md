@@ -230,9 +230,13 @@ web/src/app/
   *I have finished this session*; a review or a mock exam starts with its countdown and ends
   with the number of questions right at the first attempt. `SessionRun` measures the time
   spent while the page is visible.
-- **A question** owns a `QuestionState`: attempt, next hint, solution once allowed (after an
-  attempt, or at once for a free exercise). A fill exercise places its fields where the
-  statement has `[[N]]` (`FillGaps`).
+- **A question** owns a `QuestionState`: hints revealed one at a time before answering, then
+  **one answer**, which closes the question for the sitting. The server answers it with the
+  verdict and the correction together: the right answer turns green, a wrong one red with its
+  feedback, and `QuestionCorrectionComponent` shows *why* (the solution) beside the question,
+  or below it on a narrow screen. In an exam, the correction waits for the end, and there is no
+  hint. A free exercise shows its solution first, then the learner grades their answer. A fill
+  exercise places its fields where the statement has `[[N]]` (`FillGaps`).
 
 - **Standalone components and signals.** State lives in services, exposed as signals; no NgRx.
 - **Container and presentational components.** A container gets data from its feature's
@@ -254,7 +258,7 @@ GET  /api/subjects                       subjects and how far the learner is
 GET  …                                   chapters, sessions (written, finished), lexicon
 GET  …/sessions/{session}                parts and blocks; questions without answers
 POST …/sessions/{session}/finish         { spentSeconds }
-POST …/exercises/{id}/attempts           verdict and each part judged, recorded
+POST …/exercises/{id}/attempts           verdict, each part judged and the correction, recorded
 POST …/exercises/{id}/hints              the next hint, recorded
 GET  …/exercises/{id}/solution           after an attempt (at once for a free exercise)
 GET  …/files/{path}                      a file of the subject folder: PDFs, images

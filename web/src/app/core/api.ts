@@ -192,6 +192,8 @@ export interface AttemptResult {
   verdict: Verdict;
   items: CheckedItem[];
   progress: QuestionProgress;
+  /** The correction, shown right after the answer (at the end of an exam). */
+  solution: RevealedSolution;
 }
 
 export interface RevealedHint {

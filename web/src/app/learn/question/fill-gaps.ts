@@ -8,6 +8,7 @@ import { CheckedItem, FillGapInput } from '../../core/api';
  */
 export class FillGaps {
   private marks: CheckedItem[] = [];
+  private locked = false;
   private expected: Readonly<Record<string, string>> = {};
 
   constructor(
@@ -28,6 +29,7 @@ export class FillGaps {
       }
     }
     this.paint(root);
+    this.lock(root, this.locked);
   }
 
   /** Shows which gaps are right, and once the solution is open, what each expected. */
@@ -35,6 +37,12 @@ export class FillGaps {
     this.marks = marks;
     this.expected = expected;
     this.paint(root);
+  }
+
+  /** Once answered, the fields can no longer change. */
+  lock(root: HTMLElement, locked: boolean): void {
+    this.locked = locked;
+    root.querySelectorAll<HTMLInputElement | HTMLSelectElement>('span.gap input, span.gap select').forEach((field) => (field.disabled = locked));
   }
 
   complete(): boolean {

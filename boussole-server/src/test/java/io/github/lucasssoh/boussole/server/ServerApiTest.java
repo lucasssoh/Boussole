@@ -82,7 +82,7 @@ class ServerApiTest {
         HttpResponse<String> attempt = post("/api/subjects/reseaux/exercises/s11-w1/attempts",
                 "{\"kind\":\"value\",\"value\":\"  Le Forwarding \"}");
 
-        assertThat(attempt.body()).contains("\"verdict\":\"correct\"", "\"attempts\":1");
+        assertThat(attempt.body()).contains("\"verdict\":\"correct\"", "\"attempts\":1", "consulte la table");
         assertThat(get("/api/subjects/reseaux/exercises/s11-w1/solution").body())
                 .contains("\"kind\":\"value\"", "forwarding", "consulte la table");
     }

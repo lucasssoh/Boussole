@@ -6,6 +6,7 @@ import { McqBlockView } from '../../core/api';
 import { BlockListComponent } from '../blocks/block-list.component';
 import { LearnFacade } from '../learn.facade';
 import { SessionRun } from '../session-run';
+import { QuestionCorrectionComponent } from './question-correction.component';
 import { QuestionFooterComponent } from './question-footer.component';
 import { QuestionHeaderComponent } from './question-header.component';
 import { QuestionState } from './question-state';
@@ -13,37 +14,46 @@ import { QuestionState } from './question-state';
 /** A multiple-choice question: radio buttons, or check boxes when several answers are right. */
 @Component({
   selector: 'app-mcq-block',
-  imports: [RichTextComponent, TranslocoPipe, QuestionFooterComponent, QuestionHeaderComponent, forwardRef(() => BlockListComponent)],
+  imports: [RichTextComponent, TranslocoPipe, QuestionFooterComponent, QuestionCorrectionComponent, QuestionHeaderComponent, forwardRef(() => BlockListComponent)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let question = mcq();
-    <article class="question" [class.solved]="state().progress().solved">
+    @let corrected = state().correctionShown();
+    <article class="question" [class.solved]="state().progress().solved" [class.corrected]="corrected">
       <app-question-header [id]="question.id" [minutes]="question.minutes" [reused]="question.reused" [progress]="state().progress()" />
-      <app-block-list [blocks]="question.statement" />
-      @if (question.multiple) {
-        <p class="note">{{ 'question.several' | transloco }}</p>
-      }
-      <ul class="choices">
-        @for (choice of question.choices; track $index) {
-          @let mark = state().item($index);
-          @let expected = expectedChoice($index);
-          <li [class.correct]="mark?.correct === true || expected?.correct" [class.wrong]="mark?.correct === false">
-            <label>
-              <input
-                [type]="question.multiple ? 'checkbox' : 'radio'"
-                [name]="question.id"
-                [checked]="picked().has($index)"
-                (change)="toggle($index)"
-              />
-              <app-rich-text class="choice-text" [text]="choice" />
-            </label>
-            @if (mark?.feedback ?? expected?.feedback; as feedback) {
-              <p class="feedback"><app-rich-text [text]="feedback" /></p>
+      <div class="question-body">
+        <div class="question-main">
+          <app-block-list [blocks]="question.statement" />
+          @if (question.multiple) {
+            <p class="note">{{ 'question.several' | transloco }}</p>
+          }
+          <ul class="choices">
+            @for (choice of question.choices; track $index) {
+              @let expected = corrected ? expectedChoice($index) : undefined;
+              @let isPicked = picked().has($index);
+              <li [class.correct]="expected?.correct" [class.wrong]="corrected && isPicked && !expected?.correct" [class.picked]="isPicked">
+                <label>
+                  <input
+                    [type]="question.multiple ? 'checkbox' : 'radio'"
+                    [name]="question.id"
+                    [checked]="isPicked"
+                    [disabled]="state().answered()"
+                    (change)="toggle($index)"
+                  />
+                  <app-rich-text class="choice-text" [text]="choice" />
+                </label>
+                @if (expected?.feedback && (isPicked || expected?.correct)) {
+                  <p class="feedback"><app-rich-text [text]="expected!.feedback!" /></p>
+                }
+              </li>
             }
-          </li>
+          </ul>
+          <app-question-footer [state]="state()" [ready]="picked().size > 0" (check)="check()" />
+        </div>
+        @if (corrected) {
+          <app-question-correction [state]="state()" />
         }
-      </ul>
-      <app-question-footer [state]="state()" [ready]="picked().size > 0" (check)="check()" />
+      </div>
     </article>
   `,
 })
