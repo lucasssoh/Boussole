@@ -122,6 +122,11 @@ localhost (another site pointed at 127.0.0.1) and a change without the `X-Bousso
 form posted from another site). It also serves the interface, any other path answering with its
 `index.html`.
 
+The guide shown to a Boussole with no subject is an ordinary subject, written in the course
+format under `guide/<language>/` and copied into the jar. `BundledGuide` installs it into the
+data folder at start, and `ServeCommand` lists it only while the configuration has no subject;
+`GuideSubjectTest` keeps both languages valid.
+
 ### `boussole-cli`
 
 picocli. One class per command.
@@ -353,6 +358,7 @@ reminders:
 | Configuration | `$XDG_CONFIG_HOME/boussole/config.yaml` |
 | Progress, plan, history | `$XDG_DATA_HOME/boussole/state.db` |
 | Courses | the subject folders listed in the configuration, never inside Boussole |
+| Built-in guide | `$XDG_DATA_HOME/boussole/guide/<language>/`, rewritten at each start |
 
 On macOS and Windows the equivalent per-user folders are used.
 

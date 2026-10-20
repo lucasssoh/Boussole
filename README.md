@@ -19,7 +19,18 @@ on your machine.
 4. `boussole open <folder>` and study in your browser: quizzes and exercises are checked as you
    answer, hints come one at a time, videos and your PDFs open beside the text.
 
-Boussole itself never calls an AI and needs no account.
+```mermaid
+flowchart LR
+  D["Your documents"] --> A["Your AI agent"]
+  S["Boussole skills"] --> A
+  A --> C["cursus/: plan, sessions, quizzes"]
+  C --> B["Boussole, in your browser"]
+  B --> T["You"]
+  T -. "approve the plan" .-> A
+```
+
+Boussole itself never calls an AI and needs no account. Opened with no subject yet, it shows a
+short guide, itself a Boussole subject ([`guide/`](guide)), that walks through all of this.
 
 ## Documentation
 

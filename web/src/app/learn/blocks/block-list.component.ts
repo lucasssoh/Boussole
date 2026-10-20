@@ -4,6 +4,7 @@ import { BlockView } from '../../core/api';
 import { FillGaps } from '../question/fill-gaps';
 import { ExerciseBlockComponent } from '../question/exercise-block.component';
 import { McqBlockComponent } from '../question/mcq-block.component';
+import { RichTextComponent } from '../../shared/rich-text.component';
 import { PdfBlockComponent } from './pdf-block.component';
 import { ProseBlockComponent } from './prose-block.component';
 import { VideoBlockComponent } from './video-block.component';
@@ -15,7 +16,7 @@ import { VideoBlockComponent } from './video-block.component';
  */
 @Component({
   selector: 'app-block-list',
-  imports: [ProseBlockComponent, VideoBlockComponent, PdfBlockComponent, McqBlockComponent, ExerciseBlockComponent, TranslocoPipe],
+  imports: [ProseBlockComponent, VideoBlockComponent, PdfBlockComponent, McqBlockComponent, ExerciseBlockComponent, RichTextComponent, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @for (block of blocks(); track $index) {
@@ -25,7 +26,7 @@ import { VideoBlockComponent } from './video-block.component';
         }
         @case ('example') {
           <section class="frame example">
-            <h4 class="frame-title">{{ 'block.example' | transloco }}{{ block.label ? ' — ' + block.label : '' }}</h4>
+            <h4 class="frame-title">{{ 'block.example' | transloco }}@if (block.label) { — <app-rich-text [text]="block.label" />}</h4>
             <app-block-list [blocks]="block.blocks" />
           </section>
         }

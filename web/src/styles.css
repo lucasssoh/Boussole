@@ -1469,6 +1469,13 @@ a.session-card:active {
   color: var(--muted);
 }
 
+/* A formula in a title keeps its case and spacing: x_i must not become X_I. */
+.frame-title .katex {
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 1.15em;
+}
+
 .frame.example {
   border-color: #74c0fc;
   background: var(--example-bg);
