@@ -1,4 +1,17 @@
-import { ChangeDetectionStrategy, Component, ElementRef, computed, effect, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  Injector,
+  afterNextRender,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Session, Verdict } from '../core/api';
@@ -67,7 +80,8 @@ const ZONE_INSET = 10;
         · {{ 'session.spent' | transloco: { minutes: spentMinutes() } }}
       </p>
     </div>
-    <div class="path-track" [style.height.px]="layout().height">
+    <div class="path-viewport" #viewport>
+    <div class="path-track" [style.height.px]="layout().height" [style.transform]="'translateY(' + -offset() + 'px)'">
       <svg class="path-map" [attr.width]="width" [attr.height]="layout().height" aria-hidden="true">
         @for (zone of layout().zones; track $index) {
           <rect [attr.class]="'zone ' + zone.kind" [attr.x]="inset" [attr.y]="zone.top" [attr.width]="width - 2 * inset" [attr.height]="zone.height" rx="28"></rect>
@@ -140,6 +154,7 @@ const ZONE_INSET = 10;
         </button>
       }
     </div>
+    </div>
   `,
 })
 export class SessionPathComponent {
@@ -154,7 +169,7 @@ export class SessionPathComponent {
   protected readonly width = WIDTH;
   private readonly run = inject(SessionRun);
   private readonly transloco = inject(TranslocoService);
-  private readonly host: HTMLElement = inject(ElementRef).nativeElement;
+  private readonly injector = inject(Injector);
 
   protected readonly spentMinutes = computed(() => Math.floor(this.run.spentSeconds() / 60));
 
@@ -206,11 +221,30 @@ export class SessionPathComponent {
     return { nodes, zones, height: y, line: curveThrough(stops) };
   });
 
+  private readonly viewport = viewChild.required<ElementRef<HTMLElement>>('viewport');
+  private readonly viewportHeight = signal(0);
+
+  /**
+   * How far the path is moved up: the current node stays in the middle of the column, and the
+   * path follows it on each Next or Previous. The learner never scrolls it by hand.
+   */
+  protected readonly offset = computed(() => {
+    const layout = this.layout();
+    const height = this.viewportHeight();
+    const node = layout.nodes.find((found) => found.index === this.current());
+    if (!node || height === 0) {
+      return 0;
+    }
+    return Math.min(Math.max(node.y - height / 2, 0), Math.max(layout.height - height, 0));
+  });
+
   constructor() {
-    effect(() => {
-      this.current();
-      queueMicrotask(() => this.host.querySelector('.path-node.current')?.scrollIntoView({ block: 'center', behavior: 'smooth' }));
-    });
+    afterNextRender(() => {
+      const viewport = this.viewport().nativeElement;
+      const observer = new ResizeObserver(() => this.viewportHeight.set(viewport.clientHeight));
+      observer.observe(viewport);
+      inject(DestroyRef).onDestroy(() => observer.disconnect());
+    }, { injector: this.injector });
   }
 
   private state(screen: SessionScreen, index: number): NodeState {

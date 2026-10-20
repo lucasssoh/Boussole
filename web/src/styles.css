@@ -549,13 +549,23 @@ a:focus-visible {
   padding: 1.5rem 1.5rem 0;
 }
 
+/* The path never scrolls by hand: it slides to keep the current screen in the middle. */
 .session-path {
   position: sticky;
   top: 3.5rem;
   align-self: start;
-  max-height: calc(100vh - 3.5rem);
-  overflow-y: auto;
-  scrollbar-width: thin;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 3.5rem);
+  overflow: hidden;
+}
+
+.path-viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent);
 }
 
 .path-head {
@@ -584,7 +594,7 @@ a:focus-visible {
 .path-track {
   position: relative;
   width: 288px;
-  margin: 0.5rem 0 2rem;
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .path-map {
@@ -1099,12 +1109,12 @@ a:focus-visible {
   }
 
   .player.outline-open .session-path {
-    display: block;
+    display: flex;
     position: fixed;
     inset: 3.5rem auto 0 0;
     z-index: 35;
     width: min(18rem, 85vw);
-    max-height: none;
+    height: auto;
     box-shadow: 8px 0 24px rgb(0 0 0 / 0.2);
   }
 
