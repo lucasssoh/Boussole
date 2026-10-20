@@ -28,6 +28,7 @@ configuration (see `ARCHITECTURE.md`, *Configuration*).
 ```
 <subject>/
 ├── subject.yaml              # what the subject is
+├── learner.yaml              # how the learner learns best (optional, §7)
 ├── sources/                  # the learner's documents (PDF…), never modified by Boussole
 └── cursus/
     ├── syllabus.yaml         # chapters and sessions, in order
@@ -311,7 +312,7 @@ elsewhere in the subject. This is how a warmup asks again a question of the prev
 
 | Code | Level | Rule |
 |---|---|---|
-| `F001` | error | A YAML file or front matter is missing, unreadable, or lacks a required field or has an invalid one (`subject.yaml`, `syllabus.yaml`, `lexique.yaml`, a session's front matter). |
+| `F001` | error | A YAML file or front matter is missing, unreadable, or lacks a required field or has an invalid one (`subject.yaml`, `syllabus.yaml`, `lexique.yaml`, `learner.yaml`, a session's front matter). |
 | `F002` | error | `format` is not a version this Boussole knows. |
 | `F003` | error | Duplicate ID (chapter, session, notion, exercise, term). |
 | `F004` | error | ID with characters other than `a-z`, `0-9`, `-`. |
@@ -335,12 +336,49 @@ elsewhere in the subject. This is how a warmup asks again a question of the prev
 | `P003` | warning | `warmup` not first, or `practice` not last. |
 | `P004` | warning | Exercise without any `hint`. |
 | `P005` | warning | `term` used in the body but not listed in the front matter's `terms`. |
+| `P006` | warning | With a `learner.yaml`: a session without the checkpoint, or without the final practice holding an exercise, that `closing` asks for. |
+| `P007` | warning | With `quick_check: true`: a notion without a `qcm` before its example. |
 
 `F` codes are about the format, `P` codes about the teaching contract.
 
 ---
 
-## 7. Versions
+## 7. `learner.yaml`
+
+Optional. How the learner learns best: agents shape the sessions after it, and `P006`, `P007`
+check that they do. Without it, the defaults below apply and those checks are skipped.
+
+```yaml
+background: >
+  M1 computer science. Has done linear algebra, never studied duality.
+goal: top
+session_minutes: 60
+explanations: concise
+order: example-first
+quick_check: true
+closing: both
+videos: some
+notes: >
+  Retains better with a quick quiz after each point.
+```
+
+| Field | Values | Default | Meaning |
+|---|---|---|---|
+| `background` | text | empty | What the learner has studied, and what feels shaky. |
+| `goal` | `pass`, `good`, `top`, `understand` | `good` | How much practice, and how close to the exam. |
+| `session_minutes` | 15 to 120 | `60` | Usual length of a session when planning. |
+| `explanations` | `concise`, `detailed` | `concise` | How much an explanation spells out. |
+| `order` | `example-first`, `try-first` | `example-first` | Whether a notion's exercise comes after its example, or before. |
+| `quick_check` | `true`, `false` | `false` | A short `qcm` right after each notion's explanation, before its example. |
+| `closing` | `quiz`, `exercise`, `both` | `quiz` | What ends a session: a `checkpoint`, a final `practice` holding an exercise, or both. |
+| `videos` | `none`, `some`, `many` | `some` | How many videos to add. |
+| `notes` | text | empty | Anything else, in the learner's words. |
+
+Any other field is an error (`F001`), to catch misspellings.
+
+---
+
+## 8. Versions
 
 `format: 1` is this document. A change that makes existing courses invalid increments the
 version; Boussole keeps reading older versions, or tells exactly what to change.

@@ -29,6 +29,7 @@ public final class SubjectFixture {
     private Optional<String> subjectYaml = Optional.empty();
     private Optional<String> syllabusYaml = Optional.empty();
     private Optional<String> lexiconYaml = Optional.empty();
+    private Optional<String> learnerYaml = Optional.empty();
     private Optional<VideoCatalog> videos = Optional.empty();
 
     private SubjectFixture(Path root) {
@@ -81,6 +82,11 @@ public final class SubjectFixture {
         return this;
     }
 
+    public SubjectFixture learner(String yaml) {
+        this.learnerYaml = Optional.of(yaml);
+        return this;
+    }
+
     public SubjectFixture pdf(String name, int pages) {
         try (PDDocument document = new PDDocument()) {
             for (int page = 0; page < pages; page++) {
@@ -103,6 +109,7 @@ public final class SubjectFixture {
         write("subject.yaml", subjectYaml.orElse("format: 1\nid: test\nname: Test\nlang: fr\n"));
         write("cursus/syllabus.yaml", syllabusYaml.orElseGet(this::syllabus));
         lexiconYaml.ifPresent(yaml -> write("cursus/lexique.yaml", yaml));
+        learnerYaml.ifPresent(yaml -> write("learner.yaml", yaml));
         sessions.forEach((id, content) -> content.ifPresent(text -> write("cursus/" + DIR + "/" + id + ".md", text)));
         return new SubjectInspector(Validator.standard(), videos).inspect(root);
     }

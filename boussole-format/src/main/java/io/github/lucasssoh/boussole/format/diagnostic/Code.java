@@ -31,7 +31,9 @@ public enum Code {
     P002(WARNING, "notion with several examples"),
     P003(WARNING, "warmup not first, or practice not last"),
     P004(WARNING, "exercise without hint"),
-    P005(WARNING, "term used but not declared");
+    P005(WARNING, "term used but not declared"),
+    P006(WARNING, "session does not close as the learner asked"),
+    P007(WARNING, "notion without the quick check the learner asked for");
 
     private final Severity severity;
     private final String summary;

@@ -6,6 +6,7 @@ import io.github.lucasssoh.boussole.format.diagnostic.Position;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.lowlevel.Compose;
 import org.snakeyaml.engine.v2.exceptions.Mark;
@@ -79,6 +80,27 @@ public final class YamlMap {
 
     public Position positionOf(String key) {
         return value(key).map(source::position).orElse(position());
+    }
+
+    /** Reports every key of the mapping that is not in {@code known}, such as a misspelt field. */
+    public void reportUnknownKeys(Set<String> known) {
+        for (NodeTuple tuple : node.getValue()) {
+            if (tuple.getKeyNode() instanceof ScalarNode scalar && !known.contains(scalar.getValue())) {
+                source.report(source.position(scalar), "`" + scalar.getValue() + "` is not a field of this file");
+            }
+        }
+    }
+
+    /** {@code true} or {@code false}; reported and empty for anything else. */
+    public Optional<Boolean> flag(String key) {
+        return text(key).flatMap(text -> switch (text.strip()) {
+            case "true" -> Optional.of(true);
+            case "false" -> Optional.of(false);
+            default -> {
+                source.report(positionOf(key), "`" + key + "` is true or false, not `" + text + "`");
+                yield Optional.empty();
+            }
+        });
     }
 
     public boolean has(String key) {

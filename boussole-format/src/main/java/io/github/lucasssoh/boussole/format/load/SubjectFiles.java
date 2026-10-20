@@ -15,6 +15,7 @@ final class SubjectFiles {
     static final String SUBJECT = "subject.yaml";
     static final String SYLLABUS = "cursus/syllabus.yaml";
     static final String LEXICON = "cursus/lexique.yaml";
+    static final String LEARNER = "learner.yaml";
 
     private final Path root;
     private final Diagnostics diagnostics;

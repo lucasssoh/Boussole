@@ -1,6 +1,7 @@
 package io.github.lucasssoh.boussole.format.validate;
 
 import io.github.lucasssoh.boussole.format.diagnostic.Diagnostics;
+import io.github.lucasssoh.boussole.format.validate.rule.ClosingRule;
 import io.github.lucasssoh.boussole.format.validate.rule.DeclaredTermsRule;
 import io.github.lucasssoh.boussole.format.validate.rule.DuplicateIdRule;
 import io.github.lucasssoh.boussole.format.validate.rule.FillGapsRule;
@@ -10,6 +11,7 @@ import io.github.lucasssoh.boussole.format.validate.rule.MissingSessionFileRule;
 import io.github.lucasssoh.boussole.format.validate.rule.NotionExerciseRule;
 import io.github.lucasssoh.boussole.format.validate.rule.PartOrderRule;
 import io.github.lucasssoh.boussole.format.validate.rule.QcmChoicesRule;
+import io.github.lucasssoh.boussole.format.validate.rule.QuickCheckRule;
 import io.github.lucasssoh.boussole.format.validate.rule.ReferenceRule;
 import io.github.lucasssoh.boussole.format.validate.rule.SessionIdMatchRule;
 import io.github.lucasssoh.boussole.format.validate.rule.SingleExampleRule;
@@ -45,7 +47,9 @@ public final class Validator {
                 new SingleExampleRule(),
                 new PartOrderRule(),
                 new HintPresenceRule(),
-                new DeclaredTermsRule()));
+                new DeclaredTermsRule(),
+                new ClosingRule(),
+                new QuickCheckRule()));
     }
 
     public void validate(ValidationContext context, Diagnostics diagnostics) {

@@ -3,6 +3,7 @@ package io.github.lucasssoh.boussole.format.load;
 import io.github.lucasssoh.boussole.format.diagnostic.Diagnostics;
 import io.github.lucasssoh.boussole.format.model.Chapter;
 import io.github.lucasssoh.boussole.format.model.Course;
+import io.github.lucasssoh.boussole.format.model.LearnerProfile;
 import io.github.lucasssoh.boussole.format.model.Lexicon;
 import io.github.lucasssoh.boussole.format.model.LoadedSession;
 import io.github.lucasssoh.boussole.format.model.SessionEntry;
@@ -30,8 +31,10 @@ public final class SubjectLoader {
         }
         Syllabus syllabus = SyllabusReader.read(files, diagnostics);
         Lexicon lexicon = LexiconReader.read(files, diagnostics);
-        Course withoutSessions = new Course(root, subject.get(), syllabus, lexicon, List.of());
-        return Optional.of(new Course(root, subject.get(), syllabus, lexicon, sessions(withoutSessions, files, diagnostics)));
+        Optional<LearnerProfile> learner = LearnerProfileReader.read(files, diagnostics);
+        Course withoutSessions = new Course(root, subject.get(), syllabus, lexicon, learner, List.of());
+        return Optional.of(new Course(
+                root, subject.get(), syllabus, lexicon, learner, sessions(withoutSessions, files, diagnostics)));
     }
 
     private static List<LoadedSession> sessions(Course course, SubjectFiles files, Diagnostics diagnostics) {

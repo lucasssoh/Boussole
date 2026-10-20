@@ -8,6 +8,7 @@ import io.github.lucasssoh.boussole.format.SubjectInspector;
 import io.github.lucasssoh.boussole.format.diagnostic.Code;
 import io.github.lucasssoh.boussole.format.diagnostic.Diagnostic;
 import io.github.lucasssoh.boussole.format.fixture.SubjectFixture;
+import io.github.lucasssoh.boussole.format.model.LearnerProfile;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -80,6 +81,29 @@ class SubjectLoadingTest {
 
         assertThat(report.withCode(Code.F001)).singleElement()
                 .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("`objectives` is required"));
+    }
+
+    @Test
+    void theLearnerProfileIsReadWithItsDefaults() {
+        InspectionReport report = SubjectFixture.in(dir).learner("quick_check: true\norder: try-first\n").inspect();
+
+        var profile = report.course().orElseThrow().learner().orElseThrow();
+        assertThat(profile.quickCheck()).isTrue();
+        assertThat(profile.order()).isEqualTo(LearnerProfile.Order.TRY_FIRST);
+        assertThat(profile.closing()).isEqualTo(LearnerProfile.Closing.QUIZ);
+        assertThat(profile.sessionMinutes()).isEqualTo(60);
+        assertThat(report.diagnostics()).isEmpty();
+    }
+
+    @Test
+    void theLearnerProfileIsChecked() {
+        InspectionReport report = SubjectFixture.in(dir)
+                .learner("closing: exam\nquick_chek: true\nsession_minutes: 200\n").inspect();
+
+        assertThat(report.withCode(Code.F001)).extracting(Diagnostic::message).containsExactly(
+                "`closing` is one of quiz, exercise, both, not `exam`",
+                "`quick_chek` is not a field of this file",
+                "`session_minutes` is between 15 and 120, not 200");
     }
 
     @Test
