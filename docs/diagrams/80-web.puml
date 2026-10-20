@@ -49,6 +49,8 @@ package "learn.blocks" {
   class ProseBlockComponent
   class VideoBlockComponent
   class PdfBlockComponent
+  class GraphBlockComponent
+  class GraphDrawing <<drawGraph()>>
 }
 
 package "learn.question" {
@@ -90,6 +92,8 @@ LearnFacade --> BoussoleApi
 BlockListComponent --> ProseBlockComponent
 BlockListComponent --> VideoBlockComponent
 BlockListComponent --> PdfBlockComponent
+BlockListComponent --> GraphBlockComponent
+GraphBlockComponent ..> GraphDrawing : pixels
 BlockListComponent --> McqBlockComponent
 BlockListComponent --> ExerciseBlockComponent
 McqBlockComponent *-- QuestionState

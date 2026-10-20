@@ -5,6 +5,7 @@ import { FillGaps } from '../question/fill-gaps';
 import { ExerciseBlockComponent } from '../question/exercise-block.component';
 import { McqBlockComponent } from '../question/mcq-block.component';
 import { RichTextComponent } from '../../shared/rich-text.component';
+import { GraphBlockComponent } from './graph-block.component';
 import { PdfBlockComponent } from './pdf-block.component';
 import { ProseBlockComponent } from './prose-block.component';
 import { VideoBlockComponent } from './video-block.component';
@@ -16,7 +17,7 @@ import { VideoBlockComponent } from './video-block.component';
  */
 @Component({
   selector: 'app-block-list',
-  imports: [ProseBlockComponent, VideoBlockComponent, PdfBlockComponent, McqBlockComponent, ExerciseBlockComponent, RichTextComponent, TranslocoPipe],
+  imports: [ProseBlockComponent, VideoBlockComponent, PdfBlockComponent, GraphBlockComponent, McqBlockComponent, ExerciseBlockComponent, RichTextComponent, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @for (block of blocks(); track $index) {
@@ -47,6 +48,9 @@ import { VideoBlockComponent } from './video-block.component';
         }
         @case ('pdf') {
           <app-pdf-block [pdf]="block" />
+        }
+        @case ('graph') {
+          <app-graph-block [graph]="block" />
         }
         @case ('mcq') {
           <app-mcq-block [mcq]="block" />

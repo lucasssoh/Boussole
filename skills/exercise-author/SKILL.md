@@ -35,6 +35,9 @@ draw maths: write them in plain text with Unicode (`≤`, `x₁`, `u²`), never 
 
 - One clear question. Give every value needed, in the units of the course.
 - Same notation as the example just before it.
+- A statement may show a `:::graph` (a network, a weighted graph, a tree) instead of describing
+  it in words: the learner reads the figure, the question asks about it. Mark nothing with `!`
+  that would give the answer away; the `solution` can repeat the graph with the answer marked.
 - A statement never contains its answer, and the answer never depends on an interpretation the
   statement leaves open.
 

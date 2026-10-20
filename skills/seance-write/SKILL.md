@@ -69,6 +69,10 @@ session should be split, and propose how.
   `:::note` explaining the difference.
 - **No hidden prerequisites**: anything the documents take for granted gets a `:::recall` or a
   short explanation.
+- **Draw when a picture helps**: a network, a path, a flow, a tree or a state machine is a
+  `:::graph` (`docs/FORMAT.md` §5.5): nodes and edges as lines of text, `!` on what matters,
+  checked by `boussole validate`. A flowchart or a sequence is a `mermaid` block. Keep each to a
+  few nodes; never invent a figure the sources do not support.
 - **Answers are never in the text**: the solution of an exercise is only in its `:::solution`.
   An `:::example` is the only place where a worked answer is visible.
 - Front matter: `objectives` (the goal, possibly split in two or three), `terms` (every lexicon

@@ -101,6 +101,7 @@ export type BlockView =
   | CalloutBlockView
   | VideoBlockView
   | PdfBlockView
+  | GraphBlockView
   | McqBlockView
   | ExerciseBlockView
   | MissingRefBlockView;
@@ -133,6 +134,33 @@ export interface VideoBlockView {
   youtubeId: string;
   start: number | null;
   end: number | null;
+}
+
+/** A small graph drawn by Boussole; places are in grid units, one unit between neighbours. */
+export interface GraphBlockView {
+  type: 'graph';
+  label: string;
+  nodes: GraphNodeView[];
+  edges: GraphEdgeView[];
+  width: number;
+  height: number;
+}
+
+export interface GraphNodeView {
+  id: string;
+  /** Its label, or else its ID. */
+  text: string;
+  x: number;
+  y: number;
+  emphasized: boolean;
+}
+
+export interface GraphEdgeView {
+  from: string;
+  to: string;
+  directed: boolean;
+  label: string | null;
+  emphasized: boolean;
 }
 
 export interface PdfBlockView {

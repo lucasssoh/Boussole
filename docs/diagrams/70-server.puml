@@ -57,6 +57,9 @@ package "block" {
   class HintsView <<record>>
   class ProgressView <<record>>
   class SeededShuffle <<helpers>>
+  class GraphPlacement <<helpers>> {
+    +{static} place(GraphBlock) : Map<String, Point>
+  }
 }
 package "api" {
   class ServerController <<GET /api/server, POST stop>>
@@ -94,6 +97,7 @@ BlockView --> InputView : exercise input
 BlockView --> HintsView : revealed only
 BlockView --> ProgressView
 BlockViewMapper ..> SeededShuffle : order, match, choices
+BlockViewMapper ..> GraphPlacement : places the nodes
 
 note bottom of LocalRequestFilter
   Host must be localhost; a change (POST)

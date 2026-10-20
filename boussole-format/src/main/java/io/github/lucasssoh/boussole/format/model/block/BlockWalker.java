@@ -21,7 +21,7 @@ public final class BlockWalker {
             case CalloutBlock callout -> callout.content();
             case ExerciseBlock exercise -> concat(exercise.statement(), exercise.hints(), exercise.solution().stream().toList());
             case McqBlock mcq -> concat(mcq.statement(), mcq.hints(), mcq.solution().stream().toList());
-            case ProseBlock _, VideoBlock _, PdfBlock _, ExerciseRefBlock _ -> List.of();
+            case ProseBlock _, VideoBlock _, PdfBlock _, GraphBlock _, ExerciseRefBlock _ -> List.of();
         };
     }
 

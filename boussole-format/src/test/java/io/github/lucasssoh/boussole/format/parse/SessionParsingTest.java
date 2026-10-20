@@ -21,6 +21,12 @@ import io.github.lucasssoh.boussole.format.model.block.Block;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
 import io.github.lucasssoh.boussole.format.model.block.ProseBlock;
 import io.github.lucasssoh.boussole.format.model.block.VideoBlock;
+import io.github.lucasssoh.boussole.format.model.block.GraphBlock;
+import io.github.lucasssoh.boussole.format.model.block.GraphEdge;
+import io.github.lucasssoh.boussole.format.model.block.GraphLayout;
+import io.github.lucasssoh.boussole.format.model.block.GraphNode;
+import io.github.lucasssoh.boussole.format.model.block.GraphPoint;
+import java.util.Optional;
 import io.github.lucasssoh.boussole.format.model.part.NotionPart;
 import java.time.Duration;
 import java.util.List;
@@ -184,6 +190,80 @@ class SessionParsingTest {
     }
 
     @Nested
+    class Graphs {
+
+        @Test
+        void nodesAndEdgesAreReadInTheOrderTheyAppear() {
+            SessionContent session = parse("""
+                    :::graph[Plus court chemin]{layout=layers}
+                    s "Source" !
+                    s -> a : 4
+                    s -> b : 2 !
+                    a -- b
+                    :::
+                    """);
+
+            assertThat(diagnostics.list()).isEmpty();
+            assertThat(session.blocks().findFirst().orElseThrow()).isInstanceOfSatisfying(GraphBlock.class, graph -> {
+                assertThat(graph.label()).isEqualTo("Plus court chemin");
+                assertThat(graph.layout()).isEqualTo(GraphLayout.LAYERS);
+                assertThat(graph.nodes()).containsExactly(
+                        new GraphNode("s", Optional.of("Source"), Optional.empty(), true),
+                        new GraphNode("a", Optional.empty(), Optional.empty(), false),
+                        new GraphNode("b", Optional.empty(), Optional.empty(), false));
+                assertThat(graph.edges()).containsExactly(
+                        new GraphEdge("s", "a", true, Optional.of("4"), false),
+                        new GraphEdge("s", "b", true, Optional.of("2"), true),
+                        new GraphEdge("a", "b", false, Optional.empty(), false));
+            });
+        }
+
+        @Test
+        void placesGivenByTheAuthorAreKept() {
+            SessionContent session = parse(":::graph\nu @ 0,0\nv @ 2,1\nu -- v\n:::\n");
+
+            GraphBlock graph = (GraphBlock) session.blocks().findFirst().orElseThrow();
+            assertThat(graph.placedByAuthor()).isTrue();
+            assertThat(graph.nodes().get(1).at()).contains(new GraphPoint(2, 1));
+        }
+
+        @Test
+        void eachMistakeSaysWhatToWrite() {
+            parse("""
+                    :::graph
+                    a => b
+                    a -> a
+                    a @ 0,0
+                    a
+                    :::
+                    :::graph
+                    u @ 0,0
+                    u -- v
+                    w @ 0,0
+                    :::
+                    """);
+
+            assertThat(messages(DiagnosticCode.F037)).containsExactly(
+                    "`a => b` is neither a node (`a \"Label\" @ 0,1`) nor an edge (`a -> b : 3` or `a -- b`), with `!` at the end to make it stand out",
+                    "`a` is linked to itself: a loop is not drawn, say it in the text",
+                    "node `a` is given twice: write it on one line",
+                    "either every node gives its place with `@ x,y`, or none does; missing: v",
+                    "`u` and `w` are both at 0,0");
+        }
+
+        @Test
+        void aLargeGraphIsAWarning() {
+            StringBuilder body = new StringBuilder(":::graph{layout=row}\n");
+            for (int index = 0; index < 13; index++) {
+                body.append("n").append(index).append(" -> n").append(index + 1).append('\n');
+            }
+            parse(body.append(":::\n").toString());
+
+            assertThat(messages(DiagnosticCode.P011)).singleElement().asString().startsWith("this graph has 14 nodes");
+        }
+    }
+
+        @Nested
     class Exercises {
 
         @Test

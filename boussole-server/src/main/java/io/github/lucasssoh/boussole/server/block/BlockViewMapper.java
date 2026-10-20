@@ -15,6 +15,7 @@ import io.github.lucasssoh.boussole.format.model.block.ExampleBlock;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseHint;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseRefBlock;
+import io.github.lucasssoh.boussole.format.model.block.GraphBlock;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseType;
 import io.github.lucasssoh.boussole.format.model.block.McqBlock;
 import io.github.lucasssoh.boussole.format.model.block.McqChoice;
@@ -72,10 +73,25 @@ public final class BlockViewMapper {
                     video.start().map(Duration::toSeconds).orElse(null), video.end().map(Duration::toSeconds).orElse(null));
             case PdfBlock pdf -> new BlockView.Pdf(pdf.label(), SourcePaths.of(sourcesDir, pdf.source().file()),
                     pdf.source().page().isPresent() ? pdf.source().page().getAsInt() : null);
+            case GraphBlock graph -> graph(graph);
             case McqBlock mcq -> mcq(mcq, false);
             case ExerciseBlock exercise -> exercise(exercise, false);
             case ExerciseRefBlock ref -> reused(ref);
         };
+    }
+
+    private static BlockView.Graph graph(GraphBlock graph) {
+        Map<String, GraphPlacement.Point> places = GraphPlacement.place(graph);
+        List<BlockView.GraphNodeView> nodes = graph.nodes().stream().map(node -> {
+            GraphPlacement.Point at = places.get(node.id());
+            return new BlockView.GraphNodeView(node.id(), node.label().orElse(node.id()), at.x(), at.y(), node.emphasized());
+        }).toList();
+        List<BlockView.GraphEdgeView> edges = graph.edges().stream()
+                .map(edge -> new BlockView.GraphEdgeView(edge.from(), edge.to(), edge.directed(), edge.label().orElse(null), edge.emphasized()))
+                .toList();
+        double width = places.values().stream().mapToDouble(GraphPlacement.Point::x).max().orElse(0);
+        double height = places.values().stream().mapToDouble(GraphPlacement.Point::y).max().orElse(0);
+        return new BlockView.Graph(graph.label(), nodes, edges, width, height);
     }
 
     private BlockView reused(ExerciseRefBlock ref) {

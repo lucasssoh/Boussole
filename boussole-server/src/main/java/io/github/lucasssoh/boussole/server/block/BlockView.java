@@ -16,6 +16,7 @@ import java.util.List;
     @JsonSubTypes.Type(value = BlockView.Callout.class, name = "callout"),
     @JsonSubTypes.Type(value = BlockView.Video.class, name = "video"),
     @JsonSubTypes.Type(value = BlockView.Pdf.class, name = "pdf"),
+    @JsonSubTypes.Type(value = BlockView.Graph.class, name = "graph"),
     @JsonSubTypes.Type(value = BlockView.Mcq.class, name = "mcq"),
     @JsonSubTypes.Type(value = BlockView.Exercise.class, name = "exercise"),
     @JsonSubTypes.Type(value = BlockView.MissingRef.class, name = "missingRef")
@@ -42,6 +43,21 @@ public sealed interface BlockView {
 
     /** {@code path} is relative to the subject folder; {@code page} is null for the first page. */
     record Pdf(String label, String path, Integer page) implements BlockView {
+    }
+
+    /**
+     * A graph to draw: each node at its place in grid units, {@code width} and {@code height} the
+     * extent of those places; {@code text} is what a node shows, its label or else its ID.
+     */
+    record Graph(String label, List<GraphNodeView> nodes, List<GraphEdgeView> edges, double width, double height)
+            implements BlockView {
+    }
+
+    record GraphNodeView(String id, String text, double x, double y, boolean emphasized) {
+    }
+
+    /** {@code label} is null when the edge has none. */
+    record GraphEdgeView(String from, String to, boolean directed, String label, boolean emphasized) {
     }
 
     /** {@code reused} when the session asks again a question of another session with {@code ::ref}. */

@@ -88,11 +88,22 @@ adresse complète dans chaque paquet    puis un identifiant court
 état dans les routeurs : AUCUN         état : une entrée par circuit
 ```
 
-:::example[Une panne de routeur]
+::::example[Une panne de routeur]
 Un routeur tombe au milieu d'un transfert. En **datagramme**, les paquets suivants prennent un
 autre chemin dès que le routage a convergé : la communication continue. En **circuit
 virtuel**, le circuit passait par ce routeur : il faut en établir un nouveau.
+
+:::graph[R2 tombe : les paquets passent par R3]{layout=layers}
+A "Hôte A" !
+A -> R1 !
+R1 -- R2 : en panne
+R1 -> R3 : 2 !
+R2 -- R4
+R3 -> R4 : 3 !
+R4 -> B !
+B "Hôte B" !
 :::
+::::
 
 ::::mcq{#s11-a2}
 Dans quel modèle les routeurs gardent-ils un état **par communication** ?

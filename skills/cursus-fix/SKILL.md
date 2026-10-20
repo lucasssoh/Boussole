@@ -34,9 +34,11 @@ are about the teaching contract and matter to the learner.
 | F027 | unknown or missing attribute | see the directive's attributes in FORMAT.md §5.5–5.6 |
 | F030 | reference to an ID that does not exist | add the term to the lexicon, or fix the ID |
 | F031 | source file or page not found | use the exact file name in the sources folder and a real page |
+| F037 | a `graph` line Boussole cannot read, a node twice, a loop, or places given for some nodes only | one node (`a "Label" @ 0,1`) or edge (`a -> b : 3`) per line; `@` on every node or none; FORMAT.md §5.5 |
 | F033 to F036 | a document is new, changed, gone, or the same as another | follow `sources-update`: take it into the course, then record it in `cursus/sources.yaml` |
 | P001–P005 | teaching contract | add the exercise, keep one example, move warmup/practice, add hints (MCQs too: one or two, never the answer), list terms |
 | P006, P007 | the session does not follow `learner.yaml` | close it as `closing` asks; add the quick MCQ before the example |
+| P011 | a `graph` of more than 12 nodes | split it into two graphs, or keep only what the explanation needs |
 | P008 | the questions of a review or exam do not fill its time | add or remove questions (estimated times in `exam-build`), or set `minutes=` on a long one |
 | P009 | a review or exam holds a notion or a worked example | move it to a lesson; a timed session only asks questions |
 | P010 | a wrong MCQ choice has no feedback | add `  > why it is wrong` under it |

@@ -31,6 +31,7 @@ public enum DiagnosticCode {
     F034(WARNING, "document changed since the course used it"),
     F035(WARNING, "document listed but gone"),
     F036(WARNING, "same document in several places"),
+    F037(ERROR, "graph malformed"),
     P001(WARNING, "notion without exercise"),
     P002(WARNING, "notion with several examples"),
     P003(WARNING, "warmup not first, or practice not last"),
@@ -40,7 +41,8 @@ public enum DiagnosticCode {
     P007(WARNING, "notion without the quick check the learner asked for"),
     P008(WARNING, "timed session whose questions do not fit its time"),
     P009(WARNING, "timed session with a notion or a worked example"),
-    P010(WARNING, "MCQ wrong choice without feedback");
+    P010(WARNING, "MCQ wrong choice without feedback"),
+    P011(WARNING, "graph too large to read at a glance");
 
     private final DiagnosticSeverity severity;
     private final String summary;

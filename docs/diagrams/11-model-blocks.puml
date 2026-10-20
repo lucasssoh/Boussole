@@ -38,6 +38,30 @@ class VideoBlock <<record>> {
 class PdfBlock <<record>> {
   label : String
 }
+class GraphBlock <<record>> {
+  label : String
+  +placedByAuthor() : boolean
+}
+class GraphNode <<record>> {
+  id : String
+  label : Optional<String>
+  at : Optional<GraphPoint>
+  emphasized : boolean
+}
+class GraphEdge <<record>> {
+  from, to : String
+  directed : boolean
+  label : Optional<String>
+  emphasized : boolean
+}
+class GraphPoint <<record>> {
+  x, y : int
+}
+enum GraphLayout {
+  CIRCLE
+  ROW
+  LAYERS
+}
 class ExerciseBlock <<record>> {
   id : String
   minutes : OptionalInt
@@ -82,6 +106,11 @@ Block <|.. RecallBlock
 Block <|.. CalloutBlock
 Block <|.. VideoBlock
 Block <|.. PdfBlock
+Block <|.. GraphBlock
+GraphBlock *-- "1..*" GraphNode : nodes
+GraphBlock *-- "*" GraphEdge : edges
+GraphBlock --> GraphLayout : layout
+GraphNode --> "0..1" GraphPoint : at
 Block <|.. ExerciseBlock
 Block <|.. McqBlock
 Block <|.. ExerciseRefBlock

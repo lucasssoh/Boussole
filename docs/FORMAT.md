@@ -174,7 +174,8 @@ The body is [CommonMark](https://commonmark.org) with:
 
 - GitHub tables and strikethrough;
 - math: `$…$` inline, `$$…$$` on its own lines (rendered with KaTeX);
-- diagrams: a fenced code block with the language `mermaid`;
+- diagrams: a fenced code block with the language `mermaid` (flowcharts, sequences); for a
+  graph of nodes and edges, the `graph` directive (§5.5), which Boussole draws and checks;
 - **directives**, following the
   [generic directives proposal](https://talk.commonmark.org/t/generic-directives-plugins-syntax/444)
   (the syntax of `remark-directive`).
@@ -231,8 +232,46 @@ each answer and the correction right after it.
 | `term` | inline | Hover definition from the lexicon. `{id=…}` is optional when the text equals a term or alias. |
 | `video` | leaf | YouTube video beside the text. `youtube=<11-character video id>` required; `start`, `end` as seconds, `m:ss` or `h:mm:ss`. The label is the caption. |
 | `pdf` | leaf or inline | Opens a file of `sources/` beside the text. `src=<file>` required; `page=N` optional. |
+| `graph` | container | A small graph that Boussole draws and checks itself (below). The label is the caption; `layout=circle` (default), `row` or `layers`. |
 
 Images use plain Markdown (`![caption](../assets/route.png)`).
+
+#### The `graph` directive
+
+A graph of a few nodes and edges, written as text, so that an agent writes it, Boussole checks it
+and draws it the same way in light and dark themes, without any image file. Use it for a
+network, a shortest path, a flow, a tree, a state machine; a flowchart or a sequence stays in
+`mermaid`, a photo or a hand drawing in an image.
+
+```
+:::graph[R2 is down: packets go through R3]{layout=layers}
+A "Host A" !
+A -> R1 !
+R1 -- R2 : down
+R1 -> R3 : 2 !
+R3 -> R4 : 3 !
+:::
+```
+
+One line per node or edge, blank lines ignored:
+
+| Line | Meaning |
+|---|---|
+| `a -> b` | an arrow from `a` to `b` |
+| `a -- b` | an edge without direction |
+| `… : label` | after an edge: its label, such as a weight, a cost or a capacity (`3/5`) |
+| `a "Label"` | a node shown with a label instead of its ID |
+| `a @ x,y` | a node at column `x`, row `y` of a grid (whole numbers, from the top left) |
+| `… !` | at the end of any line: this node or edge stands out (a path, an answer) |
+
+- A node ID is letters, digits, `_` or `'` (`s`, `v1`, `R2`, `x'`). A node used by an edge needs
+  no line of its own; a node line may also stand alone (an isolated node).
+- Without `@`, Boussole places the nodes: `circle` in the order they first appear, from the top;
+  `row` from left to right; `layers` in columns by distance from the first node, following the
+  arrows. With `@`, every node gives its place, and no two share one.
+- Labels are plain text: no `$…$`; write `x₁`, `≤`, `∞` with Unicode.
+- No edge from a node to itself (a loop is not drawn). Above 12 nodes a graph no longer reads at
+  a glance (`P011`): split it, or use an image.
 
 Where each directive may appear:
 
@@ -243,7 +282,7 @@ Where each directive may appear:
 | `example` | a notion, an introduction, a section |
 | `recall` | the same, and `hint`, `solution` |
 | `note`, `tip`, `warning` | the same as `recall`, and `example`, `recall` |
-| `video`, `pdf` | anywhere except `answer` |
+| `video`, `pdf`, `graph` | anywhere except `answer` |
 | `ref` | a notion, an introduction, a section, the body of a review or exam |
 | `answer` | `exercise` |
 | `hint`, `solution` | `exercise`, `mcq` |
@@ -377,6 +416,7 @@ chapter.
 | `F034` | warning | A document whose SHA-256 differs from the one `cursus/sources.yaml` recorded: it changed since the course used it. |
 | `F035` | warning | A document `cursus/sources.yaml` lists that is no longer in the sources folder. |
 | `F036` | warning | The same document (same SHA-256) in several places of the sources folder, more than one not `ignored`. |
+| `F037` | error | A `graph` line that is neither a node nor an edge, a node given twice, a loop, places given for some nodes only, or two nodes at the same place. |
 | `F032` | warning | `video` that YouTube does not know (checked only with `--check-videos`). |
 | `P001` | warning | A notion without exercise or `mcq`. |
 | `P002` | warning | A notion with more than one `example`. |
@@ -388,6 +428,7 @@ chapter.
 | `P008` | warning | A review or exam whose questions' estimated times add up to less than 80 % or more than 110 % of its duration. |
 | `P009` | warning | A review or exam holding a notion or an `example`. |
 | `P010` | warning | Wrong choice of a `mcq` without feedback. |
+| `P011` | warning | A `graph` of more than 12 nodes. |
 
 `P001`, `P002`, `P006` and `P007` apply to lessons only; `P004` does not apply to exams, which
 give no hints.

@@ -2186,3 +2186,79 @@ app-settings-drawer {
   margin-right: 0.25rem;
   vertical-align: -0.2em;
 }
+
+/* Graphs drawn by Boussole (:::graph): quiet lines, and the course colour for what stands out. */
+.graph {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.graph svg {
+  max-width: 100%;
+  height: auto;
+  font-family: var(--font);
+}
+
+.graph figcaption {
+  margin-top: 0.3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.graph-edge {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 2.5;
+}
+
+.graph-edge.strong {
+  stroke: var(--subject);
+  stroke-width: 4;
+}
+
+.graph-arrow {
+  fill: var(--muted);
+}
+
+.graph-arrow.strong {
+  fill: var(--subject);
+}
+
+.graph-node rect {
+  fill: var(--surface);
+  stroke: var(--muted);
+  stroke-width: 2.5;
+}
+
+.graph-node.strong rect {
+  fill: var(--subject);
+  stroke: var(--subject-deep, var(--subject));
+}
+
+.graph-node text,
+.graph-edge-label text {
+  dominant-baseline: central;
+  text-anchor: middle;
+  fill: var(--text);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.graph-node.strong text {
+  fill: var(--on-subject);
+}
+
+.graph-edge-label rect {
+  fill: var(--bg);
+  stroke: var(--line);
+  stroke-width: 1.5;
+}
+
+.graph-edge-label text {
+  font-size: 13px;
+}
+
+.graph-edge-label.strong text {
+  fill: var(--subject-ink, var(--subject));
+}

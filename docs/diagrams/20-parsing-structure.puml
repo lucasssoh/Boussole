@@ -80,6 +80,7 @@ package "parse.directive" {
   class CalloutDirectiveParser
   class VideoDirectiveParser
   class PdfDirectiveParser
+  class GraphDirectiveParser
   class RefDirectiveParser
   class ExerciseDirectiveParser
   class McqDirectiveParser
@@ -117,6 +118,7 @@ DirectiveParser <|.. RecallDirectiveParser
 DirectiveParser <|.. CalloutDirectiveParser
 DirectiveParser <|.. VideoDirectiveParser
 DirectiveParser <|.. PdfDirectiveParser
+DirectiveParser <|.. GraphDirectiveParser
 DirectiveParser <|.. RefDirectiveParser
 DirectiveParser <|.. ExerciseDirectiveParser
 DirectiveParser <|.. McqDirectiveParser
