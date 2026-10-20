@@ -12,15 +12,25 @@ terms: [registre, validateur, agent]
 
 ## Le registre des documents {#registre}
 
-Tu n'as pas tous tes documents le premier jour : les transparents arrivent cours après cours,
-une version corrigée remplace l'ancienne. Le :term[registre]{id=registre}
-(`cursus/sources.yaml`) note ce que le cours a fait de chaque document, avec son **empreinte**,
-un code qui change dès que le fichier change.
+Tu n'as pas tous tes documents le premier jour :
+
+- les transparents arrivent cours après cours ;
+- une version corrigée remplace l'ancienne.
+
+Le :term[registre]{id=registre} (`cursus/sources.yaml`) note ce que le cours a fait de chaque
+document, avec son **empreinte** : un code qui change dès que le fichier change.
 
 Le :term[validateur]{id=validateur} compare le registre au dossier, sous-dossiers compris, et
-prévient : document **nouveau** (`F033`), **modifié** (`F034`), **disparu** (`F035`), ou **en
-double** à deux endroits (`F036`). La commande `boussole sources ~/cours/Optimisation` en donne la
-liste.
+prévient quand un document est :
+
+| Code | Le document est… |
+|---|---|
+| `F033` | nouveau |
+| `F034` | modifié |
+| `F035` | disparu |
+| `F036` | en double, à deux endroits |
+
+Pour voir la liste : `boussole sources ~/cours/Optimisation`.
 
 ::::exercise{#g4-a1 type=match}
 Associe chaque avertissement à sa cause.
@@ -44,10 +54,14 @@ l'agent.
 
 ## Ajouter un document {#ajouter}
 
-Ajoute simplement le fichier dans le dossier du cours, puis lance ton
-:term[agent]{id=agent} comme d'habitude. Il commence toujours par le validateur : il voit le
-nouveau document, le lit, et l'intègre. Il **ajoute** des séances avec de nouveaux numéros, sans
-renuméroter ni réécrire ce que tu as déjà étudié, et te demande ton accord si le plan change.
+1. **Ajoute le fichier** dans le dossier du cours.
+2. **Lance ton :term[agent]{id=agent}** comme d'habitude.
+
+L'agent commence toujours par le validateur. Il voit le nouveau document, le lit et l'intègre :
+
+- il **ajoute** des séances, avec de nouveaux numéros ;
+- il ne renumérote ni ne réécrit ce que tu as déjà étudié ;
+- il te demande ton accord si le plan change.
 
 ::::mcq{#g4-a2}
 Tu ajoutes les transparents du cours 7. Que se passe-t-il pour tes séances déjà faites ?

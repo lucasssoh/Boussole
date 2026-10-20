@@ -12,14 +12,25 @@ terms: [record, validator, agent]
 
 ## The record of documents {#record}
 
-You do not have all your documents on the first day: slides arrive lecture after lecture, a
-corrected version replaces the old one. The :term[record]{id=record} (`cursus/sources.yaml`)
-notes what the course did with each document, with its **fingerprint**, a code that changes as
-soon as the file changes.
+You do not have all your documents on the first day:
+
+- slides arrive lecture after lecture;
+- a corrected version replaces the old one.
+
+The :term[record]{id=record} (`cursus/sources.yaml`) notes what the course did with each
+document, with its **fingerprint**: a code that changes as soon as the file changes.
 
 The :term[validator]{id=validator} compares the record with the folder, sub-folders included, and
-warns: a document **new** (`F033`), **changed** (`F034`), **gone** (`F035`), or **the same in two
-places** (`F036`). The command `boussole sources ~/courses/Optimisation` lists them.
+warns when a document is:
+
+| Code | The document is… |
+|---|---|
+| `F033` | new |
+| `F034` | changed |
+| `F035` | gone |
+| `F036` | the same in two places |
+
+To see the list: `boussole sources ~/courses/Optimisation`.
 
 ::::exercise{#g4-a1 type=match}
 Match each warning with its cause.
@@ -42,10 +53,14 @@ The numbers follow the order of the text: new, changed, gone, twice.
 
 ## Adding a document {#adding}
 
-Just add the file to the folder of the course, then start your :term[agent]{id=agent} as usual. It
-always starts with the validator: it sees the new document, reads it and takes it in. It **adds**
-sessions with new numbers, never renumbering or rewriting what you have studied, and asks for
-your approval if the plan changes.
+1. **Add the file** to the folder of the course.
+2. **Start your :term[agent]{id=agent}** as usual.
+
+The agent always starts with the validator. It sees the new document, reads it and takes it in:
+
+- it **adds** sessions, with new numbers;
+- it never renumbers or rewrites what you have studied;
+- it asks for your approval if the plan changes.
 
 ::::mcq{#g4-a2}
 You add the slides of lecture 7. What happens to the sessions you have done?

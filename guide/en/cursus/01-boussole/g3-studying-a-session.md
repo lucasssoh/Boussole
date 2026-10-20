@@ -12,15 +12,30 @@ terms: [cursus]
 
 ## One screen at a time {#screens}
 
-A session is read **screen by screen**: the goal, then each explanation, each example and each
-question on its own screen. **Next** and **Previous** (or the arrow keys) move between them.
+A session is read **screen by screen**:
+
+- the goal;
+- each explanation, each example and each question, on its own screen;
+- a wrap-up at the end.
+
+**Next** and **Previous** (or the arrow keys) move between them.
 
 On the left, the **map** shows the whole session: a zone per part (warm-up, notions,
-checkpoint, practice), a dot per screen. Green: seen or right; red: missed; padlock: answer the
-current question first. Clicking an open dot goes there.
+checkpoint, practice) and a dot per screen.
 
+| Dot | Meaning |
+|---|---|
+| green | seen, or right answer |
+| orange | partly right answer |
+| red | wrong answer |
+| padlock | answer the current question first |
+
+Clicking an open dot goes there.
+
+:::note
 In a lesson, **Next waits for your answer** to the question on screen: the correction is part of
 the lesson.
+:::
 
 ::::mcq{#g3-a1}
 On the map, a dot shows a padlock. What does it mean?
@@ -43,13 +58,23 @@ you move on question after question.
 
 ## Answering and understanding {#answers}
 
-You answer **once**. Right away, the right answer turns green, yours red if it was wrong, and a
-**Why** box explains. Before answering, the **Hint** button reveals some help, then more,
-without giving the answer away.
+**Your first answer is final**, even if you come back to the session another day. So:
 
-Every answer earns experience, even a wrong one, and your streak of days grows when you study
-(except in this guide, which does not count).
-Reviews and mock exams are timed; in a mock exam, the corrections come at the end.
+- **before answering**, the **Hint** button reveals some help, then more, without giving the
+  answer away;
+- **when several answers are right**, Boussole asks you to confirm before sending;
+- **right after**, the right answer turns green, yours red if it was wrong, and a **Why** box
+  explains.
+
+What counts:
+
+- every answer earns experience, even a wrong one;
+- your streak of days grows when you study;
+- this guide does not count.
+
+:::note
+Reviews and mock exams are timed. In a mock exam, the corrections come at the end.
+:::
 
 ::::mcq{#g3-a2 multiple=true}
 Which are true? (several answers)

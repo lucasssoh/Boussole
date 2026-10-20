@@ -12,16 +12,30 @@ terms: [cursus]
 
 ## Un écran à la fois {#ecrans}
 
-Une séance se lit **écran par écran** : l'objectif, puis chaque explication, chaque exemple et
-chaque question sur son écran. **Suivant** et **Précédent** (ou les flèches du clavier) passent
-d'un écran à l'autre.
+Une séance se lit **écran par écran** :
+
+- l'objectif ;
+- chaque explication, chaque exemple et chaque question, sur son propre écran ;
+- un bilan à la fin.
+
+**Suivant** et **Précédent** (ou les flèches du clavier) passent d'un écran à l'autre.
 
 À gauche, la **carte** montre toute la séance : une zone par partie (échauffement, notions,
-point de contrôle, exercices), un rond par écran. Vert : vu ou juste ; rouge : raté ; cadenas : il
-faut d'abord répondre à la question en cours. Un clic sur un rond ouvert y mène.
+point de contrôle, exercices) et un rond par écran.
 
+| Rond | Sens |
+|---|---|
+| vert | vu, ou réponse juste |
+| orange | réponse en partie juste |
+| rouge | réponse fausse |
+| cadenas | réponds d'abord à la question en cours |
+
+Un clic sur un rond ouvert y mène.
+
+:::note
 Dans une leçon, **Suivant attend ta réponse** à la question affichée : la correction fait partie
 de la leçon.
+:::
 
 ::::mcq{#g3-a1}
 Sur la carte, un rond porte un cadenas. Que veut-il dire ?
@@ -44,13 +58,24 @@ avance question après question.
 
 ## Répondre et comprendre {#reponses}
 
-Tu réponds **une seule fois**. Aussitôt, la bonne réponse passe au vert, la tienne au rouge si
-elle était fausse, et un encadré **Pourquoi** explique. Avant de répondre, le bouton **Indice**
-dévoile une aide, puis une autre, sans donner la réponse.
+**Ta première réponse est définitive**, même si tu reviens sur la séance un autre jour. Alors :
 
-Chaque réponse rapporte de l'expérience, même fausse, et ta série de jours avance quand tu
-étudies (sauf dans ce guide, qui ne compte pas). Les révisions et les examens blancs sont chronométrés ; dans un examen blanc, la
-correction n'arrive qu'à la fin.
+- **avant de répondre**, le bouton **Indice** dévoile une aide, puis une autre, sans donner la
+  réponse ;
+- **quand plusieurs réponses sont justes**, Boussole te demande de confirmer avant d'envoyer ;
+- **juste après**, la bonne réponse passe au vert, la tienne au rouge si elle était fausse, et
+  un encadré **Pourquoi** explique.
+
+Ce qui compte :
+
+- chaque réponse rapporte de l'expérience, même fausse ;
+- ta série de jours avance quand tu étudies ;
+- ce guide, lui, ne compte pas.
+
+:::note
+Les révisions et les examens blancs sont chronométrés. Dans un examen blanc, la correction
+n'arrive qu'à la fin.
+:::
 
 ::::mcq{#g3-a2 multiple=true}
 Qu'est-ce qui est vrai ? (plusieurs réponses)

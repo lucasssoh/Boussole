@@ -12,19 +12,33 @@ terms: [agent, plan, validator]
 
 ## Preparing the folder {#folder}
 
-A course is **a folder**: put your documents in it as you like, in sub-folders if you prefer.
-Not only a school subject: a software manual, a company guide or a programming language make
-good courses too. Then, in a terminal:
+A course is **a folder**. Put your documents in it as you like, in sub-folders if you prefer.
+
+Not only a school subject: it works as well for
+
+- a software manual;
+- a company guide;
+- a programming language.
+
+Then, in a terminal:
 
 ```
 boussole init ~/courses/Optimisation
 ```
 
-Boussole adds `subject.yaml` (the name and language of the course), the `cursus/` folder that
-will hold the course, and the instructions for your :term[agent]{id=agent} (`AGENTS.md`,
-`.boussole/`). It never touches your documents.
+Boussole adds to the folder:
 
+| File | Role |
+|---|---|
+| `subject.yaml` | the name and language of the course |
+| `cursus/` | the course, which the agent will write |
+| `AGENTS.md`, `.boussole/` | the instructions for your :term[agent]{id=agent} |
+
+It never touches your documents.
+
+:::tip
 Then open your agent **in that folder** and simply ask: "Build the course."
+:::
 
 ::::exercise{#g2-a1 type=order}
 Put the steps in order, from an empty folder to an open course.
@@ -49,13 +63,21 @@ and `boussole open` opens the course in your browser.
 
 ## The plan, then the sessions {#plan}
 
-The agent starts with a few multiple-choice questions (a quiz after each point? an example
-first? how long a session?). Then it reads your documents and proposes a :term[plan]{id=plan}:
-chapters, sessions, durations, goals, reviews and a mock exam.
+The agent goes in three steps:
 
-The plan stays **proposed** until you approve it. Only then does the agent write the sessions,
-one at a time, running the :term[validator]{id=validator} after each. You can study the first
-while it writes the next: Boussole shows what is new as soon as it is written.
+1. **It asks you a few multiple-choice questions**: a quiz after each point? an example first?
+   how long a session?
+2. **It proposes a :term[plan]{id=plan}**: chapters, sessions, durations, goals, reviews and a
+   mock exam.
+3. **It writes the sessions one at a time**, running the :term[validator]{id=validator} after
+   each.
+
+:::note
+Until you approve it, the plan stays **proposed**: the agent writes no session.
+:::
+
+You can study the first session while it writes the next: Boussole shows what is new as soon as
+it is written.
 
 ::::exercise{#g2-a2 type=fill}
 Fill in.

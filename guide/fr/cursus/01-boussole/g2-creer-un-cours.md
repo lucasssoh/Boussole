@@ -12,19 +12,34 @@ terms: [agent, plan, validateur]
 
 ## Préparer le dossier {#dossier}
 
-Un cours, c'est **un dossier** : tu y ranges tes documents comme tu veux, en sous-dossiers si tu
-préfères. Pas forcément une matière d'école : un manuel de logiciel, un guide d'entreprise ou un
-langage de programmation font aussi de bons cours. Puis, dans un terminal :
+Un cours, c'est **un dossier**. Tu y ranges tes documents comme tu veux, en sous-dossiers si tu
+préfères.
+
+Pas forcément une matière d'école : ça marche aussi pour
+
+- un manuel de logiciel ;
+- un guide d'entreprise ;
+- un langage de programmation.
+
+Puis, dans un terminal :
 
 ```
 boussole init ~/cours/Optimisation
 ```
 
-Boussole y ajoute `subject.yaml` (le nom et la langue du cours), le dossier `cursus/` qui
-recevra le cours, et les instructions pour ton :term[agent]{id=agent} (`AGENTS.md`,
-`.boussole/`). Il ne touche jamais à tes documents.
+Boussole ajoute dans le dossier :
 
+| Fichier | Rôle |
+|---|---|
+| `subject.yaml` | le nom et la langue du cours |
+| `cursus/` | le cours, que l'agent va écrire |
+| `AGENTS.md`, `.boussole/` | les instructions pour ton :term[agent]{id=agent} |
+
+Il ne touche jamais à tes documents.
+
+:::tip
 Ouvre ensuite ton agent **dans ce dossier** et demande-lui simplement : « Construis le cours. »
+:::
 
 ::::exercise{#g2-a1 type=order}
 Remets les étapes dans l'ordre, du dossier vide au cours ouvert.
@@ -49,14 +64,21 @@ Documents d'abord, puis `boussole init`, puis l'agent, qui propose le plan ; tu 
 
 ## Le plan, puis les séances {#plan}
 
-L'agent commence par te poser quelques questions à choix (un QCM après chaque notion ? plutôt un
-exemple d'abord ? des séances de combien de temps ?). Puis il lit tes documents et te propose un
-:term[plan]{id=plan} : chapitres, séances, durées, objectifs, révisions et examen blanc.
+L'agent avance en trois temps :
 
-Le plan reste **proposé** tant que tu ne l'as pas approuvé. Ensuite seulement, l'agent écrit les
-séances une à une, et lance le :term[validateur]{id=validateur} après chacune. Tu peux étudier
-la première pendant qu'il écrit la suivante : Boussole affiche les nouveautés dès qu'elles sont
-écrites.
+1. **Il te pose quelques questions à choix** : un QCM après chaque notion ? un exemple d'abord ?
+   des séances de combien de temps ?
+2. **Il te propose un :term[plan]{id=plan}** : chapitres, séances, durées, objectifs, révisions
+   et examen blanc.
+3. **Il écrit les séances une à une**, et lance le :term[validateur]{id=validateur} après
+   chacune.
+
+:::note
+Tant que tu ne l'as pas approuvé, le plan reste **proposé** : l'agent n'écrit aucune séance.
+:::
+
+Tu peux étudier la première séance pendant qu'il écrit la suivante : Boussole affiche les
+nouveautés dès qu'elles sont écrites.
 
 ::::exercise{#g2-a2 type=fill}
 Complète.
