@@ -12,6 +12,7 @@ To build or change the course, follow the skills in `.boussole/skills/`. **Read 
 | Propose or revise the plan of the course | `.boussole/skills/cursus-plan/SKILL.md` |
 | Write a session | `.boussole/skills/seance-write/SKILL.md` |
 | Write or change an exercise or a qcm | `.boussole/skills/exercise-author/SKILL.md` |
+| Build a review or a mock exam (`kind: review` or `exam`) | `.boussole/skills/exam-build/SKILL.md` |
 | Add terms to the lexicon | `.boussole/skills/lexique-build/SKILL.md` |
 | Add videos | `.boussole/skills/video-find/SKILL.md` |
 | Fix what the validator reports | `.boussole/skills/cursus-fix/SKILL.md` |
@@ -23,8 +24,8 @@ Where to start:
 - `cursus/syllabus.yaml` has no chapter → **cursus-plan**.
 - `status: proposed` → the learner has not approved the plan yet: show it and ask for approval
   (**cursus-plan**, §4).
-- `status: approved` → write the first session of the syllabus that has no file yet
-  (**seance-write**), one at a time, in order.
+- `status: approved` → write the first session of the syllabus that has no file yet, one at a
+  time, in order: **seance-write** for a lesson, **exam-build** for a review or an exam.
 
 Rules:
 

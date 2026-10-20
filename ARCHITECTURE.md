@@ -171,8 +171,10 @@ ScheduledEvent ─► ReminderPolicy ─► ReminderPlanner ─► ReminderSched
   and an *Open* action running `boussole open <link>`.
 - Without a supported scheduler, reminders are shown only while the interface is open.
 
-**Durations are estimates.** The `duration` of a session is its content timed at a normal pace;
-a session ends with its closing, never with a timer. The player records the time actually spent,
+**Durations are estimates, except for timed sessions.** The `duration` of a lesson is its content
+timed at a normal pace; a lesson ends with its closing, never with a timer. Reviews and exams
+(`kind: review`, `exam`) are timed: their duration is the time allowed, and their questions are
+sized to fill it. The player records the time actually spent,
 and the planner (V2) plans with the learner's measured pace, which varies from day to day,
 rather than with the estimate alone.
 
@@ -225,6 +227,7 @@ The skills shipped in `skills/`:
 | `cursus-plan` | Reads `sources/`, writes `syllabus.yaml` with `status: proposed`, and stops for the learner. |
 | `seance-write` | Writes one session following `FORMAT.md`, in the language of the sources. |
 | `exercise-author` | Exercises and QCMs: feedback for each wrong choice, hints in tiers, answers recomputed. |
+| `exam-build` | Reviews and mock exams: as many questions as the time allows, mostly QCMs, mirroring the past exams. |
 | `lexique-build` | Terms and definitions for a learner who has never seen them. |
 | `video-find` | Videos per notion, kept only if `boussole validate --check-videos` accepts them. |
 | `cursus-fix` | Runs `boussole validate` and fixes until there is no error. |
