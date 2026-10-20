@@ -59,6 +59,8 @@ const SIGN_CHARACTERS = 26;
 const ZONE_BOTTOM = 52;
 const ZONE_GAP = 18;
 const ZONE_INSET = 10;
+/** The centre of the first node: below the top of the column, its halo and relief included. */
+const FIRST_NODE = 52;
 
 /**
  * The session as a path beside it: a node per screen, winding down through a zone per part (warm-up,
@@ -80,7 +82,7 @@ const ZONE_INSET = 10;
         · {{ 'session.spent' | transloco: { minutes: spentMinutes() } }}
       </p>
     </div>
-    <div class="path-viewport" #viewport>
+    <div class="path-viewport" #viewport [class.moved]="offset() > 0">
     <div class="path-track" [style.height.px]="layout().height" [style.transform]="'translateY(' + -offset() + 'px)'">
       <svg class="path-map" [attr.width]="width" [attr.height]="layout().height" aria-hidden="true">
         @for (zone of layout().zones; track $index) {
@@ -184,7 +186,7 @@ export class SessionPathComponent {
     const nodes: PathNode[] = [];
     const zones: PathZone[] = [];
     const stops: { x: number; y: number }[] = [];
-    let y = 40;
+    let y = FIRST_NODE;
     let swing = 0;
     let notions = 0;
     const place = (screen: SessionScreen, index: number, x: number) => {

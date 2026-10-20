@@ -642,6 +642,11 @@ a.session-card:active {
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  mask-image: linear-gradient(#000 calc(100% - 2.5rem), transparent);
+}
+
+/* The top fades only once the path has moved up, so the first node is never under the fade. */
+.path-viewport.moved {
   mask-image: linear-gradient(transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent);
 }
 
