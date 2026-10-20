@@ -232,8 +232,8 @@ The skills shipped in `skills/`:
 | `learner-profile` | Asks the learner a few multiple-choice questions on how they learn, and writes `learner.yaml`. |
 | `cursus-plan` | Reads `sources/`, writes `syllabus.yaml` with `status: proposed`, and stops for the learner. |
 | `seance-write` | Writes one session following `FORMAT.md`, in the language of the sources. |
-| `exercise-author` | Exercises and QCMs: feedback for each wrong choice, hints in tiers, answers recomputed. |
-| `exam-build` | Reviews and mock exams: as many questions as the time allows, mostly QCMs, mirroring the past exams. |
+| `exercise-author` | Exercises and MCQs: feedback for each wrong choice, hints in tiers, answers recomputed. |
+| `exam-build` | Reviews and mock exams: as many questions as the time allows, mostly MCQs, mirroring the past exams. |
 | `lexique-build` | Terms and definitions for a learner who has never seen them. |
 | `video-find` | Videos per notion, kept only if `boussole validate --check-videos` accepts them. |
 | `cursus-fix` | Runs `boussole validate` and fixes until there is no error. |
@@ -292,7 +292,7 @@ On macOS and Windows the equivalent per-user folders are used.
    - a subtype ends with its supertype's name: `VideoBlock` is a `Block`, `NotionPart` a `Part`,
      `ExampleDirectiveParser` a `DirectiveParser`, `NumberExpectation` an `Expectation`;
    - a part of something is prefixed by its owner: `CourseSubject`, `CourseLexicon`,
-     `LexiconTerm`, `SyllabusChapter`, `ExerciseHint`, `QcmChoice`, `FillGap`;
+     `LexiconTerm`, `SyllabusChapter`, `ExerciseHint`, `McqChoice`, `FillGap`;
    - nested types (`RawNode.Text`, `AcceptedText.Exact`) are kept for the small closed variants
      of one type.
 4. **Immutable by default**: `record`s, unmodifiable collections. No `null` in the domain;

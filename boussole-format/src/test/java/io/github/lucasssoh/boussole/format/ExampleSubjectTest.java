@@ -8,9 +8,9 @@ import io.github.lucasssoh.boussole.format.model.answer.SingleAnswer;
 import io.github.lucasssoh.boussole.format.model.expectation.NumberExpectation;
 import io.github.lucasssoh.boussole.format.model.expectation.Rational;
 import io.github.lucasssoh.boussole.format.model.expectation.TextExpectation;
-import io.github.lucasssoh.boussole.format.model.block.QcmChoice;
+import io.github.lucasssoh.boussole.format.model.block.McqChoice;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
-import io.github.lucasssoh.boussole.format.model.block.QcmBlock;
+import io.github.lucasssoh.boussole.format.model.block.McqBlock;
 import io.github.lucasssoh.boussole.format.model.part.CheckpointPart;
 import io.github.lucasssoh.boussole.format.model.part.NotionPart;
 import io.github.lucasssoh.boussole.format.model.part.PracticePart;
@@ -63,14 +63,14 @@ class ExampleSubjectTest {
 
     @Test
     void readsTheChoicesAndTheirFeedback() {
-        QcmBlock qcm = course().blocks()
-                .filter(QcmBlock.class::isInstance).map(QcmBlock.class::cast)
+        McqBlock mcq = course().blocks()
+                .filter(McqBlock.class::isInstance).map(McqBlock.class::cast)
                 .filter(found -> found.id().equals("s11-a2")).findFirst().orElseThrow();
 
-        assertThat(qcm.choices()).extracting(QcmChoice::text).containsExactly("Datagramme", "Circuit virtuel", "Les deux");
-        assertThat(qcm.choices()).extracting(QcmChoice::correct).containsExactly(false, true, false);
-        assertThat(qcm.choices().getFirst().feedback()).get().asString().startsWith("Non : en datagramme");
-        assertThat(qcm.choices().get(1).feedback()).isEmpty();
+        assertThat(mcq.choices()).extracting(McqChoice::text).containsExactly("Datagramme", "Circuit virtuel", "Les deux");
+        assertThat(mcq.choices()).extracting(McqChoice::correct).containsExactly(false, true, false);
+        assertThat(mcq.choices().getFirst().feedback()).get().asString().startsWith("Non : en datagramme");
+        assertThat(mcq.choices().get(1).feedback()).isEmpty();
     }
 
     private Course course() {

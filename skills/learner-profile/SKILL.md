@@ -75,7 +75,7 @@ goal: top                # pass | good | top | understand
 session_minutes: 60      # 15 to 120
 explanations: concise    # concise | detailed
 order: example-first     # example-first | try-first
-quick_check: true        # a short qcm right after each notion's explanation
+quick_check: true        # a short MCQ right after each notion's explanation
 closing: both            # quiz | exercise | both
 videos: some             # none | some | many
 notes: >

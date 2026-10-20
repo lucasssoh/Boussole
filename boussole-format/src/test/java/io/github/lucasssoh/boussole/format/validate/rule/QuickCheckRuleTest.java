@@ -2,7 +2,7 @@ package io.github.lucasssoh.boussole.format.validate.rule;
 
 import static io.github.lucasssoh.boussole.format.fixture.Snippets.exercise;
 import static io.github.lucasssoh.boussole.format.fixture.Snippets.notion;
-import static io.github.lucasssoh.boussole.format.fixture.Snippets.qcm;
+import static io.github.lucasssoh.boussole.format.fixture.Snippets.mcq;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
@@ -17,10 +17,10 @@ class QuickCheckRuleTest {
     @TempDir
     Path dir;
 
-    private static final String QUICK = qcm("#q1", "- [x] Oui\n- [ ] Non");
+    private static final String QUICK = mcq("#q1", "- [x] Oui\n- [ ] Non");
 
     @Test
-    void eachNotionAsksAQcmBeforeItsExample() {
+    void eachNotionAsksAMcqBeforeItsExample() {
         String checked = "## A {#a}\n\nExplication.\n\n" + QUICK + "\n:::example\nExemple.\n:::\n\n" + exercise("e1");
         var report = SubjectFixture.in(dir).learner("quick_check: true\n")
                 .session("s1", checked + "\n" + notion("b", "e2"))

@@ -147,7 +147,7 @@ class SessionParsingTest {
 
             assertThat(messages(DiagnosticCode.F020)).containsExactly(
                     "`ref` is not allowed in `example`",
-                    "`hint` is only allowed inside `exercise` or `qcm`, as :::hint",
+                    "`hint` is only allowed inside `exercise` or `mcq`, as :::hint",
                     "`warmup` is only allowed at the top level of a session");
         }
 
@@ -203,8 +203,8 @@ class SessionParsingTest {
         }
 
         @Test
-        void aQcmHasNoAnswer() {
-            parse("::::qcm{#q1}\nQ ?\n\n- [x] Oui\n- [ ] Non\n\n:::answer\nOui\n:::\n\n:::solution\nOui.\n:::\n::::\n");
+        void aMcqHasNoAnswer() {
+            parse("::::mcq{#q1}\nQ ?\n\n- [x] Oui\n- [ ] Non\n\n:::answer\nOui\n:::\n\n:::solution\nOui.\n:::\n::::\n");
 
             assertThat(messages(DiagnosticCode.F021)).singleElement().asString().contains("tick the right choices");
         }
@@ -309,8 +309,8 @@ class SessionParsingTest {
         }
 
         @Test
-        void textAfterTheChoicesOfAQcmIsReported() {
-            parse("::::qcm{#q1}\nQ ?\n\n- [x] Oui\n- [ ] Non\n\nEt ceci ?\n\n:::solution\nOui.\n:::\n::::\n");
+        void textAfterTheChoicesOfAMcqIsReported() {
+            parse("::::mcq{#q1}\nQ ?\n\n- [x] Oui\n- [ ] Non\n\nEt ceci ?\n\n:::solution\nOui.\n:::\n::::\n");
 
             assertThat(messages(DiagnosticCode.F022)).hasSize(1);
         }

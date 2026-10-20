@@ -2,7 +2,7 @@ package io.github.lucasssoh.boussole.format.validate.rule;
 
 import static io.github.lucasssoh.boussole.format.fixture.Snippets.exercise;
 import static io.github.lucasssoh.boussole.format.fixture.Snippets.notion;
-import static io.github.lucasssoh.boussole.format.fixture.Snippets.qcm;
+import static io.github.lucasssoh.boussole.format.fixture.Snippets.mcq;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
@@ -17,7 +17,7 @@ class ClosingRuleTest {
     @TempDir
     Path dir;
 
-    private static final String CHECKPOINT = ":::::checkpoint\n" + qcm("#c1", "- [x] Oui\n- [ ] Non") + ":::::\n";
+    private static final String CHECKPOINT = ":::::checkpoint\n" + mcq("#c1", "- [x] Oui\n- [ ] Non") + ":::::\n";
     private static final String PRACTICE = ":::::practice\n" + exercise("p1") + ":::::\n";
 
     @Test

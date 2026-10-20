@@ -5,7 +5,7 @@ import io.github.lucasssoh.boussole.format.model.answer.FillGap;
 
 /**
  * How long a question takes at a normal pace: choosing an answer is quicker than building one.
- * The {@code minutes} attribute of an exercise or a qcm overrides the estimate.
+ * The {@code minutes} attribute of an exercise or a mcq overrides the estimate.
  */
 public final class QuestionTimeEstimator {
 
@@ -35,11 +35,11 @@ public final class QuestionTimeEstimator {
         };
     }
 
-    public static double minutes(QcmBlock qcm) {
-        if (qcm.minutes().isPresent()) {
-            return qcm.minutes().getAsInt();
+    public static double minutes(McqBlock mcq) {
+        if (mcq.minutes().isPresent()) {
+            return mcq.minutes().getAsInt();
         }
-        return qcm.multiple() ? MULTIPLE_CHOICE : SINGLE_CHOICE;
+        return mcq.multiple() ? MULTIPLE_CHOICE : SINGLE_CHOICE;
     }
 
     private static double minutes(FillGap gap) {

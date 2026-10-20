@@ -1,6 +1,6 @@
 ---
 name: exercise-author
-description: Write exercises and multiple-choice questions for a Boussole session, with feedback that teaches, hints in tiers and answers that are verified. Use whenever an exercise, a qcm or an answer is written or changed.
+description: Write exercises and multiple-choice questions for a Boussole session, with feedback that teaches, hints in tiers and answers that are verified. Use whenever an exercise, an MCQ or an answer is written or changed.
 ---
 
 # Write exercises that teach
@@ -18,10 +18,10 @@ taught**, **checkable by Boussole**, and **right**.
 | complete an address, a table, a short calculation | `fill` with typed or number gaps (`2: number 62`) |
 | put steps or layers in order | `order` |
 | associate two lists | `match` |
-| choose between options, spot a misconception | `qcm` |
+| choose between options, spot a misconception | `mcq` |
 | prove, model, design, explain | `free`: the learner compares with the solution |
 
-Prefer a type Boussole can check (`numeric`, `text`, `fill`, `order`, `match`, `qcm`) when the
+Prefer a type Boussole can check (`numeric`, `text`, `fill`, `order`, `match`, `mcq`) when the
 skill can be checked that way. **Never ask the learner to type a formula** (LaTeX in a web field
 is painful and unreliable to check): turn a proof, an algorithm or an equation into a `fill`
 where each missing step is a choice among plausible ones, the wrong options being real mistakes.
@@ -41,19 +41,19 @@ reasoning nothing else can check, such as writing a whole model.
   mental arithmetic. Write fractions as `3/4` rather than rounded decimals.
 - `text`: list the spellings a learner would reasonably type (with and without article,
   abbreviation and full name). Use `re:` only when a list cannot do it.
-- `qcm`: exactly one ticked choice, unless `multiple=true` and the statement says "all that
+- `mcq`: exactly one ticked choice, unless `multiple=true` and the statement says "all that
   apply". Three or four choices.
 
 ## Distractors and feedback
 
-- Each wrong choice of a qcm is a **real mistake** a learner makes: a confusion between two
+- Each wrong choice of an MCQ is a **real mistake** a learner makes: a confusion between two
   notions, a forgotten step, an off-by-one. Never filler.
 - Each wrong choice gets feedback (`  > …` under it) that says **why it is wrong** and what to
   look at, without giving the right answer away.
 
 ## Quick checks
 
-When `learner.yaml` has `quick_check: true`, each notion asks a short `qcm` right after its
+When `learner.yaml` has `quick_check: true`, each notion asks a short `mcq` right after its
 explanation: one or two questions answerable in a minute, on the idea just explained, not on
 calculation. Its ID follows the « À toi » numbering (`<session>-a1`…).
 

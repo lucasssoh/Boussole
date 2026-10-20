@@ -18,7 +18,7 @@ public enum DiagnosticCode {
     F013(ERROR, "level-2 heading without an ID"),
     F020(ERROR, "unknown or misplaced directive"),
     F021(ERROR, "exercise parts missing, repeated or malformed"),
-    F022(ERROR, "qcm choices inconsistent"),
+    F022(ERROR, "MCQ choices inconsistent"),
     F023(ERROR, "fill gaps do not match"),
     F024(ERROR, "numeric answer is not a number"),
     F025(ERROR, "invalid regular expression"),

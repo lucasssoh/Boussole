@@ -30,7 +30,7 @@ package "validate" {
     class IdSyntaxRule <<F004>>
     class SessionIdMatchRule <<F010>>
     class MissingSessionFileRule <<F011>>
-    class QcmChoicesRule <<F022>>
+    class McqChoicesRule <<F022>>
     class FillGapsRule <<F023>>
     class ReferenceRule <<F030>>
     class SourceFileRule <<F031>>
@@ -69,7 +69,7 @@ ValidationRule <|.. DuplicateIdRule
 ValidationRule <|.. IdSyntaxRule
 ValidationRule <|.. SessionIdMatchRule
 ValidationRule <|.. MissingSessionFileRule
-ValidationRule <|.. QcmChoicesRule
+ValidationRule <|.. McqChoicesRule
 ValidationRule <|.. FillGapsRule
 ValidationRule <|.. ReferenceRule
 ValidationRule <|.. SourceFileRule

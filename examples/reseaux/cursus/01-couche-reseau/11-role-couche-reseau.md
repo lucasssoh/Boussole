@@ -94,7 +94,7 @@ autre chemin dès que le routage a convergé : la communication continue. En **c
 virtuel**, le circuit passait par ce routeur : il faut en établir un nouveau.
 :::
 
-::::qcm{#s11-a2}
+::::mcq{#s11-a2}
 Dans quel modèle les routeurs gardent-ils un état **par communication** ?
 
 - [ ] Datagramme
@@ -113,7 +113,7 @@ Le circuit virtuel : chaque routeur traversé garde une entrée par circuit éta
 ::::
 
 :::::checkpoint
-::::qcm{#s11-c1 multiple=true}
+::::mcq{#s11-c1 multiple=true}
 Qu'apporte la couche 3 que la couche 2 n'a pas ?
 
 - [x] Un adressage hiérarchique

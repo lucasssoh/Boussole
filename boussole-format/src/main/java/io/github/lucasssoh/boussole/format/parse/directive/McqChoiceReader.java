@@ -1,7 +1,7 @@
 package io.github.lucasssoh.boussole.format.parse.directive;
 
 import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
-import io.github.lucasssoh.boussole.format.model.block.QcmChoice;
+import io.github.lucasssoh.boussole.format.model.block.McqChoice;
 import io.github.lucasssoh.boussole.format.parse.ParseContext;
 import io.github.lucasssoh.boussole.format.parse.RawNode;
 import java.util.ArrayList;
@@ -11,27 +11,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Separates the statement of a qcm from its choices: a task list, each choice optionally
+ * Separates the statement of an MCQ from its choices: a task list, each choice optionally
  * followed by an indented blockquote, its feedback.
  */
-final class QcmChoiceReader {
+final class McqChoiceReader {
 
     private static final Pattern CHOICE = Pattern.compile("[-*+] \\[([ xX])]\\s+(.*)");
 
     private final ParseContext context;
     private final List<RawNode> statement = new ArrayList<>();
-    private final List<QcmChoice> choices = new ArrayList<>();
+    private final List<McqChoice> choices = new ArrayList<>();
     private OpenChoice current;
 
-    private QcmChoiceReader(ParseContext context) {
+    private McqChoiceReader(ParseContext context) {
         this.context = context;
     }
 
-    record Result(List<RawNode> statement, List<QcmChoice> choices) {
+    record Result(List<RawNode> statement, List<McqChoice> choices) {
     }
 
     static Result read(List<RawNode> nodes, ParseContext context) {
-        QcmChoiceReader reader = new QcmChoiceReader(context);
+        McqChoiceReader reader = new McqChoiceReader(context);
         nodes.forEach(reader::read);
         reader.finishChoice();
         return new Result(List.copyOf(reader.statement), List.copyOf(reader.choices));
@@ -57,7 +57,7 @@ final class QcmChoiceReader {
             } else if (Character.isWhitespace(line.charAt(0)) && current != null) {
                 current.add(line.strip());
             } else {
-                context.report(DiagnosticCode.F022, number, "text after the choices: the choices end the statement of a qcm");
+                context.report(DiagnosticCode.F022, number, "text after the choices: the choices end the statement of an MCQ");
             }
         }
         if (!before.isEmpty()) {
@@ -93,9 +93,9 @@ final class QcmChoiceReader {
             }
         }
 
-        private QcmChoice toChoice(ParseContext context) {
+        private McqChoice toChoice(ParseContext context) {
             Optional<String> joined = feedback.isEmpty() ? Optional.empty() : Optional.of(String.join("\n", feedback));
-            return new QcmChoice(text.toString(), correct, joined, context.position(line));
+            return new McqChoice(text.toString(), correct, joined, context.position(line));
         }
     }
 }

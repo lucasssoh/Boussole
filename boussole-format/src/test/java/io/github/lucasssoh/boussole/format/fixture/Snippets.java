@@ -41,10 +41,10 @@ public final class Snippets {
                 """.formatted(id, id) + exercise(exerciseId);
     }
 
-    /** A qcm with these choice lines and a solution. */
-    public static String qcm(String attributes, String choices) {
+    /** A mcq with these choice lines and a solution. */
+    public static String mcq(String attributes, String choices) {
         return """
-                ::::qcm{%s}
+                ::::mcq{%s}
                 Question ?
 
                 %s

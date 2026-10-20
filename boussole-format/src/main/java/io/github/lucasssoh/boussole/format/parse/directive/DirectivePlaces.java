@@ -15,7 +15,7 @@ public final class DirectivePlaces {
     /** Where text and exercises flow: the body and the sections. */
     public static final Set<String> FLOW = union(Set.of(TOP), SECTIONS);
 
-    static final Set<String> MEDIA = union(FLOW, Set.of("example", "recall", "note", "tip", "warning", "exercise", "qcm", "hint", "solution"));
+    static final Set<String> MEDIA = union(FLOW, Set.of("example", "recall", "note", "tip", "warning", "exercise", "mcq", "hint", "solution"));
 
     private DirectivePlaces() {
     }

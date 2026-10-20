@@ -6,11 +6,11 @@ import java.util.Optional;
 import java.util.OptionalInt;
 
 /** A multiple-choice exercise: the ticked choices are the answer. */
-public record QcmBlock(
+public record McqBlock(
         String id,
         boolean multiple,
         List<Block> statement,
-        List<QcmChoice> choices,
+        List<McqChoice> choices,
         List<ExerciseHint> hints,
         Optional<ExerciseSolution> solution,
         OptionalInt minutes,

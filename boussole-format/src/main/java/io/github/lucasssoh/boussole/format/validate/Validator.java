@@ -10,7 +10,7 @@ import io.github.lucasssoh.boussole.format.validate.rule.IdSyntaxRule;
 import io.github.lucasssoh.boussole.format.validate.rule.MissingSessionFileRule;
 import io.github.lucasssoh.boussole.format.validate.rule.NotionExerciseRule;
 import io.github.lucasssoh.boussole.format.validate.rule.PartOrderRule;
-import io.github.lucasssoh.boussole.format.validate.rule.QcmChoicesRule;
+import io.github.lucasssoh.boussole.format.validate.rule.McqChoicesRule;
 import io.github.lucasssoh.boussole.format.validate.rule.QuickCheckRule;
 import io.github.lucasssoh.boussole.format.validate.rule.ReferenceRule;
 import io.github.lucasssoh.boussole.format.validate.rule.SessionIdMatchRule;
@@ -40,7 +40,7 @@ public final class Validator {
                 new IdSyntaxRule(),
                 new SessionIdMatchRule(),
                 new MissingSessionFileRule(),
-                new QcmChoicesRule(),
+                new McqChoicesRule(),
                 new FillGapsRule(),
                 new ReferenceRule(),
                 new SourceFileRule(),

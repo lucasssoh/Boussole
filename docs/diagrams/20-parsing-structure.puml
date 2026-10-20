@@ -82,9 +82,9 @@ package "parse.directive" {
   class PdfDirectiveParser
   class RefDirectiveParser
   class ExerciseDirectiveParser
-  class QcmDirectiveParser
+  class McqDirectiveParser
   class ExerciseParts <<record>>
-  class QcmChoiceReader
+  class McqChoiceReader
 }
 
 class AnswerParserRegistry <<see 21-parsing-answers>>
@@ -119,10 +119,10 @@ DirectiveParser <|.. VideoDirectiveParser
 DirectiveParser <|.. PdfDirectiveParser
 DirectiveParser <|.. RefDirectiveParser
 DirectiveParser <|.. ExerciseDirectiveParser
-DirectiveParser <|.. QcmDirectiveParser
+DirectiveParser <|.. McqDirectiveParser
 ExerciseDirectiveParser --> ExerciseParts
-QcmDirectiveParser --> ExerciseParts
-QcmDirectiveParser --> QcmChoiceReader
+McqDirectiveParser --> ExerciseParts
+McqDirectiveParser --> McqChoiceReader
 ExerciseDirectiveParser --> AnswerParserRegistry : answer by type
 
 @enduml

@@ -11,7 +11,7 @@ To build or change the course, follow the skills in `.boussole/skills/`. **Read 
 | Ask how the learner learns (`learner.yaml`) | `.boussole/skills/learner-profile/SKILL.md` |
 | Propose or revise the plan of the course | `.boussole/skills/cursus-plan/SKILL.md` |
 | Write a session | `.boussole/skills/seance-write/SKILL.md` |
-| Write or change an exercise or a qcm | `.boussole/skills/exercise-author/SKILL.md` |
+| Write or change an exercise or an MCQ | `.boussole/skills/exercise-author/SKILL.md` |
 | Build a review or a mock exam (`kind: review` or `exam`) | `.boussole/skills/exam-build/SKILL.md` |
 | Add terms to the lexicon | `.boussole/skills/lexique-build/SKILL.md` |
 | Add videos | `.boussole/skills/video-find/SKILL.md` |

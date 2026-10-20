@@ -26,7 +26,7 @@ public final class DirectiveParserRegistry {
                 new VideoDirectiveParser(),
                 new PdfDirectiveParser(),
                 new ExerciseDirectiveParser(),
-                new QcmDirectiveParser(),
+                new McqDirectiveParser(),
                 new RefDirectiveParser()));
     }
 

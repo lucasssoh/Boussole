@@ -55,7 +55,7 @@ final class BlockBuilder {
             return Optional.empty();
         }
         if (DirectivePlaces.EXERCISE_PARTS.contains(name)) {
-            context.report(DiagnosticCode.F020, number, "`" + name + "` is only allowed inside `exercise` or `qcm`, as :::" + name);
+            context.report(DiagnosticCode.F020, number, "`" + name + "` is only allowed inside `exercise` or `mcq`, as :::" + name);
             return Optional.empty();
         }
         Optional<DirectiveParser> parser = registry.find(name);

@@ -33,7 +33,7 @@ by `learner.yaml` as the table after it says:
       `::pdf[…]{src=… page=…}`.
    3. **One** `:::example`, fully worked, step by step. One example per notion, never more:
       further cases become exercises.
-   4. **Right away**, one or two exercises or qcms of the **same kind** as the example
+   4. **Right away**, one or two exercises or MCQs of the **same kind** as the example
       (« À toi »), with hints.
 3. **Closing**, as `closing` asks: a **checkpoint** (`:::::checkpoint`), three to five questions
    on the whole session, passing it means the goal is reached; and/or a **practice**
@@ -44,7 +44,7 @@ How `learner.yaml` changes this shape (without the file, use the defaults):
 
 | Field | Value | The session |
 |---|---|---|
-| `quick_check` | `true` | right after each explanation, **before** the example, a short `qcm` (one or two questions, 1 minute) on what was just explained |
+| `quick_check` | `true` | right after each explanation, **before** the example, a short `mcq` (one or two questions, 1 minute) on what was just explained |
 | `order` | `try-first` | after the explanation (and the quick check), the exercise comes **before** the example; the example then shows the method, so the learner compares |
 | `closing` | `quiz` *(default)* | end with a `:::::checkpoint` |
 | | `exercise` | end with a `:::::practice` holding at least one `exercise`, the last part of the session |

@@ -186,7 +186,7 @@ A session is read top to bottom in this order:
 2. **Notions** — each level-2 heading is a notion and carries an ID:
    `## Ce que la couche 3 apporte {#couche3}`. A notion runs until the next level-2 heading or
    section. Notion IDs are unique in their session.
-   Inside it: the explanation, **one** `:::example`, then at least one `:::exercise` or `:::qcm`
+   Inside it: the explanation, **one** `:::example`, then at least one `:::exercise` or `:::mcq`
    (the learner's « À toi »).
 3. `:::checkpoint` — optional. A short quiz on the whole session; passing it validates the
    session.
@@ -196,7 +196,7 @@ Text before the first notion is an introduction. Level-3 headings and below are 
 a notion.
 
 **Timed sessions** (`kind: review` or `exam`) only ask questions, against the clock: an optional
-introduction, then exercises, qcms and `::ref`s, with no notion and no `example`. Their questions'
+introduction, then exercises, MCQs and `::ref`s, with no notion and no `example`. Their questions'
 estimated times (§5.6) add up to the time allowed. In an exam, hints are not shown and solutions
 come when the time is up; in a review, both are available after each answer.
 
@@ -235,24 +235,24 @@ Where each directive may appear:
 | Directive | Allowed in |
 |---|---|
 | `warmup`, `checkpoint`, `practice` | the top level of a session only |
-| `exercise`, `qcm` | a notion, an introduction, a section |
+| `exercise`, `mcq` | a notion, an introduction, a section |
 | `example` | a notion, an introduction, a section |
 | `recall` | the same, and `hint`, `solution` |
 | `note`, `tip`, `warning` | the same as `recall`, and `example`, `recall` |
 | `video`, `pdf` | anywhere except `answer` |
 | `ref` | a notion, an introduction, a section, the body of a review or exam |
 | `answer` | `exercise` |
-| `hint`, `solution` | `exercise`, `qcm` |
+| `hint`, `solution` | `exercise`, `mcq` |
 
 ### 5.6 Exercises
 
 Every exercise has an `id` that is **unique in the subject and never reused**. An exercise or a
-qcm may also have `minutes=N`, the time it takes at a normal pace when it differs from the
+MCQ may also have `minutes=N`, the time it takes at a normal pace when it differs from the
 estimate of its type:
 
 | Question | Estimated minutes |
 |---|---|
-| `qcm` | 1, or 1.5 with `multiple=true` |
+| `mcq` | 1, or 1.5 with `multiple=true` |
 | `order`, `match` | 2 |
 | `numeric`, `text` | 3 |
 | `fill` | 1 per typed gap, 0.5 per choice gap (at least 1) |
@@ -306,12 +306,12 @@ reasoning by picking each missing step.
 
 #### Multiple choice
 
-A `qcm` is an exercise whose choices are a task list, at the end of its statement. A blockquote indented under a choice is
+A `mcq` is an exercise whose choices are a task list, at the end of its statement. A blockquote indented under a choice is
 the feedback shown when the learner picks it. `multiple=true` means several choices are right
 and the interface says so.
 
 ```markdown
-::::qcm{#s11-a2}
+::::mcq{#s11-a2}
 Dans quel modèle les routeurs gardent-ils un état **par communication** ?
 
 - [ ] Datagramme
@@ -325,7 +325,7 @@ Le circuit virtuel : chaque routeur traversé garde une entrée par circuit éta
 ::::
 ```
 
-A `qcm` may also have `:::hint` parts. It has no `:::answer`: the ticked boxes are the answer.
+A `mcq` may also have `:::hint` parts. It has no `:::answer`: the ticked boxes are the answer.
 
 #### Reusing an exercise
 
@@ -351,8 +351,8 @@ chapter.
 | `F012` | error | A level-1 heading in a session body. |
 | `F013` | error | A level-2 heading without an ID. |
 | `F020` | error | Unknown directive, a directive of the wrong kind (`:::video`), or in a place it is not allowed (§5.5). |
-| `F021` | error | Exercise or qcm without exactly one `solution`; exercise with the wrong number of `answer` parts for its type; an `answer` that is empty or whose lines do not follow its type. |
-| `F022` | error | `qcm` with fewer than two choices, no ticked choice, several without `multiple=true`, or text after its choices. |
+| `F021` | error | Exercise or mcq without exactly one `solution`; exercise with the wrong number of `answer` parts for its type; an `answer` that is empty or whose lines do not follow its type. |
+| `F022` | error | `mcq` with fewer than two choices, no ticked choice, several without `multiple=true`, or text after its choices. |
 | `F023` | error | `fill` gaps in the statement and in the answer do not match. |
 | `F024` | error | `numeric` answer that is not a number. |
 | `F025` | error | `text` or `fill` answer with an invalid regular expression. |
@@ -361,13 +361,13 @@ chapter.
 | `F030` | error | `ref`, `term`, `prerequisites` or `see` pointing to an ID that does not exist. |
 | `F031` | error | `pdf` or `sources` naming a file absent from `sources/`, or a page past the end. |
 | `F032` | warning | `video` that YouTube does not know (checked only with `--check-videos`). |
-| `P001` | warning | A notion without exercise or `qcm`. |
+| `P001` | warning | A notion without exercise or `mcq`. |
 | `P002` | warning | A notion with more than one `example`. |
 | `P003` | warning | `warmup` not first, or `practice` not last. |
 | `P004` | warning | Exercise without any `hint`. |
 | `P005` | warning | `term` used in the body but not listed in the front matter's `terms`. |
 | `P006` | warning | With a `learner.yaml`: a session without the checkpoint, or without the final practice holding an exercise, that `closing` asks for. |
-| `P007` | warning | With `quick_check: true`: a notion without a `qcm` before its example. |
+| `P007` | warning | With `quick_check: true`: a notion without a `mcq` before its example. |
 | `P008` | warning | A review or exam whose questions' estimated times add up to less than 80 % or more than 110 % of its duration. |
 | `P009` | warning | A review or exam holding a notion or an `example`. |
 
@@ -404,7 +404,7 @@ notes: >
 | `session_minutes` | 15 to 120 | `60` | Usual size of a session when planning, timed at a normal pace. |
 | `explanations` | `concise`, `detailed` | `concise` | How much an explanation spells out. |
 | `order` | `example-first`, `try-first` | `example-first` | Whether a notion's exercise comes after its example, or before. |
-| `quick_check` | `true`, `false` | `false` | A short `qcm` right after each notion's explanation, before its example. |
+| `quick_check` | `true`, `false` | `false` | A short `mcq` right after each notion's explanation, before its example. |
 | `closing` | `quiz`, `exercise`, `both` | `quiz` | What ends a session: a `checkpoint`, a final `practice` holding an exercise, or both. |
 | `videos` | `none`, `some`, `many` | `some` | How many videos to add. |
 | `notes` | text | empty | Anything else, in the learner's words. |

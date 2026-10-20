@@ -5,13 +5,13 @@ import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCollector;
 import io.github.lucasssoh.boussole.format.model.LearnerProfile;
 import io.github.lucasssoh.boussole.format.model.block.Block;
 import io.github.lucasssoh.boussole.format.model.block.ExampleBlock;
-import io.github.lucasssoh.boussole.format.model.block.QcmBlock;
+import io.github.lucasssoh.boussole.format.model.block.McqBlock;
 import io.github.lucasssoh.boussole.format.model.part.NotionPart;
 import io.github.lucasssoh.boussole.format.validate.ValidationContext;
 import io.github.lucasssoh.boussole.format.validate.ValidationRule;
 
 /**
- * P007: when the learner asked for {@code quick_check: true}, each notion asks a short qcm right
+ * P007: when the learner asked for {@code quick_check: true}, each notion asks a short mcq right
  * after its explanation, before its example.
  */
 public final class QuickCheckRule implements ValidationRule {
@@ -24,12 +24,12 @@ public final class QuickCheckRule implements ValidationRule {
         LessonNotions.of(context.course())
                 .filter(notion -> !hasQuickCheck(notion))
                 .forEach(notion -> diagnostics.report(DiagnosticCode.P007, notion.position(), "notion `" + notion.id()
-                        + "`: the learner asked for a short qcm right after the explanation, before the example"));
+                        + "`: the learner asked for a short MCQ right after the explanation, before the example"));
     }
 
     private static boolean hasQuickCheck(NotionPart notion) {
         for (Block block : notion.blocks()) {
-            if (block instanceof QcmBlock) {
+            if (block instanceof McqBlock) {
                 return true;
             }
             if (block instanceof ExampleBlock) {

@@ -11,7 +11,7 @@ Révision de la séance sur le rôle de la couche réseau : 5 minutes, 3 questio
 
 ::ref{id=s11-a2}
 
-::::qcm{#r19-q1}
+::::mcq{#r19-q1}
 Pourquoi ne peut-on pas router Internet avec des :term[adresses MAC]{id=mac} ?
 
 - [ ] Elles sont trop longues

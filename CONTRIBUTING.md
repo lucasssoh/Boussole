@@ -40,7 +40,7 @@ Component : what changes
 Each `-m` is a paragraph: the first is the title, the next ones the body.
 
 ```
-git commit -m "Format : [validator] a qcm with several ticked choices needs multiple=true" \
+git commit -m "Format : [validator] an MCQ with several ticked choices needs multiple=true" \
            -m "Without it, the interface showed radio buttons and the learner could never pick the right answer."
 ```
 

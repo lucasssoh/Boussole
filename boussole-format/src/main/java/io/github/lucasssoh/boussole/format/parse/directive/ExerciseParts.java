@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * The content of an {@code exercise} or a {@code qcm}, split into its statement and its
+ * The content of an {@code exercise} or a {@code mcq}, split into its statement and its
  * {@code answer}, {@code hint} and {@code solution} parts.
  */
 record ExerciseParts(

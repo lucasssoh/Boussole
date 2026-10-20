@@ -50,12 +50,12 @@ enum ExerciseType {
   MATCH
   FREE
 }
-class QcmBlock <<record>> {
+class McqBlock <<record>> {
   id : String
   multiple : boolean
   minutes : OptionalInt
 }
-class QcmChoice <<record>> {
+class McqChoice <<record>> {
   text : String
   correct : boolean
   feedback : Optional<String>
@@ -70,7 +70,7 @@ class BlockWalker <<utility>> {
 }
 class QuestionTimeEstimator <<utility>> {
   +{static} minutes(ExerciseBlock) : double
-  +{static} minutes(QcmBlock) : double
+  +{static} minutes(McqBlock) : double
 }
 class SourceReference <<record>>
 interface Answer <<sealed>>
@@ -83,7 +83,7 @@ Block <|.. CalloutBlock
 Block <|.. VideoBlock
 Block <|.. PdfBlock
 Block <|.. ExerciseBlock
-Block <|.. QcmBlock
+Block <|.. McqBlock
 Block <|.. ExerciseRefBlock
 
 ProseBlock *-- "*" InlineDirective : inlines
@@ -102,14 +102,14 @@ ExerciseBlock o-- "*" Block : statement
 ExerciseBlock *-- "0..1" Answer : answer
 ExerciseBlock *-- "*" ExerciseHint : hints
 ExerciseBlock *-- "0..1" ExerciseSolution : solution
-QcmBlock o-- "*" Block : statement
-QcmBlock *-- "2..*" QcmChoice : choices
-QcmBlock *-- "*" ExerciseHint : hints
-QcmBlock *-- "0..1" ExerciseSolution : solution
+McqBlock o-- "*" Block : statement
+McqBlock *-- "2..*" McqChoice : choices
+McqBlock *-- "*" ExerciseHint : hints
+McqBlock *-- "0..1" ExerciseSolution : solution
 ExerciseHint o-- "*" Block : content
 ExerciseSolution o-- "*" Block : content
 
 BlockWalker ..> Block : walks nested
 QuestionTimeEstimator ..> ExerciseBlock : estimates
-QuestionTimeEstimator ..> QcmBlock : estimates
+QuestionTimeEstimator ..> McqBlock : estimates
 @enduml

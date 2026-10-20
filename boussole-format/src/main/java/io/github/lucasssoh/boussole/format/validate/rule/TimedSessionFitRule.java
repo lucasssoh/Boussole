@@ -7,7 +7,7 @@ import io.github.lucasssoh.boussole.format.model.CourseSession;
 import io.github.lucasssoh.boussole.format.model.block.Block;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseRefBlock;
-import io.github.lucasssoh.boussole.format.model.block.QcmBlock;
+import io.github.lucasssoh.boussole.format.model.block.McqBlock;
 import io.github.lucasssoh.boussole.format.model.block.QuestionTimeEstimator;
 import io.github.lucasssoh.boussole.format.validate.ValidationContext;
 import io.github.lucasssoh.boussole.format.validate.ValidationRule;
@@ -28,7 +28,7 @@ public final class TimedSessionFitRule implements ValidationRule {
     public void check(ValidationContext context, DiagnosticCollector diagnostics) {
         Course course = context.course();
         Map<String, Block> questions = course.blocks()
-                .filter(block -> block instanceof ExerciseBlock || block instanceof QcmBlock)
+                .filter(block -> block instanceof ExerciseBlock || block instanceof McqBlock)
                 .collect(Collectors.toMap(TimedSessionFitRule::id, Function.identity(), (first, second) -> first));
         course.sessions().stream().filter(TimedSessions::isTimed).forEach(loaded -> check(loaded, questions, diagnostics));
     }
@@ -46,13 +46,13 @@ public final class TimedSessionFitRule implements ValidationRule {
     private static double minutes(Block block, Map<String, Block> questions) {
         return switch (block) {
             case ExerciseBlock exercise -> QuestionTimeEstimator.minutes(exercise);
-            case QcmBlock qcm -> QuestionTimeEstimator.minutes(qcm);
+            case McqBlock mcq -> QuestionTimeEstimator.minutes(mcq);
             case ExerciseRefBlock ref -> questions.containsKey(ref.id()) ? minutes(questions.get(ref.id()), questions) : 0;
             default -> 0;
         };
     }
 
     private static String id(Block block) {
-        return block instanceof ExerciseBlock exercise ? exercise.id() : ((QcmBlock) block).id();
+        return block instanceof ExerciseBlock exercise ? exercise.id() : ((McqBlock) block).id();
     }
 }

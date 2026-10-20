@@ -27,7 +27,7 @@ are about the teaching contract and matter to the learner.
 | F013 | `## Title` without `{#id}` | add an ID to the heading |
 | F020 | directive misspelled (often translated: `:::exemple`) or in the wrong place | English names; see where each directive may appear, FORMAT.md §5.5 |
 | F021 | exercise without `solution`, or with a wrong `answer` | exactly one `solution`; one `answer` matching the type (none for `free`) |
-| F022 | qcm with no `[x]`, or several without `multiple=true` | tick the right choice(s) |
+| F022 | MCQ with no `[x]`, or several without `multiple=true` | tick the right choice(s) |
 | F023 | gaps `[[n]]` and answer lines differ | one answer line per gap |
 | F024, F025 | answer not a number, or invalid `re:` | write `2.5` or `3/4`; fix the regex |
 | F026 | container not closed | close it with as many colons as it opened with |
@@ -35,7 +35,7 @@ are about the teaching contract and matter to the learner.
 | F030 | reference to an ID that does not exist | add the term to the lexicon, or fix the ID |
 | F031 | source file or page not found | use the exact file name in the sources folder and a real page |
 | P001–P005 | teaching contract | add the exercise, keep one example, move warmup/practice, add hints, list terms |
-| P006, P007 | the session does not follow `learner.yaml` | close it as `closing` asks; add the quick qcm before the example |
+| P006, P007 | the session does not follow `learner.yaml` | close it as `closing` asks; add the quick MCQ before the example |
 | P008 | the questions of a review or exam do not fill its time | add or remove questions (estimated times in `exam-build`), or set `minutes=` on a long one |
 | P009 | a review or exam holds a notion or a worked example | move it to a lesson; a timed session only asks questions |
 

@@ -7,7 +7,7 @@ readable; the overview says where each area sits.
 |---|---|
 | [Overview](00-overview.svg) | modules and packages, and how they depend on each other |
 | [Course model](10-model-course.svg) | `Course`, the syllabus, the lexicon, the learner's profile, sessions and their parts |
-| [Blocks](11-model-blocks.svg) | what a session is made of: prose, examples, videos, exercises, qcms… |
+| [Blocks](11-model-blocks.svg) | what a session is made of: prose, examples, videos, exercises, MCQs… |
 | [Answers](12-model-answers.svg) | what exercises accept: answers made of expectations (text, number, choice) |
 | [Parsing: structure](20-parsing-structure.svg) | from a session file to parts and blocks: raw tree, directives |
 | [Parsing: answers](21-parsing-answers.svg) | how each exercise type reads its answer |

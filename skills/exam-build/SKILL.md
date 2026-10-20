@@ -21,8 +21,8 @@ Each question takes an estimated time at a normal pace: **choosing** an answer i
 
 | Question | Minutes |
 |---|---|
-| `qcm`, one answer | 1 |
-| `qcm`, `multiple=true` | 1.5 |
+| `mcq`, one answer | 1 |
+| `mcq`, `multiple=true` | 1.5 |
 | `order`, `match` | 2 |
 | `numeric`, `text` | 3 |
 | `fill` | 1 per typed gap, 0.5 per choice gap (at least 1) |
@@ -32,11 +32,11 @@ A question that needs more (a long calculation, a whole problem) says so with `m
 questions until their total is **90 to 100 % of `duration`**: `boussole validate .` warns
 (`P008`) below 80 % or above 110 %.
 
-Example: a 20-minute review → 14 single-choice qcms and 2 numeric exercises (14 + 6 = 20).
+Example: a 20-minute review → 14 single-choice MCQs and 2 numeric exercises (14 + 6 = 20).
 
 ## 2. Choose the questions
 
-- **Mostly qcms and fills**: in a given time they cover the most ground. A proof, an algorithm or
+- **Mostly MCQs and fills**: in a given time they cover the most ground. A proof, an algorithm or
   a calculation from the exam becomes a `fill` with choice gaps for its steps and a number gap
   for its result. Typed answers stay short and precise (a value, a keyword); `free` only when the
   real exam asks for a written answer nothing else can check.
@@ -69,7 +69,7 @@ Révision du chapitre Dualité : 20 minutes, 16 questions.
 ::ref{id=s11-a1}
 ::ref{id=s12-a2}
 
-::::qcm{#r19-q1}
+::::mcq{#r19-q1}
 …
 ::::
 ```

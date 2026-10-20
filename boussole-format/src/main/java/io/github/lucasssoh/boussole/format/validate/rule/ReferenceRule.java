@@ -29,7 +29,7 @@ public final class ReferenceRule implements ValidationRule {
                 .filter(ExerciseRefBlock.class::isInstance)
                 .map(ExerciseRefBlock.class::cast)
                 .filter(ref -> !exercises.contains(ref.id()))
-                .forEach(ref -> unknown(diagnostics, ref.position(), "no exercise or qcm has the ID `" + ref.id() + "`"));
+                .forEach(ref -> unknown(diagnostics, ref.position(), "no exercise or MCQ has the ID `" + ref.id() + "`"));
 
         for (LexiconTerm term : course.lexicon().terms()) {
             term.see().stream()
