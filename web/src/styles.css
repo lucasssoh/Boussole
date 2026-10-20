@@ -555,8 +555,7 @@ a:focus-visible {
   align-self: start;
   max-height: calc(100vh - 3.5rem);
   overflow-y: auto;
-  border-right: 2px solid var(--line);
-  background: var(--subject-soft);
+  scrollbar-width: thin;
 }
 
 .path-head {
@@ -580,45 +579,124 @@ a:focus-visible {
   font-weight: 700;
 }
 
+/* Zones, signs and nodes share one coordinate system, computed by SessionPathComponent. */
+
 .path-track {
   position: relative;
-  width: 280px;
-  margin-bottom: 2rem;
+  width: 288px;
+  margin: 0.5rem 0 2rem;
 }
 
-.path-line {
+.path-map {
   position: absolute;
   inset: 0;
 }
 
-.path-line path {
+.zone {
+  --zone: var(--subject-soft);
+  fill: var(--zone);
+}
+
+.zone.warmup,
+.path-sign.warmup {
+  --zone: #fff0e0;
+  --sign: #e8590c;
+}
+
+.zone.notion,
+.path-sign.notion {
+  --zone: var(--subject-soft);
+  --sign: var(--subject);
+}
+
+.zone.notion-alt,
+.path-sign.notion-alt {
+  --zone: #e7f5ff;
+  --sign: #1864ab;
+}
+
+.zone.checkpoint,
+.path-sign.checkpoint {
+  --zone: #fff9db;
+  --sign: #b35c00;
+}
+
+.zone.practice,
+.path-sign.practice {
+  --zone: #f3f0ff;
+  --sign: #6741d9;
+}
+
+.zone.text,
+.path-sign.text {
+  --zone: var(--surface-2);
+  --sign: var(--muted);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .zone.warmup { --zone: rgb(255 169 77 / 0.14); }
+  :root:not([data-theme='light']) .zone.notion-alt { --zone: rgb(116 192 252 / 0.14); }
+  :root:not([data-theme='light']) .zone.checkpoint { --zone: rgb(252 196 25 / 0.12); }
+  :root:not([data-theme='light']) .zone.practice { --zone: rgb(151 117 250 / 0.16); }
+  :root:not([data-theme='light']) .path-sign.warmup { --sign: #ffa94d; }
+  :root:not([data-theme='light']) .path-sign.notion-alt { --sign: #74c0fc; }
+  :root:not([data-theme='light']) .path-sign.checkpoint { --sign: #ffd43b; }
+  :root:not([data-theme='light']) .path-sign.practice { --sign: #b197fc; }
+}
+
+:root[data-theme='dark'] .zone.warmup { --zone: rgb(255 169 77 / 0.14); }
+:root[data-theme='dark'] .zone.notion-alt { --zone: rgb(116 192 252 / 0.14); }
+:root[data-theme='dark'] .zone.checkpoint { --zone: rgb(252 196 25 / 0.12); }
+:root[data-theme='dark'] .zone.practice { --zone: rgb(151 117 250 / 0.16); }
+:root[data-theme='dark'] .path-sign.warmup { --sign: #ffa94d; }
+:root[data-theme='dark'] .path-sign.notion-alt { --sign: #74c0fc; }
+:root[data-theme='dark'] .path-sign.checkpoint { --sign: #ffd43b; }
+:root[data-theme='dark'] .path-sign.practice { --sign: #b197fc; }
+
+.path-line {
   fill: none;
-  stroke: color-mix(in srgb, var(--subject) 30%, var(--surface));
+  stroke: color-mix(in srgb, var(--subject) 32%, var(--surface));
   stroke-width: 8;
   stroke-linecap: round;
   stroke-dasharray: 2 16;
 }
 
-.path-heading {
+.path-sign {
   position: absolute;
-  left: 1rem;
-  right: 1rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: var(--subject);
+  left: 50%;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 264px;
+  padding: 0.3rem 0.85rem;
+  border: 3px solid var(--sign);
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--sign);
+  color: var(--sign);
   font-size: 0.85rem;
   font-weight: 900;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
 }
 
+.path-sign app-rich-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.path-sign svg {
+  flex-shrink: 0;
+}
+
+/* A node is placed by its centre: the button is a point, its dot and label hang around it. */
 .path-node {
   position: absolute;
-  display: grid;
-  justify-items: center;
-  gap: 0.15rem;
-  width: 5.5rem;
+  z-index: 1;
+  width: 0;
+  height: 0;
   min-height: 0;
-  margin-left: -2.75rem;
   padding: 0;
   border: 0;
   background: none;
@@ -636,28 +714,37 @@ a:focus-visible {
 }
 
 .path-dot {
+  position: absolute;
+  left: 0;
+  top: 0;
   display: grid;
   place-items: center;
-  width: 60px;
-  height: 60px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   border: 3px solid color-mix(in srgb, var(--subject) 45%, var(--surface));
   background: var(--surface);
   box-shadow: 0 5px 0 color-mix(in srgb, var(--subject) 45%, var(--surface));
   color: var(--subject);
   font-weight: 900;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
+  transform: translate(-50%, -50%);
   transition: transform 0.08s;
 }
 
 .path-node:hover:not(:disabled) .path-dot {
-  transform: translateY(-2px);
+  transform: translate(-50%, calc(-50% - 2px));
 }
 
 .path-label {
-  font-size: 0.75rem;
+  position: absolute;
+  left: 0;
+  top: 34px;
+  font-size: 0.72rem;
   font-weight: 800;
   color: var(--muted);
+  white-space: nowrap;
+  transform: translateX(-50%);
 }
 
 .path-node.done .path-dot,
@@ -683,8 +770,8 @@ a:focus-visible {
 }
 
 .path-node.current .path-dot {
-  width: 70px;
-  height: 70px;
+  width: 66px;
+  height: 66px;
   border-color: var(--subject);
   background: var(--subject);
   box-shadow: 0 6px 0 var(--subject-deep), 0 0 0 8px color-mix(in srgb, var(--subject) 22%, transparent);
@@ -692,6 +779,7 @@ a:focus-visible {
 }
 
 .path-node.current .path-label {
+  top: 40px;
   color: var(--subject);
 }
 
@@ -702,7 +790,7 @@ a:focus-visible {
 }
 
 .path-node.end .path-dot {
-  border-radius: 20px;
+  border-radius: 18px;
   border-color: #fcc419;
   background: #fff3bf;
   box-shadow: 0 5px 0 #f59f00;
@@ -710,7 +798,7 @@ a:focus-visible {
 }
 
 .path-q {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   line-height: 1;
 }
 

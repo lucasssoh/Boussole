@@ -232,8 +232,9 @@ web/src/app/
   (`sessionPlan()`): the goal, then within each part (warm-up, each notion, checkpoint,
   practice) the explanation, the worked example and each question on a screen of their own,
   then a closing screen. *Previous* and *Next* (or ← →) move between them. Beside it, the plan
-  of the session drawn as a path (`SessionPathComponent`): a node per screen, winding down under
-  the titles of the parts, green once seen, the colour of its verdict for a question, locked
+  of the session drawn as a path (`SessionPathComponent`): a node per screen, winding down through
+  a zone per part (warm-up, each notion, checkpoint, practice, each its own tint), opened by a
+  sign on the line; the component computes every position, and zones and line are one SVG; green once seen, the colour of its verdict for a question, locked
   while a question before it waits for an answer; and the video or the document opened (the
   browser's own PDF viewer, at the page). The screen is in the address and, for the next
   visit, in this browser; `SessionRun` keeps the answers of the sitting. A lesson ends with
