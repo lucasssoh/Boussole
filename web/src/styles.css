@@ -993,6 +993,17 @@ progress {
   margin-left: auto;
 }
 
+.gate-note {
+  margin-left: auto;
+  align-self: center;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.gate-note + .primary {
+  margin-left: 0.75rem;
+}
+
 .resume-card {
   margin: 1rem 0 2rem;
   padding: 1.25rem 1.5rem;

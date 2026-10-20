@@ -49,7 +49,8 @@ public final class BoussoleConfigFile {
                 map.get("port") instanceof Integer port ? port : BoussoleConfig.DEFAULT_PORT,
                 map.get("subjects") instanceof List<?> folders
                         ? folders.stream().map(String::valueOf).map(this::expand).toList()
-                        : List.of());
+                        : List.of(),
+                Boolean.TRUE.equals(map.get("free_navigation")));
     }
 
     /** Adds the folder to the subjects, unless it is there already. Says whether it was added. */

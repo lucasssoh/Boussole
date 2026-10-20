@@ -33,7 +33,8 @@ public final class ServeCommand implements Callable<Integer> {
                 port != null ? port : read.port(),
                 () -> config.read().subjects(),
                 BoussolePaths.forCurrentUser().database(),
-                read.language()));
+                read.language(),
+                read.freeNavigation()));
         new ServerPidFile(BoussolePaths.forCurrentUser().serverPid()).writeCurrent();
         spec.commandLine().getOut().println("Boussole runs on " + server.url() + " (Ctrl+C to stop).");
         if (read.subjects().isEmpty()) {

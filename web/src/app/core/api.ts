@@ -232,4 +232,6 @@ export interface ServerInfo {
   name: string;
   version: string;
   language: string | null;
+  /** From config.yaml: a lesson lets the learner go on without answering its questions. */
+  freeNavigation: boolean;
 }

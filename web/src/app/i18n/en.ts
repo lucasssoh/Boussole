@@ -38,6 +38,7 @@ export const EN = {
     spent: '{{minutes}} min spent',
     begin: 'Begin',
     nextScreen: 'Next',
+    answerFirst: 'Answer to go on',
     previousScreen: 'Previous',
     endTitle: 'End of the session',
     contents: 'Contents',

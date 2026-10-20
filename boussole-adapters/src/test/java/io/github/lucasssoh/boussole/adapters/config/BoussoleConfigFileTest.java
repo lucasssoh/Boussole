@@ -24,12 +24,13 @@ class BoussoleConfigFileTest {
     @Test
     void reads_the_language_the_port_and_the_folders_with_a_tilde() throws Exception {
         Files.createDirectories(home.resolve(".config/boussole"));
-        Files.writeString(config().path(), "language: fr\nport: 7500\nsubjects:\n  - ~/courses/OC\n  - /srv/RESEAUX\n");
+        Files.writeString(config().path(), "language: fr\nport: 7500\nfree_navigation: true\nsubjects:\n  - ~/courses/OC\n  - /srv/RESEAUX\n");
 
         BoussoleConfig read = config().read();
 
         assertThat(read.language()).contains("fr");
         assertThat(read.port()).isEqualTo(7500);
+        assertThat(read.freeNavigation()).isTrue();
         assertThat(read.subjects()).containsExactly(home.resolve("courses/OC"), Path.of("/srv/RESEAUX"));
     }
 

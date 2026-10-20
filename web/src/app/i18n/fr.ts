@@ -40,6 +40,7 @@ export const FR: Translations = {
     spent: '{{minutes}} min passées',
     begin: 'Commencer',
     nextScreen: 'Suivant',
+    answerFirst: 'Réponds pour continuer',
     previousScreen: 'Précédent',
     endTitle: 'Fin de la séance',
     contents: 'Sommaire',

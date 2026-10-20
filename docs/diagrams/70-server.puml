@@ -15,6 +15,7 @@ class ServerSettings <<record>> {
   subjects : Supplier<List<Path>>
   database : Path
   language : Optional<String>
+  freeNavigation : boolean
 }
 class RunningServer <<record>>
 class LearningConfiguration <<@Configuration>>

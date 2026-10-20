@@ -12,6 +12,9 @@ package "core" {
   class boussoleHeaderInterceptor <<interceptor>>
   class LanguageService <<service>>
   class ThemeService <<service>>
+  class ServerSettingsService <<service>> {
+    freeNavigation : Signal
+  }
   class "api.ts" as Api <<types of the HTTP API>>
 }
 
@@ -72,6 +75,7 @@ CoursePageComponent --> LearnFacade
 SessionPageComponent --> LearnFacade
 SessionPageComponent *-- SessionRun : provides
 SessionPageComponent ..> SessionPlan : screens
+SessionPageComponent ..> ServerSettingsService : free navigation?
 SessionPageComponent --> SessionOutlineComponent
 SessionPageComponent --> BlockListComponent : the screen shown
 SessionRun o-- QuestionState : kept for the sitting

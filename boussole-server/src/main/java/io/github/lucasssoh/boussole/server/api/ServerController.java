@@ -27,7 +27,7 @@ class ServerController {
     @GetMapping
     ServerView describe() {
         String version = BoussoleVersion.current();
-        return new ServerView(NAME, version, settings.language().orElse(null));
+        return new ServerView(NAME, version, settings.language().orElse(null), settings.freeNavigation());
     }
 
     @PostMapping("/stop")
@@ -35,6 +35,7 @@ class ServerController {
         Thread.ofPlatform().start(() -> SpringApplication.exit(context, () -> 0));
     }
 
-    record ServerView(String name, String version, String language) {
+    /** {@code freeNavigation}: a lesson lets the learner go on without answering its questions. */
+    record ServerView(String name, String version, String language, boolean freeNavigation) {
     }
 }

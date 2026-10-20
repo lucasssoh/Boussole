@@ -2,11 +2,13 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, si
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { storedValue, storeValue } from '../core/local-preferences';
+import { ServerSettingsService } from '../core/server-settings.service';
 import { RichTextComponent } from '../shared/rich-text.component';
 import { BlockListComponent } from './blocks/block-list.component';
 import { clock } from './blocks/video-block.component';
 import { LearnFacade } from './learn.facade';
 import { SessionOutlineComponent } from './session-outline.component';
+import { BlockView } from '../core/api';
 import { SessionScreen, sessionPlan } from './session-screens';
 import { SessionRun } from './session-run';
 import { SidePanelComponent } from './side-panel.component';
@@ -34,6 +36,7 @@ import { SidePanelComponent } from './side-panel.component';
         [session]="current"
         [plan]="plan()"
         [current]="index()"
+        [reachable]="gate()"
         [attr.lang]="learn.course()?.lang"
         (go)="goTo($event); outlineOpen.set(false)"
       />
@@ -112,7 +115,10 @@ import { SidePanelComponent } from './side-panel.component';
           @if (screen().kind === 'start' && timed() && !run.started()) {
             <button type="button" class="primary" (click)="run.start(); goTo(1)">{{ 'timed.start' | transloco }} →</button>
           } @else if (index() < plan().screens.length - 1) {
-            <button type="button" class="primary" (click)="goTo(index() + 1)">
+            @if (index() >= gate()) {
+              <span class="gate-note">{{ 'session.answerFirst' | transloco }}</span>
+            }
+            <button type="button" class="primary" [disabled]="index() >= gate()" (click)="goTo(index() + 1)">
               {{ (screen().kind === 'start' ? 'session.begin' : 'session.nextScreen') | transloco }} →
             </button>
           }
@@ -136,6 +142,7 @@ export class SessionPageComponent {
   protected readonly learn = inject(LearnFacade);
   protected readonly run = inject(SessionRun);
   private readonly router = inject(Router);
+  private readonly settings = inject(ServerSettingsService);
 
   protected readonly finishedIn = signal<number | null>(null);
   protected readonly outlineOpen = signal(false);
@@ -146,8 +153,7 @@ export class SessionPageComponent {
   protected readonly plan = computed(() => sessionPlan(this.opened()?.parts ?? []));
   protected readonly index = computed(() => {
     const wanted = Number(this.screenParam() ?? 1) - 1;
-    const last = this.plan().screens.length - 1;
-    return Number.isInteger(wanted) ? Math.min(Math.max(wanted, 0), last) : 0;
+    return Number.isInteger(wanted) ? Math.min(Math.max(wanted, 0), this.gate()) : 0;
   });
   protected readonly screen = computed<SessionScreen>(() => this.plan().screens[this.index()]);
   protected readonly where = computed(() => {
@@ -156,6 +162,21 @@ export class SessionPageComponent {
     return part?.kind === 'notion' ? (part.title ?? '') : (this.opened()?.title ?? '');
   });
   protected readonly timed = computed(() => this.opened()?.kind !== 'lesson');
+  /**
+   * The last screen the learner may reach: in a lesson, the first question not answered yet in
+   * this sitting, since the correction is part of the lesson. Practice exercises, free exercises
+   * and timed sessions never hold the learner, nor does free_navigation in config.yaml.
+   */
+  protected readonly gate = computed(() => {
+    const screens = this.plan().screens;
+    if (this.opened()?.kind !== 'lesson' || this.settings.freeNavigation()) {
+      return screens.length - 1;
+    }
+    const verdicts = this.run.verdicts();
+    const blocking = screens.findIndex((screen) => holds(screen, this.plan().parts[screen.part]?.part.kind, this.exerciseType(screen))
+      && !verdicts.has(screen.question!.id) && !this.answeredBefore(screen));
+    return blocking < 0 ? screens.length - 1 : blocking;
+  });
   protected readonly roundedQuestionMinutes = computed(() => Math.round(this.opened()?.questionMinutes ?? 0));
   protected readonly remaining = computed(() => clock(this.run.remainingSeconds() ?? 0));
 
@@ -178,6 +199,12 @@ export class SessionPageComponent {
       });
     });
     effect(() => {
+      const wanted = Number(this.screenParam() ?? 1) - 1;
+      if (this.opened() && wanted > this.index()) {
+        untracked(() => this.goTo(this.index()));
+      }
+    });
+    effect(() => {
       const index = this.index();
       const session = this.opened();
       if (session) {
@@ -188,6 +215,9 @@ export class SessionPageComponent {
   }
 
   protected goTo(index: number): void {
+    if (index > this.gate()) {
+      return;
+    }
     void this.router.navigate([], { queryParams: { screen: index + 1 }, replaceUrl: true });
     scrollTo({ top: 0 });
   }
@@ -198,7 +228,7 @@ export class SessionPageComponent {
     if (event.altKey || event.ctrlKey || event.metaKey || target.closest('input, textarea, select, [contenteditable]')) {
       return;
     }
-    if (event.key === 'ArrowRight' && this.index() < this.plan().screens.length - 1 && !(this.timed() && !this.run.started())) {
+    if (event.key === 'ArrowRight' && this.index() < this.gate() && !(this.timed() && !this.run.started())) {
       this.goTo(this.index() + 1);
     } else if (event.key === 'ArrowLeft' && this.index() > 0) {
       this.goTo(this.index() - 1);
@@ -212,6 +242,21 @@ export class SessionPageComponent {
     this.finishedIn.set(Math.max(1, Math.round(seconds / 60)));
   }
 
+  private exerciseType(screen: SessionScreen): string | undefined {
+    const block = this.questionOf(screen);
+    return block?.type === 'exercise' ? block.exerciseType : undefined;
+  }
+
+  /** A question answered in an earlier sitting no longer holds the learner. */
+  private answeredBefore(screen: SessionScreen): boolean {
+    const block = this.questionOf(screen);
+    return block?.type === 'mcq' || block?.type === 'exercise' ? block.progress.attempts > 0 : false;
+  }
+
+  private questionOf(screen: SessionScreen): BlockView | undefined {
+    return screen.blocks.find((found) => (found.type === 'exercise' || found.type === 'mcq') && found.id === screen.question?.id);
+  }
+
   /** Coming back to a lesson without a screen in the address, the learner finds the screen they left. */
   private resumeStoredScreen(allowed: boolean): void {
     const session = this.opened();
@@ -223,6 +268,11 @@ export class SessionPageComponent {
       this.goTo(stored - 1);
     }
   }
+}
+
+/** A question screen holds the learner until answered, unless it is practice or a free exercise. */
+function holds(screen: SessionScreen, part: string | undefined, exerciseType: string | undefined): boolean {
+  return screen.kind === 'question' && part !== 'practice' && exerciseType !== 'free';
 }
 
 function positionKey(subject: string, session: string): string {

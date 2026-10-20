@@ -33,7 +33,7 @@ interface OutlineScreen {
     <ol class="outline-parts">
       @for (part of parts(); track $index) {
         <li [class.current]="part.current" [class.done]="part.done">
-          <button type="button" class="quiet outline-part" (click)="go.emit(part.first)">
+          <button type="button" class="quiet outline-part" [disabled]="part.first > reachable()" (click)="go.emit(part.first)">
             <span class="mark" aria-hidden="true">{{ part.done ? '✓' : part.current ? '◉' : '○' }}</span>
             <app-rich-text [text]="part.title" />
           </button>
@@ -41,7 +41,7 @@ interface OutlineScreen {
             <ol class="outline-screens">
               @for (screen of part.screens; track screen.index) {
                 <li [class]="screen.mark">
-                  <button type="button" class="quiet" (click)="go.emit(screen.index)">
+                  <button type="button" class="quiet" [disabled]="screen.index > reachable()" (click)="go.emit(screen.index)">
                     <span class="mark" aria-hidden="true">{{ symbol(screen.mark) }}</span>
                     <app-rich-text [text]="screen.label" />
                   </button>
@@ -58,6 +58,8 @@ export class SessionOutlineComponent {
   readonly session = input.required<Session>();
   readonly plan = input.required<SessionPlan>();
   readonly current = input.required<number>();
+  /** Screens after this one wait for an answer: they show, but cannot be opened yet. */
+  readonly reachable = input.required<number>();
   readonly go = output<number>();
 
   protected readonly learn = inject(LearnFacade);

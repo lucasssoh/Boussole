@@ -36,6 +36,7 @@ package "config" {
     language : Optional<String>
     port : int
     subjects : List<Path>
+    freeNavigation : boolean
   }
   class BoussolePaths <<record>> {
     config, data, state : Path

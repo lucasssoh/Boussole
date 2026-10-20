@@ -8,7 +8,9 @@ import java.util.function.Supplier;
 /**
  * What the server is started with: its port (0 for any free one), the subject folders (asked
  * for on each request, so that a folder added to the configuration shows without a restart), the
- * progress database and the interface language when the configuration sets one.
+ * progress database, the interface language when the configuration sets one, and whether a
+ * lesson lets the learner go on without answering its questions.
  */
-public record ServerSettings(int port, Supplier<List<Path>> subjects, Path database, Optional<String> language) {
+public record ServerSettings(
+        int port, Supplier<List<Path>> subjects, Path database, Optional<String> language, boolean freeNavigation) {
 }

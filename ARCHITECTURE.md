@@ -314,6 +314,7 @@ by itself.
 # ~/.config/boussole/config.yaml
 language: fr                   # interface: en | fr
 port: 7420
+free_navigation: false         # true: a lesson lets you go on without answering
 subjects:
   - ~/courses/mim-m1/RESEAUX
   - ~/courses/mim-m1/OC

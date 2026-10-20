@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { BoussoleApi } from './core/boussole-api';
+import { ServerSettingsService } from './core/server-settings.service';
 import { LanguageService } from './core/language.service';
 import { ThemeService } from './core/theme.service';
 
@@ -47,9 +47,6 @@ export class App {
   protected readonly language = inject(LanguageService);
 
   constructor() {
-    inject(BoussoleApi)
-      .server()
-      .then((server) => this.language.useConfigured(server.language))
-      .catch(() => undefined);
+    inject(ServerSettingsService).load();
   }
 }
