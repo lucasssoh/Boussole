@@ -1,19 +1,9 @@
 @startuml 12-model-answers
-skinparam shadowing false
-skinparam defaultFontName "DejaVu Sans"
-skinparam defaultFontSize 12
 skinparam packageStyle rectangle
 skinparam classAttributeIconSize 0
 skinparam linetype ortho
 skinparam nodesep 40
 skinparam ranksep 50
-skinparam ArrowColor #555555
-skinparam ClassBorderColor #555555
-skinparam ClassBackgroundColor #FFFFFF
-skinparam PackageBorderColor #999999
-skinparam PackageBackgroundColor #FAFAFA
-skinparam NoteBackgroundColor #FFF8DC
-skinparam NoteBorderColor #C8B560
 hide empty members
 hide circle
 title boussole-format — what exercises accept (model.answer, model.expectation)
