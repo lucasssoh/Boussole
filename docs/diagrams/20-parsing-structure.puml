@@ -7,20 +7,20 @@ hide empty members
 hide circle
 title boussole-format — reading a session file: structure and directives (load, parse, parse.directive)
 
-class SessionReader <<load>> {
-  +{static} read(text, file, Diagnostics) : Session
+class SessionFileReader <<load>> {
+  +{static} read(text, file, DiagnosticCollector) : SessionContent
 }
 class SessionBodyParser {
-  +{static} parse(lines, firstLine, file, Diagnostics) : List<Part>
+  +{static} parse(lines, firstLine, file, DiagnosticCollector) : List<Part>
 }
 
 package "parse" {
   class ParseContext {
-    +position(int) : Position
-    +report(Code, int, String)
+    +position(int) : SourcePosition
+    +report(DiagnosticCode, int, String)
     +blocks(List<RawNode>, parent) : List<Block>
-    +attributes(directive, source, required, optional, line) : Optional<Attributes>
-    +answerParsers() : AnswerParsers
+    +attributes(directive, source, required, optional, line) : Optional<DirectiveAttributes>
+    +answerParsers() : AnswerParserRegistry
   }
   class RawTreeBuilder {
     ~build(lines, firstLine) : List<RawNode>
@@ -43,13 +43,13 @@ package "parse" {
   class BlockBuilder {
     ~build(List<RawNode>, parent) : List<Block>
   }
-  class InlineScanner {
-    ~prose(RawNode.Text) : Prose
+  class InlineDirectiveScanner {
+    ~prose(RawNode.Text) : ProseBlock
   }
-  class AttributeParser {
-    ~{static} parse(String) : Attributes
+  class DirectiveAttributeParser {
+    ~{static} parse(String) : DirectiveAttributes
   }
-  class Attributes <<record>> {
+  class DirectiveAttributes <<record>> {
     +text(name) / required(name)
     +positiveInteger(name) / flag(name)
   }
@@ -57,13 +57,13 @@ package "parse" {
 }
 
 package "parse.directive" {
-  class DirectiveRegistry {
-    +{static} standard() : DirectiveRegistry
+  class DirectiveParserRegistry {
+    +{static} standard() : DirectiveParserRegistry
     +find(name) : Optional<DirectiveParser>
   }
   interface DirectiveParser <<strategy>> {
     +spec() : DirectiveSpec
-    +parse(Directive, ParseContext) : Optional<Block>
+    +parse(CheckedDirective, ParseContext) : Optional<Block>
   }
   class DirectiveSpec <<record>> {
     name : String
@@ -73,23 +73,23 @@ package "parse.directive" {
     CONTAINER
     LEAF
   }
-  class Directive <<record>>
-  class Parents <<constants>>
-  class ExampleParser
-  class RecallParser
-  class CalloutParser
-  class VideoParser
-  class PdfParser
-  class RefParser
-  class ExerciseParser
-  class QcmParser
+  class CheckedDirective <<record>>
+  class DirectivePlaces <<constants>>
+  class ExampleDirectiveParser
+  class RecallDirectiveParser
+  class CalloutDirectiveParser
+  class VideoDirectiveParser
+  class PdfDirectiveParser
+  class RefDirectiveParser
+  class ExerciseDirectiveParser
+  class QcmDirectiveParser
   class ExerciseParts <<record>>
-  class ChoiceReader
+  class QcmChoiceReader
 }
 
-class AnswerParsers <<see 21-parsing-answers>>
+class AnswerParserRegistry <<see 21-parsing-answers>>
 
-SessionReader --> SessionBodyParser : body
+SessionFileReader --> SessionBodyParser : body
 SessionBodyParser --> RawTreeBuilder : 1. lines to tree
 SessionBodyParser --> PartAssembler : 2. tree to parts
 RawTreeBuilder --> CodeFence
@@ -101,28 +101,28 @@ RawNode <|.. RLeaf
 RawNode <|.. RContainer
 PartAssembler --> ParseContext
 ParseContext *-- BlockBuilder
-ParseContext *-- AnswerParsers
-BlockBuilder --> DirectiveRegistry
-BlockBuilder --> InlineScanner
-ParseContext ..> AttributeParser
-AttributeParser ..> Attributes
-Attributes ..> InvalidAttributeException : throws
+ParseContext *-- AnswerParserRegistry
+BlockBuilder --> DirectiveParserRegistry
+BlockBuilder --> InlineDirectiveScanner
+ParseContext ..> DirectiveAttributeParser
+DirectiveAttributeParser ..> DirectiveAttributes
+DirectiveAttributes ..> InvalidAttributeException : throws
 
-DirectiveRegistry o-- "*" DirectiveParser
+DirectiveParserRegistry o-- "*" DirectiveParser
 DirectiveParser --> DirectiveSpec
 DirectiveSpec --> DirectiveKind
-DirectiveParser ..> Directive
-DirectiveParser <|.. ExampleParser
-DirectiveParser <|.. RecallParser
-DirectiveParser <|.. CalloutParser
-DirectiveParser <|.. VideoParser
-DirectiveParser <|.. PdfParser
-DirectiveParser <|.. RefParser
-DirectiveParser <|.. ExerciseParser
-DirectiveParser <|.. QcmParser
-ExerciseParser --> ExerciseParts
-QcmParser --> ExerciseParts
-QcmParser --> ChoiceReader
-ExerciseParser --> AnswerParsers : answer by type
+DirectiveParser ..> CheckedDirective
+DirectiveParser <|.. ExampleDirectiveParser
+DirectiveParser <|.. RecallDirectiveParser
+DirectiveParser <|.. CalloutDirectiveParser
+DirectiveParser <|.. VideoDirectiveParser
+DirectiveParser <|.. PdfDirectiveParser
+DirectiveParser <|.. RefDirectiveParser
+DirectiveParser <|.. ExerciseDirectiveParser
+DirectiveParser <|.. QcmDirectiveParser
+ExerciseDirectiveParser --> ExerciseParts
+QcmDirectiveParser --> ExerciseParts
+QcmDirectiveParser --> QcmChoiceReader
+ExerciseDirectiveParser --> AnswerParserRegistry : answer by type
 
 @enduml

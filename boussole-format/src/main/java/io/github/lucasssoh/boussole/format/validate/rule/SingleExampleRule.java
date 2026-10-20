@@ -1,8 +1,8 @@
 package io.github.lucasssoh.boussole.format.validate.rule;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
-import io.github.lucasssoh.boussole.format.diagnostic.Diagnostics;
-import io.github.lucasssoh.boussole.format.model.block.Example;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCollector;
+import io.github.lucasssoh.boussole.format.model.block.ExampleBlock;
 import io.github.lucasssoh.boussole.format.validate.ValidationContext;
 import io.github.lucasssoh.boussole.format.validate.ValidationRule;
 
@@ -10,11 +10,11 @@ import io.github.lucasssoh.boussole.format.validate.ValidationRule;
 public final class SingleExampleRule implements ValidationRule {
 
     @Override
-    public void check(ValidationContext context, Diagnostics diagnostics) {
-        Notions.of(context.course()).forEach(notion -> {
-            long examples = notion.blocks().stream().filter(Example.class::isInstance).count();
+    public void check(ValidationContext context, DiagnosticCollector diagnostics) {
+        LessonNotions.of(context.course()).forEach(notion -> {
+            long examples = notion.blocks().stream().filter(ExampleBlock.class::isInstance).count();
             if (examples > 1) {
-                diagnostics.report(Code.P002, notion.position(), "notion `" + notion.id() + "` has " + examples
+                diagnostics.report(DiagnosticCode.P002, notion.position(), "notion `" + notion.id() + "` has " + examples
                         + " examples: keep one, and turn the others into exercises");
             }
         });

@@ -43,18 +43,19 @@ Spring, no JDBC, no HTTP. ArchUnit tests fail the build if this is broken.
 Knows the course format and nothing else, so it can be used on its own (the validator agents
 run is this module).
 
-- **Model**: immutable `record`s. A `Course` holds the `Subject`, its `Syllabus` (`Chapter`s
-  of `SessionEntry`s), its `Lexicon` of `Term`s, and the `Session`s read. A session is a list of
-  `Part`s (`TextPart`, `Warmup`, `Notion`, `Checkpoint`, `Practice`), each a list of `Block`s.
-  An exercise's `Answer` is a `SingleAnswer` (numeric, text), a `FillAnswer` of `Gap`s, an
+- **Model**: immutable `record`s. A `Course` holds the `CourseSubject`, its `CourseSyllabus` (`SyllabusChapter`s
+  of `SyllabusSession`s), its `CourseLexicon` of `LexiconTerm`s, and the `CourseSession`s read, each with its
+  `SessionContent`. A session is a list of
+  `Part`s (`TextPart`, `WarmupPart`, `NotionPart`, `CheckpointPart`, `PracticePart`), each a list of `Block`s.
+  An exercise's `Answer` is a `SingleAnswer` (numeric, text), a `FillAnswer` of `FillGap`s, an
   `OrderAnswer` or a `MatchAnswer`; every value the learner gives is an `Expectation`: typed
   text, a number, or a choice. `Part`, `Block`, `Answer` and `Expectation` are sealed interfaces.
-- **Loading**: `SubjectLoader` reads the YAML files (SnakeYAML Engine, through `YamlMap`, which
-  knows the line of every value) and each session file through `SessionReader`.
+- **Loading**: `CourseLoader` reads the YAML files (SnakeYAML Engine, through `YamlMap`, which
+  knows the line of every value) and each session file through `SessionFileReader`.
 - **Parsing**: the structure of a session body is line-based, so Boussole parses it itself, in
   two steps. `RawTreeBuilder` turns lines into containers, one-line directives, headings and
   text, skipping fenced code; `BlockBuilder` checks each directive's kind, place and attributes,
-  then hands it to its `DirectiveParser`, found in the `DirectiveRegistry`. Exercise answers are
+  then hands it to its `DirectiveParser`, found in the `DirectiveParserRegistry`. Exercise answers are
   read by one `AnswerParser` per exercise type. Prose stays Markdown source: the interface
   renders it.
 - **Validation**: what a file shows on its own is reported while it is read; what needs the
@@ -135,7 +136,7 @@ A pattern is used where it solves a real problem, and the class name says which 
 | Repository | ports of `core` | data access behind an interface |
 | Strategy | `AnswerParser` and `AnswerChecker` per exercise type; `ReminderScheduler` per OS | add a case without touching the others |
 | Template method | `LineAnswerParser`: each answer type only says how a line reads and what the lines make | the reading loop and its error handling exist once |
-| Registry + factory | `DirectiveRegistry`, `AnswerParsers`; `BLOCK_RENDERERS` in `web/` | a new block type is a new class, registered |
+| Registry + factory | `DirectiveParserRegistry`, `AnswerParserRegistry`; `BLOCK_RENDERERS` in `web/` | a new block type is a new class, registered |
 | Sealed interface + exhaustive `switch` | `Block`, `ScheduledEvent` | the compiler lists every place a new type must be handled |
 | Composite | `Validator` of `ValidationRule`s | one rule per file, tested alone |
 | Command | planning actions (`MoveEvent`, `PinEvent`…) | undo and history |
@@ -287,16 +288,23 @@ On macOS and Windows the equivalent per-user folders are used.
 2. **Names say the role**: a use case is named by its verb (`SubmitAttempt`); every other role
    has its suffix: `…Repository`, `…Checker`, `…Rule`, `…Scheduler`, `…Facade`, `…Component`,
    `…Controller`, `…Command`.
-3. **Immutable by default**: `record`s, unmodifiable collections. No `null` in the domain;
+3. **Names say the hierarchy**, so that listing a package is enough to understand it:
+   - a subtype ends with its supertype's name: `VideoBlock` is a `Block`, `NotionPart` a `Part`,
+     `ExampleDirectiveParser` a `DirectiveParser`, `NumberExpectation` an `Expectation`;
+   - a part of something is prefixed by its owner: `CourseSubject`, `CourseLexicon`,
+     `LexiconTerm`, `SyllabusChapter`, `ExerciseHint`, `QcmChoice`, `FillGap`;
+   - nested types (`RawNode.Text`, `AcceptedText.Exact`) are kept for the small closed variants
+     of one type.
+4. **Immutable by default**: `record`s, unmodifiable collections. No `null` in the domain;
    `Optional` only as a return type.
-4. **An interface needs a reason**: a port to the outside world, or at least two
+5. **An interface needs a reason**: a port to the outside world, or at least two
    implementations.
-5. **Small classes, short methods**, and names that make comments unnecessary. Comments explain
+6. **Small classes, short methods**, and names that make comments unnecessary. Comments explain
    *why*, never *what*.
-6. **Tests**: JUnit 5 and AssertJ. The parser is tested on reference files
+7. **Tests**: JUnit 6 and AssertJ. The parser is tested on reference files
    (`examples/` and `boussole-format/src/test/resources`); each validation rule has its own test
    class; ArchUnit checks the module dependencies.
-7. Code, comments, commits and documentation in English. Commits, versions and releases follow
+8. Code, comments, commits and documentation in English. Commits, versions and releases follow
    [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ---
@@ -311,7 +319,7 @@ On macOS and Windows the equivalent per-user folders are used.
 | Course files | own line-based parser for the structure, SnakeYAML Engine, PDFBox for page counts; Markdown rendered by markdown-it in `web/` |
 | CLI | picocli |
 | Interface | Angular (standalone components, signals), Transloco, pdf.js, KaTeX, Mermaid |
-| Tests | JUnit 5, AssertJ, ArchUnit; Vitest and Playwright for `web/` |
+| Tests | JUnit 6, AssertJ, ArchUnit; Vitest and Playwright for `web/` |
 
 ---
 

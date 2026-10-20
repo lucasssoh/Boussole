@@ -5,7 +5,7 @@ import static io.github.lucasssoh.boussole.format.fixture.Snippets.notion;
 import static io.github.lucasssoh.boussole.format.fixture.Snippets.qcm;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.fixture.SubjectFixture;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ class FillGapsRuleTest {
     void theStatementAndTheAnswerHaveTheSameGaps() {
         var report = inspect("Le masque /24 s'écrit [[1]].", "1: 255.255.255.0\n2: oups");
 
-        assertThat(report.withCode(Code.F023)).singleElement()
+        assertThat(report.withCode(DiagnosticCode.F023)).singleElement()
                 .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("[1]", "[1, 2]"));
     }
 
@@ -28,7 +28,7 @@ class FillGapsRuleTest {
     void matchingGapsAreFine() {
         var report = inspect("[[1]] et [[2]].", "1: a | b\n2: c");
 
-        assertThat(report.withCode(Code.F023)).isEmpty();
+        assertThat(report.withCode(DiagnosticCode.F023)).isEmpty();
         assertThat(report.errors()).isEmpty();
     }
 
@@ -48,7 +48,7 @@ class FillGapsRuleTest {
                 :::
 
                 :::solution
-                Solution.
+                ExerciseSolution.
                 :::
                 ::::
                 """.formatted(statement, answer)).inspect();

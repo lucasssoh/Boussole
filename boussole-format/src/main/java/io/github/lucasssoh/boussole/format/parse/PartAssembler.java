@@ -1,14 +1,14 @@
 package io.github.lucasssoh.boussole.format.parse;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.model.block.Block;
-import io.github.lucasssoh.boussole.format.model.part.Checkpoint;
-import io.github.lucasssoh.boussole.format.model.part.Notion;
+import io.github.lucasssoh.boussole.format.model.part.CheckpointPart;
+import io.github.lucasssoh.boussole.format.model.part.NotionPart;
 import io.github.lucasssoh.boussole.format.model.part.Part;
-import io.github.lucasssoh.boussole.format.model.part.Practice;
+import io.github.lucasssoh.boussole.format.model.part.PracticePart;
 import io.github.lucasssoh.boussole.format.model.part.TextPart;
-import io.github.lucasssoh.boussole.format.model.part.Warmup;
-import io.github.lucasssoh.boussole.format.parse.directive.Parents;
+import io.github.lucasssoh.boussole.format.model.part.WarmupPart;
+import io.github.lucasssoh.boussole.format.parse.directive.DirectivePlaces;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -32,9 +32,9 @@ final class PartAssembler {
         for (RawNode node : nodes) {
             switch (node) {
                 case RawNode.Heading heading -> startNotion(heading);
-                case RawNode.Container container when Parents.SECTIONS.contains(container.directive().name()) ->
+                case RawNode.Container container when DirectivePlaces.SECTIONS.contains(container.directive().name()) ->
                         addSection(container);
-                default -> append(context.blocks(List.of(node), Parents.TOP), node.line());
+                default -> append(context.blocks(List.of(node), DirectivePlaces.TOP), node.line());
             }
         }
         finishCurrent();
@@ -44,7 +44,7 @@ final class PartAssembler {
     private void startNotion(RawNode.Heading heading) {
         finishCurrent();
         if (heading.id().isEmpty()) {
-            context.report(Code.F013, heading.line(), "`## " + heading.title() + "` needs an ID: `## "
+            context.report(DiagnosticCode.F013, heading.line(), "`## " + heading.title() + "` needs an ID: `## "
                     + heading.title() + " {#an-id}`");
         }
         current = new OpenPart(heading.id().orElse(""), heading.title(), heading.line(), true);
@@ -57,9 +57,9 @@ final class PartAssembler {
         List<Block> blocks = context.blocks(container.children(), name);
         var position = context.position(container.line());
         parts.add(switch (name) {
-            case "warmup" -> new Warmup(blocks, position);
-            case "checkpoint" -> new Checkpoint(blocks, position);
-            default -> new Practice(blocks, position);
+            case "warmup" -> new WarmupPart(blocks, position);
+            case "checkpoint" -> new CheckpointPart(blocks, position);
+            default -> new PracticePart(blocks, position);
         });
     }
 
@@ -79,7 +79,7 @@ final class PartAssembler {
         }
         var position = context.position(current.line);
         parts.add(current.notion
-                ? new Notion(current.id, current.title, List.copyOf(current.blocks), position)
+                ? new NotionPart(current.id, current.title, List.copyOf(current.blocks), position)
                 : new TextPart(List.copyOf(current.blocks), position));
         current = null;
     }

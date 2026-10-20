@@ -1,11 +1,11 @@
 package io.github.lucasssoh.boussole.format.validate.rule;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
-import io.github.lucasssoh.boussole.format.diagnostic.Diagnostics;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCollector;
 import io.github.lucasssoh.boussole.format.model.answer.FillAnswer;
-import io.github.lucasssoh.boussole.format.model.answer.Gap;
-import io.github.lucasssoh.boussole.format.model.block.Exercise;
-import io.github.lucasssoh.boussole.format.model.block.Prose;
+import io.github.lucasssoh.boussole.format.model.answer.FillGap;
+import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
+import io.github.lucasssoh.boussole.format.model.block.ProseBlock;
 import io.github.lucasssoh.boussole.format.validate.ValidationContext;
 import io.github.lucasssoh.boussole.format.validate.ValidationRule;
 import java.util.Set;
@@ -20,10 +20,10 @@ public final class FillGapsRule implements ValidationRule {
     private static final Pattern GAP = Pattern.compile("\\[\\[(\\d+)]]");
 
     @Override
-    public void check(ValidationContext context, Diagnostics diagnostics) {
+    public void check(ValidationContext context, DiagnosticCollector diagnostics) {
         context.course().blocks()
-                .filter(Exercise.class::isInstance)
-                .map(Exercise.class::cast)
+                .filter(ExerciseBlock.class::isInstance)
+                .map(ExerciseBlock.class::cast)
                 .forEach(exercise -> exercise.answer().ifPresent(answer -> {
                     if (answer instanceof FillAnswer fill) {
                         check(exercise, fill, diagnostics);
@@ -31,15 +31,15 @@ public final class FillGapsRule implements ValidationRule {
                 }));
     }
 
-    private static void check(Exercise exercise, FillAnswer answer, Diagnostics diagnostics) {
+    private static void check(ExerciseBlock exercise, FillAnswer answer, DiagnosticCollector diagnostics) {
         Set<Integer> inStatement = new TreeSet<>();
         exercise.statement().stream()
-                .filter(Prose.class::isInstance)
-                .map(prose -> GAP.matcher(((Prose) prose).markdown()))
+                .filter(ProseBlock.class::isInstance)
+                .map(prose -> GAP.matcher(((ProseBlock) prose).markdown()))
                 .forEach(matcher -> addAll(matcher, inStatement));
-        Set<Integer> inAnswer = answer.gaps().stream().map(Gap::number).collect(Collectors.toCollection(TreeSet::new));
+        Set<Integer> inAnswer = answer.gaps().stream().map(FillGap::number).collect(Collectors.toCollection(TreeSet::new));
         if (!inStatement.equals(inAnswer)) {
-            diagnostics.report(Code.F023, exercise.position(), "exercise `" + exercise.id() + "`: the statement has gaps "
+            diagnostics.report(DiagnosticCode.F023, exercise.position(), "exercise `" + exercise.id() + "`: the statement has gaps "
                     + inStatement + ", the answer " + inAnswer);
         }
     }

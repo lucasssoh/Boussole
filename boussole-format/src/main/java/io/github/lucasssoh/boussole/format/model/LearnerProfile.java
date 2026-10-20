@@ -1,6 +1,6 @@
 package io.github.lucasssoh.boussole.format.model;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Position;
+import io.github.lucasssoh.boussole.format.diagnostic.SourcePosition;
 
 /**
  * How the learner learns best, from {@code learner.yaml}. Agents shape the sessions after it, and
@@ -16,7 +16,7 @@ public record LearnerProfile(
         Closing closing,
         Videos videos,
         String notes,
-        Position position) {
+        SourcePosition position) {
 
     /** What the learner aims for: decides how much practice the course offers. */
     public enum Goal {

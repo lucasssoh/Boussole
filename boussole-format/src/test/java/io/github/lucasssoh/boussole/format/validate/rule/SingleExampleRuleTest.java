@@ -5,7 +5,7 @@ import static io.github.lucasssoh.boussole.format.fixture.Snippets.notion;
 import static io.github.lucasssoh.boussole.format.fixture.Snippets.qcm;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.fixture.SubjectFixture;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ class SingleExampleRuleTest {
     void aNotionHasOneExample() {
         var report = SubjectFixture.in(dir).session("s1", notion("a", "e1") + "\n:::example\nUn autre.\n:::\n").inspect();
 
-        assertThat(report.withCode(Code.P002)).singleElement()
+        assertThat(report.withCode(DiagnosticCode.P002)).singleElement()
                 .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("2 examples"));
     }
 }

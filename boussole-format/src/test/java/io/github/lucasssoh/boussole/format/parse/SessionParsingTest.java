@@ -3,11 +3,11 @@ package io.github.lucasssoh.boussole.format.parse;
 import static io.github.lucasssoh.boussole.format.fixture.Snippets.exercise;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.diagnostic.Diagnostic;
-import io.github.lucasssoh.boussole.format.diagnostic.Diagnostics;
-import io.github.lucasssoh.boussole.format.load.SessionReader;
-import io.github.lucasssoh.boussole.format.model.Session;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCollector;
+import io.github.lucasssoh.boussole.format.load.SessionFileReader;
+import io.github.lucasssoh.boussole.format.model.SessionContent;
 import io.github.lucasssoh.boussole.format.model.answer.FillAnswer;
 import io.github.lucasssoh.boussole.format.model.answer.MatchAnswer;
 import io.github.lucasssoh.boussole.format.model.answer.MatchPair;
@@ -18,10 +18,10 @@ import io.github.lucasssoh.boussole.format.model.expectation.TextExpectation;
 import io.github.lucasssoh.boussole.format.model.answer.OrderAnswer;
 import io.github.lucasssoh.boussole.format.model.expectation.Rational;
 import io.github.lucasssoh.boussole.format.model.block.Block;
-import io.github.lucasssoh.boussole.format.model.block.Exercise;
-import io.github.lucasssoh.boussole.format.model.block.Prose;
-import io.github.lucasssoh.boussole.format.model.block.Video;
-import io.github.lucasssoh.boussole.format.model.part.Notion;
+import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
+import io.github.lucasssoh.boussole.format.model.block.ProseBlock;
+import io.github.lucasssoh.boussole.format.model.block.VideoBlock;
+import io.github.lucasssoh.boussole.format.model.part.NotionPart;
 import java.time.Duration;
 import java.util.List;
 import org.junit.jupiter.api.Nested;
@@ -30,18 +30,18 @@ import org.junit.jupiter.api.Test;
 /** The problems a session file shows on its own, found while it is read. */
 class SessionParsingTest {
 
-    private final Diagnostics diagnostics = new Diagnostics();
+    private final DiagnosticCollector diagnostics = new DiagnosticCollector();
 
-    private Session parse(String body) {
-        return SessionReader.read("---\nid: s1\nobjectives: [Faire.]\n---\n" + body, "s1.md", diagnostics);
+    private SessionContent parse(String body) {
+        return SessionFileReader.read("---\nid: s1\nobjectives: [Faire.]\n---\n" + body, "s1.md", diagnostics);
     }
 
-    private List<String> messages(Code code) {
+    private List<String> messages(DiagnosticCode code) {
         return diagnostics.list().stream().filter(d -> d.code() == code).map(Diagnostic::message).toList();
     }
 
-    private Exercise onlyExercise(Session session) {
-        return session.blocks().filter(Exercise.class::isInstance).map(Exercise.class::cast).findFirst().orElseThrow();
+    private ExerciseBlock onlyExercise(SessionContent session) {
+        return session.blocks().filter(ExerciseBlock.class::isInstance).map(ExerciseBlock.class::cast).findFirst().orElseThrow();
     }
 
     private static String exerciseOfType(String attributes, String answer) {
@@ -54,7 +54,7 @@ class SessionParsingTest {
 
         @Test
         void containersNestByTheirColons() {
-            Session session = parse(":::::warmup\n" + exercise("w1") + ":::::\n\n## A {#a}\n\nTexte.\n");
+            SessionContent session = parse(":::::warmup\n" + exercise("w1") + ":::::\n\n## A {#a}\n\nTexte.\n");
 
             assertThat(diagnostics.list()).isEmpty();
             assertThat(session.parts()).hasSize(2);
@@ -71,54 +71,54 @@ class SessionParsingTest {
 
         @Test
         void nothingInFencedCodeIsADirective() {
-            Session session = parse("## A {#a}\n\n```\n:::example\n# pas un titre\n```\n");
+            SessionContent session = parse("## A {#a}\n\n```\n:::example\n# pas un titre\n```\n");
 
             assertThat(diagnostics.list()).isEmpty();
-            assertThat(session.parts().getFirst().blocks()).singleElement().isInstanceOf(Prose.class);
+            assertThat(session.parts().getFirst().blocks()).singleElement().isInstanceOf(ProseBlock.class);
         }
 
         @Test
         void aContainerIsClosed() {
             parse("## A {#a}\n\n:::example\nTexte.\n");
 
-            assertThat(messages(Code.F026)).containsExactly("`example` is never closed");
+            assertThat(messages(DiagnosticCode.F026)).containsExactly("`example` is never closed");
         }
 
         @Test
         void aClosingLineClosesAnOpenContainer() {
             parse("## A {#a}\n\n::::\n");
 
-            assertThat(messages(Code.F026)).singleElement().asString().contains("no container is open");
+            assertThat(messages(DiagnosticCode.F026)).singleElement().asString().contains("no container is open");
         }
 
         @Test
         void aSessionHasNoLevelOneHeading() {
             parse("# Titre\n");
 
-            assertThat(messages(Code.F012)).hasSize(1);
+            assertThat(messages(DiagnosticCode.F012)).hasSize(1);
         }
 
         @Test
         void aNotionHasAnId() {
-            Session session = parse("## Sans ID\n\nTexte.\n");
+            SessionContent session = parse("## Sans ID\n\nTexte.\n");
 
-            assertThat(messages(Code.F013)).singleElement().asString().contains("{#an-id}");
-            assertThat(session.parts().getFirst()).isInstanceOf(Notion.class);
+            assertThat(messages(DiagnosticCode.F013)).singleElement().asString().contains("{#an-id}");
+            assertThat(session.parts().getFirst()).isInstanceOf(NotionPart.class);
         }
 
         @Test
         void textBeforeTheFirstNotionIsAnIntroduction() {
-            Session session = parse("Introduction.\n\n## A {#a}\n\nTexte.\n");
+            SessionContent session = parse("Introduction.\n\n## A {#a}\n\nTexte.\n");
 
             assertThat(session.parts()).extracting(part -> part.getClass().getSimpleName())
-                    .containsExactly("TextPart", "Notion");
+                    .containsExactly("TextPart", "NotionPart");
         }
 
         @Test
         void aSessionStartsWithItsFrontMatter() {
-            SessionReader.read("## A {#a}\n", "s1.md", diagnostics);
+            SessionFileReader.read("## A {#a}\n", "s1.md", diagnostics);
 
-            assertThat(messages(Code.F001)).singleElement().asString().contains("front matter");
+            assertThat(messages(DiagnosticCode.F001)).singleElement().asString().contains("front matter");
         }
     }
 
@@ -129,14 +129,14 @@ class SessionParsingTest {
         void anUnknownDirectiveIsReported() {
             parse(":::exemple\nTexte.\n:::\n");
 
-            assertThat(messages(Code.F020)).containsExactly("unknown directive `exemple`");
+            assertThat(messages(DiagnosticCode.F020)).containsExactly("unknown directive `exemple`");
         }
 
         @Test
         void aDirectiveHasItsKind() {
             parse(":::video{youtube=aircAruvnKk}\n:::\n::example\n");
 
-            assertThat(messages(Code.F020)).containsExactly(
+            assertThat(messages(DiagnosticCode.F020)).containsExactly(
                     "`video` is a one-line directive: ::video",
                     "`example` is a container: :::example … :::");
         }
@@ -145,7 +145,7 @@ class SessionParsingTest {
         void aDirectiveIsInItsPlace() {
             parse(":::example\n::ref{id=e1}\n:::\n\n:::hint\nIndice.\n:::\n\n:::example\n:::::warmup\n:::::\n:::\n");
 
-            assertThat(messages(Code.F020)).containsExactly(
+            assertThat(messages(DiagnosticCode.F020)).containsExactly(
                     "`ref` is not allowed in `example`",
                     "`hint` is only allowed inside `exercise` or `qcm`, as :::hint",
                     "`warmup` is only allowed at the top level of a session");
@@ -155,7 +155,7 @@ class SessionParsingTest {
         void attributesAreKnownAndRequiredOnesGiven() {
             parse("::video[Vue]{youtube=aircAruvnKk speed=2}\n::pdf[Cours]\n:::example{x}\n:::\n");
 
-            assertThat(messages(Code.F027)).containsExactly(
+            assertThat(messages(DiagnosticCode.F027)).containsExactly(
                     "`speed` is not an attribute of `video`",
                     "`pdf` needs the attribute `src`",
                     "`x` is not an attribute of `example`");
@@ -165,7 +165,7 @@ class SessionParsingTest {
         void attributeValuesAreChecked() {
             parse("::video{youtube=court}\n::video{youtube=aircAruvnKk start=1:00 end=0:30}\n::pdf{src=a.pdf page=zero}\n");
 
-            assertThat(messages(Code.F027)).containsExactly(
+            assertThat(messages(DiagnosticCode.F027)).containsExactly(
                     "`video`: `youtube` must be the 11-character ID of a video, not `court`",
                     "`video`: `end` must come after `start`",
                     "`pdf`: `page` must be a whole number, not `zero`");
@@ -173,10 +173,10 @@ class SessionParsingTest {
 
         @Test
         void aVideoSegmentIsRead() {
-            Session session = parse("::video[Vue]{youtube=aircAruvnKk start=2:10 end=1:02:03}\n");
+            SessionContent session = parse("::video[Vue]{youtube=aircAruvnKk start=2:10 end=1:02:03}\n");
 
             Block video = session.blocks().findFirst().orElseThrow();
-            assertThat(video).isInstanceOfSatisfying(Video.class, found -> {
+            assertThat(video).isInstanceOfSatisfying(VideoBlock.class, found -> {
                 assertThat(found.start()).contains(Duration.ofSeconds(130));
                 assertThat(found.end()).contains(Duration.ofSeconds(3723));
             });
@@ -190,7 +190,7 @@ class SessionParsingTest {
         void anExerciseHasExactlyOneAnswerAndOneSolution() {
             parse("::::exercise{#e1 type=text}\nQuestion ?\n::::\n");
 
-            assertThat(messages(Code.F021)).containsExactly(
+            assertThat(messages(DiagnosticCode.F021)).containsExactly(
                     "`exercise` needs exactly one `answer`, it has 0",
                     "`exercise` needs exactly one `solution`, it has 0");
         }
@@ -199,40 +199,40 @@ class SessionParsingTest {
         void aFreeExerciseHasNoAnswer() {
             parse(exerciseOfType("type=free", "oui"));
 
-            assertThat(messages(Code.F021)).singleElement().asString().contains("free exercise has no `answer`");
+            assertThat(messages(DiagnosticCode.F021)).singleElement().asString().contains("free exercise has no `answer`");
         }
 
         @Test
         void aQcmHasNoAnswer() {
             parse("::::qcm{#q1}\nQ ?\n\n- [x] Oui\n- [ ] Non\n\n:::answer\nOui\n:::\n\n:::solution\nOui.\n:::\n::::\n");
 
-            assertThat(messages(Code.F021)).singleElement().asString().contains("tick the right choices");
+            assertThat(messages(DiagnosticCode.F021)).singleElement().asString().contains("tick the right choices");
         }
 
         @Test
         void theTypeIsKnown() {
             parse(exerciseOfType("type=essay", "x"));
 
-            assertThat(messages(Code.F027)).singleElement().asString().contains("must be one of numeric, text, fill, order, match, free");
+            assertThat(messages(DiagnosticCode.F027)).singleElement().asString().contains("must be one of numeric, text, fill, order, match, free");
         }
 
         @Test
         void anAttributeBelongsToTheType() {
             parse(exerciseOfType("type=text tolerance=1", "x"));
 
-            assertThat(messages(Code.F027)).singleElement().asString().contains("`tolerance` is not an attribute of a text exercise");
+            assertThat(messages(DiagnosticCode.F027)).singleElement().asString().contains("`tolerance` is not an attribute of a text exercise");
         }
 
         @Test
         void aNumericAnswerIsANumber() {
             parse(exerciseOfType("type=numeric", "quarante-huit"));
 
-            assertThat(messages(Code.F024)).hasSize(1);
+            assertThat(messages(DiagnosticCode.F024)).hasSize(1);
         }
 
         @Test
         void numericAnswersAcceptFractionsAndCommas() {
-            Exercise exercise = onlyExercise(parse(exerciseOfType("type=numeric tolerance=0,01", "3/4\n0,75")));
+            ExerciseBlock exercise = onlyExercise(parse(exerciseOfType("type=numeric tolerance=0,01", "3/4\n0,75")));
 
             assertThat(diagnostics.list()).isEmpty();
             assertThat(exercise.answer()).get().isInstanceOfSatisfying(SingleAnswer.class, answer ->
@@ -246,21 +246,21 @@ class SessionParsingTest {
         void aRegularExpressionCompiles() {
             parse(exerciseOfType("type=text", "re:(forwarding"));
 
-            assertThat(messages(Code.F025)).hasSize(1);
+            assertThat(messages(DiagnosticCode.F025)).hasSize(1);
         }
 
         @Test
         void fillOrderAndMatchAnswersAreRead() {
-            Exercise fill = onlyExercise(parse(exerciseOfType("type=fill", "1: a | b\n2: re:c+")));
+            ExerciseBlock fill = onlyExercise(parse(exerciseOfType("type=fill", "1: a | b\n2: re:c+")));
             assertThat(fill.answer()).get().isInstanceOfSatisfying(FillAnswer.class, answer ->
                     assertThat(answer.gaps()).extracting(gap -> ((TextExpectation) gap.expected()).accepted().size())
                             .containsExactly(2, 1));
 
-            Exercise order = onlyExercise(parse(exerciseOfType("type=order", "1. Physique\n2. Liaison\n3. Réseau")));
+            ExerciseBlock order = onlyExercise(parse(exerciseOfType("type=order", "1. Physique\n2. Liaison\n3. Réseau")));
             assertThat(order.answer()).get().isInstanceOfSatisfying(OrderAnswer.class,
                     answer -> assertThat(answer.items()).containsExactly("Physique", "Liaison", "Réseau"));
 
-            Exercise match = onlyExercise(parse(exerciseOfType("type=match", "TCP => transport\nIP => réseau")));
+            ExerciseBlock match = onlyExercise(parse(exerciseOfType("type=match", "TCP => transport\nIP => réseau")));
             assertThat(match.answer()).get().isInstanceOfSatisfying(MatchAnswer.class,
                     answer -> assertThat(answer.pairs()).containsExactly(new MatchPair("TCP", "transport"), new MatchPair("IP", "réseau")));
 
@@ -269,7 +269,7 @@ class SessionParsingTest {
 
         @Test
         void aGapIsTypedTextANumberOrAChoice() {
-            Exercise proof = onlyExercise(parse(exerciseOfType("type=fill",
+            ExerciseBlock proof = onlyExercise(parse(exerciseOfType("type=fill",
                     "1: x | $x$\n2: number 3/4 ±0.01\n3: choice $\\leq$ | *$\\geq$ | $=$")));
 
             assertThat(diagnostics.list()).isEmpty();
@@ -292,8 +292,8 @@ class SessionParsingTest {
             parse(exerciseOfType("type=fill", "1: choice *a | *b"));
             parse(exerciseOfType("type=fill", "1: number beaucoup"));
 
-            assertThat(messages(Code.F021)).hasSize(2).allMatch(message -> message.contains("one starred"));
-            assertThat(messages(Code.F024)).hasSize(1);
+            assertThat(messages(DiagnosticCode.F021)).hasSize(2).allMatch(message -> message.contains("one starred"));
+            assertThat(messages(DiagnosticCode.F024)).hasSize(1);
         }
 
         @Test
@@ -302,7 +302,7 @@ class SessionParsingTest {
             parse(exerciseOfType("type=order", "Physique\nLiaison"));
             parse(exerciseOfType("type=fill", "a | b"));
 
-            assertThat(messages(Code.F021)).containsExactly(
+            assertThat(messages(DiagnosticCode.F021)).containsExactly(
                     "a match answer line reads `left => right`",
                     "an order answer is a list: `1. first item`",
                     "a fill answer line reads `1: answer | other answer`, `2: number 62` or `3: choice *right | wrong`");
@@ -312,7 +312,7 @@ class SessionParsingTest {
         void textAfterTheChoicesOfAQcmIsReported() {
             parse("::::qcm{#q1}\nQ ?\n\n- [x] Oui\n- [ ] Non\n\nEt ceci ?\n\n:::solution\nOui.\n:::\n::::\n");
 
-            assertThat(messages(Code.F022)).hasSize(1);
+            assertThat(messages(DiagnosticCode.F022)).hasSize(1);
         }
 
         private Rational rational(String text) {

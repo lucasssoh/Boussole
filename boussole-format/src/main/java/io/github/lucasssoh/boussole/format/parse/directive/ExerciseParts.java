@@ -1,8 +1,8 @@
 package io.github.lucasssoh.boussole.format.parse.directive;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
-import io.github.lucasssoh.boussole.format.model.block.Hint;
-import io.github.lucasssoh.boussole.format.model.block.Solution;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
+import io.github.lucasssoh.boussole.format.model.block.ExerciseHint;
+import io.github.lucasssoh.boussole.format.model.block.ExerciseSolution;
 import io.github.lucasssoh.boussole.format.parse.ParseContext;
 import io.github.lucasssoh.boussole.format.parse.RawNode;
 import java.util.ArrayList;
@@ -15,22 +15,22 @@ import java.util.Set;
  * {@code answer}, {@code hint} and {@code solution} parts.
  */
 record ExerciseParts(
-        List<RawNode> statement, List<RawNode.Container> answers, List<Hint> hints, List<Solution> solutions) {
+        List<RawNode> statement, List<RawNode.Container> answers, List<ExerciseHint> hints, List<ExerciseSolution> solutions) {
 
-    static ExerciseParts split(Directive directive, ParseContext context) {
+    static ExerciseParts split(CheckedDirective directive, ParseContext context) {
         List<RawNode> statement = new ArrayList<>();
         List<RawNode.Container> answers = new ArrayList<>();
-        List<Hint> hints = new ArrayList<>();
-        List<Solution> solutions = new ArrayList<>();
+        List<ExerciseHint> hints = new ArrayList<>();
+        List<ExerciseSolution> solutions = new ArrayList<>();
         for (RawNode child : directive.children()) {
-            if (child instanceof RawNode.Container part && Parents.EXERCISE_PARTS.contains(part.directive().name())) {
+            if (child instanceof RawNode.Container part && DirectivePlaces.EXERCISE_PARTS.contains(part.directive().name())) {
                 String name = part.directive().name();
                 context.attributes(name, part.directive().attributes(), Set.of(), Set.of(), part.line());
                 var position = context.position(part.line());
                 switch (name) {
                     case "answer" -> answers.add(part);
-                    case "hint" -> hints.add(new Hint(context.blocks(part.children(), name), position));
-                    default -> solutions.add(new Solution(context.blocks(part.children(), name), position));
+                    case "hint" -> hints.add(new ExerciseHint(context.blocks(part.children(), name), position));
+                    default -> solutions.add(new ExerciseSolution(context.blocks(part.children(), name), position));
                 }
             } else {
                 statement.add(child);
@@ -40,9 +40,9 @@ record ExerciseParts(
     }
 
     /** The single solution, after reporting when there is none or several. */
-    Optional<Solution> solution(Directive directive, ParseContext context) {
+    Optional<ExerciseSolution> solution(CheckedDirective directive, ParseContext context) {
         if (solutions.size() != 1) {
-            context.report(Code.F021, directive.line(), "`" + directive.name() + "` needs exactly one `solution`, it has "
+            context.report(DiagnosticCode.F021, directive.line(), "`" + directive.name() + "` needs exactly one `solution`, it has "
                     + solutions.size());
         }
         return solutions.stream().findFirst();

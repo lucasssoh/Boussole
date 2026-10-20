@@ -1,6 +1,6 @@
 package io.github.lucasssoh.boussole.format.validate;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Diagnostics;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCollector;
 import io.github.lucasssoh.boussole.format.validate.rule.ClosingRule;
 import io.github.lucasssoh.boussole.format.validate.rule.DeclaredTermsRule;
 import io.github.lucasssoh.boussole.format.validate.rule.DuplicateIdRule;
@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * Runs every rule on a course. The problems a single file shows on its own are reported while
- * it is read (see {@link io.github.lucasssoh.boussole.format.load.SubjectLoader}); the rules
+ * it is read (see {@link io.github.lucasssoh.boussole.format.load.CourseLoader}); the rules
  * check what needs the whole course.
  */
 public final class Validator {
@@ -56,7 +56,7 @@ public final class Validator {
                 new TimedSessionContentRule()));
     }
 
-    public void validate(ValidationContext context, Diagnostics diagnostics) {
+    public void validate(ValidationContext context, DiagnosticCollector diagnostics) {
         rules.forEach(rule -> rule.check(context, diagnostics));
     }
 }

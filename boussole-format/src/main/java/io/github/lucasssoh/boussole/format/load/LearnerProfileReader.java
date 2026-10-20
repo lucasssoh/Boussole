@@ -1,7 +1,7 @@
 package io.github.lucasssoh.boussole.format.load;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
-import io.github.lucasssoh.boussole.format.diagnostic.Diagnostics;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCollector;
 import io.github.lucasssoh.boussole.format.model.LearnerProfile;
 import io.github.lucasssoh.boussole.format.model.LearnerProfile.Closing;
 import io.github.lucasssoh.boussole.format.model.LearnerProfile.Explanations;
@@ -26,20 +26,20 @@ final class LearnerProfileReader {
     private LearnerProfileReader() {
     }
 
-    static Optional<LearnerProfile> read(SubjectFiles files, Diagnostics diagnostics) {
-        if (!files.exists(SubjectFiles.LEARNER)) {
+    static Optional<LearnerProfile> read(SubjectFolderFiles files, DiagnosticCollector diagnostics) {
+        if (!files.exists(SubjectFolderFiles.LEARNER)) {
             return Optional.empty();
         }
-        return files.read(SubjectFiles.LEARNER)
-                .flatMap(text -> YamlMap.parse(text, YamlMap.YamlSource.of(SubjectFiles.LEARNER, diagnostics)))
+        return files.read(SubjectFolderFiles.LEARNER)
+                .flatMap(text -> YamlMap.parse(text, YamlMap.YamlSource.of(SubjectFolderFiles.LEARNER, diagnostics)))
                 .map(map -> profile(map, diagnostics));
     }
 
-    private static LearnerProfile profile(YamlMap map, Diagnostics diagnostics) {
+    private static LearnerProfile profile(YamlMap map, DiagnosticCollector diagnostics) {
         map.reportUnknownKeys(FIELDS);
         int minutes = map.integer("session_minutes").orElse(DEFAULT_MINUTES);
         if (minutes < SessionKind.LESSON.minDuration() || minutes > SessionKind.LESSON.maxDuration()) {
-            diagnostics.report(Code.F001, map.positionOf("session_minutes"), "`session_minutes` is between "
+            diagnostics.report(DiagnosticCode.F001, map.positionOf("session_minutes"), "`session_minutes` is between "
                     + SessionKind.LESSON.minDuration() + " and " + SessionKind.LESSON.maxDuration() + ", not " + minutes);
             minutes = DEFAULT_MINUTES;
         }
@@ -57,7 +57,7 @@ final class LearnerProfileReader {
     }
 
     /** A value written in lowercase with dashes, {@code try-first} for {@code TRY_FIRST}. */
-    private static <E extends Enum<E>> E choice(YamlMap map, String key, Class<E> type, E fallback, Diagnostics diagnostics) {
+    private static <E extends Enum<E>> E choice(YamlMap map, String key, Class<E> type, E fallback, DiagnosticCollector diagnostics) {
         Optional<String> value = map.text(key);
         if (value.isEmpty()) {
             return fallback;
@@ -65,7 +65,7 @@ final class LearnerProfileReader {
         String name = value.get().strip().toUpperCase(Locale.ROOT).replace('-', '_');
         return Arrays.stream(type.getEnumConstants()).filter(constant -> constant.name().equals(name)).findFirst()
                 .orElseGet(() -> {
-                    diagnostics.report(Code.F001, map.positionOf(key), "`" + key + "` is one of "
+                    diagnostics.report(DiagnosticCode.F001, map.positionOf(key), "`" + key + "` is one of "
                             + Arrays.stream(type.getEnumConstants()).map(LearnerProfileReader::written).collect(Collectors.joining(", "))
                             + ", not `" + value.get() + "`");
                     return fallback;

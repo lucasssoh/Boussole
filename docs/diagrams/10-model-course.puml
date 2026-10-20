@@ -11,23 +11,23 @@ class Course <<record>> {
   root : Path
   learner : Optional<LearnerProfile>
   +blocks() : Stream<Block>
-  +sessionId(Chapter, SessionEntry) : SessionId
+  +sessionId(SyllabusChapter, SyllabusSession) : SessionId
 }
-class Subject <<record>> {
+class CourseSubject <<record>> {
   id, name, lang : String
   sourcesDir : String
   description : Optional<String>
 }
-class Syllabus <<record>>
+class CourseSyllabus <<record>>
 enum SyllabusStatus {
   PROPOSED
   APPROVED
 }
-class Chapter <<record>> {
+class SyllabusChapter <<record>> {
   id, title, dir : String
-  sources : List<SourceRef>
+  sources : List<SourceReference>
 }
-class SessionEntry <<record>> {
+class SyllabusSession <<record>> {
   id, title, goal, file : String
   duration : int
 }
@@ -41,11 +41,11 @@ enum SessionKind {
 class SessionId <<record>> {
   subject, chapter, session : String
 }
-class Lexicon <<record>> {
-  +byId(String) : Optional<Term>
-  +byName(String) : Optional<Term>
+class CourseLexicon <<record>> {
+  +byId(String) : Optional<LexiconTerm>
+  +byName(String) : Optional<LexiconTerm>
 }
-class Term <<record>> {
+class LexiconTerm <<record>> {
   id, term, definition : String
   aliases, see : List<String>
 }
@@ -58,55 +58,55 @@ note bottom of LearnerProfile
   enums: Goal, Explanations,
   Order, Closing, Videos
 end note
-class LoadedSession <<record>> {
+class CourseSession <<record>> {
   file : String
 }
-class Session <<record>> {
+class SessionContent <<record>> {
   +blocks() : Stream<Block>
 }
-class SessionHeader <<record>> {
+class SessionFrontMatter <<record>> {
   id : String
   objectives, prerequisites, terms : List<String>
 }
-class SourceRef <<record>> {
+class SourceReference <<record>> {
   file : String
   page : OptionalInt
 }
 
 interface Part <<sealed>> {
   +blocks() : List<Block>
-  +position() : Position
+  +position() : SourcePosition
 }
 class TextPart <<record>>
-class Warmup <<record>>
-class Notion <<record>> {
+class WarmupPart <<record>>
+class NotionPart <<record>> {
   id, title : String
 }
-class Checkpoint <<record>>
-class Practice <<record>>
+class CheckpointPart <<record>>
+class PracticePart <<record>>
 
-Course *-- "1" Subject : subject
-Course *-- "1" Syllabus : syllabus
-Course *-- "1" Lexicon : lexicon
+Course *-- "1" CourseSubject : subject
+Course *-- "1" CourseSyllabus : syllabus
+Course *-- "1" CourseLexicon : lexicon
 Course *-- "0..1" LearnerProfile : learner
-Course *-- "*" LoadedSession : sessions read
-Syllabus *-- "*" Chapter : chapters
-Syllabus --> SyllabusStatus : status
-Chapter *-- "*" SessionEntry : sessions
-SessionEntry --> SessionKind : kind
-Lexicon *-- "*" Term : terms
-LoadedSession --> SessionId : id
-LoadedSession --> Chapter : chapter
-LoadedSession --> SessionEntry : entry
-LoadedSession *-- "1" Session : session
-Session *-- "1" SessionHeader : header
-Session *-- "*" Part : parts
-SessionHeader *-- "*" SourceRef : sources
+Course *-- "*" CourseSession : sessions read
+CourseSyllabus *-- "*" SyllabusChapter : chapters
+CourseSyllabus --> SyllabusStatus : status
+SyllabusChapter *-- "*" SyllabusSession : sessions
+SyllabusSession --> SessionKind : kind
+CourseLexicon *-- "*" LexiconTerm : terms
+CourseSession --> SessionId : id
+CourseSession --> SyllabusChapter : chapter
+CourseSession --> SyllabusSession : entry
+CourseSession *-- "1" SessionContent : session
+SessionContent *-- "1" SessionFrontMatter : header
+SessionContent *-- "*" Part : parts
+SessionFrontMatter *-- "*" SourceReference : sources
 Part <|.. TextPart
-Part <|.. Warmup
-Part <|.. Notion
-Part <|.. Checkpoint
-Part <|.. Practice
+Part <|.. WarmupPart
+Part <|.. NotionPart
+Part <|.. CheckpointPart
+Part <|.. PracticePart
 Part o-- "*" Block : blocks
 
 class Block <<sealed interface>>

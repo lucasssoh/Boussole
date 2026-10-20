@@ -1,6 +1,6 @@
 package io.github.lucasssoh.boussole.format.parse;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -39,7 +39,7 @@ final class RawTreeBuilder {
         flushText();
         while (!open.isEmpty()) {
             OpenContainer unclosed = open.pop();
-            context.report(Code.F026, unclosed.line, "`" + unclosed.directive.name() + "` is never closed");
+            context.report(DiagnosticCode.F026, unclosed.line, "`" + unclosed.directive.name() + "` is never closed");
             attach(unclosed.toNode());
         }
         return List.copyOf(top);
@@ -77,7 +77,7 @@ final class RawTreeBuilder {
 
     private void readHeading(Matcher heading, String line, int number) {
         if (heading.group(1).length() == 1) {
-            context.report(Code.F012, number, "level-1 heading: the title of a session comes from the syllabus");
+            context.report(DiagnosticCode.F012, number, "level-1 heading: the title of a session comes from the syllabus");
             addText(line, number);
             return;
         }
@@ -94,7 +94,7 @@ final class RawTreeBuilder {
 
     private void close(int colons, int number) {
         if (open.stream().noneMatch(container -> container.directive.colons() == colons)) {
-            context.report(Code.F026, number, "closing line with " + colons + " colons, but no container is open with as many");
+            context.report(DiagnosticCode.F026, number, "closing line with " + colons + " colons, but no container is open with as many");
             return;
         }
         flushText();
@@ -104,7 +104,7 @@ final class RawTreeBuilder {
                 attach(closed.toNode());
                 return;
             }
-            context.report(Code.F026, closed.line, "`" + closed.directive.name() + "` is never closed");
+            context.report(DiagnosticCode.F026, closed.line, "`" + closed.directive.name() + "` is never closed");
             attach(closed.toNode());
         }
     }

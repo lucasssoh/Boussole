@@ -1,9 +1,9 @@
 package io.github.lucasssoh.boussole.format.validate.rule;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Position;
+import io.github.lucasssoh.boussole.format.diagnostic.SourcePosition;
 import io.github.lucasssoh.boussole.format.model.Course;
-import io.github.lucasssoh.boussole.format.model.block.Exercise;
-import io.github.lucasssoh.boussole.format.model.block.Qcm;
+import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
+import io.github.lucasssoh.boussole.format.model.block.QcmBlock;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -13,14 +13,14 @@ final class CourseIds {
     private CourseIds() {
     }
 
-    record ExerciseId(String id, Position position) {
+    record ExerciseId(String id, SourcePosition position) {
     }
 
     /** Exercises and qcms, which share one ID space in a subject. */
     static Stream<ExerciseId> exercises(Course course) {
         return course.blocks().flatMap(block -> switch (block) {
-            case Exercise exercise -> Stream.of(new ExerciseId(exercise.id(), exercise.position()));
-            case Qcm qcm -> Stream.of(new ExerciseId(qcm.id(), qcm.position()));
+            case ExerciseBlock exercise -> Stream.of(new ExerciseId(exercise.id(), exercise.position()));
+            case QcmBlock qcm -> Stream.of(new ExerciseId(qcm.id(), qcm.position()));
             default -> Stream.empty();
         });
     }

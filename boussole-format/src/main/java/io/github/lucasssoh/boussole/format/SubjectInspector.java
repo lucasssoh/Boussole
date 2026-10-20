@@ -1,8 +1,8 @@
 package io.github.lucasssoh.boussole.format;
 
 import io.github.lucasssoh.boussole.format.diagnostic.Diagnostic;
-import io.github.lucasssoh.boussole.format.diagnostic.Diagnostics;
-import io.github.lucasssoh.boussole.format.load.SubjectLoader;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCollector;
+import io.github.lucasssoh.boussole.format.load.CourseLoader;
 import io.github.lucasssoh.boussole.format.model.Course;
 import io.github.lucasssoh.boussole.format.source.FolderSourceDocuments;
 import io.github.lucasssoh.boussole.format.validate.ValidationContext;
@@ -33,8 +33,8 @@ public final class SubjectInspector {
     }
 
     public InspectionReport inspect(Path subjectFolder) {
-        Diagnostics diagnostics = new Diagnostics();
-        Optional<Course> course = SubjectLoader.load(subjectFolder, diagnostics);
+        DiagnosticCollector diagnostics = new DiagnosticCollector();
+        Optional<Course> course = CourseLoader.load(subjectFolder, diagnostics);
         course.ifPresent(found -> validator.validate(new ValidationContext(
                 found, new FolderSourceDocuments(subjectFolder.resolve(found.subject().sourcesDir())), videos), diagnostics));
         return new InspectionReport(course, diagnostics.list().stream().sorted(BY_PLACE).toList());

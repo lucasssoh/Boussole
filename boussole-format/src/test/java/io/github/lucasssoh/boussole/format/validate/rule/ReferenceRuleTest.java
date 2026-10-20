@@ -5,7 +5,7 @@ import static io.github.lucasssoh.boussole.format.fixture.Snippets.notion;
 import static io.github.lucasssoh.boussole.format.fixture.Snippets.qcm;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.fixture.SubjectFixture;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class ReferenceRuleTest {
                 .session("s2", ":::::warmup\n::ref{id=e1}\n::ref{id=e9}\n:::::\n" + notion("b", "e2"))
                 .inspect();
 
-        assertThat(report.withCode(Code.F030)).singleElement()
+        assertThat(report.withCode(DiagnosticCode.F030)).singleElement()
                 .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("`e9`"));
     }
 
@@ -43,7 +43,7 @@ class ReferenceRuleTest {
                         "Les :term[adresses]{id=mac}, une :term[adresse mac] et la :term[MAC].\n\n" + notion("a", "e1"))
                 .inspect();
 
-        assertThat(report.withCode(Code.F030)).isEmpty();
+        assertThat(report.withCode(DiagnosticCode.F030)).isEmpty();
     }
 
     @Test
@@ -53,7 +53,7 @@ class ReferenceRuleTest {
                 .session("s1", "Une :term[trame] et une :term[adresse]{id=ip}.\n\n" + notion("a", "e1"))
                 .inspect();
 
-        assertThat(report.withCode(Code.F030)).extracting(diagnostic -> diagnostic.message())
+        assertThat(report.withCode(DiagnosticCode.F030)).extracting(diagnostic -> diagnostic.message())
                 .containsExactly(
                         "`:term[trame]` matches no term or alias of the lexicon: add {id=…}",
                         "`:term` points to `ip`, which is not in the lexicon");
@@ -66,7 +66,7 @@ class ReferenceRuleTest {
                 .session("s1", "terms: [ip]\nprerequisites: [test.ch.s1, test.ch.s9]\n", notion("a", "e1"))
                 .inspect();
 
-        assertThat(report.withCode(Code.F030)).extracting(diagnostic -> diagnostic.message())
+        assertThat(report.withCode(DiagnosticCode.F030)).extracting(diagnostic -> diagnostic.message())
                 .containsExactlyInAnyOrder(
                         "term `mac` sees `arp`, which is not in the lexicon",
                         "`terms` lists `ip`, which is not in the lexicon",

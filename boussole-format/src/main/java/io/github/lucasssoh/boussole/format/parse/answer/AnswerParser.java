@@ -2,7 +2,7 @@ package io.github.lucasssoh.boussole.format.parse.answer;
 
 import io.github.lucasssoh.boussole.format.model.answer.Answer;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseType;
-import io.github.lucasssoh.boussole.format.parse.Attributes;
+import io.github.lucasssoh.boussole.format.parse.DirectiveAttributes;
 import io.github.lucasssoh.boussole.format.parse.ParseContext;
 import java.util.List;
 import java.util.Optional;
@@ -17,5 +17,5 @@ public interface AnswerParser {
     Set<String> attributes();
 
     /** @param lines at least one line */
-    Optional<Answer> parse(List<AnswerLine> lines, Attributes attributes, ParseContext context);
+    Optional<Answer> parse(List<AnswerLine> lines, DirectiveAttributes attributes, ParseContext context);
 }

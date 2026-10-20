@@ -5,7 +5,7 @@ import static io.github.lucasssoh.boussole.format.fixture.Snippets.notion;
 import static io.github.lucasssoh.boussole.format.fixture.Snippets.qcm;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.diagnostic.Diagnostic;
 import io.github.lucasssoh.boussole.format.fixture.SubjectFixture;
 import java.nio.file.Path;
@@ -26,7 +26,7 @@ class QuickCheckRuleTest {
                 .session("s1", checked + "\n" + notion("b", "e2"))
                 .inspect();
 
-        assertThat(report.withCode(Code.P007)).singleElement()
+        assertThat(report.withCode(DiagnosticCode.P007)).singleElement()
                 .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("notion `b`"));
     }
 
@@ -34,6 +34,6 @@ class QuickCheckRuleTest {
     void withoutQuickCheckNothingIsAsked() {
         var report = SubjectFixture.in(dir).learner("quick_check: false\n").session("s1", notion("a", "e1")).inspect();
 
-        assertThat(report.withCode(Code.P007)).isEmpty();
+        assertThat(report.withCode(DiagnosticCode.P007)).isEmpty();
     }
 }

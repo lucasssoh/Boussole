@@ -16,22 +16,22 @@ class InspectionReport <<record>> {
   diagnostics : List<Diagnostic>
   +hasErrors() : boolean
   +errors() / warnings()
-  +withCode(Code)
+  +withCode(DiagnosticCode)
 }
 
 package "load" {
-  class SubjectLoader {
-    +{static} load(Path, Diagnostics) : Optional<Course>
+  class CourseLoader {
+    +{static} load(Path, DiagnosticCollector) : Optional<Course>
   }
-  class SubjectFiles {
+  class SubjectFolderFiles {
     ~exists(name) / read(name)
   }
-  class SubjectReader
-  class SyllabusReader
-  class LexiconReader
+  class CourseSubjectReader
+  class CourseSyllabusReader
+  class CourseLexiconReader
   class LearnerProfileReader
-  class SessionReader
-  class SourceRefs
+  class SessionFileReader
+  class SourceReferenceReader
 }
 
 package "yaml" {
@@ -49,52 +49,52 @@ package "yaml" {
 }
 
 package "diagnostic" {
-  class Diagnostics {
-    +report(Code, Position, String)
+  class DiagnosticCollector {
+    +report(DiagnosticCode, SourcePosition, String)
     +list() : List<Diagnostic>
   }
   class Diagnostic <<record>> {
     message : String
     +isError() : boolean
   }
-  enum Code {
+  enum DiagnosticCode {
     F001 … F032
     P001 … P009
-    +severity() : Severity
+    +severity() : DiagnosticSeverity
   }
-  enum Severity {
+  enum DiagnosticSeverity {
     ERROR
     WARNING
   }
-  class Position <<record>> {
+  class SourcePosition <<record>> {
     file : String
     line : int
   }
 }
 
-SubjectInspector --> SubjectLoader : 1. read
+SubjectInspector --> CourseLoader : 1. read
 SubjectInspector ..> InspectionReport : returns
-SubjectLoader --> SubjectFiles : files
-SubjectLoader --> SubjectReader : subject.yaml
-SubjectLoader --> SyllabusReader : syllabus.yaml
-SubjectLoader --> LexiconReader : lexique.yaml
-SubjectLoader --> LearnerProfileReader : learner.yaml
-SubjectLoader --> SessionReader : each session file
-SyllabusReader --> SourceRefs
-SessionReader --> SourceRefs
-SubjectReader --> YamlMap
-SyllabusReader --> YamlMap
-LexiconReader --> YamlMap
+CourseLoader --> SubjectFolderFiles : files
+CourseLoader --> CourseSubjectReader : subject.yaml
+CourseLoader --> CourseSyllabusReader : syllabus.yaml
+CourseLoader --> CourseLexiconReader : lexique.yaml
+CourseLoader --> LearnerProfileReader : learner.yaml
+CourseLoader --> SessionFileReader : each session file
+CourseSyllabusReader --> SourceReferenceReader
+SessionFileReader --> SourceReferenceReader
+CourseSubjectReader --> YamlMap
+CourseSyllabusReader --> YamlMap
+CourseLexiconReader --> YamlMap
 LearnerProfileReader --> YamlMap
-SessionReader --> YamlMap : front matter
+SessionFileReader --> YamlMap : front matter
 YamlMap --> YamlSource
 
 
-Diagnostics *-- "*" Diagnostic
-Diagnostic --> Code
-Diagnostic --> Position
-Code --> Severity
-SubjectLoader ..> Diagnostics : reports
+DiagnosticCollector *-- "*" Diagnostic
+Diagnostic --> DiagnosticCode
+Diagnostic --> SourcePosition
+DiagnosticCode --> DiagnosticSeverity
+CourseLoader ..> DiagnosticCollector : reports
 
 
 SubjectInspector --> Validator : 2. check

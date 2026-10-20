@@ -5,7 +5,7 @@ import static io.github.lucasssoh.boussole.format.fixture.Snippets.notion;
 import static io.github.lucasssoh.boussole.format.fixture.Snippets.qcm;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.fixture.SubjectFixture;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
@@ -20,20 +20,20 @@ class QcmChoicesRuleTest {
     void oneChoiceIsTicked() {
         var report = inspect(qcm("#q1", "- [ ] Oui\n- [ ] Non"));
 
-        assertThat(report.withCode(Code.F022)).singleElement()
+        assertThat(report.withCode(DiagnosticCode.F022)).singleElement()
                 .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("no ticked choice"));
     }
 
     @Test
     void severalTickedChoicesNeedMultiple() {
-        assertThat(inspect(qcm("#q1", "- [x] Oui\n- [x] Non")).withCode(Code.F022)).singleElement()
+        assertThat(inspect(qcm("#q1", "- [x] Oui\n- [x] Non")).withCode(DiagnosticCode.F022)).singleElement()
                 .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("multiple=true"));
-        assertThat(inspect(qcm("#q1 multiple=true", "- [x] Oui\n- [x] Non")).withCode(Code.F022)).isEmpty();
+        assertThat(inspect(qcm("#q1 multiple=true", "- [x] Oui\n- [x] Non")).withCode(DiagnosticCode.F022)).isEmpty();
     }
 
     @Test
     void aQcmHasAtLeastTwoChoices() {
-        assertThat(inspect(qcm("#q1", "- [x] Oui")).withCode(Code.F022)).singleElement()
+        assertThat(inspect(qcm("#q1", "- [x] Oui")).withCode(DiagnosticCode.F022)).singleElement()
                 .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("at least two"));
     }
 

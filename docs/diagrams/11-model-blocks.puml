@@ -8,37 +8,37 @@ hide circle
 title boussole-format — the blocks of a session (package model.block)
 
 interface Block <<sealed>> {
-  +position() : Position
+  +position() : SourcePosition
 }
-class Prose <<record>> {
+class ProseBlock <<record>> {
   markdown : String
 }
 interface InlineDirective <<sealed>>
-class TermMention <<record>> {
+class TermInlineDirective <<record>> {
   text : String
   id : Optional<String>
 }
-class PdfMention <<record>> {
+class PdfInlineDirective <<record>> {
   label : String
 }
-class Example <<record>> {
+class ExampleBlock <<record>> {
   label : String
 }
-class Recall <<record>>
-class Callout <<record>>
+class RecallBlock <<record>>
+class CalloutBlock <<record>>
 enum CalloutKind {
   NOTE
   TIP
   WARNING
 }
-class Video <<record>> {
+class VideoBlock <<record>> {
   label, youtubeId : String
   start, end : Optional<Duration>
 }
-class PdfRef <<record>> {
+class PdfBlock <<record>> {
   label : String
 }
-class Exercise <<record>> {
+class ExerciseBlock <<record>> {
   id : String
   minutes : OptionalInt
 }
@@ -50,66 +50,66 @@ enum ExerciseType {
   MATCH
   FREE
 }
-class Qcm <<record>> {
+class QcmBlock <<record>> {
   id : String
   multiple : boolean
   minutes : OptionalInt
 }
-class Choice <<record>> {
+class QcmChoice <<record>> {
   text : String
   correct : boolean
   feedback : Optional<String>
 }
-class Hint <<record>>
-class Solution <<record>>
-class ExerciseRef <<record>> {
+class ExerciseHint <<record>>
+class ExerciseSolution <<record>>
+class ExerciseRefBlock <<record>> {
   id : String
 }
-class Blocks <<utility>> {
+class BlockWalker <<utility>> {
   +{static} walk(List<Block>) : Stream<Block>
 }
-class QuestionTime <<utility>> {
-  +{static} minutes(Exercise) : double
-  +{static} minutes(Qcm) : double
+class QuestionTimeEstimator <<utility>> {
+  +{static} minutes(ExerciseBlock) : double
+  +{static} minutes(QcmBlock) : double
 }
-class SourceRef <<record>>
+class SourceReference <<record>>
 interface Answer <<sealed>>
 note bottom of Answer : see 12-model-answers
 
-Block <|.. Prose
-Block <|.. Example
-Block <|.. Recall
-Block <|.. Callout
-Block <|.. Video
-Block <|.. PdfRef
-Block <|.. Exercise
-Block <|.. Qcm
-Block <|.. ExerciseRef
+Block <|.. ProseBlock
+Block <|.. ExampleBlock
+Block <|.. RecallBlock
+Block <|.. CalloutBlock
+Block <|.. VideoBlock
+Block <|.. PdfBlock
+Block <|.. ExerciseBlock
+Block <|.. QcmBlock
+Block <|.. ExerciseRefBlock
 
-Prose *-- "*" InlineDirective : inlines
-InlineDirective <|.. TermMention
-InlineDirective <|.. PdfMention
-PdfMention --> SourceRef : source
-PdfRef --> SourceRef : source
+ProseBlock *-- "*" InlineDirective : inlines
+InlineDirective <|.. TermInlineDirective
+InlineDirective <|.. PdfInlineDirective
+PdfInlineDirective --> SourceReference : source
+PdfBlock --> SourceReference : source
 
-Example o-- "*" Block : content
-Recall o-- "*" Block : content
-Callout o-- "*" Block : content
-Callout --> CalloutKind : kind
+ExampleBlock o-- "*" Block : content
+RecallBlock o-- "*" Block : content
+CalloutBlock o-- "*" Block : content
+CalloutBlock --> CalloutKind : kind
 
-Exercise --> ExerciseType : type
-Exercise o-- "*" Block : statement
-Exercise *-- "0..1" Answer : answer
-Exercise *-- "*" Hint : hints
-Exercise *-- "0..1" Solution : solution
-Qcm o-- "*" Block : statement
-Qcm *-- "2..*" Choice : choices
-Qcm *-- "*" Hint : hints
-Qcm *-- "0..1" Solution : solution
-Hint o-- "*" Block : content
-Solution o-- "*" Block : content
+ExerciseBlock --> ExerciseType : type
+ExerciseBlock o-- "*" Block : statement
+ExerciseBlock *-- "0..1" Answer : answer
+ExerciseBlock *-- "*" ExerciseHint : hints
+ExerciseBlock *-- "0..1" ExerciseSolution : solution
+QcmBlock o-- "*" Block : statement
+QcmBlock *-- "2..*" QcmChoice : choices
+QcmBlock *-- "*" ExerciseHint : hints
+QcmBlock *-- "0..1" ExerciseSolution : solution
+ExerciseHint o-- "*" Block : content
+ExerciseSolution o-- "*" Block : content
 
-Blocks ..> Block : walks nested
-QuestionTime ..> Exercise : estimates
-QuestionTime ..> Qcm : estimates
+BlockWalker ..> Block : walks nested
+QuestionTimeEstimator ..> ExerciseBlock : estimates
+QuestionTimeEstimator ..> QcmBlock : estimates
 @enduml

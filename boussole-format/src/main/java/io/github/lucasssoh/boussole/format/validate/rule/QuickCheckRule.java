@@ -1,12 +1,12 @@
 package io.github.lucasssoh.boussole.format.validate.rule;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
-import io.github.lucasssoh.boussole.format.diagnostic.Diagnostics;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCollector;
 import io.github.lucasssoh.boussole.format.model.LearnerProfile;
 import io.github.lucasssoh.boussole.format.model.block.Block;
-import io.github.lucasssoh.boussole.format.model.block.Example;
-import io.github.lucasssoh.boussole.format.model.block.Qcm;
-import io.github.lucasssoh.boussole.format.model.part.Notion;
+import io.github.lucasssoh.boussole.format.model.block.ExampleBlock;
+import io.github.lucasssoh.boussole.format.model.block.QcmBlock;
+import io.github.lucasssoh.boussole.format.model.part.NotionPart;
 import io.github.lucasssoh.boussole.format.validate.ValidationContext;
 import io.github.lucasssoh.boussole.format.validate.ValidationRule;
 
@@ -17,22 +17,22 @@ import io.github.lucasssoh.boussole.format.validate.ValidationRule;
 public final class QuickCheckRule implements ValidationRule {
 
     @Override
-    public void check(ValidationContext context, Diagnostics diagnostics) {
+    public void check(ValidationContext context, DiagnosticCollector diagnostics) {
         if (!context.course().learner().map(LearnerProfile::quickCheck).orElse(false)) {
             return;
         }
-        Notions.of(context.course())
+        LessonNotions.of(context.course())
                 .filter(notion -> !hasQuickCheck(notion))
-                .forEach(notion -> diagnostics.report(Code.P007, notion.position(), "notion `" + notion.id()
+                .forEach(notion -> diagnostics.report(DiagnosticCode.P007, notion.position(), "notion `" + notion.id()
                         + "`: the learner asked for a short qcm right after the explanation, before the example"));
     }
 
-    private static boolean hasQuickCheck(Notion notion) {
+    private static boolean hasQuickCheck(NotionPart notion) {
         for (Block block : notion.blocks()) {
-            if (block instanceof Qcm) {
+            if (block instanceof QcmBlock) {
                 return true;
             }
-            if (block instanceof Example) {
+            if (block instanceof ExampleBlock) {
                 return false;
             }
         }

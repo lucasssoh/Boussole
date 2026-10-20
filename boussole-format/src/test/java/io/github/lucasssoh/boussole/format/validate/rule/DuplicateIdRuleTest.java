@@ -5,7 +5,7 @@ import static io.github.lucasssoh.boussole.format.fixture.Snippets.notion;
 import static io.github.lucasssoh.boussole.format.fixture.Snippets.qcm;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.fixture.SubjectFixture;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class DuplicateIdRuleTest {
                 .session("s2", notion("a", "e1"))
                 .inspect();
 
-        assertThat(report.withCode(Code.F003)).singleElement()
+        assertThat(report.withCode(DiagnosticCode.F003)).singleElement()
                 .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("exercise ID `e1`", "s1.md"));
     }
 
@@ -31,7 +31,7 @@ class DuplicateIdRuleTest {
     void aNotionIdIsUniqueInItsSession() {
         var report = SubjectFixture.in(dir).session("s1", notion("a", "e1") + notion("a", "e2")).inspect();
 
-        assertThat(report.withCode(Code.F003)).singleElement()
+        assertThat(report.withCode(DiagnosticCode.F003)).singleElement()
                 .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("notion ID `a`"));
     }
 
@@ -39,6 +39,6 @@ class DuplicateIdRuleTest {
     void theSameNotionIdInTwoSessionsIsFine() {
         var report = SubjectFixture.in(dir).session("s1", notion("a", "e1")).session("s2", notion("a", "e2")).inspect();
 
-        assertThat(report.withCode(Code.F003)).isEmpty();
+        assertThat(report.withCode(DiagnosticCode.F003)).isEmpty();
     }
 }

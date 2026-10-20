@@ -5,7 +5,7 @@ import static io.github.lucasssoh.boussole.format.fixture.Snippets.notion;
 import static io.github.lucasssoh.boussole.format.fixture.Snippets.qcm;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.fixture.SubjectFixture;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ class NotionExerciseRuleTest {
     void aNotionEndsWithSomethingToDo() {
         var report = SubjectFixture.in(dir).session("s1", "## Rien à faire {#vide}\n\nExplication.\n\n" + notion("b", "e1")).inspect();
 
-        assertThat(report.withCode(Code.P001)).singleElement()
+        assertThat(report.withCode(DiagnosticCode.P001)).singleElement()
                 .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("`vide`"));
     }
 
@@ -28,6 +28,6 @@ class NotionExerciseRuleTest {
     void aQcmIsSomethingToDo() {
         var report = SubjectFixture.in(dir).session("s1", "## A {#a}\n\n" + qcm("#q1", "- [x] Oui\n- [ ] Non")).inspect();
 
-        assertThat(report.withCode(Code.P001)).isEmpty();
+        assertThat(report.withCode(DiagnosticCode.P001)).isEmpty();
     }
 }

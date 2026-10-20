@@ -7,17 +7,17 @@ hide empty members
 hide circle
 title boussole-format — reading the answer of an exercise (parse.answer)
 
-class ExerciseParser <<parse.directive>>
+class ExerciseDirectiveParser <<parse.directive>>
 class ParseContext <<parse>>
 package "parse.answer" {
-  class AnswerParsers {
-    +{static} standard() : AnswerParsers
+  class AnswerParserRegistry {
+    +{static} standard() : AnswerParserRegistry
     +forType(ExerciseType) : Optional<AnswerParser>
   }
   interface AnswerParser <<strategy>> {
     +type() : ExerciseType
     +attributes() : Set<String>
-    +parse(lines, Attributes, ParseContext) : Optional<Answer>
+    +parse(lines, DirectiveAttributes, ParseContext) : Optional<Answer>
   }
   abstract class LineAnswerParser<T> <<template method>> {
     +parse(...) : Optional<Answer> {final}
@@ -34,15 +34,15 @@ package "parse.answer" {
     ~{static} read(text, strict, line, ctx) : Optional<Expectation>
     ~{static} text(alternatives, ...) : Optional<TextExpectation>
   }
-  class Numbers
-  class AcceptedTexts
+  class NumberReader
+  class AcceptedTextReader
   class AnswerLine <<record>>
 }
 
-ExerciseParser --> ParseContext
-ParseContext *-- AnswerParsers
-ExerciseParser --> AnswerParsers : answer by type
-AnswerParsers o-- "*" AnswerParser
+ExerciseDirectiveParser --> ParseContext
+ParseContext *-- AnswerParserRegistry
+ExerciseDirectiveParser --> AnswerParserRegistry : answer by type
+AnswerParserRegistry o-- "*" AnswerParser
 AnswerParser <|.. LineAnswerParser
 LineAnswerParser <|-- NumericAnswerParser
 LineAnswerParser <|-- TextAnswerParser
@@ -52,9 +52,9 @@ LineAnswerParser <|-- MatchAnswerParser
 LineAnswerParser ..> AnswerLine
 FillAnswerParser --> ExpectationReader : each gap
 TextAnswerParser --> ExpectationReader
-NumericAnswerParser --> Numbers
-ExpectationReader --> Numbers
-ExpectationReader --> AcceptedTexts
+NumericAnswerParser --> NumberReader
+ExpectationReader --> NumberReader
+ExpectationReader --> AcceptedTextReader
 
 note right of LineAnswerParser
   Template method: parse() reads each line

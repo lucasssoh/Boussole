@@ -5,7 +5,7 @@ import static io.github.lucasssoh.boussole.format.fixture.Snippets.notion;
 import static io.github.lucasssoh.boussole.format.fixture.Snippets.qcm;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.fixture.SubjectFixture;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
@@ -23,12 +23,12 @@ class VideoExistsRuleTest {
     void eachVideoIsKnownToTheCatalog() {
         var report = SubjectFixture.in(dir).videos("aircAruvnKk"::equals).session("s1", BODY).inspect();
 
-        assertThat(report.withCode(Code.F032)).singleElement()
+        assertThat(report.withCode(DiagnosticCode.F032)).singleElement()
                 .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("xxxxxxxxxxx"));
     }
 
     @Test
     void withoutCatalogVideosAreNotChecked() {
-        assertThat(SubjectFixture.in(dir).session("s1", BODY).inspect().withCode(Code.F032)).isEmpty();
+        assertThat(SubjectFixture.in(dir).session("s1", BODY).inspect().withCode(DiagnosticCode.F032)).isEmpty();
     }
 }

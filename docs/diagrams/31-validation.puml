@@ -9,15 +9,15 @@ left to right direction
 title boussole-format — checking a whole course (validate, validate.rule, source)
 
 class SubjectInspector <<entry point>>
-class Diagnostics <<diagnostic>>
+class DiagnosticCollector <<diagnostic>>
 class Course <<model>>
 package "validate" {
   class Validator <<composite>> {
     +{static} standard() : Validator
-    +validate(ValidationContext, Diagnostics)
+    +validate(ValidationContext, DiagnosticCollector)
   }
   interface ValidationRule {
-    +check(ValidationContext, Diagnostics)
+    +check(ValidationContext, DiagnosticCollector)
   }
   class ValidationContext <<record>> {
     videos : Optional<VideoCatalog>
@@ -44,7 +44,7 @@ package "validate" {
     class QuickCheckRule <<P007>>
     class TimedSessionFitRule <<P008>>
     class TimedSessionContentRule <<P009>>
-    class "CourseIds, Notions, Terms,\nIdSeen, TimedSessions" as RuleHelpers <<helpers>>
+    class "CourseIds, LessonNotions, LexiconTermResolver,\nIdSeen, TimedSessions" as RuleHelpers <<helpers>>
   }
 }
 
@@ -83,8 +83,8 @@ ValidationRule <|.. ClosingRule
 ValidationRule <|.. QuickCheckRule
 ValidationRule <|.. TimedSessionFitRule
 ValidationRule <|.. TimedSessionContentRule
-ValidationRule ..> Diagnostics : reports
-ValidationRule ..> Diagnostics : reports
+ValidationRule ..> DiagnosticCollector : reports
+ValidationRule ..> DiagnosticCollector : reports
 note bottom of RuleHelpers
   Errors a file shows on its own are
   reported while it is read (load, parse);

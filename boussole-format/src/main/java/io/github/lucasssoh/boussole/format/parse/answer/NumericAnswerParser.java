@@ -5,7 +5,7 @@ import io.github.lucasssoh.boussole.format.model.answer.SingleAnswer;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseType;
 import io.github.lucasssoh.boussole.format.model.expectation.NumberExpectation;
 import io.github.lucasssoh.boussole.format.model.expectation.Rational;
-import io.github.lucasssoh.boussole.format.parse.Attributes;
+import io.github.lucasssoh.boussole.format.parse.DirectiveAttributes;
 import io.github.lucasssoh.boussole.format.parse.ParseContext;
 import java.util.List;
 import java.util.Optional;
@@ -25,13 +25,13 @@ final class NumericAnswerParser extends LineAnswerParser<Rational> {
     }
 
     @Override
-    protected Optional<Rational> readLine(AnswerLine line, Attributes attributes, ParseContext context) {
-        return Numbers.read(line.text(), line.line(), context);
+    protected Optional<Rational> readLine(AnswerLine line, DirectiveAttributes attributes, ParseContext context) {
+        return NumberReader.read(line.text(), line.line(), context);
     }
 
     @Override
-    protected Optional<Answer> assemble(List<Rational> values, Attributes attributes, AnswerLine first, ParseContext context) {
+    protected Optional<Answer> assemble(List<Rational> values, DirectiveAttributes attributes, AnswerLine first, ParseContext context) {
         return Optional.of(new SingleAnswer(
-                new NumberExpectation(values, Numbers.toleranceAttribute(attributes), attributes.text("unit"))));
+                new NumberExpectation(values, NumberReader.toleranceAttribute(attributes), attributes.text("unit"))));
     }
 }

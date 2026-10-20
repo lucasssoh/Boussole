@@ -1,11 +1,11 @@
 package io.github.lucasssoh.boussole.format.parse;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
-import io.github.lucasssoh.boussole.format.diagnostic.Diagnostics;
-import io.github.lucasssoh.boussole.format.diagnostic.Position;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCollector;
+import io.github.lucasssoh.boussole.format.diagnostic.SourcePosition;
 import io.github.lucasssoh.boussole.format.model.block.Block;
-import io.github.lucasssoh.boussole.format.parse.answer.AnswerParsers;
-import io.github.lucasssoh.boussole.format.parse.directive.DirectiveRegistry;
+import io.github.lucasssoh.boussole.format.parse.answer.AnswerParserRegistry;
+import io.github.lucasssoh.boussole.format.parse.directive.DirectiveParserRegistry;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -15,21 +15,21 @@ import java.util.TreeSet;
 public final class ParseContext {
 
     private final String file;
-    private final Diagnostics diagnostics;
+    private final DiagnosticCollector diagnostics;
     private final BlockBuilder blockBuilder;
-    private final AnswerParsers answerParsers = AnswerParsers.standard();
+    private final AnswerParserRegistry answerParsers = AnswerParserRegistry.standard();
 
-    public ParseContext(String file, Diagnostics diagnostics) {
+    public ParseContext(String file, DiagnosticCollector diagnostics) {
         this.file = file;
         this.diagnostics = diagnostics;
-        this.blockBuilder = new BlockBuilder(this, DirectiveRegistry.standard());
+        this.blockBuilder = new BlockBuilder(this, DirectiveParserRegistry.standard());
     }
 
-    public Position position(int line) {
-        return new Position(file, line);
+    public SourcePosition position(int line) {
+        return new SourcePosition(file, line);
     }
 
-    public void report(Code code, int line, String message) {
+    public void report(DiagnosticCode code, int line, String message) {
         diagnostics.report(code, position(line), message);
     }
 
@@ -38,7 +38,7 @@ public final class ParseContext {
         return blockBuilder.build(nodes, parent);
     }
 
-    public AnswerParsers answerParsers() {
+    public AnswerParserRegistry answerParsers() {
         return answerParsers;
     }
 
@@ -46,23 +46,23 @@ public final class ParseContext {
      * Reads the attributes of a directive and checks their names. Unknown attributes are
      * reported; a missing required one makes the result empty.
      */
-    public Optional<Attributes> attributes(
+    public Optional<DirectiveAttributes> attributes(
             String directive, String source, Set<String> required, Set<String> optional, int line) {
-        Attributes attributes;
+        DirectiveAttributes attributes;
         try {
-            attributes = AttributeParser.parse(source);
+            attributes = DirectiveAttributeParser.parse(source);
         } catch (InvalidAttributeException e) {
-            report(Code.F027, line, "attributes of `" + directive + "`: " + e.getMessage());
+            report(DiagnosticCode.F027, line, "attributes of `" + directive + "`: " + e.getMessage());
             return Optional.empty();
         }
         for (String name : new TreeSet<>(attributes.names())) {
             if (!required.contains(name) && !optional.contains(name)) {
-                report(Code.F027, line, "`" + name + "` is not an attribute of `" + directive + "`");
+                report(DiagnosticCode.F027, line, "`" + name + "` is not an attribute of `" + directive + "`");
             }
         }
         Set<String> missing = new TreeSet<>(required);
         missing.removeAll(attributes.names());
-        missing.forEach(name -> report(Code.F027, line, "`" + directive + "` needs the attribute `" + name + "`"));
+        missing.forEach(name -> report(DiagnosticCode.F027, line, "`" + directive + "` needs the attribute `" + name + "`"));
         return missing.isEmpty() ? Optional.of(attributes) : Optional.empty();
     }
 }

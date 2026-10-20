@@ -30,7 +30,7 @@ public final class Snippets {
     /** A notion with one example and one exercise. */
     public static String notion(String id, String exerciseId) {
         return """
-                ## Notion %s {#%s}
+                ## NotionPart %s {#%s}
 
                 Explication.
 

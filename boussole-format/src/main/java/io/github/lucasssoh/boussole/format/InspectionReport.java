@@ -1,6 +1,6 @@
 package io.github.lucasssoh.boussole.format;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.diagnostic.Diagnostic;
 import io.github.lucasssoh.boussole.format.model.Course;
 import java.util.List;
@@ -21,7 +21,7 @@ public record InspectionReport(Optional<Course> course, List<Diagnostic> diagnos
         return diagnostics.stream().filter(diagnostic -> !diagnostic.isError()).toList();
     }
 
-    public List<Diagnostic> withCode(Code code) {
+    public List<Diagnostic> withCode(DiagnosticCode code) {
         return diagnostics.stream().filter(diagnostic -> diagnostic.code() == code).toList();
     }
 }

@@ -5,7 +5,7 @@ import static io.github.lucasssoh.boussole.format.fixture.Snippets.notion;
 import static io.github.lucasssoh.boussole.format.fixture.Snippets.qcm;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.fixture.SubjectFixture;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class DeclaredTermsRuleTest {
                 .session("s1", "La :term[MAC] et encore la :term[MAC].\n\n" + notion("a", "e1"))
                 .inspect();
 
-        assertThat(report.withCode(Code.P005)).singleElement()
+        assertThat(report.withCode(DiagnosticCode.P005)).singleElement()
                 .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("`mac`"));
     }
 

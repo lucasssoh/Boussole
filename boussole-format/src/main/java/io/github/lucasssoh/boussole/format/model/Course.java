@@ -12,17 +12,17 @@ import java.util.stream.Stream;
  */
 public record Course(
         Path root,
-        Subject subject,
-        Syllabus syllabus,
-        Lexicon lexicon,
+        CourseSubject subject,
+        CourseSyllabus syllabus,
+        CourseLexicon lexicon,
         Optional<LearnerProfile> learner,
-        List<LoadedSession> sessions) {
+        List<CourseSession> sessions) {
 
     public Stream<Block> blocks() {
         return sessions.stream().flatMap(loaded -> loaded.session().blocks());
     }
 
-    public SessionId sessionId(Chapter chapter, SessionEntry entry) {
+    public SessionId sessionId(SyllabusChapter chapter, SyllabusSession entry) {
         return new SessionId(subject.id(), chapter.id(), entry.id());
     }
 }

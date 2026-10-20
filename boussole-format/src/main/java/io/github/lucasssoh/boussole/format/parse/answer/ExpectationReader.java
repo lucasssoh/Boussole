@@ -1,6 +1,6 @@
 package io.github.lucasssoh.boussole.format.parse.answer;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.model.expectation.AcceptedText;
 import io.github.lucasssoh.boussole.format.model.expectation.ChoiceExpectation;
 import io.github.lucasssoh.boussole.format.model.expectation.Expectation;
@@ -48,7 +48,7 @@ final class ExpectationReader {
     static Optional<TextExpectation> text(List<String> alternatives, boolean strict, int line, ParseContext context) {
         List<AcceptedText> accepted = new ArrayList<>();
         for (String alternative : alternatives) {
-            Optional<AcceptedText> text = AcceptedTexts.read(alternative, strict, line, context);
+            Optional<AcceptedText> text = AcceptedTextReader.read(alternative, strict, line, context);
             if (text.isEmpty()) {
                 return Optional.empty();
             }
@@ -67,16 +67,16 @@ final class ExpectationReader {
             }
         }
         if (written.size() < 2 || right.size() != 1) {
-            context.report(Code.F021, line, "a choice gap reads `choice *right | wrong | other`: two options or more, one starred");
+            context.report(DiagnosticCode.F021, line, "a choice gap reads `choice *right | wrong | other`: two options or more, one starred");
             return Optional.empty();
         }
         return Optional.of(new ChoiceExpectation(plain, right.getFirst()));
     }
 
     private static Optional<Expectation> number(String value, String tolerance, int line, ParseContext context) {
-        return Numbers.read(value, line, context).flatMap(number -> (tolerance == null
+        return NumberReader.read(value, line, context).flatMap(number -> (tolerance == null
                         ? Optional.of(Rational.ZERO)
-                        : Numbers.tolerance(tolerance, line, context, "tolerance"))
+                        : NumberReader.tolerance(tolerance, line, context, "tolerance"))
                 .map(margin -> new NumberExpectation(List.of(number), margin, Optional.empty())));
     }
 }

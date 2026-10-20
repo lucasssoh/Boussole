@@ -13,5 +13,5 @@ public interface DirectiveParser {
 
     DirectiveSpec spec();
 
-    Optional<Block> parse(Directive directive, ParseContext context);
+    Optional<Block> parse(CheckedDirective directive, ParseContext context);
 }

@@ -5,7 +5,7 @@ import static io.github.lucasssoh.boussole.format.fixture.Snippets.notion;
 import static io.github.lucasssoh.boussole.format.fixture.Snippets.qcm;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.fixture.SubjectFixture;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class PartOrderRuleTest {
                 :::::
                 """.formatted(exercise("p1"), notion("a", "e1"), exercise("w1"))).inspect();
 
-        assertThat(report.withCode(Code.P003)).extracting(diagnostic -> diagnostic.message())
+        assertThat(report.withCode(DiagnosticCode.P003)).extracting(diagnostic -> diagnostic.message())
                 .containsExactly("the practice comes last in a session", "the warmup comes first in a session");
     }
 
@@ -39,6 +39,6 @@ class PartOrderRuleTest {
         var report = SubjectFixture.in(dir).session("s1", "Introduction.\n\n:::::warmup\n" + exercise("w1") + ":::::\n"
                 + notion("a", "e1")).inspect();
 
-        assertThat(report.withCode(Code.P003)).hasSize(1);
+        assertThat(report.withCode(DiagnosticCode.P003)).hasSize(1);
     }
 }

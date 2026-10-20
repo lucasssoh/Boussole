@@ -1,8 +1,8 @@
 package io.github.lucasssoh.boussole.format.yaml;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
-import io.github.lucasssoh.boussole.format.diagnostic.Diagnostics;
-import io.github.lucasssoh.boussole.format.diagnostic.Position;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCollector;
+import io.github.lucasssoh.boussole.format.diagnostic.SourcePosition;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -65,7 +65,7 @@ public final class YamlMap {
             }
             return root;
         } catch (MarkedYamlEngineException e) {
-            Position position = e.getProblemMark().map(source::position).orElse(source.file());
+            SourcePosition position = e.getProblemMark().map(source::position).orElse(source.file());
             source.report(position, "not valid YAML: " + e.getProblem());
             return Optional.empty();
         } catch (YamlEngineException e) {
@@ -74,11 +74,11 @@ public final class YamlMap {
         }
     }
 
-    public Position position() {
+    public SourcePosition position() {
         return source.position(node);
     }
 
-    public Position positionOf(String key) {
+    public SourcePosition positionOf(String key) {
         return value(key).map(source::position).orElse(position());
     }
 
@@ -165,7 +165,7 @@ public final class YamlMap {
     }
 
     /** Positions of the items of {@link #texts(String)}, in the same order. */
-    public List<Position> textPositions(String key) {
+    public List<SourcePosition> textPositions(String key) {
         return value(key)
                 .map(value -> value instanceof SequenceNode sequence
                         ? sequence.getValue().stream().filter(ScalarNode.class::isInstance).map(source::position).toList()
@@ -208,26 +208,26 @@ public final class YamlMap {
     }
 
     /** Where the YAML text comes from: a file, and the line it starts at in that file. */
-    public record YamlSource(String fileName, int firstLine, Diagnostics diagnostics) {
+    public record YamlSource(String fileName, int firstLine, DiagnosticCollector diagnostics) {
 
-        public static YamlSource of(String fileName, Diagnostics diagnostics) {
+        public static YamlSource of(String fileName, DiagnosticCollector diagnostics) {
             return new YamlSource(fileName, 1, diagnostics);
         }
 
-        Position file() {
-            return Position.fileOnly(fileName);
+        SourcePosition file() {
+            return SourcePosition.fileOnly(fileName);
         }
 
-        Position position(Node node) {
+        SourcePosition position(Node node) {
             return node.getStartMark().map(this::position).orElse(file());
         }
 
-        Position position(Mark mark) {
-            return new Position(fileName, firstLine + mark.getLine());
+        SourcePosition position(Mark mark) {
+            return new SourcePosition(fileName, firstLine + mark.getLine());
         }
 
-        void report(Position position, String message) {
-            diagnostics.report(Code.F001, position, message);
+        void report(SourcePosition position, String message) {
+            diagnostics.report(DiagnosticCode.F001, position, message);
         }
     }
 }

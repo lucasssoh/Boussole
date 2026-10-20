@@ -3,18 +3,18 @@ package io.github.lucasssoh.boussole.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.lucasssoh.boussole.format.model.Course;
-import io.github.lucasssoh.boussole.format.model.LoadedSession;
+import io.github.lucasssoh.boussole.format.model.CourseSession;
 import io.github.lucasssoh.boussole.format.model.answer.SingleAnswer;
 import io.github.lucasssoh.boussole.format.model.expectation.NumberExpectation;
 import io.github.lucasssoh.boussole.format.model.expectation.Rational;
 import io.github.lucasssoh.boussole.format.model.expectation.TextExpectation;
-import io.github.lucasssoh.boussole.format.model.block.Choice;
-import io.github.lucasssoh.boussole.format.model.block.Exercise;
-import io.github.lucasssoh.boussole.format.model.block.Qcm;
-import io.github.lucasssoh.boussole.format.model.part.Checkpoint;
-import io.github.lucasssoh.boussole.format.model.part.Notion;
-import io.github.lucasssoh.boussole.format.model.part.Practice;
-import io.github.lucasssoh.boussole.format.model.part.Warmup;
+import io.github.lucasssoh.boussole.format.model.block.QcmChoice;
+import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
+import io.github.lucasssoh.boussole.format.model.block.QcmBlock;
+import io.github.lucasssoh.boussole.format.model.part.CheckpointPart;
+import io.github.lucasssoh.boussole.format.model.part.NotionPart;
+import io.github.lucasssoh.boussole.format.model.part.PracticePart;
+import io.github.lucasssoh.boussole.format.model.part.WarmupPart;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 
@@ -32,24 +32,24 @@ class ExampleSubjectTest {
 
     @Test
     void readsTheSessionInItsParts() {
-        LoadedSession session = course().sessions().getFirst();
+        CourseSession session = course().sessions().getFirst();
 
         assertThat(session.id()).hasToString("reseaux.couche-reseau.s11");
         assertThat(session.session().parts())
                 .extracting(part -> part.getClass().getSimpleName())
-                .containsExactly("Warmup", "Notion", "Notion", "Checkpoint", "Practice");
-        assertThat(session.session().parts().get(1)).isInstanceOfSatisfying(Notion.class, notion -> {
+                .containsExactly("WarmupPart", "NotionPart", "NotionPart", "CheckpointPart", "PracticePart");
+        assertThat(session.session().parts().get(1)).isInstanceOfSatisfying(NotionPart.class, notion -> {
             assertThat(notion.id()).isEqualTo("couche3");
             assertThat(notion.title()).isEqualTo("Ce que la couche 3 apporte");
         });
-        assertThat(session.session().parts().getFirst()).isInstanceOf(Warmup.class);
-        assertThat(session.session().parts().get(3)).isInstanceOf(Checkpoint.class);
-        assertThat(session.session().parts().get(4)).isInstanceOf(Practice.class);
+        assertThat(session.session().parts().getFirst()).isInstanceOf(WarmupPart.class);
+        assertThat(session.session().parts().get(3)).isInstanceOf(CheckpointPart.class);
+        assertThat(session.session().parts().get(4)).isInstanceOf(PracticePart.class);
     }
 
     @Test
     void readsTheAnswers() {
-        Exercise macBits = exercise("s11-a1");
+        ExerciseBlock macBits = exercise("s11-a1");
         assertThat(expected(macBits)).isInstanceOfSatisfying(NumberExpectation.class, number -> {
             assertThat(number.values()).containsExactly(Rational.parse("48").orElseThrow());
             assertThat(number.unit()).contains("bits");
@@ -63,12 +63,12 @@ class ExampleSubjectTest {
 
     @Test
     void readsTheChoicesAndTheirFeedback() {
-        Qcm qcm = course().blocks()
-                .filter(Qcm.class::isInstance).map(Qcm.class::cast)
+        QcmBlock qcm = course().blocks()
+                .filter(QcmBlock.class::isInstance).map(QcmBlock.class::cast)
                 .filter(found -> found.id().equals("s11-a2")).findFirst().orElseThrow();
 
-        assertThat(qcm.choices()).extracting(Choice::text).containsExactly("Datagramme", "Circuit virtuel", "Les deux");
-        assertThat(qcm.choices()).extracting(Choice::correct).containsExactly(false, true, false);
+        assertThat(qcm.choices()).extracting(QcmChoice::text).containsExactly("Datagramme", "Circuit virtuel", "Les deux");
+        assertThat(qcm.choices()).extracting(QcmChoice::correct).containsExactly(false, true, false);
         assertThat(qcm.choices().getFirst().feedback()).get().asString().startsWith("Non : en datagramme");
         assertThat(qcm.choices().get(1).feedback()).isEmpty();
     }
@@ -77,13 +77,13 @@ class ExampleSubjectTest {
         return report.course().orElseThrow();
     }
 
-    private static Object expected(Exercise exercise) {
+    private static Object expected(ExerciseBlock exercise) {
         return ((SingleAnswer) exercise.answer().orElseThrow()).expected();
     }
 
-    private Exercise exercise(String id) {
+    private ExerciseBlock exercise(String id) {
         return course().blocks()
-                .filter(Exercise.class::isInstance).map(Exercise.class::cast)
+                .filter(ExerciseBlock.class::isInstance).map(ExerciseBlock.class::cast)
                 .filter(exercise -> exercise.id().equals(id)).findFirst().orElseThrow();
     }
 }

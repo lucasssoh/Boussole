@@ -5,7 +5,7 @@ import static io.github.lucasssoh.boussole.format.fixture.Snippets.notion;
 import static io.github.lucasssoh.boussole.format.fixture.Snippets.qcm;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.diagnostic.Diagnostic;
 import io.github.lucasssoh.boussole.format.fixture.SubjectFixture;
 import java.nio.file.Path;
@@ -34,7 +34,7 @@ class TimedSessionFitRuleTest {
                 .timedSession("e3", "review", 10, qcms("s", 15))
                 .inspect();
 
-        assertThat(report.withCode(Code.P008)).extracting(Diagnostic::message).containsExactly(
+        assertThat(report.withCode(DiagnosticCode.P008)).extracting(Diagnostic::message).containsExactly(
                 "the questions take about 5 min at a normal pace, the session allows 20: add questions",
                 "the questions take about 15 min at a normal pace, the session allows 10: remove questions");
     }
@@ -45,7 +45,7 @@ class TimedSessionFitRuleTest {
                 + exercise("b2").replace("type=text", "type=numeric").replace("oui", "4");
         var report = SubjectFixture.in(dir).timedSession("e1", "exam", 10, built + qcms("q", 4)).inspect();
 
-        assertThat(report.withCode(Code.P008)).isEmpty();
+        assertThat(report.withCode(DiagnosticCode.P008)).isEmpty();
     }
 
     @Test
@@ -55,7 +55,7 @@ class TimedSessionFitRuleTest {
         var report = SubjectFixture.in(dir).timedSession("e1", "review", 5, fill + qcms("q", 2)).inspect();
 
         assertThat(report.errors()).isEmpty();
-        assertThat(report.withCode(Code.P008)).isEmpty();
+        assertThat(report.withCode(DiagnosticCode.P008)).isEmpty();
     }
 
     @Test
@@ -66,11 +66,11 @@ class TimedSessionFitRuleTest {
                 .inspect();
 
         assertThat(report.errors()).isEmpty();
-        assertThat(report.withCode(Code.P008)).isEmpty();
+        assertThat(report.withCode(DiagnosticCode.P008)).isEmpty();
     }
 
     @Test
     void lessonsAreNotTimed() {
-        assertThat(SubjectFixture.in(dir).session("s1", notion("a", "e1")).inspect().withCode(Code.P008)).isEmpty();
+        assertThat(SubjectFixture.in(dir).session("s1", notion("a", "e1")).inspect().withCode(DiagnosticCode.P008)).isEmpty();
     }
 }

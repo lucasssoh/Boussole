@@ -1,32 +1,32 @@
 package io.github.lucasssoh.boussole.format.parse;
 
-import io.github.lucasssoh.boussole.format.diagnostic.Code;
+import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.model.block.Block;
-import io.github.lucasssoh.boussole.format.parse.directive.Directive;
+import io.github.lucasssoh.boussole.format.parse.directive.CheckedDirective;
 import io.github.lucasssoh.boussole.format.parse.directive.DirectiveKind;
 import io.github.lucasssoh.boussole.format.parse.directive.DirectiveParser;
-import io.github.lucasssoh.boussole.format.parse.directive.DirectiveRegistry;
+import io.github.lucasssoh.boussole.format.parse.directive.DirectiveParserRegistry;
 import io.github.lucasssoh.boussole.format.parse.directive.DirectiveSpec;
-import io.github.lucasssoh.boussole.format.parse.directive.Parents;
+import io.github.lucasssoh.boussole.format.parse.directive.DirectivePlaces;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Turns raw nodes into blocks: text becomes {@link io.github.lucasssoh.boussole.format.model.block.Prose},
- * each directive goes to its parser from the {@link DirectiveRegistry}, once its kind, its place and its
+ * Turns raw nodes into blocks: text becomes {@link io.github.lucasssoh.boussole.format.model.block.ProseBlock},
+ * each directive goes to its parser from the {@link DirectiveParserRegistry}, once its kind, its place and its
  * attributes are checked.
  */
 final class BlockBuilder {
 
     private final ParseContext context;
-    private final DirectiveRegistry registry;
-    private final InlineScanner inlineScanner;
+    private final DirectiveParserRegistry registry;
+    private final InlineDirectiveScanner inlineScanner;
 
-    BlockBuilder(ParseContext context, DirectiveRegistry registry) {
+    BlockBuilder(ParseContext context, DirectiveParserRegistry registry) {
         this.context = context;
         this.registry = registry;
-        this.inlineScanner = new InlineScanner(context);
+        this.inlineScanner = new InlineDirectiveScanner(context);
     }
 
     List<Block> build(List<RawNode> nodes, String parent) {
@@ -50,39 +50,39 @@ final class BlockBuilder {
     private Optional<Block> directive(
             DirectiveLine line, List<RawNode> children, int number, DirectiveKind kind, String parent) {
         String name = line.name();
-        if (Parents.SECTIONS.contains(name)) {
-            context.report(Code.F020, number, "`" + name + "` is only allowed at the top level of a session");
+        if (DirectivePlaces.SECTIONS.contains(name)) {
+            context.report(DiagnosticCode.F020, number, "`" + name + "` is only allowed at the top level of a session");
             return Optional.empty();
         }
-        if (Parents.EXERCISE_PARTS.contains(name)) {
-            context.report(Code.F020, number, "`" + name + "` is only allowed inside `exercise` or `qcm`, as :::" + name);
+        if (DirectivePlaces.EXERCISE_PARTS.contains(name)) {
+            context.report(DiagnosticCode.F020, number, "`" + name + "` is only allowed inside `exercise` or `qcm`, as :::" + name);
             return Optional.empty();
         }
         Optional<DirectiveParser> parser = registry.find(name);
         if (parser.isEmpty()) {
-            context.report(Code.F020, number, "unknown directive `" + name + "`");
+            context.report(DiagnosticCode.F020, number, "unknown directive `" + name + "`");
             return Optional.empty();
         }
         DirectiveSpec spec = parser.get().spec();
         if (spec.kind() != kind) {
-            context.report(Code.F020, number, spec.kind() == DirectiveKind.LEAF
+            context.report(DiagnosticCode.F020, number, spec.kind() == DirectiveKind.LEAF
                     ? "`" + name + "` is a one-line directive: ::" + name
                     : "`" + name + "` is a container: :::" + name + " … :::");
             return Optional.empty();
         }
         if (!spec.parents().contains(parent)) {
-            context.report(Code.F020, number, "`" + name + "` is not allowed in " + Parents.describe(parent));
+            context.report(DiagnosticCode.F020, number, "`" + name + "` is not allowed in " + DirectivePlaces.describe(parent));
             return Optional.empty();
         }
         return context.attributes(name, line.attributes(), spec.required(), spec.optional(), number)
-                .flatMap(attributes -> parse(parser.get(), new Directive(name, line.label(), attributes, children, number)));
+                .flatMap(attributes -> parse(parser.get(), new CheckedDirective(name, line.label(), attributes, children, number)));
     }
 
-    private Optional<Block> parse(DirectiveParser parser, Directive directive) {
+    private Optional<Block> parse(DirectiveParser parser, CheckedDirective directive) {
         try {
             return parser.parse(directive, context);
         } catch (InvalidAttributeException e) {
-            context.report(Code.F027, directive.line(), "`" + directive.name() + "`: " + e.getMessage());
+            context.report(DiagnosticCode.F027, directive.line(), "`" + directive.name() + "`: " + e.getMessage());
             return Optional.empty();
         }
     }

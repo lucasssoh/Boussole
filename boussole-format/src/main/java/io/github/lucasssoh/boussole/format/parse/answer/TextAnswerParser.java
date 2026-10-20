@@ -3,7 +3,7 @@ package io.github.lucasssoh.boussole.format.parse.answer;
 import io.github.lucasssoh.boussole.format.model.answer.Answer;
 import io.github.lucasssoh.boussole.format.model.answer.SingleAnswer;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseType;
-import io.github.lucasssoh.boussole.format.parse.Attributes;
+import io.github.lucasssoh.boussole.format.parse.DirectiveAttributes;
 import io.github.lucasssoh.boussole.format.parse.ParseContext;
 import java.util.List;
 import java.util.Optional;
@@ -23,12 +23,12 @@ final class TextAnswerParser extends LineAnswerParser<String> {
     }
 
     @Override
-    protected Optional<String> readLine(AnswerLine line, Attributes attributes, ParseContext context) {
+    protected Optional<String> readLine(AnswerLine line, DirectiveAttributes attributes, ParseContext context) {
         return Optional.of(line.text());
     }
 
     @Override
-    protected Optional<Answer> assemble(List<String> spellings, Attributes attributes, AnswerLine first, ParseContext context) {
+    protected Optional<Answer> assemble(List<String> spellings, DirectiveAttributes attributes, AnswerLine first, ParseContext context) {
         return ExpectationReader.text(spellings, attributes.flag("strict"), first.line(), context).map(SingleAnswer::new);
     }
 }
