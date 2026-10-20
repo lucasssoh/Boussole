@@ -6,7 +6,9 @@ import io.github.lucasssoh.boussole.format.model.LexiconTerm;
 import io.github.lucasssoh.boussole.format.model.SyllabusChapter;
 import io.github.lucasssoh.boussole.format.model.SyllabusSession;
 import java.util.List;
+import io.github.lucasssoh.boussole.core.learn.progress.SessionProgress;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,7 +33,7 @@ record CourseView(
                 course.subject().description().orElse(null),
                 course.subject().sourcesDir(),
                 course.syllabus().chapters().stream()
-                        .map(chapter -> ChapterView.of(chapter, written, overview.finishedSessions()))
+                        .map(chapter -> ChapterView.of(chapter, written, overview.finishedSessions(), overview.sessionProgress()))
                         .toList(),
                 course.lexicon().terms().stream().map(TermView::of).toList(),
                 ResumeView.of(overview).orElse(null));
@@ -39,18 +41,31 @@ record CourseView(
 
     record ChapterView(String id, String title, List<SessionEntryView> sessions) {
 
-        static ChapterView of(SyllabusChapter chapter, Set<String> written, Set<String> finished) {
+        static ChapterView of(
+                SyllabusChapter chapter, Set<String> written, Set<String> finished, Map<String, SessionProgress> progress) {
             return new ChapterView(chapter.id(), chapter.title(), chapter.sessions().stream()
-                    .map(entry -> SessionEntryView.of(entry, written.contains(entry.id()), finished.contains(entry.id())))
+                    .map(entry -> SessionEntryView.of(entry, written.contains(entry.id()), finished.contains(entry.id()),
+                            progress.getOrDefault(entry.id(), new SessionProgress(0, 0, 0))))
                     .toList());
         }
     }
 
-    record SessionEntryView(String id, String title, String kind, int duration, String goal, boolean written, boolean finished) {
+    /** {@code questions}, {@code answered}, {@code right}: how far the learner is in the session. */
+    record SessionEntryView(
+            String id,
+            String title,
+            String kind,
+            int duration,
+            String goal,
+            boolean written,
+            boolean finished,
+            int questions,
+            int answered,
+            int right) {
 
-        static SessionEntryView of(SyllabusSession entry, boolean written, boolean finished) {
+        static SessionEntryView of(SyllabusSession entry, boolean written, boolean finished, SessionProgress progress) {
             return new SessionEntryView(entry.id(), entry.title(), entry.kind().name().toLowerCase(Locale.ROOT),
-                    entry.duration(), entry.goal(), written, finished);
+                    entry.duration(), entry.goal(), written, finished, progress.questions(), progress.answered(), progress.right());
         }
     }
 

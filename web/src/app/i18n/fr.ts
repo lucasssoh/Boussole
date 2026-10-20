@@ -22,6 +22,9 @@ export const FR: Translations = {
     start: 'Commencer',
     next: 'Prochaine : {{title}}',
     allDone: 'Toutes les séances écrites sont terminées.',
+    questions: '{{questions}} questions',
+    progress: '{{answered}} sur {{questions}} faites · {{right}} justes',
+    progressLabel: '{{answered}} questions faites sur {{questions}}, dont {{right}} justes',
     sessions: 'Séances',
   },
   session: {

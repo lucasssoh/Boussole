@@ -20,6 +20,9 @@ export const EN = {
     start: 'Start',
     next: 'Next: {{title}}',
     allDone: 'Every written session is finished.',
+    questions: '{{questions}} questions',
+    progress: '{{answered}} of {{questions}} answered · {{right}} right',
+    progressLabel: '{{answered}} of {{questions}} questions answered, {{right}} right',
     sessions: 'Sessions',
   },
   session: {

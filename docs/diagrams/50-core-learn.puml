@@ -62,6 +62,9 @@ package "learn.progress" {
     +sessionsFinishedAt() : List<Instant>
   }
   class LastActivity <<record>>
+  class SessionProgress <<record>> {
+    questions, answered, right : int
+  }
   class ExerciseProgress <<record>> {
     attempts : int
     lastVerdict : Optional<Verdict>
@@ -137,6 +140,7 @@ ListCourses --> ContentRepository
 ListCourses --> CourseOverviews
 OpenCourse --> CourseOverviews
 CourseOverviews ..> LastActivity : resume
+CourseOverviews ..> SessionProgress : per session
 ReadStudyStats --> ProgressRepository : history
 ReadStudyStats ..> XpRules
 ReadStudyStats ..> StudyStats

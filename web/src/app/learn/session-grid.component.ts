@@ -45,6 +45,21 @@ import { RichTextComponent } from '../shared/rich-text.component';
                   </span>
                   <span class="session-card-title"><app-rich-text [text]="entry.title" /></span>
                   <span class="session-card-goal"><app-rich-text [text]="entry.goal" /></span>
+                  @if (entry.questions > 0) {
+                    <span class="session-progress" [attr.aria-label]="'course.progressLabel' | transloco: entry">
+                      <span class="session-progress-track">
+                        <span class="session-progress-right" [style.width.%]="(100 * entry.right) / entry.questions"></span>
+                        <span class="session-progress-missed" [style.width.%]="(100 * (entry.answered - entry.right)) / entry.questions"></span>
+                      </span>
+                      <span class="session-progress-text">
+                        @if (entry.answered === 0) {
+                          {{ 'course.questions' | transloco: entry }}
+                        } @else {
+                          {{ 'course.progress' | transloco: entry }}
+                        }
+                      </span>
+                    </span>
+                  }
                 </a>
               } @else {
                 <div class="session-card unwritten">

@@ -8,6 +8,7 @@ import io.github.lucasssoh.boussole.core.learn.check.ValueResponse;
 import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
+import io.github.lucasssoh.boussole.core.learn.progress.SessionProgress;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -90,6 +91,17 @@ class LearningTest {
 
         assertThat(overview.resume()).contains("r19");
         assertThat(overview.lastStudied()).contains(clock.instant());
+    }
+
+    @Test
+    void the_course_says_how_far_the_learner_is_in_each_session() {
+        new SubmitAttempt(content, progress, clock).submit(new ExerciseKey("reseaux", "s11-a1"), new ValueResponse("48"), Optional.empty());
+        new SubmitAttempt(content, progress, clock).submit(new ExerciseKey("reseaux", "s11-a2"), new ChoicesResponse(Set.of(0)), Optional.empty());
+
+        CourseOverview overview = new OpenCourse(content, progress).open("reseaux");
+
+        assertThat(overview.sessionProgress().get("s11")).isEqualTo(new SessionProgress(5, 2, 1));
+        assertThat(overview.sessionProgress().get("r19")).isEqualTo(new SessionProgress(3, 2, 1));
     }
 
     @Test

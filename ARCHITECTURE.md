@@ -229,7 +229,8 @@ web/src/app/
 - **The home page** puts on top the session to resume (in the subject studied last: the session
   answered in last, unless finished, else the next one), the sessions of its chapter, then every
   subject with its progress. A subject's page shows all its sessions as a grid, chapter by
-  chapter (`SessionGridComponent`).
+  chapter (`SessionGridComponent`), each card with how many of its questions are answered and
+  right (`SessionProgress`, computed by the server from the progress kept).
 - **The session player** shows **one screen at a time**, never the whole session
   (`sessionPlan()`): the goal, then within each part (warm-up, each notion, checkpoint,
   practice) the explanation, the worked example and each question on a screen of their own,

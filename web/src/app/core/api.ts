@@ -50,6 +50,10 @@ export interface SessionEntry {
   goal: string;
   written: boolean;
   finished: boolean;
+  /** Its questions (those asked again included), how many the learner answered, how many right. */
+  questions: number;
+  answered: number;
+  right: number;
 }
 
 export interface LexiconTerm {
