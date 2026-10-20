@@ -18,6 +18,6 @@ minor release may break things and says so.
 - **Course format, validation:** every MCQ needs hints too (P004), and every wrong choice of an MCQ its feedback (P010), since the learner sees them right after answering.
 - **Session player, reviews and mock exams:** a timed session starts with its countdown and ends with the number of questions you got right at the first attempt.
 - **Session player:** English or French, light or dark, and usable on a phone.
-- **Server:** `boussole open` starts it in the background when needed, `boussole stop` stops it, `boussole serve` runs it in a terminal. It only answers this machine.
+- **Server:** `boussole open` starts it in the background when needed, `boussole stop` stops it (even when it no longer answers), `boussole serve` runs it in a terminal. It only answers this machine, and keeps working while a new version of Boussole is built.
 - **Course format, validation:** `boussole validate --check-videos` also asks YouTube whether each video exists.
 - **Reviews and mock exams:** besides lessons, a course has timed sessions: a short review at the end of each chapter, and mock exams as long as the real ones. Their number of questions fits the time allowed, knowing that choosing an answer is quicker than building one; `boussole validate` warns when it does not.

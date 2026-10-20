@@ -47,6 +47,19 @@ public record BoussolePaths(Path config, Path data, Path state) {
         return state.resolve("server.log");
     }
 
+    /**
+     * The copy of boussole.jar the background server runs, so that building a new boussole.jar
+     * never pulls the files from under a running server.
+     */
+    public Path serverJar() {
+        return state.resolve("server.jar");
+    }
+
+    /** The process ID of the running server, for {@code boussole stop} when it does not answer. */
+    public Path serverPid() {
+        return state.resolve("server.pid");
+    }
+
     private static Optional<Path> env(String name) {
         return Optional.ofNullable(System.getenv(name)).filter(value -> !value.isBlank()).map(Path::of);
     }

@@ -21,14 +21,12 @@ public record Launcher(Optional<Path> jar) {
         return jar.map(path -> "java -jar " + quoted(path.toString()) + " validate .").orElse("boussole validate .");
     }
 
-    /** The command line that runs a subcommand of this Boussole in a new process, when it runs from a jar. */
-    public Optional<List<String>> commandLine(String... arguments) {
+    /** The command line that runs a subcommand of the given jar in a new process, with the same Java. */
+    public static List<String> commandLine(Path jar, String... arguments) {
         String java = ProcessHandle.current().info().command().orElse("java");
-        return jar.map(path -> {
-            List<String> command = new java.util.ArrayList<>(List.of(java, "-jar", path.toString()));
-            command.addAll(List.of(arguments));
-            return List.copyOf(command);
-        });
+        List<String> command = new java.util.ArrayList<>(List.of(java, "-jar", jar.toString()));
+        command.addAll(List.of(arguments));
+        return List.copyOf(command);
     }
 
     private static String quoted(String path) {

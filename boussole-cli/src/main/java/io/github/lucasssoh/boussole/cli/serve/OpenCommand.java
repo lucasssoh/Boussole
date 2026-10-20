@@ -62,11 +62,14 @@ public final class OpenCommand implements Callable<Integer> {
         ServerProbe probe = new ServerProbe(config.read().port());
         if (!probe.isBoussole()) {
             if (probe.portTaken()) {
-                err.println("boussole: another program uses port " + config.read().port() + "; set another one with port: in " + config.path());
+                err.println("boussole: port " + config.read().port() + " is taken by a program that does not answer as Boussole."
+                        + " If it is a Boussole that stopped answering, boussole stop ends it; otherwise set another port: in "
+                        + config.path());
                 return ExitCode.UNUSABLE;
             }
-            Path log = BoussolePaths.forCurrentUser().serverLog();
-            if (BackgroundServer.start(log).isEmpty()) {
+            BoussolePaths paths = BoussolePaths.forCurrentUser();
+            Path log = paths.serverLog();
+            if (BackgroundServer.start(paths).isEmpty()) {
                 err.println("boussole: start the server with boussole serve, then open " + probe.url(""));
                 return ExitCode.UNUSABLE;
             }

@@ -30,7 +30,7 @@ package "cli" {
     jar : Optional<Path>
     +{static} current() : Launcher
     +validateCommand() : String
-    +commandLine(String...) : Optional<List<String>>
+    +{static} commandLine(Path jar, String...) : List<String>
   }
 }
 
@@ -53,7 +53,11 @@ package "cli.serve" {
     ~stop()
   }
   class BackgroundServer {
-    ~{static} start(Path log) : Optional<Process>
+    ~{static} start(BoussolePaths) : Optional<Process>
+  }
+  class ServerPidFile {
+    ~writeCurrent()
+    ~server() : Optional<ProcessHandle>
   }
   class BrowserOpener {
     ~{static} open(String url) : boolean
@@ -99,7 +103,9 @@ OpenCommand --> BoussoleConfigFile : adds the subject
 OpenCommand --> ServerProbe : running?
 OpenCommand --> BackgroundServer : else starts
 OpenCommand --> BrowserOpener
-BackgroundServer --> Launcher : java -jar … serve
+BackgroundServer --> Launcher : copy of the jar, serve
+ServeCommand --> ServerPidFile : writes
+StopCommand --> ServerPidFile : unanswered server
 StopCommand --> ServerProbe
 ServeCommand --> BoussoleServer : starts
 ServeCommand --> BoussoleConfigFile

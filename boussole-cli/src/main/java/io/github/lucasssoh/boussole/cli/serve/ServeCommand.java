@@ -34,6 +34,7 @@ public final class ServeCommand implements Callable<Integer> {
                 () -> config.read().subjects(),
                 BoussolePaths.forCurrentUser().database(),
                 read.language()));
+        new ServerPidFile(BoussolePaths.forCurrentUser().serverPid()).writeCurrent();
         spec.commandLine().getOut().println("Boussole runs on " + server.url() + " (Ctrl+C to stop).");
         if (read.subjects().isEmpty()) {
             spec.commandLine().getOut().println("No subject yet: boussole open <folder> adds one.");
