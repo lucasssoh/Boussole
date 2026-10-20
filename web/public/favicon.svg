@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <title>Boussole</title>
+  <rect x="6" y="12" width="108" height="104" rx="30" fill="#075341"/>
+  <rect x="6" y="4" width="108" height="104" rx="30" fill="#0b7a5f"/>
+  <circle cx="60" cy="56" r="36" fill="none" stroke="#ffffff" stroke-width="7" opacity="0.35"/>
+  <path d="M60 20 L73 56 L60 60 L47 56 Z" fill="#ff6b6b"/>
+  <path d="M60 92 L73 56 L60 52 L47 56 Z" fill="#ffffff"/>
+  <circle cx="60" cy="56" r="7" fill="#ffffff" stroke="#0b7a5f" stroke-width="4"/>
+</svg>

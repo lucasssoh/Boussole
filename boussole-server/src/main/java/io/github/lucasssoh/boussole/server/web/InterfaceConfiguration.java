@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
@@ -18,6 +19,12 @@ class InterfaceConfiguration implements WebMvcConfigurer {
     private static final String LOCATION = "classpath:/web/browser/";
     private static final Resource INDEX = new ClassPathResource("web/browser/index.html");
 
+    /** The resource handler serves files, and "/" names none: it is forwarded to the interface's page. */
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("forward:/index.html");
+    }
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**")
@@ -26,8 +33,11 @@ class InterfaceConfiguration implements WebMvcConfigurer {
                 .addResolver(new PathResourceResolver() {
                     @Override
                     protected Resource getResource(String path, Resource location) throws IOException {
+                        if (path.startsWith("api/")) {
+                            return super.getResource(path, location);
+                        }
                         Resource found = super.getResource(path, location);
-                        return found != null || path.startsWith("api/") ? found : INDEX;
+                        return found != null ? found : INDEX;
                     }
                 });
     }

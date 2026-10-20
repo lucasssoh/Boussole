@@ -11,9 +11,7 @@ import { SettingsDrawerComponent } from './core/settings-drawer.component';
   template: `
     <header class="top-bar">
       <a class="brand" routerLink="/">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
-          <circle cx="12" cy="12" r="9.5"></circle><path d="M15.5 8.5l-2 5-5 2 2-5z" fill="currentColor"></path>
-        </svg>
+        <img class="brand-logo" src="favicon.svg" alt="" width="32" height="32" />
         Boussole
       </a>
       @if (stats.stats(); as current) {

@@ -1,3 +1,5 @@
+<img src="docs/logo.svg" alt="" width="96" height="96">
+
 # Boussole
 
 Turn your own course documents into a real course — lessons, quizzes, exercises checked as you

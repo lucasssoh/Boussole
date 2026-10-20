@@ -260,6 +260,10 @@ a:focus-visible {
   text-decoration: none;
 }
 
+.brand-logo {
+  display: block;
+}
+
 .top-actions {
   display: flex;
   gap: 0.25rem;
