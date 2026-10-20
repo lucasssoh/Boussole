@@ -1,6 +1,6 @@
 # Class diagrams
 
-PlantUML sources (`*.puml`) and their rendering (`*.svg`). One diagram per area, so each stays
+PlantUML sources (`*.puml`, each self-contained) and their rendering (`*.svg`). One diagram per area, so each stays
 readable; the overview says where each area sits.
 
 | Diagram | Shows |
