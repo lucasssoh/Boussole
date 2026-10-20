@@ -1,20 +1,53 @@
 ---
 id: g1
 objectives:
+  - Say what Boussole is for and what it saves you.
   - Say what your agent does, what Boussole does and what you do.
-  - Place your documents and your course in a subject folder.
 terms: [agent, skill, cursus, plan]
 ---
 
-Welcome! This short guide is itself a Boussole subject: you go through it screen by screen, you
-answer the questions, and the map on the left shows where you are. It stays apart on the home
-page, to come back to when you forget, and does not count in your experience.
+Welcome! This guide is itself a Boussole course: you go screen by screen and answer the
+questions. It stays on the home page, to come back to whenever you like. It does not count in
+your experience.
+
+## Why "Boussole" {#why}
+
+Boussole is French for compass. In front of a course, you sometimes feel lost: many documents,
+and no clear path.
+
+Boussole points the way. You know what to study, in what order, and where you are.
+
+In practice:
+
+- **Your documents become a course.** Short sessions, with questions corrected at once.
+- **You know what to do next.** The home page offers the session to resume.
+- **You pay for no platform.** The course is made from your documents, on your machine.
+- **You spend fewer tokens.** Your agent does not reinvent the method each time: the
+  :term[skills]{id=skill} tell it what to write and how. Boussole tells it exactly what is
+  wrong. Then studying costs nothing more: Boussole corrects without AI.
+
+::::mcq{#g1-a0}
+When do you spend tokens with Boussole?
+
+- [x] When your agent writes the course
+- [ ] At each answer you give
+  > No: Boussole corrects with the answer written in the session, without AI.
+- [ ] Each time you open a session
+  > No: opening a session only reads files on your machine.
+
+:::hint
+Who uses an AI: your agent, or Boussole?
+:::
+
+:::solution
+Only when **your agent writes** the course. Once written, you study as much as you like without
+spending tokens: Boussole corrects by itself.
+:::
+::::
 
 ## From documents to a course {#chain}
 
-Boussole turns **your own documents** (lecture notes, slides, problem sheets, past exams) into a
-real course: short sessions, quizzes during the lesson, corrected exercises, videos and your
-PDFs beside the text.
+Here is the way from a document to you.
 
 ```mermaid
 flowchart LR
@@ -26,9 +59,8 @@ flowchart LR
   T -. "approve the plan" .-> A
 ```
 
-Boussole does not write the course: your :term[AI agent]{id=agent} does, guided by the
-:term[skills]{id=skill} Boussole installs next to your documents. The result goes into the
-:term[course folder]{id=cursus}, which Boussole shows.
+Boussole does not write the course. Your :term[AI agent]{id=agent} writes it, following the
+skills. The course goes into the :term[course folder]{id=cursus}, and Boussole shows it.
 
 ::::mcq{#g1-a1}
 Who writes the sessions and quizzes of your course?
