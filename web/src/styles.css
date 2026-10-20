@@ -658,7 +658,14 @@ a.session-card:active {
   grid-template-columns: 19rem minmax(0, 1fr) minmax(22rem, 38vw);
 }
 
+/*
+ * The screen sits between the bar above and the buttons below: centred when there is room (its
+ * auto margins share the space), from the top when it is taller, never cut.
+ */
 .session {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 3.5rem);
   padding: 1.5rem 1.5rem 0;
 }
 
@@ -975,6 +982,7 @@ a.session-card:active {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.25rem 0.75rem;
+  width: 100%;
   max-width: var(--content-width);
   margin: -1.5rem auto 1.25rem;
   padding: 0.75rem 0 0.5rem;
@@ -1042,9 +1050,9 @@ a.session-card:active {
 }
 
 .screen {
+  width: 100%;
   max-width: var(--content-width);
-  min-height: 52vh;
-  margin: 0 auto;
+  margin: auto;
 }
 
 .screen-start h1,
@@ -1074,8 +1082,9 @@ a.session-card:active {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
   max-width: var(--content-width);
-  margin: 2rem auto 0;
+  margin: 1.5rem auto 0;
   padding: 1rem 0 1.25rem;
   background: linear-gradient(transparent, var(--bg) 30%);
 }
