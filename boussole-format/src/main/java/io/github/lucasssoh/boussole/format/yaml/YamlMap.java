@@ -112,7 +112,7 @@ public final class YamlMap {
             if (value instanceof ScalarNode scalar) {
                 return Optional.of(scalar.getValue());
             }
-            source.report(source.position(value), "`" + key + "` must be a single value");
+            source.report(source.position(value), "`" + key + "` must be a single value" + quoteHint(value));
             return Optional.empty();
         });
     }
@@ -158,10 +158,20 @@ public final class YamlMap {
             if (item instanceof ScalarNode scalar) {
                 texts.add(scalar.getValue());
             } else {
-                source.report(source.position(item), "each item of `" + key + "` must be a single value");
+                source.report(source.position(item), "each item of `" + key + "` must be a single value" + quoteHint(item));
             }
         }
         return List.copyOf(texts);
+    }
+
+    /**
+     * A text holding {@code ": "} reads as a key and its value in YAML: the usual cause of a value
+     * that is not single, worth saying how to keep it a text.
+     */
+    private static String quoteHint(Node node) {
+        return node instanceof MappingNode
+                ? "; a text holding `: ` reads as a key and its value: put it in quotes, \"like: this\""
+                : "";
     }
 
     /** Positions of the items of {@link #texts(String)}, in the same order. */

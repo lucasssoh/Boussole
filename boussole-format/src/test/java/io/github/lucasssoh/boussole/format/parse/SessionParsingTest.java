@@ -225,6 +225,15 @@ class SessionParsingTest {
         }
     }
 
+    @Test
+    void anObjectiveHoldingAColonSaysToQuoteIt() {
+        SessionFileReader.read("---\nid: s1\nobjectives:\n  - Lire un diagnostic : du fichier au message.\n---\n## A {#a}\n",
+                "s1.md", diagnostics);
+
+        assertThat(messages(DiagnosticCode.F001)).anySatisfy(message -> assertThat(message)
+                .contains("each item of `objectives` must be a single value", "put it in quotes"));
+    }
+
     @Nested
     class Graphs {
 

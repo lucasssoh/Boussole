@@ -24,6 +24,11 @@ file.
 | `prerequisites` | no | the **full** identifiers of the sessions to do before |
 | `sources` | no | the documents of `sources/`, with `#page=N` if needed |
 
+:::warning
+A sentence holding ": " (colon and space) reads in YAML as a key and its value: put it in quotes,
+`- "Read a diagnostic: from the file to the message."`.
+:::
+
 :::example[The front matter of session s2]
 ```markdown
 ---

@@ -19,7 +19,7 @@ are about the teaching contract and matter to the learner.
 
 | Code | Usual cause | Fix |
 |---|---|---|
-| F001 | missing or invalid field in a YAML file or front matter | add it, as in FORMAT.md §2–5 |
+| F001 | missing or invalid field in a YAML file or front matter | add it, as in FORMAT.md §2–5; a text holding `: ` goes in quotes |
 | F003 | the same ID twice | rename the **newer** one; never an ID that already had progress |
 | F004 | capital letter, `_` or accent in an ID | lowercase letters, digits, `-` |
 | F010 | the file's `id` differs from the syllabus | make the file's `id` match the syllabus |

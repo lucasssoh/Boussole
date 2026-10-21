@@ -168,6 +168,9 @@ sources:
 | `terms` | no | Lexicon IDs used in the session, shown as its vocabulary list. |
 | `sources` | no | Files of `sources/`, optionally with `#page=N`. |
 
+A value holding `: ` (colon and space) reads as a key and its value in YAML: put it in quotes,
+`- "Lire un diagnostic : du fichier au message."` (`F001` otherwise).
+
 ### 5.2 Body
 
 The body is [CommonMark](https://commonmark.org) with:
@@ -229,7 +232,7 @@ each answer and the correction right after it.
 | `example` | container | A worked example, solution included and visible. One per notion. |
 | `recall` | container | A reminder of a term or prerequisite, just before it is needed. |
 | `note`, `tip`, `warning` | container | Callouts. |
-| `term` | inline | Hover definition from the lexicon. `{id=…}` is optional when the text equals a term or alias. |
+| `term` | inline | Hover definition from the lexicon. `{id=…}` is optional when the text equals a term or alias, ignoring case (`:term[Dépôt]` finds the term `dépôt`). |
 | `video` | leaf | A video beside the text: `youtube=<11-character video id>` for YouTube, or `src=<file>` for a video file of the sources folder (a lecture recording), never both. `start`, `end` as seconds, `m:ss` or `h:mm:ss`. The label is the caption. A file plays in the browser when it is MP4 (H.264), WebM or Ogg (`F038` otherwise). |
 | `pdf` | leaf or inline | Opens a file of `sources/` beside the text. `src=<file>` required; `page=N` optional. |
 | `link` | leaf or inline | A web page the course cites (documentation, an article, a reference), opened beside the text: `url=<https://…>` required, a whole web address. Boussole shows the page in place when its site allows it, and otherwise opens it in a window of its own, beside Boussole. The label is the caption, or the words of the sentence. |
@@ -304,14 +307,16 @@ estimate of its type:
 
 These estimates size timed sessions. The convention is
 `<session>-<letter><n>`: `s11-a1` (À toi), `s11-w1` (warmup), `s11-c1` (checkpoint),
-`s11-p1` (practice). Renaming an ID loses the progress recorded on it.
+`s11-p1` (practice), and `r19-q1` for a question written in a review or an exam (`q`, since
+those have no parts). The validator checks the syntax of an ID (`F004`) and that it is unique
+(`F003`), not this convention. Renaming an ID loses the progress recorded on it.
 
 An exercise is a container. Its first part is the statement (Markdown); then come its parts:
 
 | Part | Count | Meaning |
 |---|---|---|
 | `:::answer` | exactly one, except `free` | What is accepted. Syntax depends on the type, below. |
-| `:::hint` | one or more, except in an exam | Hints, revealed one at a time in file order, before the learner answers. |
+| `:::hint` | one or more (optional in an exam) | Hints, revealed one at a time in file order, before the learner answers. An exam never shows them: a question written in an exam may have hints, which show when a lesson or a review asks it again with `::ref`. |
 | `:::solution` | exactly one | Why the right answer is right: shown beside the question as soon as the learner has answered, with the right answer in green and a wrong one in red. |
 
 ```markdown
@@ -434,7 +439,7 @@ chapter.
 | `P011` | warning | A `graph` of more than 12 nodes. |
 
 `P001`, `P002`, `P006` and `P007` apply to lessons only; `P004` does not apply to exams, which
-give no hints.
+show no hints.
 
 `F` codes are about the format, `P` codes about the teaching contract.
 

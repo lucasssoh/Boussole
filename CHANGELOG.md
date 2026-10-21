@@ -48,5 +48,6 @@ minor release may break things and says so.
 - **Reviews and mock exams:** besides lessons, a course has timed sessions: a short review at the end of each chapter, and mock exams as long as the real ones. Their number of questions fits the time allowed, knowing that choosing an answer is quicker than building one; `boussole validate` warns when it does not.
 
 ### Fixed
+- **Course format, validation:** a YAML value broken by `: ` now says to put it in quotes. `docs/FORMAT.md` says it, and settles points left unclear: hints of a question written in an exam (allowed, shown when the question is asked again elsewhere), `:term` ignoring case, and the ID of a question written in a review (`r19-q1`).
 - **Fill-in exercises:** a gap written in code (`` `ip [[1]] show` `` or a code block) is a field to fill, as the validator already counted it; elsewhere than a fill statement, `[[N]]` shows as written instead of vanishing.
 - **Course format:** a task list inside fenced code, in the statement of an MCQ, is shown as code instead of being read as its choices.

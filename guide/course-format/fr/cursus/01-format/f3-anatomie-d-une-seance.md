@@ -23,6 +23,11 @@ terms: [front-matter, session, notion, identifier, lexicon, worked-example]
 | `prerequisites` | non | les identifiants **complets** des séances à faire avant |
 | `sources` | non | les documents de `sources/`, avec `#page=N` si besoin |
 
+:::warning
+Une phrase qui contient « : » (deux-points et espace) se lit en YAML comme une clé et sa valeur :
+mets-la entre guillemets, `- "Lire un diagnostic : du fichier au message."`.
+:::
+
 :::example[L'en-tête de la séance s2]
 ```markdown
 ---
