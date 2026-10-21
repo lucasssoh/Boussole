@@ -10,8 +10,8 @@ export const FR: Translations = {
     title: 'Tes cours',
     empty: "Aucun cours pour l'instant. Lance boussole open <dossier> sur un dossier de documents : supports de cours, manuel, documentation…",
     progress: '{{written}} séances écrites sur {{planned}} · {{finished}} terminées',
-    guideTitle: 'Le guide',
-    guideText: "À relire quand tu veux : il ne compte pas dans ton expérience.",
+    guideTitle: 'Guide',
+    guideText: "Ce que fait Boussole, et comment t'en servir.",
   },
   kind: { lesson: 'Leçon', review: 'Révision', exam: 'Examen blanc' },
   course: {

@@ -397,10 +397,29 @@ a:focus-visible {
 
 /* Home */
 
+/* Where to resume, and the guide beside it; one under the other on a narrow screen. */
+.home-top {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(14rem, 1fr);
+  align-items: stretch;
+  gap: 1rem;
+  margin: 1rem 0 2rem;
+}
+
+.home-top > :only-child {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 760px) {
+  .home-top {
+    grid-template-columns: 1fr;
+  }
+}
+
 .resume-card {
   display: grid;
   gap: 0.4rem;
-  margin: 1rem 0 2rem;
+  margin: 0;
   padding: 1.5rem 1.75rem;
   border: 3px solid var(--subject);
   border-radius: 24px;
@@ -482,6 +501,23 @@ a:focus-visible {
 .guide-logo {
   width: 1.9rem;
   height: 1.9rem;
+}
+
+.guide-card {
+  align-content: start;
+  position: relative;
+  padding-bottom: 2.6rem;
+}
+
+.guide-card .eyebrow {
+  margin: 0;
+}
+
+.guide-go {
+  position: absolute;
+  right: 1.1rem;
+  bottom: 1rem;
+  color: var(--subject);
 }
 
 .card-text,
@@ -2131,6 +2167,7 @@ app-settings-drawer {
     .question-actions,
     .screen-nav > *,
     .resume-card,
+    .home-top > .guide-card,
     .session-grid > li,
     .grid-chapter-head,
     .cards > li,
@@ -2143,7 +2180,7 @@ app-settings-drawer {
 }
 
 /* The rank of each element among its siblings. */
-:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(2) { --i: 1; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav, .home-top) > :nth-child(2) { --i: 1; }
 :is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(3) { --i: 2; }
 :is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(4) { --i: 3; }
 :is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(5) { --i: 4; }

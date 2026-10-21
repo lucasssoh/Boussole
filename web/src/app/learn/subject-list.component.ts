@@ -10,8 +10,8 @@ import { SessionGridComponent } from './session-grid.component';
 
 /**
  * The home page: where to resume, on top (the session in progress in the subject studied last,
- * or the first session of a subject not started yet), then every subject with its progress, and
- * apart, the guide to Boussole, which is never what to resume once the learner has a subject.
+ * or the first session of a subject not started yet) with the guide to Boussole beside it, then
+ * every subject with its progress. The guide is what to resume only while there is no other subject.
  */
 @Component({
   selector: 'app-subject-list',
@@ -22,6 +22,7 @@ import { SessionGridComponent } from './session-grid.component';
       @if (learn.unreachable()) {
         <p class="frame warning">{{ 'app.unreachable' | transloco }}</p>
       }
+      <div class="home-top">
       @if (resume(); as subject) {
         @if (subject.resume; as next) {
           <section class="resume-card subject-scope" [attr.lang]="subject.lang" [style.--subject]="color(subject.id)">
@@ -37,6 +38,15 @@ import { SessionGridComponent } from './session-grid.component';
           </section>
         }
       }
+      @for (guide of besideResume(); track guide.id) {
+        <a class="card guide-card subject-scope" [routerLink]="['/subjects', guide.id]" [attr.lang]="guide.lang">
+          <span class="eyebrow">{{ 'home.guideTitle' | transloco }}</span>
+          <span class="card-title"><img src="favicon.svg" alt="" class="guide-logo" /> {{ guide.name }}</span>
+          <span class="card-text">{{ 'home.guideText' | transloco }}</span>
+          <span class="guide-go"><app-icon name="arrow-right" /></span>
+        </a>
+      }
+      </div>
       @if (resumeChapter(); as chapter) {
         @if (learn.course(); as course) {
           <div class="subject-scope" [style.--subject]="color(course.id)" [attr.lang]="course.lang">
@@ -66,19 +76,6 @@ import { SessionGridComponent } from './session-grid.component';
           }
         </ul>
       }
-      @if (guides().length > 0) {
-        <h2>{{ 'home.guideTitle' | transloco }}</h2>
-        <ul class="cards">
-          @for (guide of guides(); track guide.id) {
-            <li>
-              <a class="card guide-card subject-scope" [routerLink]="['/subjects', guide.id]" [attr.lang]="guide.lang">
-                <span class="card-title"><img src="favicon.svg" alt="" class="guide-logo" /> {{ guide.name }}</span>
-                <span class="card-text">{{ 'home.guideText' | transloco }}</span>
-              </a>
-            </li>
-          }
-        </ul>
-      }
     </main>
   `,
 })
@@ -89,6 +86,9 @@ export class SubjectListComponent {
   protected readonly ownSubjects = computed(() => this.learn.subjects()?.filter((subject) => !subject.guide));
 
   protected readonly guides = computed(() => (this.learn.subjects() ?? []).filter((subject) => subject.guide));
+
+  /** The guide sits beside the session to resume, unless it is that session. */
+  protected readonly besideResume = computed(() => this.guides().filter((guide) => guide.id !== this.resume()?.id));
 
   /**
    * The subject studied last that has a session to resume, else the first one that has; the
