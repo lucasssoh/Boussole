@@ -26,8 +26,8 @@
     **toi seul le valides**.
 
 - id: validateur
-  term: Contrôle qualité
-  aliases: [validateur, boussole validate]
+  term: Validateur
+  aliases: [boussole validate]
   definition: >
     La commande `boussole validate` : elle vérifie que le parcours est bien écrit et dit
     précisément quoi corriger. L'agent la lance après chaque changement.
@@ -38,3 +38,58 @@
   definition: >
     Le fichier `cursus/sources.yaml` : ce que le parcours a fait de chacun de tes documents
     (utilisé, ignoré, en attente), avec son empreinte, pour repérer ceux qui arrivent ou changent.
+
+- id: parcours
+  term: Parcours
+  definition: >
+    Ce que Boussole fait d'un dossier de documents : des séances courtes, dans l'ordre. Un
+    parcours peut venir de supports de cours, d'un manuel, d'un guide d'entreprise…
+
+- id: etape
+  term: Étape
+  aliases: [étapes]
+  definition: >
+    Un morceau de séance : l'objectif, une explication, un exemple, une question ou le bilan. On
+    passe de l'une à l'autre avec Suivant et Précédent.
+
+- id: trace
+  term: Tracé
+  aliases: [le Tracé]
+  definition: >
+    La carte de la séance, à gauche : une zone par partie, un rond par étape, en vert, orange ou
+    rouge selon tes réponses.
+
+- id: mode-guide
+  term: Mode guidé
+  definition: >
+    Dans une leçon, Suivant attend ta réponse à la question affichée. Le mode libre, réglable dans
+    la configuration, laisse avancer sans répondre.
+
+- id: premier-coup
+  term: Du premier coup
+  aliases: [premier coup]
+  definition: >
+    Dans une leçon, ta première réponse à une question est définitive : c'est elle que comptent le
+    Tracé et le bilan.
+
+- id: coup-de-pouce
+  term: Coup de pouce
+  aliases: [coups de pouce]
+  definition: >
+    Une aide à dévoiler avant de répondre, puis une autre, sans jamais donner la réponse.
+
+- id: derniere-verification
+  term: Dernière vérification
+  definition: >
+    Quand plusieurs réponses peuvent être justes, Boussole te demande de confirmer avant d'envoyer.
+
+- id: revision-express
+  term: Révision express
+  aliases: [révisions express]
+  definition: >
+    Une séance courte et chronométrée qui reprend les questions clés d'un chapitre.
+
+- id: serie
+  term: Série
+  definition: >
+    Le nombre de jours d'affilée où tu as étudié. Elle tient jusqu'à la fin du jour suivant.

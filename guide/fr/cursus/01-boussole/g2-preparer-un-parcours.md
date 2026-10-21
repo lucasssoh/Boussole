@@ -72,7 +72,7 @@ L'agent avance en trois temps :
    exemple d'abord ? des séances de combien de temps ?
 2. **Le plan à valider.** Chapitres, séances, durées, objectifs, révisions express et examen
    blanc : c'est le :term[plan]{id=plan}.
-3. **Les séances.** Une à une, chacune passée au :term[contrôle qualité]{id=validateur}.
+3. **Les séances.** Une à une, chacune vérifiée par le :term[validateur]{id=validateur}.
 
 :::note
 Tant que tu ne l'as pas validé, le plan reste **proposé** : aucune séance ne s'écrit.
@@ -95,12 +95,12 @@ Pour ouvrir ensuite le parcours, la commande est [[4]].
 :::
 
 :::hint
-`init` prépare le dossier, `validate` contrôle le parcours, une seule commande l'affiche.
+`init` prépare le dossier, `validate` vérifie le parcours, une seule commande l'affiche.
 :::
 
 :::solution
 `proposed`, puis `approved` quand **tu** le valides ; `boussole open` ouvre le parcours.
-`boussole init` prépare un dossier, `boussole validate` contrôle la qualité.
+`boussole init` prépare un dossier, `boussole validate` vérifie le parcours.
 :::
 ::::
 

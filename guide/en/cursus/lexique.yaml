@@ -27,8 +27,8 @@
     **only you approve it**.
 
 - id: validator
-  term: Quality check
-  aliases: [validator, boussole validate]
+  term: Validator
+  aliases: [boussole validate]
   definition: >
     The `boussole validate` command: it checks that the track is well written and says exactly
     what to fix. The agent runs it after every change.
@@ -39,3 +39,58 @@
   definition: >
     The `cursus/sources.yaml` file: what the track did with each of your documents (used,
     ignored, pending), with its fingerprint, to spot those that arrive or change.
+
+- id: track
+  term: Track
+  aliases: [tracks]
+  definition: >
+    What Boussole makes of a folder of documents: short sessions, in order. A track can come from
+    lecture notes, a manual, a company guide…
+
+- id: step
+  term: Step
+  aliases: [steps]
+  definition: >
+    A piece of a session: the goal, an explanation, an example, a question or the wrap-up. Next and
+    Previous move from one to the other.
+
+- id: trail
+  term: Trail
+  aliases: [the Trail]
+  definition: >
+    The map of the session, on the left: a zone per part, a dot per step, green, orange or red
+    according to your answers.
+
+- id: guided-mode
+  term: Guided mode
+  definition: >
+    In a lesson, Next waits for your answer to the question shown. Free mode, set in the
+    configuration, lets you move on without answering.
+
+- id: first-try
+  term: First try
+  definition: >
+    In a lesson, your first answer to a question is final: it is the one the Trail and the wrap-up
+    count.
+
+- id: nudge
+  term: Nudge
+  aliases: [nudges]
+  definition: >
+    Some help to reveal before answering, then more, never giving the answer away.
+
+- id: final-check
+  term: Final check
+  definition: >
+    When several answers may be right, Boussole asks you to confirm before sending.
+
+- id: quick-review
+  term: Quick review
+  aliases: [quick reviews]
+  definition: >
+    A short, timed session that brings back the key questions of a chapter.
+
+- id: streak
+  term: Streak
+  definition: >
+    The number of days in a row you have studied. It holds until the end of the next day.

@@ -20,7 +20,7 @@ terms: [record, validator, agent]
 :term[Document tracking]{id=record} (`cursus/sources.yaml`) notes what the track did with each
 document, with its **fingerprint**: a code that changes as soon as the file changes.
 
-The :term[quality check]{id=validator} compares this tracking with the folder, sub-folders
+The :term[validator]{id=validator} compares this tracking with the folder, sub-folders
 included, and warns when a document is:
 
 | Code | The document is… |
@@ -58,7 +58,7 @@ Two moves are enough:
 1. **Add the file** to the folder of the track.
 2. **Start your :term[agent]{id=agent}** as usual.
 
-The agent starts with the quality check. It sees the new document, reads it and takes it in:
+The agent starts with the validator. It sees the new document, reads it and takes it in:
 
 - it **adds** sessions, with new numbers;
 - it keeps what you have studied intact;
@@ -85,7 +85,7 @@ numbers, and the agent shows you what changes in the plan.
 
 :::::checkpoint
 ::::mcq{#g4-c1}
-The quality check reports `F034` for `lecture3.pdf`. What happened?
+The validator reports `F034` for `lecture3.pdf`. What happened?
 
 - [x] `lecture3.pdf` changed since the track used it
 - [ ] `lecture3.pdf` is new

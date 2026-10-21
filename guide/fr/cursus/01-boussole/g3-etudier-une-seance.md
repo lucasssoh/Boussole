@@ -3,7 +3,7 @@ id: g3
 objectives:
   - Avancer dans une séance étape par étape, en suivant le Tracé.
   - Répondre du premier coup, avec les coups de pouce, et lire la correction expliquée.
-terms: [cursus]
+terms: [etape, trace, mode-guide, premier-coup, coup-de-pouce, derniere-verification, serie, revision-express]
 ---
 
 :::::warmup
@@ -12,7 +12,7 @@ terms: [cursus]
 
 ## Une étape à la fois {#ecrans}
 
-**« Un chapitre d'un bloc, ça décourage. »** Une séance avance donc par **étapes** :
+**« Un chapitre d'un bloc, ça décourage. »** Une séance avance donc par :term[étapes]{id=etape} :
 
 - l'objectif ;
 - une explication, un exemple ou une question par étape ;
@@ -20,7 +20,7 @@ terms: [cursus]
 
 **Suivant** et **Précédent**, ou les flèches du clavier, passent d'une étape à l'autre.
 
-**« Où j'en suis, et combien il en reste ? »** C'est le rôle du **Tracé**, à gauche : une zone
+**« Où j'en suis, et combien il en reste ? »** C'est le rôle du :term[Tracé]{id=trace}, à gauche : une zone
 par partie (échauffement, notions, point de contrôle, entraînement) et un rond par étape.
 
 | Rond | Sens |
@@ -33,8 +33,8 @@ par partie (échauffement, notions, point de contrôle, entraînement) et un ron
 Un clic sur un rond ouvert y mène.
 
 :::note
-**Mode guidé** : dans une leçon, Suivant attend ta réponse à la question affichée. La correction
-fait partie de la leçon.
+:term[Mode guidé]{id=mode-guide} : dans une leçon, Suivant attend ta réponse à la question
+affichée. La correction fait partie de la leçon.
 :::
 
 ::::mcq{#g3-a1}
@@ -58,20 +58,20 @@ avance question après question.
 
 ## Répondre et comprendre {#reponses}
 
-**« Je clique au hasard jusqu'à tomber juste. »** Pas ici : ta réponse compte **du premier
-coup**, même si tu reviens sur la séance un autre jour. Pour t'aider à bien répondre :
+**« Je clique au hasard jusqu'à tomber juste. »** Pas ici : ta réponse compte :term[du premier coup]{id=premier-coup},
+même si tu reviens sur la séance un autre jour. Pour t'aider à bien répondre :
 
-- **Coups de pouce** : avant de répondre, une aide, puis une autre, sans la réponse ;
-- **Dernière vérification** : quand plusieurs réponses sont justes, Boussole te demande de
+- :term[Coups de pouce]{id=coup-de-pouce} : avant de répondre, une aide, puis une autre, sans la réponse ;
+- :term[Dernière vérification]{id=derniere-verification} : quand plusieurs réponses sont justes, Boussole te demande de
   confirmer avant d'envoyer ;
 - **Correction expliquée** : juste après, la bonne réponse passe au vert, la tienne au rouge si
   elle était fausse, et un encadré **Pourquoi** explique.
 
 **« Je ne vois pas mes progrès. »** Chaque réponse rapporte de l'**expérience**, même fausse :
-essayer paie toujours. Ta **série** avance chaque jour où tu étudies.
+essayer paie toujours. Ta :term[série]{id=serie} avance chaque jour où tu étudies.
 
 :::note
-Les révisions express et les examens blancs sont chronométrés. Dans un examen blanc, la
+Les :term[révisions express]{id=revision-express} et les examens blancs sont chronométrés. Dans un examen blanc, la
 correction arrive à la fin, comme à un vrai examen.
 :::
 

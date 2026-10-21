@@ -3,7 +3,7 @@ id: g1
 objectives:
   - Dire quels problèmes Boussole résout, et comment.
   - Dire ce que fait ton agent, ce que fait Boussole et ce que tu fais.
-terms: [agent, skill, cursus, plan]
+terms: [parcours, etape, agent, skill, cursus, plan]
 ---
 
 **Trop de documents, pas de chemin ?** Boussole est fait pour ça.
@@ -20,8 +20,8 @@ Une boussole ne marche pas à ta place : elle t'indique le nord. Ici, c'est pare
 
 | Le problème | Ce que fait Boussole |
 |---|---|
-| « J'ai un tas de documents, pas un chemin. » | Il en fait un **parcours** de séances courtes. |
-| « Un chapitre d'un bloc, ça décourage. » | Chaque séance avance par **étapes** : une explication, puis une question. |
+| « J'ai un tas de documents, pas un chemin. » | Il en fait un :term[parcours]{id=parcours} de séances courtes. |
+| « Un chapitre d'un bloc, ça décourage. » | Chaque séance avance par :term[étapes]{id=etape} : une explication, puis une question. |
 | « Je ne sais pas si j'ai compris. » | Chaque réponse reçoit une **correction expliquée**, aussitôt. |
 | « Où est-ce que je m'étais arrêté ? » | L'accueil te propose de **reprendre** là où tu en étais. |
 
@@ -89,7 +89,7 @@ méthode. Boussole vérifie qu'il est bien écrit, te le présente et suit ta pr
 |---|---|
 | **Toi** | Tu ranges tes documents, dis comment tu apprends, **valides le plan** et étudies. |
 | **Ton agent** | Il lit les documents, propose le :term[plan]{id=plan}, écrit les séances et les vérifie. |
-| **Boussole** | Il guide ton agent, contrôle la qualité du parcours, te le présente, corrige tes réponses et suit ta progression. |
+| **Boussole** | Il guide ton agent, vérifie le parcours, te le présente, corrige tes réponses et suit ta progression. |
 
 Tout se passe sur ta machine, à côté de tes documents.
 
@@ -120,7 +120,7 @@ Qui valide le plan du parcours avant que les séances soient écrites ?
 - [ ] L'agent, tout seul
   > L'agent propose ; c'est toi qui décides.
 - [ ] Boussole
-  > Boussole contrôle la forme, pas le contenu.
+  > Boussole vérifie la forme, pas le contenu.
 
 :::hint
 Sur le schéma, une flèche en pointillés revient vers l'agent.

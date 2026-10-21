@@ -3,7 +3,7 @@ id: g1
 objectives:
   - Say which problems Boussole solves, and how.
   - Say what your agent does, what Boussole does and what you do.
-terms: [agent, skill, cursus, plan]
+terms: [track, step, agent, skill, cursus, plan]
 ---
 
 **Too many documents, no path?** That is what Boussole is for.
@@ -20,8 +20,8 @@ Boussole is French for compass. A compass does not walk for you: it shows you no
 
 | The problem | What Boussole does |
 |---|---|
-| "I have a pile of documents, not a path." | It turns them into a **track** of short sessions. |
-| "A whole chapter in one go is discouraging." | Each session moves in **steps**: an explanation, then a question. |
+| "I have a pile of documents, not a path." | It turns them into a :term[track]{id=track} of short sessions. |
+| "A whole chapter in one go is discouraging." | Each session moves in :term[steps]{id=step}: an explanation, then a question. |
 | "I don't know if I understood." | Every answer gets an **explained answer**, right away. |
 | "Where did I stop?" | The home page offers to **continue** where you left off. |
 
@@ -89,7 +89,7 @@ Boussole checks it is well written, presents it to you and follows your progress
 |---|---|
 | **You** | You gather your documents, say how you learn, **approve the plan** and study. |
 | **Your agent** | It reads the documents, proposes the :term[plan]{id=plan}, writes the sessions and checks them. |
-| **Boussole** | It guides your agent, checks the quality of the track, presents it to you, corrects your answers and follows your progress. |
+| **Boussole** | It guides your agent, checks the track, presents it to you, corrects your answers and follows your progress. |
 
 Everything happens on your machine, next to your documents.
 

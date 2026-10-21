@@ -72,7 +72,7 @@ The agent goes in three steps:
    example first? how long a session?
 2. **The plan for approval.** Chapters, sessions, durations, goals, quick reviews and a mock
    exam: that is the :term[plan]{id=plan}.
-3. **The sessions.** One at a time, each one through the :term[quality check]{id=validator}.
+3. **The sessions.** One at a time, each one checked by the :term[validator]{id=validator}.
 
 :::note
 Until you approve it, the plan stays **proposed**: no session is written.
@@ -100,7 +100,7 @@ To open the track afterwards, the command is [[4]].
 
 :::solution
 `proposed`, then `approved` when **you** approve it; `boussole open` opens the track. `boussole
-init` prepares a folder, `boussole validate` checks the quality.
+init` prepares a folder, `boussole validate` checks the track.
 :::
 ::::
 

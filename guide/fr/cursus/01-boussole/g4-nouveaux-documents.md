@@ -20,7 +20,7 @@ terms: [registre, validateur, agent]
 Le :term[suivi des documents]{id=registre} (`cursus/sources.yaml`) note ce que le parcours a
 fait de chaque document, avec son **empreinte** : un code qui change dès que le fichier change.
 
-Le :term[contrôle qualité]{id=validateur} compare ce suivi au dossier, sous-dossiers compris, et
+Le :term[validateur]{id=validateur} compare ce suivi au dossier, sous-dossiers compris, et
 prévient quand un document est :
 
 | Code | Le document est… |
@@ -59,7 +59,7 @@ Deux gestes suffisent :
 1. **Ajoute le fichier** dans le dossier du parcours.
 2. **Lance ton :term[agent]{id=agent}** comme d'habitude.
 
-L'agent commence par le contrôle qualité. Il voit le nouveau document, le lit et l'intègre :
+L'agent commence par le validateur. Il voit le nouveau document, le lit et l'intègre :
 
 - il **ajoute** des séances, avec de nouveaux numéros ;
 - il garde intact ce que tu as déjà étudié ;
@@ -86,7 +86,7 @@ suite, avec de nouveaux numéros, et l'agent te montre ce qui change dans le pla
 
 :::::checkpoint
 ::::mcq{#g4-c1}
-Le contrôle qualité signale `F034` pour `cours3.pdf`. Que s'est-il passé ?
+Le validateur signale `F034` pour `cours3.pdf`. Que s'est-il passé ?
 
 - [x] `cours3.pdf` a changé depuis que le parcours l'a utilisé
 - [ ] `cours3.pdf` est nouveau
