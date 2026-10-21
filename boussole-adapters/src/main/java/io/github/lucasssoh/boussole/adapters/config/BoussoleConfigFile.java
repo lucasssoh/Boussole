@@ -50,7 +50,8 @@ public final class BoussoleConfigFile {
                 map.get("subjects") instanceof List<?> folders
                         ? folders.stream().map(String::valueOf).map(this::expand).toList()
                         : List.of(),
-                Boolean.TRUE.equals(map.get("free_navigation")));
+                Boolean.TRUE.equals(map.get("free_navigation")),
+                Optional.ofNullable(map.get("tracks_dir")).map(String::valueOf).map(this::expand));
     }
 
     /** Adds the folder to the subjects, unless it is there already. Says whether it was added. */

@@ -75,6 +75,11 @@ package "cli.init" {
     profile : Path
     +call() : Integer
   }
+  class NewCommand <<@Command new>> {
+    name, goal, lang : String
+    in : Path
+    +call() : Integer
+  }
   class SubjectScaffold
   class AgentKitInstaller
   class AgentKit <<resources>>
@@ -97,6 +102,10 @@ BoussoleCommand --> OpenCommand : subcommand
 BoussoleCommand --> ServeCommand : subcommand
 BoussoleCommand --> StopCommand : subcommand
 BoussoleCommand --> InitCommand : subcommand
+BoussoleCommand --> NewCommand : subcommand
+NewCommand --> SubjectScaffold : folder, subject files, goal
+NewCommand --> AgentKitInstaller : agent kit
+NewCommand ..> BoussoleConfigFile : tracks_dir, adds the track
 BoussoleCommand --> ValidateCommand : subcommand
 BoussoleCommand --> SourcesCommand : subcommand
 BoussoleCommand --> ManifestVersion

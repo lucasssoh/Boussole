@@ -53,7 +53,7 @@ public final class InitCommand implements Callable<Integer> {
         SubjectFolder subject = new SubjectFolder(folder);
         SubjectScaffold scaffold = new SubjectScaffold(subject);
         InitReport report = new InitReport();
-        scaffold.create(new SubjectScaffold.Settings(id, name, lang, sources), report);
+        scaffold.create(new SubjectScaffold.Settings(id, name, lang, sources, ""), report);
         scaffold.copyProfile(profile, report);
         new AgentKitInstaller(subject).install(scaffold.sources(sources), Launcher.current().validateCommand(), report);
 

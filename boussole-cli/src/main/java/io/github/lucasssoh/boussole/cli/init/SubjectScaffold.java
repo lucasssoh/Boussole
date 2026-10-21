@@ -21,8 +21,8 @@ final class SubjectScaffold {
         this.folder = folder;
     }
 
-    /** Values given on the command line; empty ones are guessed from the folder. */
-    record Settings(String id, String name, String lang, String sources) {
+    /** Values given on the command line; empty ones are guessed from the folder, or left out (description). */
+    record Settings(String id, String name, String lang, String sources, String description) {
     }
 
     void create(Settings given, InitReport report) {
@@ -69,7 +69,8 @@ final class SubjectScaffold {
                 given.id().isEmpty() ? Slug.of(folderName) : given.id(),
                 given.name().isEmpty() ? folderName : given.name(),
                 given.lang(),
-                sources(given.sources()));
+                sources(given.sources()),
+                given.description());
     }
 
     private static String subjectYaml(Settings settings) {
@@ -77,7 +78,8 @@ final class SubjectScaffold {
                 + "id: " + settings.id() + "\n"
                 + "name: " + quoted(settings.name()) + "\n"
                 + "lang: " + settings.lang() + "\n"
-                + "sources: " + quoted(settings.sources()) + "\n";
+                + "sources: " + quoted(settings.sources()) + "\n"
+                + (settings.description().isBlank() ? "" : "description: " + quoted(settings.description().strip()) + "\n");
     }
 
     private static String quoted(String text) {

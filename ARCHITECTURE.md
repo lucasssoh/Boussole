@@ -353,6 +353,7 @@ by itself.
 language: fr                   # interface: en | fr
 port: 7420
 free_navigation: false         # true: a lesson lets you go on without answering
+tracks_dir: ~/Boussole          # where boussole new creates a track (default ~/Boussole)
 subjects:
   - ~/courses/mim-m1/RESEAUX
   - ~/courses/mim-m1/OC

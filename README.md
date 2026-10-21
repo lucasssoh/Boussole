@@ -20,6 +20,9 @@ on your machine.
 4. `boussole open <folder>` and study in your browser: quizzes and exercises are checked as you
    answer, hints come one at a time, videos and your PDFs open beside the text.
 
+No documents? `boussole new "Python" --goal "automate my work"` creates an empty track; your
+agent asks what you want to learn, finds open sources, cites each one, and proposes a plan.
+
 ```mermaid
 flowchart LR
   D["Your documents"] --> A["Your AI agent"]
