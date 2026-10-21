@@ -8,6 +8,7 @@ minor release may break things and says so.
 
 ### Added
 - **To learn more:** Boussole can ship more than its guide: the home page lists the other built-in tracks under *To learn more*.
+- **Writing a track by hand:** a built-in track, in English and French, teaches the course format step by step for those who write a track without an agent: the folder, the plan, sessions, directives, questions, lexicon and sources, reviews, and how to read the validator; with one example built up across the sessions.
 - **Tracks from nothing:** the `cursus-discover` playbook takes over a track started with `boussole new`: it asks what you want to be able to do, finds open sources (official documentation, university courses, open textbooks), downloads those whose licence allows it and sums up the others in source notes, records each with its address and licence, shows you the list, then makes the plan; every session cites its sources with links that open beside the text.
 - **`boussole new <name> [--goal …]`:** starts a track without documents of your own: its folder (in `tracks_dir` of `config.yaml`, `~/Boussole` by default) is prepared for an agent and listed in Boussole, with your goal as its description.
 - **Sourced tracks:** an entry of `cursus/sources.yaml` can say where its document comes from: `url`, `title`, `licence`, `retrieved`. A document from the web without its licence is reported (`F039`); a page that may not be copied is summed up in a source note, `web/<name>.md`, with its address.

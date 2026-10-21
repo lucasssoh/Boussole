@@ -1,0 +1,119 @@
+- id: track
+  term: Parcours
+  definition: >
+    Un dossier de fichiers texte que Boussole présente comme une suite de séances courtes. Le
+    format l'appelle *subject*, d'où le nom de son fichier `subject.yaml`.
+  see: [syllabus, session]
+
+- id: syllabus
+  term: Plan
+  aliases: [syllabus, syllabus.yaml]
+  definition: >
+    Le fichier `cursus/syllabus.yaml` : les chapitres et les séances du parcours, dans l'ordre,
+    avec leur durée et leur objectif.
+  see: [chapter, session]
+
+- id: chapter
+  term: Chapitre
+  aliases: [chapitres]
+  definition: >
+    Un groupe de séances du plan. Ses séances sont rangées dans un même dossier de `cursus/`.
+  see: [syllabus]
+
+- id: session
+  term: Séance
+  aliases: [séances]
+  definition: >
+    Un fichier Markdown du parcours : des notions, chacune suivie d'une question. Son titre, sa
+    durée et son objectif viennent du plan.
+  see: [notion, front-matter]
+
+- id: identifier
+  term: Identifiant
+  aliases: [identifiants, ID]
+  definition: >
+    Un nom court en minuscules, chiffres et tirets, comme `premiers-pas` ou `s1-a1`. La
+    progression de l'apprenant y est attachée : on ne le change plus une fois le parcours étudié.
+
+- id: front-matter
+  term: En-tête
+  aliases: [front matter]
+  definition: >
+    Le bloc YAML entre deux lignes `---`, tout en haut d'une séance : son identifiant, ses
+    objectifs, ses termes, ses prérequis et ses sources.
+  see: [session]
+
+- id: notion
+  term: Notion
+  aliases: [notions]
+  definition: >
+    Une partie de séance qui commence par un titre `## Titre {#id}` : une explication, un exemple
+    résolu, puis au moins une question.
+  see: [worked-example]
+
+- id: directive
+  term: Directive
+  aliases: [directives]
+  definition: >
+    Un morceau de texte écrit avec des deux-points, comme `:::example`, `::video` ou `:term`,
+    dont Boussole fait un encadré, une vidéo, une question…
+
+- id: worked-example
+  term: Exemple résolu
+  aliases: [exemples résolus]
+  definition: >
+    Un bloc `:::example` : un cas traité pas à pas, solution comprise et visible. Une notion en a
+    un seul ; les autres cas deviennent des questions.
+  see: [notion]
+
+- id: nudge
+  term: Coup de pouce
+  aliases: [coups de pouce]
+  definition: >
+    Une aide écrite dans un bloc `:::hint`. L'apprenant la dévoile avant de répondre, une à la
+    fois ; elle ne donne jamais la réponse.
+
+- id: lexicon
+  term: Lexique
+  aliases: [lexique.yaml]
+  definition: >
+    Le fichier `cursus/lexique.yaml` : les termes du parcours et leur définition, affichée au
+    survol partout où une séance les cite avec `:term`.
+
+- id: document-tracking
+  term: Suivi des documents
+  aliases: [sources.yaml]
+  definition: >
+    Le fichier `cursus/sources.yaml` : ce que le parcours a fait de chaque document, avec son
+    empreinte, pour repérer ceux qui arrivent, changent ou disparaissent.
+
+- id: quick-review
+  term: Révision express
+  aliases: [révisions express]
+  definition: >
+    Une séance chronométrée qui ne pose que des questions, souvent reprises des leçons, avec la
+    correction juste après chaque réponse.
+  see: [mock-exam]
+
+- id: mock-exam
+  term: Examen blanc
+  aliases: [examens blancs]
+  definition: >
+    Une séance chronométrée sans coups de pouce, corrigée à la fin, comme un vrai examen.
+  see: [quick-review]
+
+- id: validator
+  term: Validateur
+  aliases: [boussole validate]
+  definition: >
+    La commande `boussole validate` : elle relit tout le parcours et dit, fichier par fichier et
+    ligne par ligne, quoi corriger.
+  see: [diagnostic]
+
+- id: diagnostic
+  term: Diagnostic
+  aliases: [diagnostics]
+  definition: >
+    Une ligne du validateur : le fichier, la ligne, la gravité, un code et un message. Une erreur
+    empêche d'ouvrir le parcours, un avertissement non.
+  see: [validator]

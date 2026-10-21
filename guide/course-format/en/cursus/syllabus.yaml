@@ -1,0 +1,62 @@
+status: approved
+chapters:
+  - id: format
+    title: The track format
+    dir: 01-format
+    sessions:
+      - id: f1
+        title: The folder of a track
+        duration: 15
+        goal: Create the smallest valid track and check it with the validator.
+        file: f1-the-folder.md
+      - id: f2
+        title: "The plan: syllabus.yaml"
+        duration: 15
+        goal: Write the plan of a track, with its chapters, its sessions, their durations and their goals.
+        file: f2-the-plan.md
+      - id: f3
+        title: The anatomy of a session
+        duration: 15
+        goal: Write the front matter of a session and put its body in the right order.
+        file: f3-anatomy-of-a-session.md
+      - id: f4
+        title: Directive syntax
+        duration: 15
+        goal: Write a directive and its attributes, and nest blocks with the right number of colons.
+        file: f4-directive-syntax.md
+      - id: f5
+        title: "Explaining: content directives"
+        duration: 20
+        goal: Pick the right directive for an example, a reminder, a document, a video, a link or a diagram.
+        file: f5-content-directives.md
+      - id: f6
+        title: "Asking a question: MCQs and exercises"
+        duration: 15
+        goal: Write an MCQ and an exercise, with nudges, feedback and a solution.
+        file: f6-mcqs-and-exercises.md
+      - id: f7
+        title: The other exercise types
+        duration: 15
+        goal: Write a fill-in-the-blanks, an ordering, a matching and a free-answer exercise.
+        file: f7-other-exercises.md
+      - id: f8
+        title: The lexicon and document tracking
+        duration: 15
+        goal: Write the lexicon of a track and keep track of its documents.
+        file: f8-lexicon-and-documents.md
+      - id: f9
+        title: Quick reviews and mock exams
+        duration: 15
+        goal: Write a timed session whose questions fit the time allowed.
+        file: f9-reviews-and-exams.md
+      - id: f10
+        title: Validate and fix
+        duration: 20
+        goal: Read a diagnostic of the validator and fix the track until it says "no problem".
+        file: f10-validate-and-fix.md
+      - id: r1
+        title: Quick review — the format in 10 minutes
+        kind: review
+        duration: 10
+        goal: Recall the essentials of the track format without help.
+        file: r1-review.md

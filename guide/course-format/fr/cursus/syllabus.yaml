@@ -1,0 +1,62 @@
+status: approved
+chapters:
+  - id: format
+    title: Le format des parcours
+    dir: 01-format
+    sessions:
+      - id: f1
+        title: Le dossier d'un parcours
+        duration: 15
+        goal: Créer le plus petit parcours valide et le vérifier avec le validateur.
+        file: f1-le-dossier.md
+      - id: f2
+        title: "Le plan : syllabus.yaml"
+        duration: 15
+        goal: Écrire le plan d'un parcours, avec ses chapitres, ses séances, leurs durées et leurs objectifs.
+        file: f2-le-plan.md
+      - id: f3
+        title: L'anatomie d'une séance
+        duration: 15
+        goal: Écrire l'en-tête d'une séance et ranger son corps dans le bon ordre.
+        file: f3-anatomie-d-une-seance.md
+      - id: f4
+        title: La syntaxe des directives
+        duration: 15
+        goal: Écrire une directive, ses attributs, et imbriquer des blocs sans se tromper de deux-points.
+        file: f4-syntaxe-des-directives.md
+      - id: f5
+        title: "Expliquer : les directives de contenu"
+        duration: 20
+        goal: Choisir la bonne directive pour un exemple, un rappel, un document, une vidéo, un lien ou un schéma.
+        file: f5-directives-de-contenu.md
+      - id: f6
+        title: "Poser une question : QCM et exercices"
+        duration: 15
+        goal: Écrire un QCM et un exercice, avec coups de pouce, retours et solution.
+        file: f6-qcm-et-exercices.md
+      - id: f7
+        title: Les autres types d'exercices
+        duration: 15
+        goal: Écrire un texte à trous, un exercice à remettre dans l'ordre, à associer ou à réponse libre.
+        file: f7-autres-exercices.md
+      - id: f8
+        title: Le lexique et le suivi des documents
+        duration: 15
+        goal: Écrire le lexique d'un parcours et tenir le suivi de ses documents.
+        file: f8-lexique-et-documents.md
+      - id: f9
+        title: Révisions express et examens blancs
+        duration: 15
+        goal: Écrire une séance chronométrée dont les questions tiennent dans le temps accordé.
+        file: f9-revisions-et-examens.md
+      - id: f10
+        title: Valider et corriger
+        duration: 20
+        goal: Lire un diagnostic du validateur et corriger le parcours jusqu'à « no problem ».
+        file: f10-valider-et-corriger.md
+      - id: r1
+        title: Révision express — le format en 10 minutes
+        kind: review
+        duration: 10
+        goal: Retrouver sans aide l'essentiel du format des parcours.
+        file: r1-revision.md

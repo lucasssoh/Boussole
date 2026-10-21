@@ -1,0 +1,119 @@
+- id: track
+  term: Track
+  aliases: [tracks]
+  definition: >
+    A folder of text files that Boussole shows as a series of short sessions. The format calls
+    it a *subject*, hence the name of its file, `subject.yaml`.
+  see: [syllabus, session]
+
+- id: syllabus
+  term: Plan
+  aliases: [syllabus, syllabus.yaml]
+  definition: >
+    The file `cursus/syllabus.yaml`: the chapters and sessions of the track, in order, with
+    their duration and goal.
+  see: [chapter, session]
+
+- id: chapter
+  term: Chapter
+  aliases: [chapters]
+  definition: >
+    A group of sessions of the plan. Its sessions sit in one folder of `cursus/`.
+  see: [syllabus]
+
+- id: session
+  term: Session
+  aliases: [sessions]
+  definition: >
+    A Markdown file of the track: notions, each followed by a question. Its title, duration and
+    goal come from the plan.
+  see: [notion, front-matter]
+
+- id: identifier
+  term: Identifier
+  aliases: [identifiers, ID, IDs]
+  definition: >
+    A short name in lowercase letters, digits and hyphens, such as `first-steps` or `s1-a1`. The
+    learner's progress is attached to it: once the track is studied, it never changes.
+
+- id: front-matter
+  term: Front matter
+  definition: >
+    The YAML block between two `---` lines at the very top of a session: its identifier,
+    objectives, terms, prerequisites and sources.
+  see: [session]
+
+- id: notion
+  term: Notion
+  aliases: [notions]
+  definition: >
+    A part of a session that starts with a heading `## Title {#id}`: an explanation, a worked
+    example, then at least one question.
+  see: [worked-example]
+
+- id: directive
+  term: Directive
+  aliases: [directives]
+  definition: >
+    A piece of text written with colons, such as `:::example`, `::video` or `:term`, that
+    Boussole turns into a callout, a video, a question…
+
+- id: worked-example
+  term: Worked example
+  aliases: [worked examples]
+  definition: >
+    An `:::example` block: a case solved step by step, solution included and visible. A notion
+    has only one; further cases become questions.
+  see: [notion]
+
+- id: nudge
+  term: Nudge
+  aliases: [nudges]
+  definition: >
+    A help written in a `:::hint` block. The learner reveals it before answering, one at a
+    time; it never gives the answer away.
+
+- id: lexicon
+  term: Lexicon
+  aliases: [lexique.yaml]
+  definition: >
+    The file `cursus/lexique.yaml`: the terms of the track and their definition, shown on hover
+    wherever a session cites them with `:term`.
+
+- id: document-tracking
+  term: Document tracking
+  aliases: [sources.yaml]
+  definition: >
+    The file `cursus/sources.yaml`: what the track did with each document, with its fingerprint,
+    to spot the ones that arrive, change or disappear.
+
+- id: quick-review
+  term: Quick review
+  aliases: [quick reviews]
+  definition: >
+    A timed session that only asks questions, often taken from the lessons, with the correction
+    right after each answer.
+  see: [mock-exam]
+
+- id: mock-exam
+  term: Mock exam
+  aliases: [mock exams]
+  definition: >
+    A timed session without nudges, corrected at the end, like a real exam.
+  see: [quick-review]
+
+- id: validator
+  term: Validator
+  aliases: [boussole validate]
+  definition: >
+    The command `boussole validate`: it reads the whole track and says, file by file and line by
+    line, what to fix.
+  see: [diagnostic]
+
+- id: diagnostic
+  term: Diagnostic
+  aliases: [diagnostics]
+  definition: >
+    A line of the validator: the file, the line, the severity, a code and a message. An error
+    keeps the track from opening, a warning does not.
+  see: [validator]
