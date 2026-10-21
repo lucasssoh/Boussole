@@ -1,0 +1,91 @@
+- id: copyright
+  term: Copyright
+  aliases: [author's rights, droit d'auteur]
+  definition: >
+    The rights an author holds on their work, from the moment it is written: deciding who may
+    copy, share or adapt it. It protects the form (text, slides, figures), not the ideas.
+
+- id: track
+  term: Track
+  aliases: [tracks]
+  definition: >
+    What Boussole makes of a folder of documents: short sessions, in order. A track is a folder
+    on your machine, next to your documents.
+
+- id: licence
+  term: Licence
+  aliases: [licences, license]
+  definition: >
+    The author's answer, given in advance, to "may I copy, share or adapt this?". Without one,
+    the answer is no: all rights are reserved.
+
+- id: all-rights-reserved
+  term: All rights reserved
+  aliases: [©]
+  definition: >
+    No permission given in advance: you may read the work and use it for yourself, but copying,
+    sharing or adapting it needs the author's consent. A work with no licence at all is in the
+    same case.
+
+- id: creative-commons
+  term: Creative Commons
+  aliases: [CC]
+  definition: >
+    A family of licences that say yes in advance, on conditions: BY (name the author), SA (share
+    alike), NC (no commercial use), ND (no modified versions).
+
+- id: public-domain
+  term: Public domain
+  aliases: [CC0]
+  definition: >
+    Works no one holds rights on any more: their protection has expired, or their author gave
+    them up, for instance with CC0. Anyone may copy, adapt and share them.
+
+- id: quotation
+  term: Quotation
+  aliases: [quote, quotations]
+  definition: >
+    A short passage given in the author's exact words, in quotation marks, with its source. A
+    whole page is not a quotation but a copy.
+
+- id: written-by
+  term: Written by
+  aliases: [written_by]
+  definition: >
+    The lines at the top of a session that say who wrote it, then who revised or translated it:
+    an AI model by its exact ID, or a person, with a date. You see them on the first step.
+
+- id: contributor
+  term: Contributor
+  aliases: [contributors]
+  definition: >
+    Someone who helped make a track without signing it, named with their role on the track's
+    page: "lecture notes the track is built from", "exercises of chapter 3"…
+
+- id: document-tracking
+  term: Document tracking
+  aliases: [sources.yaml]
+  definition: >
+    The `cursus/sources.yaml` file: what the track did with each document, and for a document
+    from the web its address, title, licence and the day it was retrieved.
+
+- id: source-note
+  term: Source note
+  aliases: [source notes]
+  definition: >
+    A file `web/<name>.md` of the sources folder: the agent's own summary of a web page, with its
+    address and a few short quotations, in place of a copy the licence does not allow.
+
+- id: validator
+  term: Validator
+  aliases: [boussole validate]
+  definition: >
+    The `boussole validate` command: it checks that the track is well written and says exactly
+    what to fix, including a missing licence or a session that does not say who wrote it.
+
+- id: agent
+  term: AI agent
+  aliases: [agent]
+  definition: >
+    An assistant that works in your files, such as Claude Code, Codex or Gemini CLI. It reads
+    your documents and writes the track.

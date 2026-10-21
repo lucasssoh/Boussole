@@ -1,0 +1,9 @@
+format: 1
+id: boussole-credits
+name: Authors, rights and credits
+lang: en
+description: "Respect the work of others when you build, use and share a track: who made what, licences, citing, and credits in Boussole."
+authors:
+  - name: Boussole
+    organisation: true
+    url: https://github.com/lucasssoh/boussole

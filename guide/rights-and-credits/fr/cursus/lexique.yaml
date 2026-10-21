@@ -1,0 +1,94 @@
+- id: copyright
+  term: Droit d'auteur
+  aliases: [droits d'auteur, copyright]
+  definition: >
+    Les droits qu'un auteur a sur son œuvre dès qu'elle est écrite : décider qui peut la copier,
+    la partager ou l'adapter. Il protège la forme (texte, transparents, figures), pas les idées.
+
+- id: track
+  term: Parcours
+  definition: >
+    Ce que Boussole fait d'un dossier de documents : des séances courtes, dans l'ordre. Un
+    parcours est un dossier sur ta machine, à côté de tes documents.
+
+- id: licence
+  term: Licence
+  aliases: [licences]
+  definition: >
+    La réponse donnée d'avance par l'auteur à « puis-je copier, partager ou adapter ceci ? ».
+    Sans licence, la réponse est non : tous les droits sont réservés.
+
+- id: all-rights-reserved
+  term: Tous droits réservés
+  aliases: [©]
+  definition: >
+    Aucune permission donnée d'avance : tu peux lire l'œuvre et t'en servir pour toi, mais la
+    copier, la partager ou l'adapter demande l'accord de l'auteur. Une œuvre sans aucune licence
+    est dans le même cas.
+
+- id: creative-commons
+  term: Creative Commons
+  aliases: [CC]
+  definition: >
+    Une famille de licences qui disent oui d'avance, à conditions : BY (citer l'auteur), SA
+    (partager à l'identique), NC (pas d'usage commercial), ND (pas de version modifiée).
+
+- id: public-domain
+  term: Domaine public
+  aliases: [CC0]
+  definition: >
+    Les œuvres sur lesquelles plus personne n'a de droits : leur protection a expiré, ou leur
+    auteur y a renoncé, par exemple avec CC0. Tout le monde peut les copier, les adapter et les
+    partager.
+
+- id: quotation
+  term: Citation
+  aliases: [citations]
+  definition: >
+    Un court passage donné avec les mots exacts de l'auteur, entre guillemets, avec sa source.
+    Une page entière n'est pas une citation mais une copie.
+
+- id: written-by
+  term: Écrit par
+  aliases: [written_by]
+  definition: >
+    Les lignes en tête d'une séance qui disent qui l'a écrite, puis qui l'a révisée ou traduite :
+    un modèle d'IA par son identifiant exact, ou une personne, avec une date. Tu les vois à la
+    première étape.
+
+- id: contributor
+  term: Contributeur
+  aliases: [contributeurs, contributrice, contributrices]
+  definition: >
+    Une personne qui a aidé à faire un parcours sans le signer, nommée avec son rôle sur la page
+    du parcours : « notes de cours dont le parcours est tiré », « exercices du chapitre 3 »…
+
+- id: document-tracking
+  term: Suivi des documents
+  aliases: [sources.yaml]
+  definition: >
+    Le fichier `cursus/sources.yaml` : ce que le parcours a fait de chaque document, et pour un
+    document du web son adresse, son titre, sa licence et le jour où il a été récupéré.
+
+- id: source-note
+  term: Note de source
+  aliases: [notes de source]
+  definition: >
+    Un fichier `web/<nom>.md` du dossier des sources : le résumé que l'agent fait d'une page web,
+    avec son adresse et quelques courtes citations, à la place d'une copie que la licence ne
+    permet pas.
+
+- id: validator
+  term: Validateur
+  aliases: [boussole validate]
+  definition: >
+    La commande `boussole validate` : elle vérifie que le parcours est bien écrit et dit
+    exactement quoi corriger, y compris une licence manquante ou une séance qui ne dit pas qui
+    l'a écrite.
+
+- id: agent
+  term: Agent IA
+  aliases: [agent]
+  definition: >
+    Un assistant qui travaille dans tes fichiers, comme Claude Code, Codex ou Gemini CLI. C'est
+    lui qui lit tes documents et écrit le parcours.

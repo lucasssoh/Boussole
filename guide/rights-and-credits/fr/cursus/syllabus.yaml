@@ -1,0 +1,37 @@
+status: approved
+chapters:
+  - id: credits
+    title: Respecter le travail des autres
+    dir: 01-credits
+    sessions:
+      - id: c1
+        title: Qui a fait quoi
+        duration: 15
+        goal: Dire à qui appartient un document de cours, et ce qui change quand tu le partages.
+        file: c1-qui-a-fait-quoi.md
+      - id: c2
+        title: Lire une licence
+        duration: 15
+        goal: Dire ce qu'un document permet, de « tous droits réservés » à Creative Commons et au domaine public.
+        file: c2-lire-une-licence.md
+      - id: c3
+        title: Citer ses sources
+        duration: 15
+        goal: Résumer avec tes mots, citer court avec la source, et dire pourquoi un parcours cite.
+        file: c3-citer-ses-sources.md
+      - id: c4
+        title: Les crédits dans Boussole
+        duration: 15
+        goal: Dire qui a écrit une séance, qui fait le parcours, et d'où vient chaque source.
+        file: c4-credits-dans-boussole.md
+      - id: c5
+        title: Partager un parcours
+        duration: 15
+        goal: Décider de ce que tu peux partager, demander à l'auteur, et rester honnête sur qui a écrit quoi.
+        file: c5-partager-un-parcours.md
+      - id: r1
+        title: Révision express — droits et crédits en 5 minutes
+        kind: review
+        duration: 5
+        goal: Retrouver sans aide qui décide, ce qu'une licence permet et comment créditer.
+        file: r1-revision.md

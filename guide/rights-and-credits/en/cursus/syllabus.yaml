@@ -1,0 +1,37 @@
+status: approved
+chapters:
+  - id: credits
+    title: Respecting the work of others
+    dir: 01-credits
+    sessions:
+      - id: c1
+        title: Who made what
+        duration: 15
+        goal: Say who a course document belongs to, and what changes when you share it.
+        file: c1-who-made-what.md
+      - id: c2
+        title: Reading a licence
+        duration: 15
+        goal: Say what a document allows, from all rights reserved to Creative Commons and the public domain.
+        file: c2-reading-a-licence.md
+      - id: c3
+        title: Citing and quoting
+        duration: 15
+        goal: Sum up in your own words, quote briefly with the source, and say why a track cites.
+        file: c3-citing-and-quoting.md
+      - id: c4
+        title: Credits in Boussole
+        duration: 15
+        goal: Say who wrote a session, who makes the track, and where each source comes from.
+        file: c4-credits-in-boussole.md
+      - id: c5
+        title: Sharing a track
+        duration: 15
+        goal: Decide what you may share, ask the author, and stay honest about who wrote what.
+        file: c5-sharing-a-track.md
+      - id: r1
+        title: Quick review — rights and credits in 5 minutes
+        kind: review
+        duration: 5
+        goal: Recall without help who decides, what a licence allows and how to give credit.
+        file: r1-review.md

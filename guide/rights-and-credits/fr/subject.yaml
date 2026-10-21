@@ -1,0 +1,9 @@
+format: 1
+id: boussole-credits
+name: Auteurs, droits et crédits
+lang: fr
+description: "Respecter le travail des autres quand tu construis, utilises et partages un parcours : qui a fait quoi, licences, citations, et crédits dans Boussole."
+authors:
+  - name: Boussole
+    organisation: true
+    url: https://github.com/lucasssoh/boussole
