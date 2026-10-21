@@ -1272,6 +1272,45 @@ a.session-card:active {
 }
 
 .side-panel iframe.video,
+.side-panel iframe.web {
+  flex: 1;
+  background: #ffffff;
+}
+
+/* A web page that refuses frames: what it is, and the way to open it. */
+.panel-card {
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  margin: 2rem 1.25rem;
+  padding: 1.5rem;
+  border: 3px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--muted);
+  text-align: center;
+}
+
+.panel-card strong {
+  color: var(--text);
+  font-size: 1.1rem;
+}
+
+.panel-card .icon {
+  color: var(--subject);
+}
+
+.panel-host {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+
+.media-card .web-picture {
+  display: grid;
+  place-items: center;
+  color: var(--subject);
+}
+
 .side-panel video.video {
   flex: 0 0 auto;
   aspect-ratio: 16 / 9;

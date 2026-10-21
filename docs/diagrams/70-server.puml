@@ -61,6 +61,9 @@ package "block" {
     +{static} place(GraphBlock) : Map<String, Point>
   }
 }
+package "reference" {
+  class ReferenceController <<GET /api/references/preview>>
+}
 package "api" {
   class ServerController <<GET /api/server, POST stop>>
   class ApiExceptionHandler <<@RestControllerAdvice>>
@@ -81,6 +84,7 @@ SessionController --> core
 ExerciseController --> core
 SubjectFileController --> core
 StatsController --> core
+ReferenceController --> core : PreviewWebPage
 CourseController ..> ResumeView : session to resume
 SessionController ..> SessionView
 SessionView *-- PartView : parts

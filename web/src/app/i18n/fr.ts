@@ -66,6 +66,7 @@ export const FR: Translations = {
     tip: 'Astuce',
     warning: 'Attention',
     watch: 'Regarder',
+    visit: 'Consulter',
     open: 'Ouvrir',
     page: 'p. {{page}}',
     missingRef: "L'exercice {{id}} est introuvable.",
@@ -116,5 +117,12 @@ export const FR: Translations = {
     partly: 'en partie réussi',
     not_yet: 'pas encore réussi',
   },
-  panel: { close: 'Fermer', newTab: 'Ouvrir dans un onglet' },
+  panel: {
+    close: 'Fermer',
+    newTab: 'Ouvrir dans un onglet',
+    opening: 'Ouverture du site…',
+    openSite: 'Ouvrir le site',
+    webElsewhere: 'Ce site ne se laisse pas afficher ici : il s’ouvre dans un onglet, à côté.',
+    webUnreachable: 'Ce site ne répond pas pour l’instant. Tu peux essayer de l’ouvrir dans un onglet.',
+  },
 };

@@ -16,6 +16,7 @@ import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseHint;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseRefBlock;
 import io.github.lucasssoh.boussole.format.model.block.GraphBlock;
+import io.github.lucasssoh.boussole.format.model.block.LinkBlock;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseType;
 import io.github.lucasssoh.boussole.format.model.block.McqBlock;
 import io.github.lucasssoh.boussole.format.model.block.McqChoice;
@@ -77,6 +78,7 @@ public final class BlockViewMapper {
                     video.start().map(Duration::toSeconds).orElse(null), video.end().map(Duration::toSeconds).orElse(null));
             case PdfBlock pdf -> new BlockView.Pdf(pdf.label(), SourcePaths.of(sourcesDir, pdf.source().file()),
                     pdf.source().page().isPresent() ? pdf.source().page().getAsInt() : null);
+            case LinkBlock link -> new BlockView.Link(link.label(), link.url());
             case GraphBlock graph -> graph(graph);
             case McqBlock mcq -> mcq(mcq, false);
             case ExerciseBlock exercise -> exercise(exercise, false);

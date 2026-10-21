@@ -7,6 +7,7 @@ minor release may break things and says so.
 ## Unreleased
 
 ### Added
+- **Web references:** `::link[…]{url=…}`, or `:link[…]{url=…}` in a sentence, opens a web page the track cites beside the text: in place when the site allows it, else a card with its title and a button to open it in a tab. Boussole looks at a page only when you open it, never at your own machine or network.
 - **Videos from your own files:** `::video[…]{src=…}` plays a video of the sources folder, such as a lecture recording, beside the text, from `start` to `end`, like a YouTube video. The validator checks the file exists, warns about formats browsers do not play (`F038`), and the document tracking follows videos too. The `video-find` playbook looks at the learner's recordings before YouTube.
 - **Contributing:** `AGENTS.md` tells people and agents changing Boussole what each kind of change touches (code, format, diagrams, playbooks, guide, changelog), and `DocumentationSyncTest` fails the build when the docs drift from the code.
 - **Course format:** options of a choice gap and right-hand sides of a match show in drop-down lists, which cannot draw maths: write them in plain text with Unicode symbols (≤, x₁), not `$…$`.

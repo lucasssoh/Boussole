@@ -64,6 +64,7 @@ export const EN = {
     tip: 'Tip',
     warning: 'Watch out',
     watch: 'Watch',
+    visit: 'Visit',
     open: 'Open',
     page: 'p. {{page}}',
     missingRef: 'Exercise {{id}} cannot be found.',
@@ -114,7 +115,14 @@ export const EN = {
     partly: 'partly got it',
     not_yet: 'not yet',
   },
-  panel: { close: 'Close', newTab: 'Open in a new tab' },
+  panel: {
+    close: 'Close',
+    newTab: 'Open in a new tab',
+    opening: 'Opening the site…',
+    openSite: 'Open the site',
+    webElsewhere: 'This site does not let itself be shown here: it opens in a tab, next to Boussole.',
+    webUnreachable: 'This site does not answer right now. You can try opening it in a tab.',
+  },
 };
 
 export type Translations = typeof EN;

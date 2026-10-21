@@ -2,8 +2,9 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { BoussoleApi } from '../core/boussole-api';
 import { Course, CourseSummary, LexiconTerm, Session } from '../core/api';
 
-/** What opens beside the text: a YouTube video, a video file of the sources, or a document. */
+/** What opens beside the text: a YouTube video, a video file of the sources, a document or a web page. */
 export type SidePanel =
+  | { kind: 'web'; label: string; url: string }
   | { kind: 'video'; label: string; youtubeId: string; start: number | null; end: number | null }
   | { kind: 'localVideo'; label: string; path: string; start: number | null; end: number | null }
   | { kind: 'pdf'; label: string; path: string; page: number | null };

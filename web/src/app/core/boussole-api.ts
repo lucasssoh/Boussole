@@ -1,17 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import {
-  AttemptRequest,
-  AttemptResult,
-  Course,
-  CourseSummary,
-  RevealedHint,
-  RevealedSolution,
-  ServerInfo,
-  Session,
-  StudyStats,
-} from './api';
+import { AttemptRequest, AttemptResult, Course, CourseSummary, PagePreview, RevealedHint, RevealedSolution, ServerInfo, Session, StudyStats } from './api';
 
 /** The calls to the local server. Answers only come with an attempt or a solution asked for. */
 @Injectable({ providedIn: 'root' })
@@ -54,6 +44,11 @@ export class BoussoleApi {
 
   solution(subject: string, exercise: string): Promise<RevealedSolution> {
     return this.get(`${exercisePath(subject, exercise)}/solution`);
+  }
+
+  /** Whether a web page cited by a course can show beside the text. */
+  previewPage(url: string): Promise<PagePreview> {
+    return this.get(`/api/references/preview?url=${enc(url)}`);
   }
 
   /** The URL of a file of the subject folder, from its path relative to that folder. */

@@ -81,6 +81,10 @@ package "parse.directive" {
   class VideoDirectiveParser
   class PdfDirectiveParser
   class GraphDirectiveParser
+  class LinkDirectiveParser
+  class WebAddress <<helpers>> {
+    +{static} read(String) : String
+  }
   class RefDirectiveParser
   class ExerciseDirectiveParser
   class McqDirectiveParser
@@ -119,6 +123,8 @@ DirectiveParser <|.. CalloutDirectiveParser
 DirectiveParser <|.. VideoDirectiveParser
 DirectiveParser <|.. PdfDirectiveParser
 DirectiveParser <|.. GraphDirectiveParser
+DirectiveParser <|.. LinkDirectiveParser
+LinkDirectiveParser ..> WebAddress : url
 DirectiveParser <|.. RefDirectiveParser
 DirectiveParser <|.. ExerciseDirectiveParser
 DirectiveParser <|.. McqDirectiveParser

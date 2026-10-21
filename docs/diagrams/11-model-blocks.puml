@@ -18,6 +18,9 @@ class TermInlineDirective <<record>> {
   text : String
   id : Optional<String>
 }
+class LinkInlineDirective <<record>> {
+  label, url : String
+}
 class PdfInlineDirective <<record>> {
   label : String
 }
@@ -44,6 +47,9 @@ class FileVideoSource <<record>> {
 }
 class PdfBlock <<record>> {
   label : String
+}
+class LinkBlock <<record>> {
+  label, url : String
 }
 class GraphBlock <<record>> {
   label : String
@@ -118,6 +124,7 @@ VideoSource <|.. FileVideoSource
 FileVideoSource --> SourceReference : file
 Block <|.. PdfBlock
 Block <|.. GraphBlock
+Block <|.. LinkBlock
 GraphBlock *-- "1..*" GraphNode : nodes
 GraphBlock *-- "*" GraphEdge : edges
 GraphBlock --> GraphLayout : layout
@@ -129,6 +136,7 @@ Block <|.. ExerciseRefBlock
 ProseBlock *-- "*" InlineDirective : inlines
 InlineDirective <|.. TermInlineDirective
 InlineDirective <|.. PdfInlineDirective
+InlineDirective <|.. LinkInlineDirective
 PdfInlineDirective --> SourceReference : source
 PdfBlock --> SourceReference : source
 

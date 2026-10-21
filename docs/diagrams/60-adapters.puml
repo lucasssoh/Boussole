@@ -49,12 +49,20 @@ package "video" {
   class YoutubeOEmbedCatalog
 }
 
+package "web" {
+  class HttpWebPages <<never this machine or its network>> {
+    +preview(URI) : PagePreview
+  }
+}
+
 interface ContentRepository <<boussole-core port>>
 interface ProgressRepository <<boussole-core port>>
 interface VideoCatalog <<boussole-format>>
+interface WebPages <<boussole-core port>>
 class CourseLoader <<boussole-format>>
 
 ContentRepository <|.. FileContentRepository
+WebPages <|.. HttpWebPages
 FileContentRepository *-- SubjectFolderCache : one per folder
 SubjectFolderCache ..> CourseFilesFingerprint : changed?
 SubjectFolderCache ..> CourseLoader : reads again

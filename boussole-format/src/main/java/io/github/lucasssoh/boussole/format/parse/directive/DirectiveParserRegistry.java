@@ -26,6 +26,7 @@ public final class DirectiveParserRegistry {
                 new CalloutDirectiveParser(CalloutKind.WARNING),
                 new VideoDirectiveParser(),
                 new PdfDirectiveParser(),
+                new LinkDirectiveParser(),
                 new GraphDirectiveParser(),
                 new ExerciseDirectiveParser(),
                 new McqDirectiveParser(),

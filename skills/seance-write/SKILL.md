@@ -69,6 +69,9 @@ session should be split, and propose how.
   `:::note` explaining the difference.
 - **No hidden prerequisites**: anything the documents take for granted gets a `:::recall` or a
   short explanation.
+- **Cite what you rely on**: a page of the documents is a `:pdf[…]{src=… page=…}`, a web page a
+  `:link[…]{url=…}` in the sentence, or a `::link[…]{url=…}` block for a reference worth
+  reading in full. The learner opens it beside the text.
 - **Draw when a picture helps**: a network, a path, a flow, a tree or a state machine is a
   `:::graph` (`docs/FORMAT.md` §5.5): nodes and edges as lines of text, `!` on what matters,
   checked by `boussole validate`. A flowchart or a sequence is a `mermaid` block. Keep each to a

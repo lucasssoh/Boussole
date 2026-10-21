@@ -9,13 +9,13 @@ export interface MarkdownContext {
   base: string;
 }
 
-const DIRECTIVE = /^:(term|pdf)\[([^\]\n]*)\](?:\{([^}\n]*)\})?/;
+const DIRECTIVE = /^:(term|pdf|link)\[([^\]\n]*)\](?:\{([^}\n]*)\})?/;
 const GAP = /^\[\[(\d+)\]\]/;
 const ATTRIBUTE = /([#.]?)([\w-]+)(?:=(?:"([^"]*)"|'([^']*)'|([^\s"']+)))?/g;
 
 /**
  * Renders the prose of a session: Markdown, maths ($…$ and $$…$$ with KaTeX), the inline
- * directives of the format (:term and :pdf), the gaps of a fill exercise ([[N]]) and Mermaid
+ * directives of the format (:term, :pdf and :link), the gaps of a fill exercise ([[N]]) and Mermaid
  * diagrams. Raw HTML in the source is shown as text, never run.
  */
 @Injectable({ providedIn: 'root' })
@@ -96,6 +96,9 @@ function renderDirective(meta: DirectiveMeta, markdown: MarkdownIt): string {
   const text = markdown.renderInline(meta.text);
   if (meta.name === 'term') {
     return `<span class="term" tabindex="0" data-term-id="${escape(meta.attributes['id'] ?? '')}" data-term-text="${escape(meta.text)}">${text}</span>`;
+  }
+  if (meta.name === 'link') {
+    return `<button type="button" class="pdf-link web-link" data-link-url="${escape(meta.attributes['url'] ?? '')}">${iconSvg('globe', 16)}<span class="pdf-label">${text}</span></button>`;
   }
   return `<button type="button" class="pdf-link" data-pdf-src="${escape(meta.attributes['src'] ?? '')}" data-pdf-page="${escape(meta.attributes['page'] ?? '')}">${iconSvg('document', 16)}<span class="pdf-label">${text}</span></button>`;
 }

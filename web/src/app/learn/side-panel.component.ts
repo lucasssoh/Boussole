@@ -1,10 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { IconComponent } from '../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { BoussoleApi } from '../core/boussole-api';
+import { PagePreview } from '../core/api';
 import { LearnFacade } from './learn.facade';
 
-/** The video (YouTube or a file of the sources) or the document opened beside the text. */
+/**
+ * The video (YouTube or a file of the sources), the document or the web page opened beside the
+ * text. A web page shows in place when its site allows it; otherwise a card offers to open it in
+ * a tab, since many sites refuse to be shown inside another page.
+ */
 @Component({
   selector: 'app-side-panel',
   imports: [IconComponent, TranslocoPipe],
@@ -19,7 +25,26 @@ import { LearnFacade } from './learn.facade';
         }
         <button type="button" class="quiet" (click)="learn.panel.set(null)">{{ 'panel.close' | transloco }} <app-icon name="close" /></button>
       </div>
-      @if (panel.kind === 'localVideo') {
+      @if (panel.kind === 'web') {
+        @if (webPreview(); as preview) {
+          @if (preview.embeddable && webFrameUrl(); as url) {
+            <iframe class="web" [src]="url" [title]="panel.label" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                    referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          } @else {
+            <div class="panel-card">
+              <app-icon name="globe" [size]="40" />
+              <strong>{{ preview.title ?? panel.label }}</strong>
+              <span class="panel-host">{{ host(panel.url) }}</span>
+              <p>{{ (preview.reachable ? 'panel.webElsewhere' : 'panel.webUnreachable') | transloco }}</p>
+              <a class="button primary" [href]="panel.url" target="_blank" rel="noopener">
+                {{ 'panel.openSite' | transloco }} <app-icon name="arrow-right" />
+              </a>
+            </div>
+          }
+        } @else {
+          <p class="panel-card">{{ 'panel.opening' | transloco }}</p>
+        }
+      } @else if (panel.kind === 'localVideo') {
         <video class="video" [src]="localVideoUrl()" controls autoplay playsinline [title]="panel.label"></video>
       } @else if (frameUrl(); as url) {
         <iframe
@@ -36,6 +61,38 @@ import { LearnFacade } from './learn.facade';
 export class SidePanelComponent {
   protected readonly learn = inject(LearnFacade);
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly api = inject(BoussoleApi);
+
+  /** What the server learned of the web page open, once it answers. */
+  protected readonly webPreview = signal<PagePreview | null>(null);
+
+  protected readonly webFrameUrl = computed<SafeResourceUrl | null>(() => {
+    const panel = this.learn.panel();
+    return panel?.kind === 'web' ? this.sanitizer.bypassSecurityTrustResourceUrl(panel.url) : null;
+  });
+
+  constructor() {
+    effect(() => {
+      const panel = this.learn.panel();
+      untracked(() => this.webPreview.set(null));
+      if (panel?.kind === 'web') {
+        const unreachable: PagePreview = { reachable: false, embeddable: false, title: null };
+        void this.api.previewPage(panel.url).catch(() => unreachable).then((preview) => {
+          if (this.learn.panel() === panel) {
+            this.webPreview.set(preview);
+          }
+        });
+      }
+    });
+  }
+
+  protected host(url: string): string {
+    try {
+      return new URL(url).host.replace(/^www\./, '');
+    } catch {
+      return url;
+    }
+  }
 
   protected readonly newTabUrl = computed(() => {
     const panel = this.learn.panel();
@@ -47,6 +104,8 @@ export class SidePanelComponent {
         return this.learn.fileUrl(panel.path) + (panel.page ? `#page=${panel.page}` : '');
       case 'localVideo':
         return this.localVideoUrl();
+      case 'web':
+        return panel.url;
       case 'video':
         return `https://www.youtube.com/watch?v=${panel.youtubeId}${panel.start ? `&t=${panel.start}s` : ''}`;
     }
@@ -64,7 +123,7 @@ export class SidePanelComponent {
 
   protected readonly frameUrl = computed<SafeResourceUrl | null>(() => {
     const panel = this.learn.panel();
-    if (!panel || panel.kind === 'localVideo') {
+    if (!panel || panel.kind === 'localVideo' || panel.kind === 'web') {
       return null;
     }
     const url = panel.kind === 'pdf'

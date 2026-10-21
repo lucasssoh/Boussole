@@ -32,6 +32,11 @@ export class ProseBlockComponent {
   }
 
   protected onClick(event: MouseEvent): void {
+    const web = (event.target as HTMLElement).closest<HTMLElement>('.web-link');
+    if (web) {
+      this.learn.panel.set({ kind: 'web', label: web.querySelector('.pdf-label')?.textContent?.trim() ?? '', url: web.dataset['linkUrl'] ?? '' });
+      return;
+    }
     const link = (event.target as HTMLElement).closest<HTMLElement>('.pdf-link');
     if (link) {
       const page = Number(link.dataset['pdfPage']);

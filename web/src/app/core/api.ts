@@ -101,6 +101,7 @@ export type BlockView =
   | CalloutBlockView
   | VideoBlockView
   | PdfBlockView
+  | LinkBlockView
   | GraphBlockView
   | McqBlockView
   | ExerciseBlockView
@@ -136,6 +137,20 @@ export interface VideoBlockView {
   path: string | null;
   start: number | null;
   end: number | null;
+}
+
+/** A web page cited by the course, opened beside the text. */
+export interface LinkBlockView {
+  type: 'link';
+  label: string;
+  url: string;
+}
+
+/** What Boussole learned of a web page: may it show beside the text, and its title. */
+export interface PagePreview {
+  reachable: boolean;
+  embeddable: boolean;
+  title: string | null;
 }
 
 /** A small graph drawn by Boussole; places are in grid units, one unit between neighbours. */

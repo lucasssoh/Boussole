@@ -288,8 +288,9 @@ web/src/app/
 
 ## 6. HTTP API (excerpt)
 
-Answers, hints and solutions never reach the browser before they are asked for. Under
-`/api/subjects/{subject}`:
+Answers, hints and solutions never reach the browser before they are asked for. Boussole looks
+at a web page only when the learner opens it, and never at an address of this machine or its
+local network (`HttpWebPages`). Under `/api/subjects/{subject}`:
 
 ```
 GET  /api/subjects                       subjects, how far the learner is, the session to resume
@@ -299,7 +300,8 @@ POST …/sessions/{session}/finish         { spentSeconds }
 POST …/exercises/{id}/attempts?session=  verdict, each part judged and the correction, recorded
 POST …/exercises/{id}/hints              the next hint, recorded
 GET  …/exercises/{id}/solution           after an attempt (at once for a free exercise)
-GET  …/files/{path}                      a file of the subject folder: PDFs, images
+GET  …/files/{path}                      a file of the subject folder: PDFs, videos (range requests), images
+GET  /api/references/preview?url=        whether a web page a course cites may show beside the text
 GET  /api/stats                          experience, level, streak
 GET  /api/server                         lets boussole open recognise a running Boussole
 POST /api/server/stop                    boussole stop

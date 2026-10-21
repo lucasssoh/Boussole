@@ -232,6 +232,7 @@ each answer and the correction right after it.
 | `term` | inline | Hover definition from the lexicon. `{id=…}` is optional when the text equals a term or alias. |
 | `video` | leaf | A video beside the text: `youtube=<11-character video id>` for YouTube, or `src=<file>` for a video file of the sources folder (a lecture recording), never both. `start`, `end` as seconds, `m:ss` or `h:mm:ss`. The label is the caption. A file plays in the browser when it is MP4 (H.264), WebM or Ogg (`F038` otherwise). |
 | `pdf` | leaf or inline | Opens a file of `sources/` beside the text. `src=<file>` required; `page=N` optional. |
+| `link` | leaf or inline | A web page the course cites (documentation, an article, a reference), opened beside the text: `url=<https://…>` required, a whole web address. Boussole shows the page in place when its site allows it, and otherwise offers to open it in a tab. The label is the caption, or the words of the sentence. |
 | `graph` | container | A small graph that Boussole draws and checks itself (below). The label is the caption; `layout=circle` (default), `row` or `layers`. |
 
 Images use plain Markdown (`![caption](../assets/route.png)`).
@@ -282,7 +283,7 @@ Where each directive may appear:
 | `example` | a notion, an introduction, a section |
 | `recall` | the same, and `hint`, `solution` |
 | `note`, `tip`, `warning` | the same as `recall`, and `example`, `recall` |
-| `video`, `pdf`, `graph` | anywhere except `answer` |
+| `video`, `pdf`, `link`, `graph` | anywhere except `answer` |
 | `ref` | a notion, an introduction, a section, the body of a review or exam |
 | `answer` | `exercise` |
 | `hint`, `solution` | `exercise`, `mcq` |

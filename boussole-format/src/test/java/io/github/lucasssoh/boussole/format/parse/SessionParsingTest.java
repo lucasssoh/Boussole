@@ -21,6 +21,8 @@ import io.github.lucasssoh.boussole.format.model.block.Block;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
 import io.github.lucasssoh.boussole.format.model.block.ProseBlock;
 import io.github.lucasssoh.boussole.format.model.block.FileVideoSource;
+import io.github.lucasssoh.boussole.format.model.block.LinkBlock;
+import io.github.lucasssoh.boussole.format.model.block.LinkInlineDirective;
 import io.github.lucasssoh.boussole.format.model.block.VideoBlock;
 import io.github.lucasssoh.boussole.format.model.block.GraphBlock;
 import io.github.lucasssoh.boussole.format.model.block.GraphEdge;
@@ -176,6 +178,21 @@ class SessionParsingTest {
                     "`video`: `youtube` must be the 11-character ID of a video, not `court`",
                     "`video`: `end` must come after `start`",
                     "`pdf`: `page` must be a whole number, not `zero`");
+        }
+
+        @Test
+        void aWebPageIsCitedAsABlockOrInASentence() {
+            SessionContent session = parse("::link[La documentation de Python]{url=https://docs.python.org/3/}\n\n"
+                    + "Voir :link[la page de la PEP 8]{url=https://peps.python.org/pep-0008/}.\n\n"
+                    + "::link[Mauvais]{url=docs.python.org}\n\nEt :link[ici]{url=ftp://exemple.org}.\n");
+
+            assertThat(session.blocks().findFirst().orElseThrow()).isInstanceOfSatisfying(LinkBlock.class,
+                    link -> assertThat(link.url()).isEqualTo("https://docs.python.org/3/"));
+            assertThat(session.blocks().filter(ProseBlock.class::isInstance).map(ProseBlock.class::cast)
+                    .flatMap(prose -> prose.inlines().stream()).filter(LinkInlineDirective.class::isInstance).toList()).hasSize(1);
+            assertThat(messages(DiagnosticCode.F027)).containsExactly(
+                    "`link`: `url` must be a whole web address, such as `https://docs.python.org/3/`, not `docs.python.org`",
+                    "`link`: `url` must be a whole web address, such as `https://docs.python.org/3/`, not `ftp://exemple.org`");
         }
 
         @Test

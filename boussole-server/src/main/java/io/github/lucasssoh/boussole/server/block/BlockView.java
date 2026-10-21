@@ -16,6 +16,7 @@ import java.util.List;
     @JsonSubTypes.Type(value = BlockView.Callout.class, name = "callout"),
     @JsonSubTypes.Type(value = BlockView.Video.class, name = "video"),
     @JsonSubTypes.Type(value = BlockView.Pdf.class, name = "pdf"),
+    @JsonSubTypes.Type(value = BlockView.Link.class, name = "link"),
     @JsonSubTypes.Type(value = BlockView.Graph.class, name = "graph"),
     @JsonSubTypes.Type(value = BlockView.Mcq.class, name = "mcq"),
     @JsonSubTypes.Type(value = BlockView.Exercise.class, name = "exercise"),
@@ -46,6 +47,10 @@ public sealed interface BlockView {
 
     /** {@code path} is relative to the subject folder; {@code page} is null for the first page. */
     record Pdf(String label, String path, Integer page) implements BlockView {
+    }
+
+    /** A web page cited by the course: {@code url} is a whole web address. */
+    record Link(String label, String url) implements BlockView {
     }
 
     /**

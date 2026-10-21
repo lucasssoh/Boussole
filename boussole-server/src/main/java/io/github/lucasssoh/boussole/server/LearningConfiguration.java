@@ -1,6 +1,9 @@
 package io.github.lucasssoh.boussole.server;
 
 import io.github.lucasssoh.boussole.adapters.content.FileContentRepository;
+import io.github.lucasssoh.boussole.adapters.web.HttpWebPages;
+import io.github.lucasssoh.boussole.core.reference.PreviewWebPage;
+import io.github.lucasssoh.boussole.core.reference.WebPages;
 import io.github.lucasssoh.boussole.adapters.progress.SqliteDatabase;
 import io.github.lucasssoh.boussole.adapters.progress.SqliteProgressRepository;
 import io.github.lucasssoh.boussole.core.learn.ContentRepository;
@@ -37,6 +40,16 @@ class LearningConfiguration {
     @Bean
     RewardedSubjects rewardedSubjects() {
         return RewardedSubjects.allBut(BundledGuide.SUBJECT);
+    }
+
+    @Bean
+    WebPages webPages() {
+        return new HttpWebPages();
+    }
+
+    @Bean
+    PreviewWebPage previewWebPage(WebPages pages) {
+        return new PreviewWebPage(pages);
     }
 
     @Bean

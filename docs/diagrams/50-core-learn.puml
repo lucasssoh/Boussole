@@ -5,7 +5,7 @@ skinparam nodesep 40
 skinparam ranksep 50
 hide empty members
 hide circle
-title boussole-core — studying a course (packages learn, learn.check, learn.progress)
+title boussole-core — studying a course (packages learn, learn.check, learn.progress, learn.reward) and the web pages it cites (reference)
 
 package "learn" {
   interface ContentRepository <<port>> {
@@ -141,6 +141,19 @@ package "learn.check" {
   }
 }
 
+package "reference" {
+  class PreviewWebPage <<use case>> {
+    +preview(url) : PagePreview
+  }
+  interface WebPages <<port>> {
+    +preview(URI) : PagePreview
+  }
+  class PagePreview <<record>> {
+    reachable, embeddable : boolean
+    title : Optional<String>
+  }
+}
+
 ListCourses --> ContentRepository
 ListCourses --> CourseOverviews
 OpenCourse --> CourseOverviews
@@ -148,6 +161,8 @@ CourseOverviews ..> LastActivity : resume
 CourseOverviews ..> SessionProgress : per session
 ReadStudyStats --> ProgressRepository : history
 ReadStudyStats ..> XpRules
+PreviewWebPage --> WebPages : pages
+PreviewWebPage ..> PagePreview
 ReadStudyStats --> RewardedSubjects : rewarded
 SubmitAttempt --> RewardedSubjects : rewarded
 FinishSession --> RewardedSubjects : rewarded
