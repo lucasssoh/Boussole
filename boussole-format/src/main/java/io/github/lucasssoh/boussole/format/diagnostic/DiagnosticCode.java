@@ -34,6 +34,8 @@ public enum DiagnosticCode {
     F037(ERROR, "graph malformed"),
     F038(WARNING, "video file a browser may not play"),
     F039(WARNING, "document from the web without its licence"),
+    F040(ERROR, "versions of a track differ"),
+    F041(WARNING, "session written in another version, not yet in this one"),
     P001(WARNING, "notion without exercise"),
     P002(WARNING, "notion with several examples"),
     P003(WARNING, "warmup not first, or practice not last"),

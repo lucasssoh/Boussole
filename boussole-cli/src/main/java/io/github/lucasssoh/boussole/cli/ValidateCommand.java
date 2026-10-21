@@ -1,5 +1,12 @@
 package io.github.lucasssoh.boussole.cli;
 
+import java.util.List;
+import java.util.Comparator;
+import java.util.ArrayList;
+import io.github.lucasssoh.boussole.format.version.TrackVersions;
+import io.github.lucasssoh.boussole.format.model.Course;
+import io.github.lucasssoh.boussole.format.diagnostic.Diagnostic;
+import io.github.lucasssoh.boussole.adapters.config.BoussoleConfigFile;
 import io.github.lucasssoh.boussole.format.InspectionReport;
 import io.github.lucasssoh.boussole.adapters.video.YoutubeOEmbedCatalog;
 import io.github.lucasssoh.boussole.format.SubjectInspector;
@@ -47,8 +54,27 @@ final class ValidateCommand implements Callable<Integer> {
             return ExitCode.UNUSABLE;
         }
         Optional<VideoCatalog> videos = checkVideos ? Optional.of(new YoutubeOEmbedCatalog()) : Optional.empty();
-        InspectionReport report = new SubjectInspector(Validator.standard(), videos).inspect(folder);
+        InspectionReport report = withOtherVersions(new SubjectInspector(Validator.standard(), videos).inspect(folder));
         new ReportPrinter(spec.commandLine().getOut(), folder, errorsOnly).print(report);
         return report.hasErrors() ? ExitCode.PROBLEMS : ExitCode.OK;
+    }
+
+    /**
+     * The other versions of the track, in other languages, found next to the folder or among the
+     * subjects of config.yaml, compared with this one (F040, F041).
+     */
+    private InspectionReport withOtherVersions(InspectionReport report) {
+        if (report.course().isEmpty()) {
+            return report;
+        }
+        Course course = report.course().get();
+        List<Diagnostic> diagnostics = new ArrayList<>(report.diagnostics());
+        TrackVersionFolders.of(folder, course.subject().id(), BoussoleConfigFile.forCurrentUser().read().subjects()).stream()
+                .map(other -> new SubjectInspector().inspect(other).course())
+                .flatMap(Optional::stream)
+                .forEach(other -> diagnostics.addAll(TrackVersions.compare(other, course)));
+        diagnostics.sort(Comparator.comparing((Diagnostic diagnostic) -> diagnostic.position().file())
+                .thenComparingInt(diagnostic -> diagnostic.position().line()));
+        return new InspectionReport(report.course(), List.copyOf(diagnostics));
     }
 }

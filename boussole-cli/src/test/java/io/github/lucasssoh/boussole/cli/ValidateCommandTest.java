@@ -35,6 +35,34 @@ class ValidateCommandTest {
     }
 
     @Test
+    void theOtherVersionsOfATrackAreComparedWithIt() throws IOException {
+        Path guide = Path.of("..", "guide", "getting-started");
+        copy(guide.resolve("en"), dir.resolve("guide/en"));
+        copy(guide.resolve("fr"), dir.resolve("guide/fr"));
+        Path session = dir.resolve("guide/fr/cursus/01-boussole/g1-ce-qu-est-boussole.md");
+        Files.writeString(session, Files.readString(session).replace("{#roles}", "{#qui-fait-quoi}"));
+
+        // Either version may be the one to fix: both say how they differ.
+        assertThat(run("validate", dir.resolve("guide/en").toString())).isEqualTo(1);
+        assertThat(run("validate", dir.resolve("guide/fr").toString())).isEqualTo(1);
+
+        assertThat(out.toString()).contains("error F040 session `g1` has the notions [why, chain, qui-fait-quoi], the `en` version [why, chain, roles]");
+    }
+
+    private static void copy(Path from, Path to) throws IOException {
+        try (var files = Files.walk(from)) {
+            for (Path file : files.toList()) {
+                Path target = to.resolve(from.relativize(file).toString());
+                if (Files.isDirectory(file)) {
+                    Files.createDirectories(target);
+                } else {
+                    Files.copy(file, target);
+                }
+            }
+        }
+    }
+
+    @Test
     void problemsAreListedWithTheirPlace() throws IOException {
         write("subject.yaml", "format: 1\nid: t\nname: T\nlang: fr\n");
         write("cursus/syllabus.yaml", """

@@ -425,6 +425,8 @@ chapter.
 | `F037` | error | A `graph` line that is neither a node nor an edge, a node given twice, a loop, places given for some nodes only, or two nodes at the same place. |
 | `F038` | warning | A `video` file that browsers may not play (not `.mp4`, `.m4v`, `.webm` or `.ogv`): convert it, for example with `ffmpeg`. |
 | `F039` | warning | An entry of `cursus/sources.yaml` with a `url` but no `licence`. |
+| `F040` | error | Two versions of a track (same `id`, other `lang`) differ: sessions, notion or question IDs, or what a question asks (§9); or two versions in the same language. |
+| `F041` | warning | A session written in another version of the track, not yet in this one (§9). |
 | `F032` | warning | `video` that YouTube does not know (checked only with `--check-videos`). |
 | `P001` | warning | A notion without exercise or `mcq`. |
 | `P002` | warning | A notion with more than one `example`. |
@@ -533,7 +535,33 @@ the course (`cursus/`, `subject.yaml`, `learner.yaml`, `AGENTS.md`, `CLAUDE.md`)
 An entry naming the file exactly wins over a pattern. `boussole sources <subject folder>` lists
 what is new, changed, pending or gone, with the entries to add and their SHA-256.
 
-## 9. Versions
+## 9. A track in several languages
+
+A track can exist in several languages: one subject folder per language, each with its own
+`lang`, and **the same `id`**. Boussole shows them as one track: the learner picks the language
+on the track's page, or switches during a session, and finds the same place in the other
+language. Progress is kept by ID, so it is the same in every language.
+
+```
+python/
+├── en/   subject.yaml: id: python, lang: en
+└── fr/   subject.yaml: id: python, lang: fr
+```
+
+**Only the text is translated.** Every ID stays the same in every version: sessions, notions
+(`{#…}`), exercises and MCQs, so that progress and the place in a session carry over. Each
+question asks the same thing: the same kind, the same number of choices with the same ones
+right, the same gaps, the same number of items to order or pairs to match. The accepted answers
+of a typed gap or a `text` exercise are in the language of their version.
+
+`boussole validate` compares a version with the others it finds: the folders next to it, and
+the subjects of `config.yaml` with the same `id`. A difference is an error (`F040`); a session
+written in one version and not yet in another is a warning (`F041`), the time to translate it.
+
+To add a language: copy a version's folder, translate its text, set `lang`, and open it with
+`boussole open`. The `track-translate` playbook does it with an agent.
+
+## 10. Versions
 
 `format: 1` is this document. A change that makes existing courses invalid increments the
 version; Boussole keeps reading older versions, or tells exactly what to change.

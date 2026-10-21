@@ -15,6 +15,9 @@ package "cli" {
     folder : Path
     all : boolean
   }
+  class TrackVersionFolders <<siblings, config.yaml>> {
+    +{static} of(folder, id, subjects) : List<Path>
+  }
   class ValidateCommand <<@Command validate>> {
     folder : Path
     errorsOnly : boolean
@@ -136,4 +139,6 @@ AgentKitInstaller --> AgentKit : skills, format
 AgentKitInstaller --> MarkedBlock : AGENTS.md
 SubjectScaffold ..> InitReport
 AgentKitInstaller ..> InitReport
+ValidateCommand ..> TrackVersionFolders : other versions
+
 @enduml

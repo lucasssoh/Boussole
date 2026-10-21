@@ -103,4 +103,12 @@ note bottom of RuleHelpers
   reported while it is read (load, parse);
   the rules check what needs the whole course.
 end note
+
+package "version" {
+  class TrackVersions <<F040, F041>> {
+    +{static} compare(reference, version) : List<Diagnostic>
+  }
+}
+TrackVersions ..> Diagnostic : sessions, notions, questions
+
 @enduml
