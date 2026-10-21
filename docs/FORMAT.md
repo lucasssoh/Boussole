@@ -503,7 +503,8 @@ document of the sources folder, so that Boussole can say what is new and what ch
 | `note` | no | What it is, or why it is ignored or pending. |
 
 A document is any file of the sources folder, sub-folders included, with one of these extensions: `pdf`, `ppt`, `pptx`,
-`odp`, `doc`, `docx`, `odt`, `md`, `txt`, `tex`, `zip`, `png`, `jpg`, `jpeg`; hidden files and
+`odp`, `doc`, `docx`, `odt`, `md`, `txt`, `tex`, `zip`, `png`, `jpg`, `jpeg`, and the videos `mp4`, `m4v`,
+`webm`, `ogv`, `mov`, `mkv`, `avi`; hidden files and
 folders are not. When the sources folder is the subject folder itself (`sources: .`), the files of
 the course (`cursus/`, `subject.yaml`, `learner.yaml`, `AGENTS.md`, `CLAUDE.md`) are not documents.
 An entry naming the file exactly wins over a pattern. `boussole sources <subject folder>` lists
