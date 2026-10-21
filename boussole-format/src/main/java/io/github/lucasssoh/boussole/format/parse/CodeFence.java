@@ -8,14 +8,14 @@ import java.util.regex.Pattern;
  * Tracks fenced code blocks, so that nothing inside them is read as a directive or a heading.
  * Feed it every line in order.
  */
-final class CodeFence {
+public final class CodeFence {
 
     private static final Pattern FENCE = Pattern.compile(" {0,3}(`{3,}|~{3,}).*");
 
     private Optional<String> open = Optional.empty();
 
     /** Whether {@code line} is code: inside a fence, or one of its fence lines. */
-    boolean isCode(String line) {
+    public boolean isCode(String line) {
         Matcher matcher = FENCE.matcher(line);
         if (open.isEmpty()) {
             if (matcher.matches()) {

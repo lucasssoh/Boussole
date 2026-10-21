@@ -46,3 +46,6 @@ minor release may break things and says so.
 - **Guide:** « Getting started with Boussole », a short subject in English or French (the language of the interface) with a diagram of how documents become a course, the commands, the session player and documents that arrive later. A new Boussole opens on it; afterwards it stays apart on the home page, to read again when you forget, and earns no experience.
 - **Course format, validation:** `boussole validate --check-videos` also asks YouTube whether each video exists.
 - **Reviews and mock exams:** besides lessons, a course has timed sessions: a short review at the end of each chapter, and mock exams as long as the real ones. Their number of questions fits the time allowed, knowing that choosing an answer is quicker than building one; `boussole validate` warns when it does not.
+
+### Fixed
+- **Course format:** a task list inside fenced code, in the statement of an MCQ, is shown as code instead of being read as its choices.

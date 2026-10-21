@@ -22,6 +22,8 @@ import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
 import io.github.lucasssoh.boussole.format.model.block.ProseBlock;
 import io.github.lucasssoh.boussole.format.model.block.FileVideoSource;
 import io.github.lucasssoh.boussole.format.model.block.LinkBlock;
+import io.github.lucasssoh.boussole.format.model.block.McqChoice;
+import io.github.lucasssoh.boussole.format.model.block.McqBlock;
 import io.github.lucasssoh.boussole.format.model.block.LinkInlineDirective;
 import io.github.lucasssoh.boussole.format.model.block.VideoBlock;
 import io.github.lucasssoh.boussole.format.model.block.GraphBlock;
@@ -427,6 +429,32 @@ class SessionParsingTest {
             parse("::::mcq{#q1}\nQ ?\n\n- [x] Oui\n- [ ] Non\n\nEt ceci ?\n\n:::solution\nOui.\n:::\n::::\n");
 
             assertThat(messages(DiagnosticCode.F022)).hasSize(1);
+        }
+
+        @Test
+        void aTaskListInsideCodeBelongsToTheStatementOfAMcq() {
+            SessionContent session = parse("""
+                    ::::mcq{#q1}
+                    Laquelle de ces écritures est un QCM valide ?
+
+                    ```markdown
+                    - [x] Oui
+                    - [x] Non
+                    ```
+
+                    - [x] La première
+                    - [ ] Aucune
+                      > Relis la syntaxe des choix.
+
+                    :::solution
+                    La première.
+                    :::
+                    ::::
+                    """);
+
+            assertThat(messages(DiagnosticCode.F022)).isEmpty();
+            McqBlock mcq = (McqBlock) session.blocks().findFirst().orElseThrow();
+            assertThat(mcq.choices()).extracting(McqChoice::text).containsExactly("La première", "Aucune");
         }
 
         private Rational rational(String text) {

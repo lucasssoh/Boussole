@@ -2,6 +2,7 @@ package io.github.lucasssoh.boussole.format.parse.directive;
 
 import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.model.block.McqChoice;
+import io.github.lucasssoh.boussole.format.parse.CodeFence;
 import io.github.lucasssoh.boussole.format.parse.ParseContext;
 import io.github.lucasssoh.boussole.format.parse.RawNode;
 import java.util.ArrayList;
@@ -12,7 +13,8 @@ import java.util.regex.Pattern;
 
 /**
  * Separates the statement of an MCQ from its choices: a task list, each choice optionally
- * followed by an indented blockquote, its feedback.
+ * followed by an indented blockquote, its feedback. A task list inside fenced code belongs to the
+ * statement: it is shown, not answered.
  */
 final class McqChoiceReader {
 
@@ -21,6 +23,7 @@ final class McqChoiceReader {
     private final ParseContext context;
     private final List<RawNode> statement = new ArrayList<>();
     private final List<McqChoice> choices = new ArrayList<>();
+    private final CodeFence fence = new CodeFence();
     private OpenChoice current;
 
     private McqChoiceReader(ParseContext context) {
@@ -46,6 +49,11 @@ final class McqChoiceReader {
         for (int index = 0; index < text.lines().size(); index++) {
             String line = text.lines().get(index);
             int number = text.line() + index;
+            boolean inStatement = current == null && choices.isEmpty();
+            if (fence.isCode(line) && inStatement) {
+                before.add(line);
+                continue;
+            }
             Matcher choice = CHOICE.matcher(line);
             if (choice.matches()) {
                 finishChoice();
