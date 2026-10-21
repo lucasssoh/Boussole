@@ -39,6 +39,27 @@ class SourceFileRuleTest {
     }
 
     @Test
+    void aVideoFileIsInTheSourcesFolder() {
+        var report = SubjectFixture.in(dir)
+                .session("s1", "::video[Cours 3]{src=enregistrements/cours3.mp4 start=2:00}\n\n" + notion("a", "e1"))
+                .inspect();
+
+        assertThat(report.withCode(DiagnosticCode.F031)).singleElement()
+                .satisfies(diagnostic -> assertThat(diagnostic.message()).contains("`enregistrements/cours3.mp4` is not in sources/"));
+    }
+
+    @Test
+    void aVideoFileOfTheSourcesIsFound() {
+        var report = SubjectFixture.in(dir)
+                .document("enregistrements/cours3.mp4", "not really a video")
+                .session("s1", "::video[Cours 3]{src=enregistrements/cours3.mp4}\n\n" + notion("a", "e1"))
+                .inspect();
+
+        assertThat(report.withCode(DiagnosticCode.F031)).isEmpty();
+        assertThat(report.withCode(DiagnosticCode.F038)).isEmpty();
+    }
+
+    @Test
     void aSourceCannotLeaveTheSourcesFolder() {
         var report = SubjectFixture.in(dir).session("s1", "::pdf[x]{src=../subject.yaml}\n\n" + notion("a", "e1")).inspect();
 

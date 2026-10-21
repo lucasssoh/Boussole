@@ -7,6 +7,7 @@ minor release may break things and says so.
 ## Unreleased
 
 ### Added
+- **Videos from your own files:** `::video[…]{src=…}` plays a video of the sources folder, such as a lecture recording, beside the text, from `start` to `end`, like a YouTube video. The validator checks the file exists, warns about formats browsers do not play (`F038`), and the document tracking follows videos too. The `video-find` playbook looks at the learner's recordings before YouTube.
 - **Contributing:** `AGENTS.md` tells people and agents changing Boussole what each kind of change touches (code, format, diagrams, playbooks, guide, changelog), and `DocumentationSyncTest` fails the build when the docs drift from the code.
 - **Course format:** options of a choice gap and right-hand sides of a match show in drop-down lists, which cannot draw maths: write them in plain text with Unicode symbols (≤, x₁), not `$…$`.
 - **Course format, validation:** `boussole validate <folder>` checks a subject against the course format and lists each problem with its file, line and what to change. It ends with `0` when there is no error, so an agent writing a course can run it until it passes.

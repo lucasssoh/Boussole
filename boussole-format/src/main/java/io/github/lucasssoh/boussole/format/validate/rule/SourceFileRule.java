@@ -6,7 +6,9 @@ import io.github.lucasssoh.boussole.format.model.Course;
 import io.github.lucasssoh.boussole.format.model.CourseSession;
 import io.github.lucasssoh.boussole.format.model.SourceReference;
 import io.github.lucasssoh.boussole.format.model.block.PdfInlineDirective;
+import io.github.lucasssoh.boussole.format.model.block.FileVideoSource;
 import io.github.lucasssoh.boussole.format.model.block.PdfBlock;
+import io.github.lucasssoh.boussole.format.model.block.VideoBlock;
 import io.github.lucasssoh.boussole.format.model.block.ProseBlock;
 import io.github.lucasssoh.boussole.format.source.SourceDocuments;
 import io.github.lucasssoh.boussole.format.validate.ValidationContext;
@@ -14,7 +16,7 @@ import io.github.lucasssoh.boussole.format.validate.ValidationRule;
 import java.util.OptionalInt;
 import java.util.stream.Stream;
 
-/** F031: every source named exists in the sources folder, and every page is in its PDF. */
+/** F031: every source named (a document, a video file) exists in the sources folder, and every page is in its PDF. */
 public final class SourceFileRule implements ValidationRule {
 
     @Override
@@ -29,6 +31,7 @@ public final class SourceFileRule implements ValidationRule {
         Stream<SourceReference> header = loaded.session().header().sources().stream();
         Stream<SourceReference> blocks = loaded.session().blocks().flatMap(block -> switch (block) {
             case PdfBlock pdf -> Stream.of(pdf.source());
+            case VideoBlock video when video.source() instanceof FileVideoSource local -> Stream.of(local.file());
             case ProseBlock prose -> prose.inlines().stream()
                     .filter(PdfInlineDirective.class::isInstance)
                     .map(mention -> ((PdfInlineDirective) mention).source());

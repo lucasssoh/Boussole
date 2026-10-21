@@ -1271,10 +1271,16 @@ a.session-card:active {
   border: 0;
 }
 
-.side-panel iframe.video {
+.side-panel iframe.video,
+.side-panel video.video {
   flex: 0 0 auto;
   aspect-ratio: 16 / 9;
   height: auto;
+}
+
+.side-panel video.video {
+  width: 100%;
+  background: #000000;
 }
 
 /* Narrow screens: the path opens as a drawer, the panel from the bottom */
@@ -1580,8 +1586,10 @@ a.session-card:active {
   box-shadow: 0 4px 0 var(--subject-deep);
 }
 
-.media-card img {
+.media-card .media-picture {
+  flex: none;
   width: 8rem;
+  background: var(--surface-2);
   aspect-ratio: 16 / 9;
   object-fit: cover;
   border-radius: 10px;

@@ -230,7 +230,7 @@ each answer and the correction right after it.
 | `recall` | container | A reminder of a term or prerequisite, just before it is needed. |
 | `note`, `tip`, `warning` | container | Callouts. |
 | `term` | inline | Hover definition from the lexicon. `{id=…}` is optional when the text equals a term or alias. |
-| `video` | leaf | YouTube video beside the text. `youtube=<11-character video id>` required; `start`, `end` as seconds, `m:ss` or `h:mm:ss`. The label is the caption. |
+| `video` | leaf | A video beside the text: `youtube=<11-character video id>` for YouTube, or `src=<file>` for a video file of the sources folder (a lecture recording), never both. `start`, `end` as seconds, `m:ss` or `h:mm:ss`. The label is the caption. A file plays in the browser when it is MP4 (H.264), WebM or Ogg (`F038` otherwise). |
 | `pdf` | leaf or inline | Opens a file of `sources/` beside the text. `src=<file>` required; `page=N` optional. |
 | `graph` | container | A small graph that Boussole draws and checks itself (below). The label is the caption; `layout=circle` (default), `row` or `layers`. |
 
@@ -411,12 +411,13 @@ chapter.
 | `F026` | error | A container never closed, or a closing line with no open container of as many colons. |
 | `F027` | error | An attribute unknown to its directive or exercise type, a required one missing, or a value that cannot be used. |
 | `F030` | error | `ref`, `term`, `prerequisites` or `see` pointing to an ID that does not exist. |
-| `F031` | error | `pdf` or `sources` naming a file absent from `sources/`, or a page past the end. |
+| `F031` | error | `pdf`, `video` with `src` or `sources` naming a file absent from `sources/`, or a page past the end. |
 | `F033` | warning | A document of the sources folder that `cursus/sources.yaml` does not list, or lists as `pending`; or documents and no `cursus/sources.yaml` at all (§8). |
 | `F034` | warning | A document whose SHA-256 differs from the one `cursus/sources.yaml` recorded: it changed since the course used it. |
 | `F035` | warning | A document `cursus/sources.yaml` lists that is no longer in the sources folder. |
 | `F036` | warning | The same document (same SHA-256) in several places of the sources folder, more than one not `ignored`. |
 | `F037` | error | A `graph` line that is neither a node nor an edge, a node given twice, a loop, places given for some nodes only, or two nodes at the same place. |
+| `F038` | warning | A `video` file that browsers may not play (not `.mp4`, `.m4v`, `.webm` or `.ogv`): convert it, for example with `ffmpeg`. |
 | `F032` | warning | `video` that YouTube does not know (checked only with `--check-videos`). |
 | `P001` | warning | A notion without exercise or `mcq`. |
 | `P002` | warning | A notion with more than one `example`. |

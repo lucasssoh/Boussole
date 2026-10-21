@@ -32,8 +32,15 @@ enum CalloutKind {
   WARNING
 }
 class VideoBlock <<record>> {
-  label, youtubeId : String
+  label : String
   start, end : Optional<Duration>
+}
+interface VideoSource <<sealed>>
+class YoutubeVideoSource <<record>> {
+  youtubeId : String
+}
+class FileVideoSource <<record>> {
+  +playable() : boolean
 }
 class PdfBlock <<record>> {
   label : String
@@ -105,6 +112,10 @@ Block <|.. ExampleBlock
 Block <|.. RecallBlock
 Block <|.. CalloutBlock
 Block <|.. VideoBlock
+VideoBlock --> VideoSource : source
+VideoSource <|.. YoutubeVideoSource
+VideoSource <|.. FileVideoSource
+FileVideoSource --> SourceReference : file
 Block <|.. PdfBlock
 Block <|.. GraphBlock
 GraphBlock *-- "1..*" GraphNode : nodes

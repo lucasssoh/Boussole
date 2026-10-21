@@ -37,8 +37,11 @@ public sealed interface BlockView {
     record Callout(String kind, List<BlockView> blocks) implements BlockView {
     }
 
-    /** {@code start} and {@code end} in seconds, or null for the whole video. */
-    record Video(String label, String youtubeId, Long start, Long end) implements BlockView {
+    /**
+     * Either {@code youtubeId}, or {@code path} (relative to the subject folder) for a video file of
+     * the sources; the other is null. {@code start} and {@code end} in seconds, or null for the whole video.
+     */
+    record Video(String label, String youtubeId, String path, Long start, Long end) implements BlockView {
     }
 
     /** {@code path} is relative to the subject folder; {@code page} is null for the first page. */

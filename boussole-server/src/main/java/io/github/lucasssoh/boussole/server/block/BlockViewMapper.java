@@ -23,7 +23,9 @@ import io.github.lucasssoh.boussole.format.model.block.PdfBlock;
 import io.github.lucasssoh.boussole.format.model.block.ProseBlock;
 import io.github.lucasssoh.boussole.format.model.block.QuestionTimeEstimator;
 import io.github.lucasssoh.boussole.format.model.block.RecallBlock;
+import io.github.lucasssoh.boussole.format.model.block.FileVideoSource;
 import io.github.lucasssoh.boussole.format.model.block.VideoBlock;
+import io.github.lucasssoh.boussole.format.model.block.YoutubeVideoSource;
 import io.github.lucasssoh.boussole.format.model.expectation.ChoiceExpectation;
 import io.github.lucasssoh.boussole.format.model.expectation.Expectation;
 import io.github.lucasssoh.boussole.format.model.expectation.NumberExpectation;
@@ -69,7 +71,9 @@ public final class BlockViewMapper {
             case ExampleBlock example -> new BlockView.Example(example.label(), blocks(example.content()));
             case RecallBlock recall -> new BlockView.Recall(blocks(recall.content()));
             case CalloutBlock callout -> new BlockView.Callout(callout.kind().name().toLowerCase(Locale.ROOT), blocks(callout.content()));
-            case VideoBlock video -> new BlockView.Video(video.label(), video.youtubeId(),
+            case VideoBlock video -> new BlockView.Video(video.label(),
+                    video.source() instanceof YoutubeVideoSource youtube ? youtube.youtubeId() : null,
+                    video.source() instanceof FileVideoSource local ? SourcePaths.of(sourcesDir, local.file().file()) : null,
                     video.start().map(Duration::toSeconds).orElse(null), video.end().map(Duration::toSeconds).orElse(null));
             case PdfBlock pdf -> new BlockView.Pdf(pdf.label(), SourcePaths.of(sourcesDir, pdf.source().file()),
                     pdf.source().page().isPresent() ? pdf.source().page().getAsInt() : null);

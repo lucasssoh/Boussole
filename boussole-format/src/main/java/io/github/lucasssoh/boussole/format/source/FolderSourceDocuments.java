@@ -29,7 +29,8 @@ public final class FolderSourceDocuments implements SourceDocuments {
 
     /** The kinds of files a teacher or a learner hands in: lecture notes, slides, sheets, scans, archives. */
     private static final Set<String> DOCUMENT_TYPES = Set.of(
-            "pdf", "ppt", "pptx", "odp", "doc", "docx", "odt", "md", "txt", "tex", "zip", "png", "jpg", "jpeg");
+            "pdf", "ppt", "pptx", "odp", "doc", "docx", "odt", "md", "txt", "tex", "zip", "png", "jpg", "jpeg",
+            "mp4", "m4v", "webm", "ogv", "mov", "mkv", "avi");
     private static final Set<String> SUBJECT_FILES = Set.of("subject.yaml", "learner.yaml", "AGENTS.md", "CLAUDE.md");
     private static final String COURSE_DIR = "cursus";
 

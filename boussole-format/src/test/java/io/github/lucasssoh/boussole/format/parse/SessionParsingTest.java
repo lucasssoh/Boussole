@@ -20,6 +20,7 @@ import io.github.lucasssoh.boussole.format.model.expectation.Rational;
 import io.github.lucasssoh.boussole.format.model.block.Block;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
 import io.github.lucasssoh.boussole.format.model.block.ProseBlock;
+import io.github.lucasssoh.boussole.format.model.block.FileVideoSource;
 import io.github.lucasssoh.boussole.format.model.block.VideoBlock;
 import io.github.lucasssoh.boussole.format.model.block.GraphBlock;
 import io.github.lucasssoh.boussole.format.model.block.GraphEdge;
@@ -175,6 +176,22 @@ class SessionParsingTest {
                     "`video`: `youtube` must be the 11-character ID of a video, not `court`",
                     "`video`: `end` must come after `start`",
                     "`pdf`: `page` must be a whole number, not `zero`");
+        }
+
+        @Test
+        void aVideoComesFromYoutubeOrFromAFileNeverBoth() {
+            SessionContent session = parse("::video[Cours 3]{src=enregistrements/cours3.mp4 start=12:30}\n"
+                    + "::video[Les deux]{youtube=aircAruvnKk src=a.mp4}\n::video[Aucune]\n::video[Vieux format]{src=cours1.avi}\n");
+
+            assertThat(session.blocks().findFirst().orElseThrow()).isInstanceOfSatisfying(VideoBlock.class, video -> {
+                assertThat(video.source()).isInstanceOfSatisfying(FileVideoSource.class,
+                        local -> assertThat(local.file().file()).isEqualTo("enregistrements/cours3.mp4"));
+                assertThat(video.start()).contains(Duration.ofSeconds(750));
+            });
+            assertThat(messages(DiagnosticCode.F027)).containsExactly(
+                    "`video`: `youtube` or `src` is needed, one of them: `youtube=<video ID>` for YouTube, `src=<file>` for a video of the sources folder",
+                    "`video`: `youtube` or `src` is needed, one of them: `youtube=<video ID>` for YouTube, `src=<file>` for a video of the sources folder");
+            assertThat(messages(DiagnosticCode.F038)).singleElement().asString().startsWith("`cours1.avi` may not play in a browser");
         }
 
         @Test

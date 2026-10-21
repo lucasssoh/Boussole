@@ -4,7 +4,7 @@ import { IconComponent } from '../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { LearnFacade } from './learn.facade';
 
-/** The video or the document opened beside the text. */
+/** The video (YouTube or a file of the sources) or the document opened beside the text. */
 @Component({
   selector: 'app-side-panel',
   imports: [IconComponent, TranslocoPipe],
@@ -19,7 +19,9 @@ import { LearnFacade } from './learn.facade';
         }
         <button type="button" class="quiet" (click)="learn.panel.set(null)">{{ 'panel.close' | transloco }} <app-icon name="close" /></button>
       </div>
-      @if (frameUrl(); as url) {
+      @if (panel.kind === 'localVideo') {
+        <video class="video" [src]="localVideoUrl()" controls autoplay playsinline [title]="panel.label"></video>
+      } @else if (frameUrl(); as url) {
         <iframe
           [class]="panel.kind"
           [src]="url"
@@ -40,14 +42,29 @@ export class SidePanelComponent {
     if (!panel) {
       return null;
     }
-    return panel.kind === 'pdf'
-      ? this.learn.fileUrl(panel.path) + (panel.page ? `#page=${panel.page}` : '')
-      : `https://www.youtube.com/watch?v=${panel.youtubeId}${panel.start ? `&t=${panel.start}s` : ''}`;
+    switch (panel.kind) {
+      case 'pdf':
+        return this.learn.fileUrl(panel.path) + (panel.page ? `#page=${panel.page}` : '');
+      case 'localVideo':
+        return this.localVideoUrl();
+      case 'video':
+        return `https://www.youtube.com/watch?v=${panel.youtubeId}${panel.start ? `&t=${panel.start}s` : ''}`;
+    }
+  });
+
+  /** A video file, from its start and stopping at its end: a media fragment, {@code #t=start,end}. */
+  protected readonly localVideoUrl = computed(() => {
+    const panel = this.learn.panel();
+    if (panel?.kind !== 'localVideo') {
+      return '';
+    }
+    const fragment = panel.start === null && panel.end === null ? '' : `#t=${panel.start ?? 0}${panel.end === null ? '' : ',' + panel.end}`;
+    return this.learn.fileUrl(panel.path) + fragment;
   });
 
   protected readonly frameUrl = computed<SafeResourceUrl | null>(() => {
     const panel = this.learn.panel();
-    if (!panel) {
+    if (!panel || panel.kind === 'localVideo') {
       return null;
     }
     const url = panel.kind === 'pdf'

@@ -128,10 +128,12 @@ export interface CalloutBlockView {
   blocks: BlockView[];
 }
 
+/** A video from YouTube ({@link youtubeId}) or a file of the sources ({@link path}); the other is null. */
 export interface VideoBlockView {
   type: 'video';
   label: string;
-  youtubeId: string;
+  youtubeId: string | null;
+  path: string | null;
   start: number | null;
   end: number | null;
 }
