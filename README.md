@@ -34,7 +34,7 @@ flowchart LR
 ```
 
 Boussole itself never calls an AI and needs no account. A short guide, itself a Boussole course
-([`guide/`](guide)), walks through all of this: it is where a new Boussole opens, and it stays
+([`guide/getting-started`](guide/getting-started)), walks through all of this: it is where a new Boussole opens, and it stays
 apart on the home page to come back to.
 
 ## Documentation

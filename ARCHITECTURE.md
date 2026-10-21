@@ -127,11 +127,15 @@ localhost (another site pointed at 127.0.0.1) and a change without the `X-Bousso
 form posted from another site). It also serves the interface, any other path answering with its
 `index.html`.
 
-The guide to Boussole is an ordinary subject, written in the course format under
-`guide/<language>/` and copied into the jar. `BundledGuide` installs it into the data folder at
-start, and `ServerSettings.guide` lists it after the learner's subjects, always: the home page
-shows it apart and resumes it only while there is no other subject. It earns no experience and
-keeps no streak (`RewardedSubjects`, in the core). `GuideSubjectTest` keeps both languages valid.
+The tracks built into Boussole are ordinary subjects, written in the course format under
+`guide/<track>/<language>/` and copied into the jar: `getting-started`, the guide a new
+Boussole opens on (its subject ID is `BundledTracks.STARTER`), and the tracks to learn more,
+such as `course-format` (writing a track by hand). `BundledTracks` installs them into the data
+folder at start, and `ServerSettings.builtIn` lists them after the learner's subjects, always:
+the home page shows the guide beside the session to resume (and resumes it only while there is
+no other subject), and the others under *To learn more*. They earn no experience and keep no
+streak (`RewardedSubjects`, in the core). `GuideSubjectTest` keeps every track valid in both
+languages, with the same sessions.
 
 ### `boussole-cli`
 
@@ -368,7 +372,7 @@ reminders:
 | Configuration | `$XDG_CONFIG_HOME/boussole/config.yaml` |
 | Progress, plan, history | `$XDG_DATA_HOME/boussole/state.db` |
 | Courses | the subject folders listed in the configuration, never inside Boussole |
-| Built-in guide | `$XDG_DATA_HOME/boussole/guide/<language>/`, rewritten at each start |
+| Built-in tracks | `$XDG_DATA_HOME/boussole/guide/<track>/<language>/`, rewritten at each start |
 
 On macOS and Windows the equivalent per-user folders are used.
 

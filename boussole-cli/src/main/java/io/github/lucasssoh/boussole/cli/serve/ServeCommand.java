@@ -4,9 +4,10 @@ import io.github.lucasssoh.boussole.adapters.config.BoussoleConfig;
 import io.github.lucasssoh.boussole.adapters.config.BoussoleConfigFile;
 import io.github.lucasssoh.boussole.adapters.config.BoussolePaths;
 import io.github.lucasssoh.boussole.server.BoussoleServer;
-import io.github.lucasssoh.boussole.server.guide.BundledGuide;
+import io.github.lucasssoh.boussole.server.guide.BuiltInTrack;
+import io.github.lucasssoh.boussole.server.guide.BundledTracks;
+import java.util.List;
 import java.nio.file.Path;
-import java.util.Optional;
 import java.util.Locale;
 import io.github.lucasssoh.boussole.server.RunningServer;
 import io.github.lucasssoh.boussole.server.ServerSettings;
@@ -34,11 +35,11 @@ public final class ServeCommand implements Callable<Integer> {
         BoussoleConfigFile config = BoussoleConfigFile.forCurrentUser();
         BoussoleConfig read = config.read();
         BoussolePaths paths = BoussolePaths.forCurrentUser();
-        Path guide = BundledGuide.install(paths.data().resolve("guide"), read.language().orElse(Locale.getDefault().getLanguage()));
+        List<BuiltInTrack> builtIn = BundledTracks.install(paths.data().resolve("guide"), read.language().orElse(Locale.getDefault().getLanguage()));
         RunningServer server = BoussoleServer.start(new ServerSettings(
                 port != null ? port : read.port(),
                 () -> config.read().subjects(),
-                Optional.of(guide),
+                builtIn,
                 paths.database(),
                 read.language(),
                 read.freeNavigation()));

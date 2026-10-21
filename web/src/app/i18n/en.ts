@@ -10,6 +10,7 @@ export const EN = {
     progress: '{{written}} of {{planned}} sessions written · {{finished}} finished',
     guideTitle: 'Getting started',
     guideText: 'What Boussole does, and how to use it.',
+    moreTitle: 'To learn more',
   },
   kind: { lesson: 'Lesson', review: 'Quick review', exam: 'Mock exam' },
   course: {

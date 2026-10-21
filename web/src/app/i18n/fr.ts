@@ -12,6 +12,7 @@ export const FR: Translations = {
     progress: '{{written}} séances écrites sur {{planned}} · {{finished}} terminées',
     guideTitle: 'Bien démarrer',
     guideText: "Ce que fait Boussole, et comment t'en servir.",
+    moreTitle: 'Pour en savoir plus',
   },
   kind: { lesson: 'Leçon', review: 'Révision express', exam: 'Examen blanc' },
   course: {

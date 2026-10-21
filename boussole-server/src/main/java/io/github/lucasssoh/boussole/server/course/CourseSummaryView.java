@@ -3,9 +3,13 @@ package io.github.lucasssoh.boussole.server.course;
 import io.github.lucasssoh.boussole.core.learn.CourseOverview;
 import io.github.lucasssoh.boussole.format.model.Course;
 import io.github.lucasssoh.boussole.format.model.SyllabusChapter;
-import io.github.lucasssoh.boussole.server.guide.BundledGuide;
+import io.github.lucasssoh.boussole.server.guide.BundledTracks;
+import java.util.Set;
 
-/** A subject in the list of subjects; {@code guide} marks the guide built into Boussole. */
+/**
+ * A subject in the list of subjects. {@code builtIn} marks a track shipped inside Boussole, and
+ * {@code starter} the one a new Boussole opens on, shown beside the session to resume.
+ */
 record CourseSummaryView(
         String id,
         String name,
@@ -16,9 +20,10 @@ record CourseSummaryView(
         int finished,
         String lastStudied,
         ResumeView resume,
-        boolean guide) {
+        boolean builtIn,
+        boolean starter) {
 
-    static CourseSummaryView of(CourseOverview overview) {
+    static CourseSummaryView of(CourseOverview overview, Set<String> builtIn) {
         Course course = overview.course();
         return new CourseSummaryView(
                 course.subject().id(),
@@ -30,6 +35,7 @@ record CourseSummaryView(
                 overview.finishedSessions().size(),
                 overview.lastStudied().map(Object::toString).orElse(null),
                 ResumeView.of(overview).orElse(null),
-                course.subject().id().equals(BundledGuide.SUBJECT));
+                builtIn.contains(course.subject().id()),
+                course.subject().id().equals(BundledTracks.STARTER));
     }
 }

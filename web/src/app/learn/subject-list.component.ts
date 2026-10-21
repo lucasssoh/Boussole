@@ -11,7 +11,8 @@ import { SessionGridComponent } from './session-grid.component';
 /**
  * The home page: where to resume, on top (the session in progress in the subject studied last,
  * or the first session of a subject not started yet) with the guide to Boussole beside it, then
- * every subject with its progress. The guide is what to resume only while there is no other subject.
+ * every subject with its progress, then the other tracks built into Boussole, to learn more. The
+ * guide is what to resume only while there is no other subject.
  */
 @Component({
   selector: 'app-subject-list',
@@ -76,16 +77,35 @@ import { SessionGridComponent } from './session-grid.component';
           }
         </ul>
       }
+      @if (moreTracks().length > 0) {
+        <h2>{{ 'home.moreTitle' | transloco }}</h2>
+        <ul class="cards">
+          @for (track of moreTracks(); track track.id) {
+            <li>
+              <a class="card guide-card subject-scope" [routerLink]="['/subjects', track.id]" [attr.lang]="track.lang">
+                <span class="card-title"><img src="favicon.svg" alt="" class="guide-logo" /> {{ track.name }}</span>
+                @if (track.description) {
+                  <span class="card-text">{{ track.description }}</span>
+                }
+                <span class="guide-go"><app-icon name="arrow-right" /></span>
+              </a>
+            </li>
+          }
+        </ul>
+      }
     </main>
   `,
 })
 export class SubjectListComponent {
   protected readonly learn = inject(LearnFacade);
 
-  /** The learner's own subjects, the guide left out; undefined until they are loaded. */
-  protected readonly ownSubjects = computed(() => this.learn.subjects()?.filter((subject) => !subject.guide));
+  /** The learner's own subjects, the built-in tracks left out; undefined until they are loaded. */
+  protected readonly ownSubjects = computed(() => this.learn.subjects()?.filter((subject) => !subject.builtIn));
 
-  protected readonly guides = computed(() => (this.learn.subjects() ?? []).filter((subject) => subject.guide));
+  protected readonly guides = computed(() => (this.learn.subjects() ?? []).filter((subject) => subject.builtIn && subject.starter));
+
+  /** The other built-in tracks, such as writing a track by hand. */
+  protected readonly moreTracks = computed(() => (this.learn.subjects() ?? []).filter((subject) => subject.builtIn && !subject.starter));
 
   /** The guide sits beside the session to resume, unless it is that session. */
   protected readonly besideResume = computed(() => this.guides().filter((guide) => guide.id !== this.resume()?.id));

@@ -1,5 +1,7 @@
 package io.github.lucasssoh.boussole.server.course;
 
+import io.github.lucasssoh.boussole.server.ServerSettings;
+import java.util.Set;
 import io.github.lucasssoh.boussole.core.learn.ListCourses;
 import io.github.lucasssoh.boussole.core.learn.OpenCourse;
 import java.util.List;
@@ -14,15 +16,17 @@ class CourseController {
 
     private final ListCourses listCourses;
     private final OpenCourse openCourse;
+    private final Set<String> builtIn;
 
-    CourseController(ListCourses listCourses, OpenCourse openCourse) {
+    CourseController(ListCourses listCourses, OpenCourse openCourse, ServerSettings settings) {
         this.listCourses = listCourses;
         this.openCourse = openCourse;
+        this.builtIn = settings.builtInIds();
     }
 
     @GetMapping
     List<CourseSummaryView> list() {
-        return listCourses.list().stream().map(CourseSummaryView::of).toList();
+        return listCourses.list().stream().map(overview -> CourseSummaryView.of(overview, builtIn)).toList();
     }
 
     @GetMapping("/{subject}")

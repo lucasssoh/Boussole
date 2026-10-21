@@ -17,7 +17,6 @@ import io.github.lucasssoh.boussole.core.learn.SubmitAttempt;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 import io.github.lucasssoh.boussole.core.learn.reward.ReadStudyStats;
 import io.github.lucasssoh.boussole.core.learn.reward.RewardedSubjects;
-import io.github.lucasssoh.boussole.server.guide.BundledGuide;
 import java.time.Clock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +27,7 @@ class LearningConfiguration {
 
     @Bean
     ContentRepository contentRepository(ServerSettings settings) {
-        return new FileContentRepository(settings::subjectsWithGuide);
+        return new FileContentRepository(settings::subjectsWithBuiltIn);
     }
 
     @Bean
@@ -36,10 +35,10 @@ class LearningConfiguration {
         return new SqliteProgressRepository(SqliteDatabase.open(settings.database()));
     }
 
-    /** The guide built into Boussole is there to be read again: it earns no experience. */
+    /** The tracks built into Boussole are there to be read again: they earn no experience. */
     @Bean
-    RewardedSubjects rewardedSubjects() {
-        return RewardedSubjects.allBut(BundledGuide.SUBJECT);
+    RewardedSubjects rewardedSubjects(ServerSettings settings) {
+        return new RewardedSubjects(settings.builtInIds());
     }
 
     @Bean

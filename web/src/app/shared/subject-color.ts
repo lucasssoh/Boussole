@@ -4,12 +4,12 @@
  */
 const PALETTE = ['#a61e4d', '#1864ab', '#c2410c', '#5c7cfa', '#0b7a5f', '#2b8a3e', '#862e9c', '#6741d9'];
 
-/** The guide built into Boussole (BundledGuide.SUBJECT on the server) wears the colour of Boussole itself. */
-const GUIDE = 'boussole-guide';
+/** The tracks built into Boussole (their IDs start with boussole-) wear the colour of Boussole itself. */
+const BUILT_IN = 'boussole-';
 const BRAND = '#0b7a5f';
 
 export function subjectColor(id: string): string {
-  if (id === GUIDE) {
+  if (id.startsWith(BUILT_IN)) {
     return BRAND;
   }
   let hash = 0;

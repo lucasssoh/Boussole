@@ -33,7 +33,7 @@ recipe below: do it all the same.
 | `boussole-cli` | `boussole` commands, the agent kit | server |
 | `web/` | the Angular interface | the HTTP API |
 | `skills/` | the playbooks installed for agents | `docs/FORMAT.md` |
-| `guide/` | the built-in *Getting started* track, in the course format | `docs/FORMAT.md` |
+| `guide/` | the tracks built into Boussole, in the course format: `getting-started` (the guide a new Boussole opens on) and the tracks *to learn more*, such as `course-format` | `docs/FORMAT.md` |
 
 ## Recipes
 
@@ -53,7 +53,8 @@ Each recipe lists every place a change of that kind touches. Tick them all.
 7. `skills/`: say when an agent should use it (`seance-write`, `exercise-author`), and how to fix
    its codes (`cursus-fix`).
 8. An example of it in `examples/` or `guide/`, so that `mvn verify` validates a real use.
-9. `CHANGELOG.md`.
+9. The track `guide/course-format` (en and fr) teaches it, with a question.
+10. `CHANGELOG.md`.
 
 ### A new exercise type
 
@@ -61,7 +62,8 @@ Each recipe lists every place a change of that kind touches. Tick them all.
 in the core, its `LearnerResponse`, the request in `boussole-server` (`AttemptRequest`) and in
 `web/core/api.ts`, its input in `ExerciseBlockComponent` (with `ready()` and the stored answer
 of `QuestionState`); `docs/FORMAT.md` §5.6; diagrams `12-model-answers`, `21-parsing-answers`,
-`50-core-learn`, `80-web`; `skills/exercise-author`; an example; `CHANGELOG.md`.
+`50-core-learn`, `80-web`; `skills/exercise-author`; an example; the track
+`guide/course-format`; `CHANGELOG.md`.
 
 ### A new validation rule or diagnostic code
 
@@ -85,7 +87,8 @@ diagrams `50-core-learn`, `60-adapters`, `70-server`.
   vocabulary below. No emoji: icons come from `IconComponent`.
 - A new component: diagram `80-web`.
 - Checked in a browser, light and dark, English and French, at phone width too.
-- If it changes how studying works, the guide says so (`guide/en`, `guide/fr`).
+- If it changes how studying works, the guide says so (`guide/getting-started/en` and `/fr`).
+- If it changes the course format, the track `guide/course-format` teaches it too.
 - `CHANGELOG.md`, in the words of the interface.
 
 ### A new command or option
@@ -100,10 +103,13 @@ it, the guide if it is part of getting started. A new `config.yaml` key: `Bousso
 the routing rule in `boussole-cli/src/main/resources/boussole-agent/AGENTS.md` if agents
 must reach it, `ARCHITECTURE.md` §7.
 
-### The guide
+### The built-in tracks
 
-`guide/en` and `guide/fr` say the same thing; both pass `boussole validate guide/<lang>`
-(`GuideSubjectTest` checks it). New words of the product go into both lexicons.
+Each track of `guide/<track>/` has `en` and `fr` folders that say the same thing, with the same
+session IDs; both pass `boussole validate` (`GuideSubjectTest` checks every track). A new
+track only needs its folder: its subject ID starts with `boussole-`, and Boussole shows it under
+*To learn more*. New words of the product go into the lexicons. A change of the format
+(`docs/FORMAT.md`) is taught in `guide/course-format` in the same commit.
 
 ## Writing for learners
 

@@ -13,7 +13,7 @@ class BoussoleServer <<@SpringBootApplication>> {
 class ServerSettings <<record>> {
   port : int
   subjects : Supplier<List<Path>>
-  guide : Optional<Path>
+  builtIn : List<BuiltInTrack>
   database : Path
   language : Optional<String>
   freeNavigation : boolean
@@ -61,6 +61,15 @@ package "block" {
     +{static} place(GraphBlock) : Map<String, Point>
   }
 }
+package "guide" {
+  class BundledTracks <<getting-started first>> {
+    +{static} install(folder, language) : List<BuiltInTrack>
+  }
+  class BuiltInTrack <<record>> {
+    id : String
+    folder : Path
+  }
+}
 package "reference" {
   class ReferenceController <<GET /api/references/preview>>
 }
@@ -77,6 +86,8 @@ package "boussole-core" as core {
 }
 
 BoussoleServer ..> ServerSettings
+ServerSettings *-- "*" BuiltInTrack : builtIn
+BundledTracks ..> BuiltInTrack : installs
 BoussoleServer ..> RunningServer
 LearningConfiguration ..> core : adapters into use cases
 CourseController --> core
