@@ -94,3 +94,10 @@
   term: Streak
   definition: >
     The number of days in a row you have studied. It holds until the end of the next day.
+
+- id: link
+  term: Link
+  aliases: [links]
+  definition: >
+    A web page the track cites, which opens beside the text when its site allows it, and in a tab
+    otherwise.

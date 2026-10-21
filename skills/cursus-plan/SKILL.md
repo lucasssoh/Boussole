@@ -14,7 +14,8 @@ write sessions here: the learner approves the plan first.
    `session_minutes` sets the usual length of a session, its `background` tells which
    prerequisites to plan for, and its `goal` how much exam practice to plan.
 2. Read `subject.yaml`. `sources` names the folder of documents (`.` means the subject folder
-   itself). Never modify, move or rename anything in it.
+   itself). Never modify, move or rename anything in it. If it holds no document, follow
+   `cursus-discover` first: it finds the sources, then comes back here.
 3. List every document there. For each one, note its kind (lecture notes, slides, tutorial
    sheet, lab, past exam, project brief) and its number of pages.
 4. Read them all. If you cannot read a PDF directly, extract its text with

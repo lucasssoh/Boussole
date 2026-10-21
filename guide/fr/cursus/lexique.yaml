@@ -93,3 +93,10 @@
   term: Série
   definition: >
     Le nombre de jours d'affilée où tu as étudié. Elle tient jusqu'à la fin du jour suivant.
+
+- id: lien
+  term: Lien
+  aliases: [liens]
+  definition: >
+    Une page web citée par le parcours, qui s'ouvre à côté du texte quand le site le permet, et
+    sinon dans un onglet.

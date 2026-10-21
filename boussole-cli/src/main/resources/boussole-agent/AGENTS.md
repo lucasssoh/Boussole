@@ -9,6 +9,7 @@ To build or change the course, follow the skills in `.boussole/skills/`. **Read 
 | Task | Skill |
 |---|---|
 | Ask how the learner learns (`learner.yaml`) | `.boussole/skills/learner-profile/SKILL.md` |
+| Find the sources when there are no documents (a track started with `boussole new`) | `.boussole/skills/cursus-discover/SKILL.md` |
 | Propose or revise the plan of the course | `.boussole/skills/cursus-plan/SKILL.md` |
 | Write a session | `.boussole/skills/seance-write/SKILL.md` |
 | Write or change an exercise or an MCQ | `.boussole/skills/exercise-author/SKILL.md` |
@@ -27,6 +28,9 @@ Where to start:
   the documents itself.
 - No `learner.yaml` → **learner-profile** first, right after the learner's first request; then
   carry on with that request.
+- The sources folder holds no document, or the learner wants to learn something without giving
+  documents → **cursus-discover**: it finds and cites the sources, then hands over to
+  **cursus-plan**.
 - `cursus/syllabus.yaml` has no chapter → **cursus-plan**.
 - `status: proposed` → the learner has not approved the plan yet: show it and ask for approval
   (**cursus-plan**, §4).
@@ -39,7 +43,9 @@ Rules:
 - **Asking the learner**: when you need a choice from them, use your interactive
   multiple-choice tool if you have one (Claude Code: `AskUserQuestion`, answered with the arrow
   keys), with the recommended option first; otherwise ask in a message with numbered choices.
-- Write only `subject.yaml`, `learner.yaml` and files under `cursus/`.
+- Write only `subject.yaml`, `learner.yaml` and files under `cursus/`; and, for a track without
+  documents (**cursus-discover**), the sources you download or the source notes you write in
+  {{sources}}, never anything else there.
 - Every session follows `learner.yaml`: how notions are ordered, the quick checks, how sessions
   close.
 - The course is written in the language given by `lang` in `subject.yaml`.

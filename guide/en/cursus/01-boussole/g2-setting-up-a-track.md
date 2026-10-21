@@ -3,7 +3,7 @@ id: g2
 objectives:
   - Set up a track with `boussole init`.
   - Follow your agent from the plan to the first session.
-terms: [agent, plan, validator]
+terms: [agent, plan, validator, link]
 ---
 
 :::::warmup
@@ -40,6 +40,16 @@ Your documents stay where they are.
 :::tip
 Open your agent **in that folder** and ask it: "Build the track."
 :::
+
+**"What if I have no documents?"** Start from nothing:
+
+```
+boussole new "Python" --goal "automate my work"
+```
+
+Your agent asks what you want to be able to do, looks for open sources (official documentation,
+university courses, open textbooks) and shows them to you before making the plan. Every source
+keeps its address and licence; in the sessions, a :term[link]{id=link} opens it beside the text.
 
 ::::exercise{#g2-a1 type=order}
 Put the steps in order, from an empty folder to an open track.

@@ -317,6 +317,7 @@ The skills shipped in `skills/`:
 | Skill | Role |
 |---|---|
 | `learner-profile` | Asks the learner a few multiple-choice questions on how they learn, and writes `learner.yaml`. |
+| `cursus-discover` | With no documents (`boussole new`): asks what the learner wants, finds open sources on the web, downloads those whose licence allows it and sums up the others in source notes, records each with its address and licence, then hands over to `cursus-plan`. |
 | `cursus-plan` | Reads `sources/`, writes `syllabus.yaml` with `status: proposed`, and stops for the learner. |
 | `seance-write` | Writes one session following `FORMAT.md`, in the language of the sources. |
 | `exercise-author` | Exercises and MCQs: feedback for each wrong choice, hints in tiers, answers recomputed. |

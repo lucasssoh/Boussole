@@ -3,7 +3,7 @@ id: g2
 objectives:
   - Préparer un parcours avec `boussole init`.
   - Suivre ton agent du plan à la première séance.
-terms: [agent, plan, validateur]
+terms: [agent, plan, validateur, lien]
 ---
 
 :::::warmup
@@ -40,6 +40,17 @@ Tes documents restent à leur place.
 :::tip
 Ouvre ton agent **dans ce dossier** et demande-lui : « Construis le parcours. »
 :::
+
+**« Et si je n'ai aucun document ? »** Pars de rien :
+
+```
+boussole new "Python" --goal "automatiser mon travail"
+```
+
+Ton agent te demande ce que tu veux savoir faire, cherche des sources ouvertes (documentation
+officielle, cours d'université, manuels libres) et te les montre avant de faire le plan. Chaque
+source garde son adresse et sa licence ; dans les séances, un :term[lien]{id=lien} l'ouvre à côté
+du texte.
 
 ::::exercise{#g2-a1 type=order}
 Remets les étapes dans l'ordre, du dossier vide au parcours ouvert.
