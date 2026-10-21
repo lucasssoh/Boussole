@@ -4,6 +4,8 @@ import io.github.lucasssoh.boussole.core.learn.ContentNotFoundException;
 import io.github.lucasssoh.boussole.core.learn.OpenCourse;
 import java.io.IOException;
 import java.nio.file.Files;
+import io.github.lucasssoh.boussole.format.model.Course;
+import io.github.lucasssoh.boussole.server.block.SourcePaths;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -43,19 +45,31 @@ class SubjectFileController {
         return file(subject, Optional.of(lang), path);
     }
 
+    /**
+     * A file of the subject folder, or of its sources folder when it lies elsewhere: a version of a
+     * track in another language may read the documents of the original ({@code sources: ../python/sources}).
+     */
     private ResponseEntity<Resource> file(String subject, Optional<String> lang, String path) throws IOException {
-        Path root = openCourse.open(subject, lang).course().root().toRealPath();
+        Course course = openCourse.open(subject, lang).course();
+        Path root = course.root().toRealPath();
         Path relative = Path.of(path.replaceFirst("^/+", "")).normalize();
-        if (relative.isAbsolute() || relative.startsWith("..") || isHidden(relative)) {
+        if (relative.isAbsolute() || isHidden(relative)) {
             throw new ContentNotFoundException("no file " + path + " in " + subject);
         }
-        Path file = root.resolve(relative);
-        if (!Files.isRegularFile(file) || !file.toRealPath().startsWith(root)) {
+        Path sources = root.resolve(course.subject().sourcesDir()).normalize();
+        Path file = relative.startsWith(SourcePaths.SOURCES) && relative.getNameCount() > 1
+                ? sources.resolve(relative.subpath(1, relative.getNameCount())).normalize()
+                : root.resolve(relative).normalize();
+        if (!Files.isRegularFile(file) || !within(file.toRealPath(), root, sources)) {
             throw new ContentNotFoundException("no file " + path + " in " + subject);
         }
         Resource resource = new FileSystemResource(file);
         MediaType type = MediaTypeFactory.getMediaType(resource).orElse(MediaType.APPLICATION_OCTET_STREAM);
         return ResponseEntity.ok().contentType(type).body(resource);
+    }
+
+    private static boolean within(Path file, Path root, Path sources) throws IOException {
+        return file.startsWith(root) || (Files.isDirectory(sources) && file.startsWith(sources.toRealPath()));
     }
 
     private static boolean isHidden(Path relative) {

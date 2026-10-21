@@ -6,7 +6,7 @@ chapters:
     sessions:
       - id: f1
         title: The folder of a track
-        duration: 15
+        duration: 20
         goal: Create the smallest valid track and check it with the validator.
         file: f1-the-folder.md
       - id: f2

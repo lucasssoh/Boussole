@@ -17,6 +17,7 @@ the [course format](../docs/FORMAT.md) and an `AGENTS.md` that tells any agent w
 | [`lexique-build`](lexique-build/SKILL.md) | Builds the lexicon. |
 | [`video-find`](video-find/SKILL.md) | Adds videos that exist and fit. |
 | [`sources-update`](sources-update/SKILL.md) | Takes documents that arrive or change into the course, without breaking what is written. |
+| [`track-translate`](track-translate/SKILL.md) | Writes a version of the track in another language, keeping every ID. |
 | [`cursus-fix`](cursus-fix/SKILL.md) | Runs the validator and fixes until there is no error. |
 
 A skill is written for the agent, in English, whatever the language of the course: the course

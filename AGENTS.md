@@ -103,6 +103,13 @@ it, the guide if it is part of getting started. A new `config.yaml` key: `Bousso
 the routing rule in `boussole-cli/src/main/resources/boussole-agent/AGENTS.md` if agents
 must reach it, `ARCHITECTURE.md` §7.
 
+### A version of a track in another language
+
+A folder of its own with the same `id` and its own `lang`; only the text is translated
+(`docs/FORMAT.md` §9). For a built-in track, add `guide/<track>/<lang>/`: it ships at once, and
+`GuideSubjectTest` checks it against the others. The `track-translate` playbook says what to
+translate and what to keep. A new interface language is another thing: `web/src/app/i18n`.
+
 ### The built-in tracks
 
 Each track of `guide/<track>/` has `en` and `fr` folders that say the same thing, with the same

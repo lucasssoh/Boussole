@@ -95,6 +95,10 @@ export class LearnFacade {
   /** A :pdf directive names a file of the sources folder. */
   sourcePath(file: string): string {
     const folder = this.course()?.sourcesDir ?? '.';
+    if (folder.startsWith('..')) {
+      // A sources folder outside the subject's (SourcePaths.SOURCES on the server).
+      return `@sources/${file}`;
+    }
     return folder === '.' || folder === '' ? file : `${folder.replace(/\/$/, '')}/${file}`;
   }
 

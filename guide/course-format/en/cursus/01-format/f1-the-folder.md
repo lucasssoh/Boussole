@@ -167,6 +167,47 @@ come later, if needed.
 :::
 ::::
 
+## A track in several languages {#languages}
+
+**"What if I want the same track in French?"** You add a **version**: a folder of its own, with
+the **same `id`** and its own `lang`.
+
+```
+git-basics/
+├── en/   subject.yaml: id: git-basics, lang: en
+└── fr/   subject.yaml: id: git-basics, lang: fr
+```
+
+- Boussole shows both folders as **one track**: the learner picks the language on its page, or
+  switches during a session, at the same place.
+- Progress is the same in every language.
+- **Only the text is translated.** The IDs (sessions, notions `{#…}`, questions) stay the same,
+  and each question asks the same thing: same choices, same gaps.
+- Documents are not copied: the version points to the original's, `sources: "../en/sources"`.
+
+The validator compares the versions: `F040` when they differ, `F041` for a session not
+translated yet.
+
+::::mcq{#f1-a4}
+You translate session s1 of "Git basics" into French. What do you keep as it is?
+
+- [ ] The title of the notion `## Creating a repository`
+  > The title is translated; its ID `{#init}` is what stays.
+- [x] The IDs: `{#init}`, `s1-a1`, and the `id` of the track
+- [ ] The accepted answers of a `text` exercise
+  > They are in the language of the version: write the French answers.
+
+:::hint
+What lets Boussole find the same place in the other language?
+:::
+
+:::solution
+**The IDs.** The text is translated, titles and answers included; the IDs and what each question
+asks stay the same, so that progress and the place in the session follow from one language to
+the other.
+:::
+::::
+
 :::::checkpoint
 ::::exercise{#f1-c1 type=fill}
 Fill in.

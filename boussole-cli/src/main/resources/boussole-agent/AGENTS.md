@@ -17,6 +17,7 @@ To build or change the course, follow the skills in `.boussole/skills/`. **Read 
 | Add terms to the lexicon | `.boussole/skills/lexique-build/SKILL.md` |
 | Add videos | `.boussole/skills/video-find/SKILL.md` |
 | Take in documents that arrived or changed | `.boussole/skills/sources-update/SKILL.md` |
+| Write the course in another language (a version of the track) | `.boussole/skills/track-translate/SKILL.md` |
 | Fix what the validator reports | `.boussole/skills/cursus-fix/SKILL.md` |
 
 Where to start:

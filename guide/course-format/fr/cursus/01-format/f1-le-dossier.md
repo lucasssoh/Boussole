@@ -167,6 +167,48 @@ viennent ensuite, si besoin.
 :::
 ::::
 
+## Un parcours en plusieurs langues {#languages}
+
+**« Et si je veux le même parcours en anglais ? »** Tu ajoutes une **version** : un dossier à part,
+avec le **même `id`** et son propre `lang`.
+
+```
+git-bases/
+├── fr/   subject.yaml : id: git-bases, lang: fr
+└── en/   subject.yaml : id: git-bases, lang: en
+```
+
+- Boussole montre les deux dossiers comme **un seul parcours** : on choisit la langue sur sa page,
+  ou on la change en pleine séance, au même endroit.
+- La progression est la même dans toutes les langues.
+- **Seul le texte se traduit.** Les identifiants (séances, notions `{#…}`, questions) restent les
+  mêmes, et chaque question demande la même chose : mêmes choix, mêmes trous.
+- Les documents ne se copient pas : la version pointe vers ceux de l'original,
+  `sources: "../fr/sources"`.
+
+Le validateur compare les versions entre elles : `F040` quand elles diffèrent, `F041` pour une
+séance pas encore traduite.
+
+::::mcq{#f1-a4}
+Tu traduis la séance s1 de « Les bases de Git » en anglais. Que gardes-tu tel quel ?
+
+- [ ] Le titre de la notion `## Créer un dépôt`
+  > Le titre se traduit ; c'est son identifiant `{#init}` qui reste.
+- [x] Les identifiants : `{#init}`, `s1-a1`, et le `id` du parcours
+- [ ] Les réponses acceptées d'un exercice `text`
+  > Elles sont dans la langue de la version : on écrit les réponses anglaises.
+
+:::hint
+Qu'est-ce qui permet à Boussole de retrouver la même place dans l'autre langue ?
+:::
+
+:::solution
+**Les identifiants.** Le texte se traduit, titres et réponses compris ; les identifiants et ce que
+chaque question demande restent les mêmes, pour que la progression et la place dans la séance
+suivent d'une langue à l'autre.
+:::
+::::
+
 :::::checkpoint
 ::::exercise{#f1-c1 type=fill}
 Complète.
