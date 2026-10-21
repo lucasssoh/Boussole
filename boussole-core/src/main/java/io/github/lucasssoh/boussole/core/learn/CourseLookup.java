@@ -1,5 +1,7 @@
 package io.github.lucasssoh.boussole.core.learn;
 
+import java.util.Optional;
+import java.util.List;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.format.model.Course;
 import io.github.lucasssoh.boussole.format.model.CourseSession;
@@ -14,8 +16,17 @@ final class CourseLookup {
         this.content = content;
     }
 
-    Course course(String subject) {
-        return content.course(subject).orElseThrow(() -> new ContentNotFoundException("no subject " + subject));
+    /** The version of a track in {@code language} when it has one, else its first. */
+    Course course(String subject, Optional<String> language) {
+        return CourseVersions.pick(versions(subject), language);
+    }
+
+    List<Course> versions(String subject) {
+        List<Course> versions = content.versions(subject);
+        if (versions.isEmpty()) {
+            throw new ContentNotFoundException("no subject " + subject);
+        }
+        return versions;
     }
 
     CourseSession session(Course course, String session) {
@@ -26,8 +37,8 @@ final class CourseLookup {
                         "no written session " + session + " in " + course.subject().id()));
     }
 
-    Block question(ExerciseKey key) {
-        return CourseQuestions.find(course(key.subject()), key.exercise())
+    Block question(ExerciseKey key, Optional<String> language) {
+        return CourseQuestions.find(course(key.subject(), language), key.exercise())
                 .orElseThrow(() -> new ContentNotFoundException("no exercise " + key.exercise() + " in " + key.subject()));
     }
 }

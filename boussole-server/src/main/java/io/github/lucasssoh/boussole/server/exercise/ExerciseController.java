@@ -37,23 +37,25 @@ class ExerciseController {
             @PathVariable String subject,
             @PathVariable String exercise,
             @RequestParam Optional<String> session,
+            @RequestParam Optional<String> lang,
             @RequestBody AttemptRequest request) {
         ExerciseKey key = new ExerciseKey(subject, exercise);
-        AttemptOutcome outcome = submitAttempt.submit(key, request.toResponse(), session);
-        return AttemptView.of(outcome, SolutionView.of(revealSolution.reveal(key), mapper(subject)));
+        AttemptOutcome outcome = submitAttempt.submit(key, request.toResponse(), session, lang);
+        return AttemptView.of(outcome, SolutionView.of(revealSolution.reveal(key, lang), mapper(subject, lang)));
     }
 
+    /** {@code lang}: the version of the track the question is read in. */
     @PostMapping("/hints")
-    HintView nextHint(@PathVariable String subject, @PathVariable String exercise) {
-        return HintView.of(revealNextHint.reveal(new ExerciseKey(subject, exercise)), mapper(subject));
+    HintView nextHint(@PathVariable String subject, @PathVariable String exercise, @RequestParam Optional<String> lang) {
+        return HintView.of(revealNextHint.reveal(new ExerciseKey(subject, exercise), lang), mapper(subject, lang));
     }
 
     @GetMapping("/solution")
-    SolutionView solution(@PathVariable String subject, @PathVariable String exercise) {
-        return SolutionView.of(revealSolution.reveal(new ExerciseKey(subject, exercise)), mapper(subject));
+    SolutionView solution(@PathVariable String subject, @PathVariable String exercise, @RequestParam Optional<String> lang) {
+        return SolutionView.of(revealSolution.reveal(new ExerciseKey(subject, exercise), lang), mapper(subject, lang));
     }
 
-    private BlockViewMapper mapper(String subject) {
-        return BlockViewMapper.forContent(openCourse.open(subject).course().subject().sourcesDir());
+    private BlockViewMapper mapper(String subject, Optional<String> lang) {
+        return BlockViewMapper.forContent(openCourse.open(subject, lang).course().subject().sourcesDir());
     }
 }

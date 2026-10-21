@@ -4,6 +4,8 @@ import io.github.lucasssoh.boussole.core.learn.FinishSession;
 import io.github.lucasssoh.boussole.core.learn.OpenSession;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import java.time.Duration;
+import org.springframework.web.bind.annotation.RequestParam;
+import java.util.Optional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,8 +26,8 @@ class SessionController {
     }
 
     @GetMapping
-    SessionView open(@PathVariable String subject, @PathVariable String session) {
-        return SessionView.of(openSession.open(subject, session));
+    SessionView open(@PathVariable String subject, @PathVariable String session, @RequestParam Optional<String> lang) {
+        return SessionView.of(openSession.open(subject, session, lang));
     }
 
     @PostMapping("/finish")

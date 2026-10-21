@@ -10,7 +10,7 @@ terms: [nudge, notion]
 ::ref{id=f6-a2}
 :::::
 
-## Le texte à trous {#trous}
+## Le texte à trous {#fill}
 
 **Comment faire compléter une phrase, une commande ou un raisonnement ?** Avec `type=fill`. Dans
 l'énoncé, `[[1]]`, `[[2]]`… marquent les trous ; dans `:::answer`, une ligne par trou :
@@ -115,7 +115,7 @@ Sans mot-clé, l'apprenant tape sa réponse.
 :::
 ::::
 
-## Ordre, paires et réponse libre {#ordre-paires}
+## Ordre, paires et réponse libre {#order-match}
 
 **Et pour remettre des étapes dans l'ordre, ou relier deux listes ?** Trois autres types :
 

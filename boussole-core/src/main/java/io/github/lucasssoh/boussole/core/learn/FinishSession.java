@@ -6,6 +6,7 @@ import io.github.lucasssoh.boussole.core.learn.reward.RewardedSubjects;
 import io.github.lucasssoh.boussole.core.learn.reward.XpRules;
 import java.time.Clock;
 import java.time.Duration;
+import java.util.Optional;
 
 /**
  * Records that the learner reached the end of a session, and the time they actually spent on it;
@@ -26,7 +27,7 @@ public final class FinishSession {
     }
 
     public int finish(SessionKey key, Duration spent) {
-        lookup.session(lookup.course(key.subject()), key.session());
+        lookup.session(lookup.course(key.subject(), Optional.empty()), key.session());
         progress.saveSessionFinished(key, clock.instant(), spent.isNegative() ? Duration.ZERO : spent);
         return rewarded.rewards(key.subject()) ? XpRules.SESSION_FINISHED : 0;
     }

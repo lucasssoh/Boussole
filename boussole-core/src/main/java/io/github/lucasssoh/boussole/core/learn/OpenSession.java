@@ -22,10 +22,12 @@ public final class OpenSession {
         this.progress = progress;
     }
 
-    public OpenedSession open(String subject, String session) {
-        Course course = lookup.course(subject);
+    /** In {@code language} when the track exists in it, else in its first language. */
+    public OpenedSession open(String subject, String session, Optional<String> language) {
+        Course course = lookup.course(subject, language);
         CourseSession found = lookup.session(course, session);
-        return new OpenedSession(course, found, referenced(course, found), progress.exercises(subject),
+        return new OpenedSession(course, CourseVersions.languages(lookup.versions(subject)), found, referenced(course, found),
+                progress.exercises(subject),
                 AnswerOnce.appliesTo(found) ? progress.firstVerdicts(new SessionKey(subject, session)) : Map.of());
     }
 

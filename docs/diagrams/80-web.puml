@@ -25,6 +25,8 @@ package "core" {
 package "learn" {
   class LearnFacade <<facade>> {
     subjects, course, session, panel : Signal
+    +trackLanguage(subject) : string
+    +chooseTrackLanguage(subject, language)
   }
   class SessionRun <<per session page>> {
     spentSeconds, remainingSeconds : Signal
@@ -41,6 +43,7 @@ package "learn" {
   class "sessionPlan()" as SessionPlan <<start, explanation, example, question…, end>>
   class SessionPathComponent <<the session as a path of nodes>>
   class SessionGridComponent <<the sessions as a grid, by chapter>>
+  class TrackLanguagesComponent <<the languages of a track, chips>>
   class SidePanelComponent <<video, PDF or web page>>
 }
 
@@ -87,6 +90,8 @@ package "shared" {
 }
 
 SubjectListComponent --> LearnFacade
+CoursePageComponent --> TrackLanguagesComponent : follow in
+SessionPageComponent --> TrackLanguagesComponent : switch, same place
 QuestionFooterComponent ..> IconComponent : hint, arrows
 FillGaps ..> IconComponent : iconSvg()
 CoursePageComponent --> LearnFacade

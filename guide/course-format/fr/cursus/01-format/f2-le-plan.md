@@ -10,7 +10,7 @@ terms: [syllabus, chapter, session, identifier, quick-review, mock-exam]
 ::ref{id=f1-a2}
 :::::
 
-## Chapitres et séances {#chapitres}
+## Chapitres et séances {#chapters}
 
 **Comment Boussole sait-il quelles séances présenter, et dans quel ordre ?** Par le
 :term[plan]{id=syllabus}, `cursus/syllabus.yaml`. L'ordre du fichier est l'ordre du parcours.
@@ -114,7 +114,7 @@ Regarde les champs `dir` et `file` du plan.
 :::
 ::::
 
-## Type, durée et statut {#statut}
+## Type, durée et statut {#status}
 
 **Comment dire qu'une séance est une révision, et combien de temps elle prend ?** Avec `kind` et
 `duration`.

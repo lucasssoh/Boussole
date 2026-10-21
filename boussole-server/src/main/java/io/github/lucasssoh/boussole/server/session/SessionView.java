@@ -23,12 +23,14 @@ import java.util.Locale;
 import java.util.stream.Stream;
 
 /**
- * A session as the player shows it. {@code file} is the session file in the subject folder:
+ * A session as the player shows it, in {@code lang}, one of the {@code languages} of its track. {@code file} is the session file in the subject folder:
  * relative links and images of the Markdown resolve against it. {@code questionMinutes} is the
  * time its questions take at a normal pace, which a timed session fits to its {@code duration}.
  */
 record SessionView(
         String subject,
+        String lang,
+        List<String> languages,
         String id,
         String title,
         String kind,
@@ -56,6 +58,8 @@ record SessionView(
         int index = written.indexOf(entry.id());
         return new SessionView(
                 course.subject().id(),
+                course.subject().lang(),
+                opened.languages(),
                 entry.id(),
                 entry.title(),
                 entry.kind().name().toLowerCase(Locale.ROOT),

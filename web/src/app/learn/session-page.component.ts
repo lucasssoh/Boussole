@@ -10,6 +10,7 @@ import { subjectColor } from '../shared/subject-color';
 import { BlockListComponent } from './blocks/block-list.component';
 import { clock } from './blocks/video-block.component';
 import { LearnFacade } from './learn.facade';
+import { TrackLanguagesComponent } from './track-languages.component';
 import { SessionPathComponent } from './session-path.component';
 import { BlockView, Verdict } from '../core/api';
 import { SessionScreen, sessionPlan } from './session-screens';
@@ -24,7 +25,7 @@ import { SidePanelComponent } from './side-panel.component';
  */
 @Component({
   selector: 'app-session-page',
-  imports: [IconComponent, RichTextComponent, RouterLink, TranslocoPipe, BlockListComponent, SessionPathComponent, SidePanelComponent],
+  imports: [IconComponent, RichTextComponent, RouterLink, TranslocoPipe, BlockListComponent, SessionPathComponent, SidePanelComponent, TrackLanguagesComponent],
   providers: [SessionRun],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -54,6 +55,9 @@ import { SidePanelComponent } from './side-panel.component';
           <span class="screen-where"><app-rich-text [text]="where()" /></span>
           @if (timed() && run.started()) {
             <span class="timer" [class.over]="run.timeIsUp()" role="timer"><app-icon name="timer" /> {{ remaining() }}</span>
+          }
+          @if (opened(); as current) {
+            <app-track-languages [languages]="current.languages" [current]="current.lang" [compact]="true" (choose)="switchLanguage($event)" />
           }
           <span class="screen-count">{{ index() + 1 }} / {{ plan().screens.length }}</span>
           <progress [max]="plan().screens.length - 1" [value]="index()"></progress>
@@ -235,6 +239,36 @@ export class SessionPageComponent {
         storeValue(positionKey(session.subject, session.id), String(index + 1));
       }
     });
+  }
+
+  /**
+   * The same session in another language of its track, at the same place: the same part (by the
+   * ID of its notion, else by its rank), at the same step of it when it has as many.
+   */
+  protected async switchLanguage(language: string): Promise<void> {
+    const opened = this.opened();
+    if (!opened) {
+      return;
+    }
+    const plan = this.plan();
+    const screen = this.screen();
+    const part = plan.parts[screen.part];
+    const offset = part ? part.screens.indexOf(this.index()) : 0;
+    this.learn.chooseTrackLanguage(opened.subject, language);
+    await this.learn.openSession(opened.subject, opened.id);
+    this.run.reloadQuestions(this.answeredHere());
+    const again = this.plan();
+    let target = screen.kind === 'end' ? again.screens.length - 1 : 0;
+    const byId = part ? again.parts.findIndex((candidate) => part.part.id !== null
+      ? candidate.part.id === part.part.id
+      : candidate.part.kind === part.part.kind) : -1;
+    // Versions keep their IDs; one that does not still has its parts in the same order.
+    const found = byId >= 0 ? byId : (screen.part >= 0 && screen.part < again.parts.length ? screen.part : -1);
+    if (found >= 0) {
+      const screens = again.parts[found].screens;
+      target = screens[Math.min(Math.max(offset, 0), screens.length - 1)];
+    }
+    this.goTo(Math.min(target, this.gate()));
   }
 
   protected goTo(index: number): void {

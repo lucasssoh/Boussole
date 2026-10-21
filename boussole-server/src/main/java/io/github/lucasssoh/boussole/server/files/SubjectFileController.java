@@ -5,6 +5,7 @@ import io.github.lucasssoh.boussole.core.learn.OpenCourse;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -30,7 +31,20 @@ class SubjectFileController {
 
     @GetMapping("/api/subjects/{subject}/files/{*path}")
     ResponseEntity<Resource> file(@PathVariable String subject, @PathVariable String path) throws IOException {
-        Path root = openCourse.open(subject).course().root().toRealPath();
+        return file(subject, Optional.empty(), path);
+    }
+
+    /**
+     * A file of one version of the track ({@code lang}), each with its own folder. The language is
+     * in the path, so that the relative links and images of a session resolve against its folder.
+     */
+    @GetMapping("/api/subjects/{subject}/lang/{lang}/files/{*path}")
+    ResponseEntity<Resource> file(@PathVariable String subject, @PathVariable String lang, @PathVariable String path) throws IOException {
+        return file(subject, Optional.of(lang), path);
+    }
+
+    private ResponseEntity<Resource> file(String subject, Optional<String> lang, String path) throws IOException {
+        Path root = openCourse.open(subject, lang).course().root().toRealPath();
         Path relative = Path.of(path.replaceFirst("^/+", "")).normalize();
         if (relative.isAbsolute() || relative.startsWith("..") || isHidden(relative)) {
             throw new ContentNotFoundException("no file " + path + " in " + subject);

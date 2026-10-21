@@ -1,5 +1,6 @@
 package io.github.lucasssoh.boussole.core.learn;
 
+import java.util.Optional;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 import io.github.lucasssoh.boussole.format.model.block.Block;
@@ -20,8 +21,8 @@ public final class RevealSolution {
         this.progress = progress;
     }
 
-    public RevealedSolution reveal(ExerciseKey key) {
-        Block question = lookup.question(key);
+    public RevealedSolution reveal(ExerciseKey key, Optional<String> language) {
+        Block question = lookup.question(key, language);
         if (!isFree(question) && !progress.exercise(key).solutionUnlocked()) {
             throw new LearningRuleException("try " + key.exercise() + " once before its solution");
         }

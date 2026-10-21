@@ -10,7 +10,7 @@ terms: [registre, validateur, agent]
 ::ref{id=g3-a1}
 :::::
 
-## Le suivi des documents {#registre}
+## Le suivi des documents {#record}
 
 **« Un nouveau poly est arrivé : qu'est-ce qui change ? »** Tu n'as pas tout le premier jour :
 
@@ -52,7 +52,7 @@ l'agent.
 :::
 ::::
 
-## Ajouter un document {#ajouter}
+## Ajouter un document {#adding}
 
 Deux gestes suffisent :
 

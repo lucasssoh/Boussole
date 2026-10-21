@@ -63,6 +63,8 @@ export class QuestionState {
     readonly isFree = false,
     shuffledItems: string[] = [],
     private readonly stats: StatsService | null = null,
+    /** The version of the track the question is read in: its answer, hints and solution. */
+    private readonly language: string | null = null,
   ) {
     this.order = signal([...shuffledItems]);
     this.progress = signal(progress);
@@ -81,7 +83,7 @@ export class QuestionState {
 
   async attempt(request: AttemptRequest): Promise<void> {
     await this.call(async () => {
-      const result = await this.api.attempt(this.subject, this.id, request, this.session);
+      const result = await this.api.attempt(this.subject, this.id, request, this.session, this.language);
       this.result.set(result);
       this.solution.set(result.solution);
       this.progress.set(result.progress);
@@ -95,14 +97,14 @@ export class QuestionState {
 
   async nextHint(): Promise<void> {
     await this.call(async () => {
-      const hint = await this.api.nextHint(this.subject, this.id);
+      const hint = await this.api.nextHint(this.subject, this.id, this.language);
       this.hints.update((hints) => [...hints, hint.blocks]);
     });
   }
 
   /** A free exercise is compared with its solution before the learner grades it. */
   async showSolution(): Promise<void> {
-    await this.call(async () => this.solution.set(await this.api.solution(this.subject, this.id)));
+    await this.call(async () => this.solution.set(await this.api.solution(this.subject, this.id, this.language)));
   }
 
   /**
@@ -118,7 +120,7 @@ export class QuestionState {
       return;
     }
     this.earlierVerdict.set(verdict);
-    void this.call(async () => this.solution.set(await this.api.solution(this.subject, this.id)));
+    void this.call(async () => this.solution.set(await this.api.solution(this.subject, this.id, this.language)));
   }
 
   private fillFrom(request: AttemptRequest): void {

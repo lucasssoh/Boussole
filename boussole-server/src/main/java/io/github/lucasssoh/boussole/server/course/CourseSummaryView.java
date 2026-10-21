@@ -4,6 +4,7 @@ import io.github.lucasssoh.boussole.core.learn.CourseOverview;
 import io.github.lucasssoh.boussole.format.model.Course;
 import io.github.lucasssoh.boussole.format.model.SyllabusChapter;
 import io.github.lucasssoh.boussole.server.guide.BundledTracks;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,6 +15,7 @@ record CourseSummaryView(
         String id,
         String name,
         String lang,
+        List<String> languages,
         String description,
         int planned,
         int written,
@@ -29,6 +31,7 @@ record CourseSummaryView(
                 course.subject().id(),
                 course.subject().name(),
                 course.subject().lang(),
+                overview.languages(),
                 course.subject().description().orElse(null),
                 course.syllabus().chapters().stream().map(SyllabusChapter::sessions).mapToInt(java.util.List::size).sum(),
                 course.sessions().size(),

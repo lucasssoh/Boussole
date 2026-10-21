@@ -6,11 +6,12 @@ import { RichTextComponent } from '../shared/rich-text.component';
 import { subjectColor } from '../shared/subject-color';
 import { SessionGridComponent } from './session-grid.component';
 import { LearnFacade } from './learn.facade';
+import { TrackLanguagesComponent } from './track-languages.component';
 
 /** A subject: its plan, and its lexicon. */
 @Component({
   selector: 'app-course-page',
-  imports: [IconComponent, RichTextComponent, RouterLink, SessionGridComponent, TranslocoPipe],
+  imports: [IconComponent, RichTextComponent, RouterLink, SessionGridComponent, TranslocoPipe, TrackLanguagesComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'subject-scope', '[style.--subject]': 'color()' },
   template: `
@@ -22,6 +23,7 @@ import { LearnFacade } from './learn.facade';
         @if (course.id === subject()) {
           <div [attr.lang]="course.lang">
             <h1>{{ course.name }}</h1>
+            <app-track-languages [languages]="course.languages" [current]="course.lang" (choose)="followIn(course.id, $event)" />
             @if (course.description) {
               <p class="lead">{{ course.description }}</p>
             }
@@ -57,6 +59,11 @@ export class CoursePageComponent {
   readonly subject = input.required<string>();
   protected readonly learn = inject(LearnFacade);
   protected readonly color = computed(() => subjectColor(this.subject()));
+
+  protected followIn(subject: string, language: string): void {
+    this.learn.chooseTrackLanguage(subject, language);
+    void this.learn.openCourse(subject).catch(() => undefined);
+  }
 
   constructor() {
     effect(() => void this.learn.openCourse(this.subject()).catch(() => undefined));

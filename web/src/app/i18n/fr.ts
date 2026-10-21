@@ -14,6 +14,7 @@ export const FR: Translations = {
     guideText: "Ce que fait Boussole, et comment t'en servir.",
     moreTitle: 'Pour en savoir plus',
   },
+  track: { languages: 'Langues du parcours', followIn: 'Suivre en :' },
   kind: { lesson: 'Leçon', review: 'Révision express', exam: 'Examen blanc' },
   course: {
     estimate: '≈ {{minutes}} min',

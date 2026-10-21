@@ -10,7 +10,7 @@ terms: [etape, trace, mode-guide, premier-coup, coup-de-pouce, derniere-verifica
 ::ref{id=g2-a2}
 :::::
 
-## Une étape à la fois {#ecrans}
+## Une étape à la fois {#screens}
 
 **« Un chapitre d'un bloc, ça décourage. »** Une séance avance donc par :term[étapes]{id=etape} :
 
@@ -56,7 +56,7 @@ avance question après question.
 :::
 ::::
 
-## Répondre et comprendre {#reponses}
+## Répondre et comprendre {#answers}
 
 **« Je clique au hasard jusqu'à tomber juste. »** Pas ici : ta réponse compte :term[du premier coup]{id=premier-coup},
 même si tu reviens sur la séance un autre jour. Pour t'aider à bien répondre :

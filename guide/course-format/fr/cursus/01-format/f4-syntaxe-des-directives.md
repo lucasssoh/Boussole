@@ -10,7 +10,7 @@ terms: [directive, notion, nudge]
 ::ref{id=f3-a3}
 :::::
 
-## Trois formes {#formes}
+## Trois formes {#forms}
 
 **Comment écrire autre chose que du texte : un encadré, une vidéo, une question ?** Avec une
 :term[directive]{id=directive}. Son nombre de deux-points dit sa forme :
@@ -96,7 +96,7 @@ Vérifie le nom, puis chaque attribut : écrit une seule fois, sans espace autou
 :::
 ::::
 
-## Imbriquer des blocs {#imbrication}
+## Imbriquer des blocs {#nesting}
 
 **Comment glisser un coup de pouce dans une question, et la question dans un point de
 contrôle ?** En mettant **plus de deux-points à l'extérieur** : un de plus par niveau. Chaque

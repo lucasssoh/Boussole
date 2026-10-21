@@ -8,7 +8,6 @@ import io.github.lucasssoh.boussole.server.guide.BuiltInTrack;
 import io.github.lucasssoh.boussole.server.guide.BundledTracks;
 import java.util.List;
 import java.nio.file.Path;
-import java.util.Locale;
 import io.github.lucasssoh.boussole.server.RunningServer;
 import io.github.lucasssoh.boussole.server.ServerSettings;
 import java.util.concurrent.Callable;
@@ -35,7 +34,7 @@ public final class ServeCommand implements Callable<Integer> {
         BoussoleConfigFile config = BoussoleConfigFile.forCurrentUser();
         BoussoleConfig read = config.read();
         BoussolePaths paths = BoussolePaths.forCurrentUser();
-        List<BuiltInTrack> builtIn = BundledTracks.install(paths.data().resolve("guide"), read.language().orElse(Locale.getDefault().getLanguage()));
+        List<BuiltInTrack> builtIn = BundledTracks.install(paths.data().resolve("guide"));
         RunningServer server = BoussoleServer.start(new ServerSettings(
                 port != null ? port : read.port(),
                 () -> config.read().subjects(),

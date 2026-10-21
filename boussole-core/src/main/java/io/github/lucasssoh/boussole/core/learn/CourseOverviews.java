@@ -24,11 +24,11 @@ final class CourseOverviews {
         this.progress = progress;
     }
 
-    CourseOverview of(Course course) {
+    CourseOverview of(Course course, List<String> languages) {
         String subject = course.subject().id();
         Set<String> finished = progress.finishedSessions(subject);
         Optional<LastActivity> last = progress.lastActivity(subject);
-        return new CourseOverview(course, finished, sessionProgress(course, progress.exercises(subject)),
+        return new CourseOverview(course, languages, finished, sessionProgress(course, progress.exercises(subject)),
                 last.map(LastActivity::at), resume(course, finished, last));
     }
 

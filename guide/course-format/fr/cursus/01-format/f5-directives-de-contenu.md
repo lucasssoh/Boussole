@@ -11,7 +11,7 @@ terms: [worked-example, directive, lexicon, notion]
 ::ref{id=f4-a2}
 :::::
 
-## Exemples, rappels et encadrés {#encadres}
+## Exemples, rappels et encadrés {#callouts}
 
 **Comment faire ressortir ce qui compte dans une explication ?** Avec quatre
 :term[directives]{id=directive} :
@@ -96,7 +96,7 @@ la solution de la question lui montre la méthode.
 :::
 ::::
 
-## Documents, vidéos et liens {#medias}
+## Documents, vidéos et liens {#media}
 
 **Comment renvoyer vers une page du manuel, une vidéo ou une page web ?** Trois directives les
 ouvrent à côté du texte. L'étiquette est la légende, ou les mots de la phrase.
@@ -170,7 +170,7 @@ secondes, soit 3 minutes 30.
 :::
 ::::
 
-## Schémas et maths {#schemas}
+## Schémas et maths {#diagrams}
 
 **Comment dessiner un schéma sans fichier image ?** Deux moyens :
 

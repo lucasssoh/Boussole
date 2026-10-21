@@ -172,7 +172,8 @@ export class ExerciseBlockComponent {
     const exercise = this.exercise();
     const input = exercise.input;
     const create = () => new QuestionState(this.api, this.learn.session()?.subject ?? '', this.learn.session()?.id ?? null, exercise.id, exercise.progress,
-      exercise.hints, this.run, input.kind === 'free', input.kind === 'order' ? input.items : [], this.stats);
+      exercise.hints, this.run, input.kind === 'free', input.kind === 'order' ? input.items : [], this.stats,
+      this.learn.session()?.lang ?? null);
     return this.run?.question(exercise.id, create) ?? create();
   });
   protected readonly typed = computed(() => this.state().value());

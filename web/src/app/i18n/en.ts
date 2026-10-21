@@ -12,6 +12,7 @@ export const EN = {
     guideText: 'What Boussole does, and how to use it.',
     moreTitle: 'To learn more',
   },
+  track: { languages: 'Languages of the track', followIn: 'Follow in:' },
   kind: { lesson: 'Lesson', review: 'Quick review', exam: 'Mock exam' },
   course: {
     estimate: '≈ {{minutes}} min',

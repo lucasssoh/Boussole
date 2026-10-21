@@ -10,7 +10,7 @@ terms: [front-matter, session, notion, identifier, lexicon, worked-example]
 ::ref{id=f2-a1}
 :::::
 
-## L'en-tête {#en-tete}
+## L'en-tête {#front-matter}
 
 **Comment Boussole relie-t-il un fichier à sa place dans le plan ?** Par son
 :term[en-tête]{id=front-matter} : un bloc YAML entre deux lignes `---`, tout en haut du fichier.
@@ -95,7 +95,7 @@ De **1** à **5** phrases qui commencent par **un verbe** ; des identifiants **c
 :::
 ::::
 
-## Le corps, dans l'ordre {#corps}
+## Le corps, dans l'ordre {#body}
 
 **Que mettre sous l'en-tête ?** Du Markdown, lu de haut en bas dans cet ordre :
 
@@ -134,7 +134,7 @@ terms: [depot]
 
 **Où Git range-t-il l'historique de ton projet ?** Dans un dépôt.
 
-## Ce qu'est un dépôt {#depot}
+## Ce qu'est un dépôt {#repository}
 
 L'explication, un exemple, puis une question.
 

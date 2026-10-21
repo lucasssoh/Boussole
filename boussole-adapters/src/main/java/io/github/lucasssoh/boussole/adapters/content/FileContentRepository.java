@@ -5,7 +5,8 @@ import io.github.lucasssoh.boussole.format.model.Course;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
@@ -23,15 +24,13 @@ public final class FileContentRepository implements ContentRepository {
         this.folders = folders;
     }
 
+    /** A second folder with the same ID and the same language as an earlier one is left out. */
     @Override
     public List<Course> courses() {
+        Set<String> seen = new HashSet<>();
         return folders.get().stream()
                 .flatMap(folder -> caches.computeIfAbsent(folder, SubjectFolderCache::new).course().stream())
+                .filter(course -> seen.add(course.subject().id() + "\u0000" + course.subject().lang()))
                 .toList();
-    }
-
-    @Override
-    public Optional<Course> course(String subject) {
-        return courses().stream().filter(course -> course.subject().id().equals(subject)).findFirst();
     }
 }

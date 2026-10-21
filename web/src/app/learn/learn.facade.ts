@@ -1,6 +1,8 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { BoussoleApi } from '../core/boussole-api';
 import { Course, CourseSummary, LexiconTerm, Session } from '../core/api';
+import { LanguageService } from '../core/language.service';
+import { storeValue, storedText } from '../core/local-preferences';
 
 /** What opens beside the text: a YouTube video, a video file of the sources, a document or a web page. */
 export type SidePanel =
@@ -13,6 +15,7 @@ export type SidePanel =
 @Injectable({ providedIn: 'root' })
 export class LearnFacade {
   private readonly api = inject(BoussoleApi);
+  private readonly interfaceLanguage = inject(LanguageService);
 
   readonly subjects = signal<CourseSummary[] | null>(null);
   readonly course = signal<Course | null>(null);
@@ -23,19 +26,36 @@ export class LearnFacade {
   readonly lexicon = computed(() => this.course()?.lexicon ?? []);
 
   async loadSubjects(): Promise<void> {
-    this.subjects.set(await this.reach(this.api.subjects()));
+    this.subjects.set(await this.reach(this.api.subjects(this.interfaceLanguage.current())));
   }
 
   async openCourse(subject: string): Promise<void> {
-    this.course.set(await this.reach(this.api.course(subject)));
+    this.course.set(await this.reach(this.api.course(subject, this.trackLanguage(subject))));
   }
 
   async openSession(subject: string, session: string): Promise<void> {
     this.session.set(null);
     this.panel.set(null);
-    const [course, opened] = await Promise.all([this.reach(this.api.course(subject)), this.reach(this.api.session(subject, session))]);
+    const lang = this.trackLanguage(subject);
+    const [course, opened] = await Promise.all([
+      this.reach(this.api.course(subject, lang)),
+      this.reach(this.api.session(subject, session, lang)),
+    ]);
     this.course.set(course);
     this.session.set(opened);
+  }
+
+  /**
+   * The language a track is followed in: the learner's choice for it in this browser, else the
+   * language of the interface; the server falls back on the track's first language.
+   */
+  trackLanguage(subject: string): string {
+    return storedText(`track-language.${subject}`) || this.interfaceLanguage.current();
+  }
+
+  /** Follows a track in another language from now on; progress is the same in every language. */
+  chooseTrackLanguage(subject: string, language: string): void {
+    storeValue(`track-language.${subject}`, language);
   }
 
   /** The finished mark of a session shows in the course at once. */
@@ -59,7 +79,7 @@ export class LearnFacade {
   }
 
   fileUrl(path: string): string {
-    return this.api.fileUrl(this.course()?.id ?? this.session()?.subject ?? '', path);
+    return this.api.fileUrl(this.course()?.id ?? this.session()?.subject ?? '', path, this.session()?.lang ?? this.course()?.lang ?? null);
   }
 
   /** The folder of the open session file, for the relative links and images of its Markdown. */
@@ -69,7 +89,7 @@ export class LearnFacade {
       return '';
     }
     const folder = session.file.substring(0, session.file.lastIndexOf('/') + 1);
-    return this.api.fileUrl(session.subject, folder);
+    return this.api.fileUrl(session.subject, folder, session.lang);
   }
 
   /** A :pdf directive names a file of the sources folder. */

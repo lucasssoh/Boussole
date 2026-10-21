@@ -21,8 +21,16 @@ class FileContentRepositoryTest {
     void reads_the_example_subject() {
         FileContentRepository content = new FileContentRepository(() -> List.of(Path.of("../examples/reseaux")));
 
-        assertThat(content.course("reseaux")).hasValueSatisfying(course -> assertThat(course.sessions()).hasSize(2));
-        assertThat(content.course("oc")).isEmpty();
+        assertThat(content.versions("reseaux")).singleElement().satisfies(course -> assertThat(course.sessions()).hasSize(2));
+        assertThat(content.versions("oc")).isEmpty();
+    }
+
+    @Test
+    void the_versions_of_a_track_share_its_id_and_a_second_folder_in_the_same_language_is_left_out() {
+        Path guide = Path.of("../guide/getting-started");
+        FileContentRepository content = new FileContentRepository(() -> List.of(guide.resolve("en"), guide.resolve("fr"), guide.resolve("fr")));
+
+        assertThat(content.versions("boussole-guide")).extracting(course -> course.subject().lang()).containsExactly("en", "fr");
     }
 
     @Test
@@ -44,7 +52,7 @@ class FileContentRepositoryTest {
     }
 
     private static String firstSessionText(FileContentRepository content) {
-        return content.course("reseaux").orElseThrow().sessions().getFirst().session().parts().toString();
+        return content.versions("reseaux").getFirst().sessions().getFirst().session().parts().toString();
     }
 
     private static void copy(Path from, Path to) throws IOException {

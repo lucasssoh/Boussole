@@ -2,6 +2,8 @@ package io.github.lucasssoh.boussole.server.course;
 
 import io.github.lucasssoh.boussole.server.ServerSettings;
 import java.util.Set;
+import org.springframework.web.bind.annotation.RequestParam;
+import java.util.Optional;
 import io.github.lucasssoh.boussole.core.learn.ListCourses;
 import io.github.lucasssoh.boussole.core.learn.OpenCourse;
 import java.util.List;
@@ -24,13 +26,14 @@ class CourseController {
         this.builtIn = settings.builtInIds();
     }
 
+    /** {@code lang}: the language each track is shown in when it has it, such as the interface's or the one chosen. */
     @GetMapping
-    List<CourseSummaryView> list() {
-        return listCourses.list().stream().map(overview -> CourseSummaryView.of(overview, builtIn)).toList();
+    List<CourseSummaryView> list(@RequestParam Optional<String> lang) {
+        return listCourses.list(lang).stream().map(overview -> CourseSummaryView.of(overview, builtIn)).toList();
     }
 
     @GetMapping("/{subject}")
-    CourseView open(@PathVariable String subject) {
-        return CourseView.of(openCourse.open(subject));
+    CourseView open(@PathVariable String subject, @RequestParam Optional<String> lang) {
+        return CourseView.of(openCourse.open(subject, lang));
     }
 }

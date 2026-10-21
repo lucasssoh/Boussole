@@ -14,7 +14,7 @@ En quinze minutes, ce module te montre :
 - qui fait quoi : toi, ton agent IA et Boussole ;
 - comment on avance dans une séance.
 
-## Pourquoi « Boussole » {#pourquoi}
+## Pourquoi « Boussole » {#why}
 
 Une boussole ne marche pas à ta place : elle t'indique le nord. Ici, c'est pareil.
 
@@ -48,7 +48,7 @@ explication : c'est en essayant qu'on retient.
 :::
 ::::
 
-## Du document au parcours {#chaine}
+## Du document au parcours {#chain}
 
 ```mermaid
 flowchart LR

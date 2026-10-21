@@ -10,32 +10,37 @@ title boussole-core — studying a course (packages learn, learn.check, learn.pr
 package "learn" {
   interface ContentRepository <<port>> {
     +courses() : List<Course>
-    +course(String) : Optional<Course>
+    +versions(subject) : List<Course>
   }
   class ListCourses <<use case>> {
-    +list() : List<CourseOverview>
+    +list(language) : List<CourseOverview>
   }
   class OpenCourse <<use case>> {
-    +open(subject) : CourseOverview
+    +open(subject, language) : CourseOverview
   }
   class OpenSession <<use case>> {
-    +open(subject, session) : OpenedSession
+    +open(subject, session, language) : OpenedSession
   }
   class SubmitAttempt <<use case>> {
-    +submit(ExerciseKey, LearnerResponse, session) : AttemptOutcome
+    +submit(ExerciseKey, LearnerResponse, session, language) : AttemptOutcome
   }
   class RevealNextHint <<use case>> {
-    +reveal(ExerciseKey) : RevealedHint
+    +reveal(ExerciseKey, language) : RevealedHint
   }
   class RevealSolution <<use case>> {
-    +reveal(ExerciseKey) : RevealedSolution
+    +reveal(ExerciseKey, language) : RevealedSolution
   }
   class FinishSession <<use case>> {
     +finish(SessionKey, Duration)
   }
   class CourseLookup
+  class CourseVersions <<helpers>> {
+    +{static} pick(versions, language) : Course
+    +{static} languages(versions) : List<String>
+  }
   class CourseQuestions <<helpers>>
   class CourseOverview <<record>> {
+    languages : List<String>
     finishedSessions : Set<String>
     lastStudied : Optional<Instant>
     resume : Optional<String>
@@ -171,6 +176,8 @@ StudyStats --> Level
 SubmitAttempt ..> XpRules : xp gained
 CourseOverviews --> ProgressRepository
 OpenCourse --> CourseLookup
+CourseLookup ..> CourseVersions : one track, one language
+ListCourses ..> CourseVersions
 OpenSession --> CourseLookup
 SubmitAttempt --> CourseLookup
 RevealNextHint --> CourseLookup

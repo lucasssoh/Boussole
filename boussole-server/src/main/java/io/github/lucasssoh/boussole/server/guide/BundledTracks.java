@@ -9,7 +9,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -22,7 +21,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
  * The tracks shipped inside Boussole (repository folder {@code guide/<track>/<language>}): the
  * guide a new Boussole opens on, and the tracks to learn more, such as writing a track by hand.
  * They are copied out of the jar at each start, so that they follow the version of Boussole, in
- * English or in French, and always shown apart from the learner's own tracks.
+ * every language they are written in, and always shown apart from the learner's own tracks.
  */
 public final class BundledTracks {
 
@@ -30,37 +29,29 @@ public final class BundledTracks {
     public static final String STARTER = "boussole-guide";
 
     private static final String ROOT = "boussole-guide/";
-    private static final List<String> LANGUAGES = List.of("en", "fr");
-    private static final Pattern TRACK_AND_PATH = Pattern.compile(Pattern.quote(ROOT) + "([^/]+)/([a-z]{2})/(.+)$");
+    private static final Pattern TRACK_AND_PATH = Pattern.compile(Pattern.quote(ROOT) + "([^/]+)/([a-zA-Z-]+)/(.+)$");
     private static final Pattern ID = Pattern.compile("(?m)^id:\\s*(\\S+)\\s*$");
 
     private BundledTracks() {
     }
 
-    /** The language of the tracks: the one asked for if they have it, else English. */
-    public static String languageFor(String wanted) {
-        String language = wanted.toLowerCase(Locale.ROOT);
-        return LANGUAGES.stream().filter(language::startsWith).findFirst().orElse("en");
-    }
-
     /**
-     * Copies every track in {@code language} into {@code folder}, replacing older copies, and
-     * returns them, the starter guide first.
+     * Copies every track, in every language, into {@code folder} ({@code <track>/<language>}),
+     * replacing older copies, and returns the versions, the starter guide first.
      */
-    public static List<BuiltInTrack> install(Path folder, String language) {
-        String lang = languageFor(language);
+    public static List<BuiltInTrack> install(Path folder) {
         try {
-            Map<String, List<Resource>> byTrack = new TreeMap<>();
-            for (Resource file : new PathMatchingResourcePatternResolver().getResources("classpath*:" + ROOT + "*/" + lang + "/**/*.*")) {
+            Map<String, List<Resource>> byVersion = new TreeMap<>();
+            for (Resource file : new PathMatchingResourcePatternResolver().getResources("classpath*:" + ROOT + "*/*/**/*.*")) {
                 Matcher matcher = TRACK_AND_PATH.matcher(file.getURL().toString());
                 if (matcher.find()) {
-                    byTrack.computeIfAbsent(matcher.group(1), unused -> new ArrayList<>()).add(file);
+                    byVersion.computeIfAbsent(matcher.group(1) + "/" + matcher.group(2), unused -> new ArrayList<>()).add(file);
                 }
             }
+            deleteTree(folder);
             List<BuiltInTrack> tracks = new ArrayList<>();
-            for (Map.Entry<String, List<Resource>> track : byTrack.entrySet()) {
-                Path target = folder.resolve(track.getKey()).resolve(lang);
-                deleteTree(target);
+            for (Map.Entry<String, List<Resource>> track : byVersion.entrySet()) {
+                Path target = folder.resolve(track.getKey());
                 for (Resource file : track.getValue()) {
                     Matcher matcher = TRACK_AND_PATH.matcher(file.getURL().toString());
                     matcher.find();
@@ -72,7 +63,7 @@ public final class BundledTracks {
                 }
                 tracks.add(new BuiltInTrack(idOf(target), target));
             }
-            tracks.sort(Comparator.comparing((BuiltInTrack track) -> !track.id().equals(STARTER)).thenComparing(BuiltInTrack::id));
+            tracks.sort(Comparator.comparing((BuiltInTrack track) -> !track.id().equals(STARTER)));
             return List.copyOf(tracks);
         } catch (IOException e) {
             throw new UncheckedIOException("cannot install the built-in tracks in " + folder, e);

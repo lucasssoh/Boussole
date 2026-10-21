@@ -10,7 +10,7 @@ terms: [lexicon, document-tracking, identifier, validator]
 ::ref{id=f7-a4}
 :::::
 
-## Le lexique {#lexique}
+## Le lexique {#lexicon}
 
 **Comment donner la définition d'un mot sans couper l'explication ?** Tu l'écris une fois dans le
 :term[lexique]{id=lexicon}, `cursus/lexique.yaml`, et chaque séance y renvoie avec `:term` :

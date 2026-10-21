@@ -130,8 +130,8 @@ form posted from another site). It also serves the interface, any other path ans
 The tracks built into Boussole are ordinary subjects, written in the course format under
 `guide/<track>/<language>/` and copied into the jar: `getting-started`, the guide a new
 Boussole opens on (its subject ID is `BundledTracks.STARTER`), and the tracks to learn more,
-such as `course-format` (writing a track by hand). `BundledTracks` installs them into the data
-folder at start, and `ServerSettings.builtIn` lists them after the learner's subjects, always:
+such as `course-format` (writing a track by hand). `BundledTracks` installs them, in every
+language, into the data folder at start, and `ServerSettings.builtIn` lists them after the learner's subjects, always:
 the home page shows the guide beside the session to resume (and resumes it only while there is
 no other subject), and the others under *To learn more*. They earn no experience and keep no
 streak (`RewardedSubjects`, in the core). `GuideSubjectTest` keeps every track valid in both
@@ -292,19 +292,24 @@ web/src/app/
 
 ## 6. HTTP API (excerpt)
 
-Answers, hints and solutions never reach the browser before they are asked for. Boussole looks
+A track may exist in several languages: subjects with the same ID (FORMAT.md §9).
+`ContentRepository.versions` lists them, `CourseVersions` picks the one asked for (`?lang=` on
+every call that reads content, the attempt included, since a typed answer is in a language),
+and progress stays keyed by ID, so it is shared. Answers, hints and solutions never reach the
+browser before they are asked for. Boussole looks
 at a web page only when the learner opens it, and never at an address of this machine or its
 local network (`HttpWebPages`). Under `/api/subjects/{subject}`:
 
 ```
-GET  /api/subjects                       subjects, how far the learner is, the session to resume
-GET  …                                   chapters, sessions (written, finished), lexicon
+GET  /api/subjects?lang=                 tracks (once each, in lang when they have it), progress, the session to resume
+GET  …?lang=                             chapters, sessions (written, finished), lexicon, the languages of the track
 GET  …/sessions/{session}                parts and blocks; questions without answers
 POST …/sessions/{session}/finish         { spentSeconds }
 POST …/exercises/{id}/attempts?session=  verdict, each part judged and the correction, recorded
 POST …/exercises/{id}/hints              the next hint, recorded
 GET  …/exercises/{id}/solution           after an attempt (at once for a free exercise)
 GET  …/files/{path}                      a file of the subject folder: PDFs, videos (range requests), images
+GET  …/lang/{lang}/files/{path}          the same, in one version of the track (the language in the path keeps relative links)
 GET  /api/references/preview?url=        whether a web page a course cites may show beside the text
 GET  /api/stats                          experience, level, streak
 GET  /api/server                         lets boussole open recognise a running Boussole

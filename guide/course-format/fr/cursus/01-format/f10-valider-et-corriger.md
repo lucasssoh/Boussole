@@ -88,7 +88,7 @@ avertissement respecte tout le contrat pédagogique.
 :::
 ::::
 
-## Les erreurs fréquentes {#erreurs}
+## Les erreurs fréquentes {#errors}
 
 **Quelles erreurs reviennent le plus quand on écrit à la main ?** Presque toujours les mêmes :
 

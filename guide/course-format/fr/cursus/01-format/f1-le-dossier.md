@@ -16,7 +16,7 @@ séances et une révision express. Chaque séance ajoute une pièce.
 Garde un terminal ouvert à côté : tu peux taper chaque exemple et le vérifier aussitôt.
 :::
 
-## Un dossier, quelques fichiers {#dossier}
+## Un dossier, quelques fichiers {#folder}
 
 **Par où commence un parcours ?** Par un dossier. Voici celui du fil rouge :
 

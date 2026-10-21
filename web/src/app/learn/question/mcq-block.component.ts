@@ -70,7 +70,8 @@ export class McqBlockComponent {
   protected readonly state = computed(() => {
     const question = this.mcq();
     const create = () =>
-      new QuestionState(this.api, this.learn.session()?.subject ?? '', this.learn.session()?.id ?? null, question.id, question.progress, question.hints, this.run, false, [], this.stats);
+      new QuestionState(this.api, this.learn.session()?.subject ?? '', this.learn.session()?.id ?? null, question.id, question.progress, question.hints, this.run, false, [], this.stats,
+        this.learn.session()?.lang ?? null);
     return this.run?.question(question.id, create) ?? create();
   });
   protected readonly picked = computed(() => this.state().picked());

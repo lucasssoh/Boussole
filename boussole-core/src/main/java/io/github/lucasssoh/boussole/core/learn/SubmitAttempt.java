@@ -33,11 +33,12 @@ public final class SubmitAttempt {
 
     /**
      * {@code session} is the session the learner answers in, which may ask a question of another
-     * session again. In a lesson, a question already answered there is refused (see AnswerOnce).
+     * session again, and {@code language} the version of the track they read it in, whose answer is
+     * checked. In a lesson, a question already answered there is refused, in any language (see AnswerOnce).
      */
-    public AttemptOutcome submit(ExerciseKey key, LearnerResponse response, Optional<String> session) {
+    public AttemptOutcome submit(ExerciseKey key, LearnerResponse response, Optional<String> session, Optional<String> language) {
         session.ifPresent(id -> refuseASecondAnswer(key, id));
-        CheckResult result = switch (lookup.question(key)) {
+        CheckResult result = switch (lookup.question(key, language)) {
             case McqBlock mcq -> checker.check(mcq, response);
             case ExerciseBlock exercise -> checker.check(exercise, response);
             default -> throw new ResponseMismatchException(key.exercise() + " is not a question");
@@ -51,7 +52,7 @@ public final class SubmitAttempt {
     }
 
     private void refuseASecondAnswer(ExerciseKey key, String session) {
-        boolean lesson = AnswerOnce.appliesTo(lookup.session(lookup.course(key.subject()), session));
+        boolean lesson = AnswerOnce.appliesTo(lookup.session(lookup.course(key.subject(), Optional.empty()), session));
         if (lesson && progress.firstVerdicts(new SessionKey(key.subject(), session)).containsKey(key.exercise())) {
             throw new LearningRuleException(key.exercise() + " is already answered in " + session + ": in a lesson, the first answer is final");
         }

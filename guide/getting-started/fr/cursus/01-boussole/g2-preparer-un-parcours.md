@@ -10,7 +10,7 @@ terms: [agent, plan, validateur, lien]
 ::ref{id=g1-a1}
 :::::
 
-## Préparer un parcours {#dossier}
+## Préparer un parcours {#folder}
 
 **« Par où je commence avec mon IA ? »** Par un dossier.
 

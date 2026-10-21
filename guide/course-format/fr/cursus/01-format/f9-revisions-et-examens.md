@@ -10,7 +10,7 @@ terms: [quick-review, mock-exam, nudge, notion, worked-example]
 ::ref{id=f8-a4}
 :::::
 
-## Des séances chronométrées {#chrono}
+## Des séances chronométrées {#timed}
 
 **Comment faire réviser un chapitre en temps limité ?** Avec une séance `kind: review` ou
 `kind: exam` dans le plan. Son fichier ne fait que poser des questions : une introduction

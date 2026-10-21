@@ -6,6 +6,7 @@ import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseHint;
 import java.time.Clock;
 import java.util.List;
+import java.util.Optional;
 
 /** Reveals the next hint of an exercise, in the order of the file, and records it. */
 public final class RevealNextHint {
@@ -20,8 +21,8 @@ public final class RevealNextHint {
         this.clock = clock;
     }
 
-    public RevealedHint reveal(ExerciseKey key) {
-        List<ExerciseHint> hints = CourseQuestions.hints(lookup.question(key));
+    public RevealedHint reveal(ExerciseKey key, Optional<String> language) {
+        List<ExerciseHint> hints = CourseQuestions.hints(lookup.question(key, language));
         ExerciseProgress before = progress.exercise(key);
         if (before.hintsRevealed() >= hints.size()) {
             throw new LearningRuleException("no hint left for " + key.exercise());

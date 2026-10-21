@@ -46,7 +46,7 @@ package "reward" {
   class StatsController <<GET /api/stats>>
 }
 package "files" {
-  class SubjectFileController <<…/files/**>>
+  class SubjectFileController <<…/files/**, …/lang/{lang}/files/**>>
 }
 package "block" {
   class BlockViewMapper {

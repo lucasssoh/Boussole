@@ -10,7 +10,7 @@ terms: [nudge, identifier, notion]
 ::ref{id=f5-a3}
 :::::
 
-## Le QCM {#qcm}
+## Le QCM {#mcq}
 
 **Comment savoir si l'apprenant a compris ?** En lui posant une question, juste après l'exemple de
 la :term[notion]{id=notion}. La plus simple est le QCM, un bloc `::::mcq{#id}` :
@@ -117,7 +117,7 @@ L'attribut dit qu'il y a « plusieurs » bonnes réponses, en anglais.
 :::
 ::::
 
-## L'exercice {#exercice}
+## L'exercice {#exercise}
 
 **Et quand la réponse n'est pas un choix ?** Un bloc `::::exercise{#id type=…}` : l'énoncé, puis
 exactement un `:::answer`, un ou plusieurs `:::hint` et un `:::solution`.

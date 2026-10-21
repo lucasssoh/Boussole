@@ -2371,3 +2371,46 @@ app-settings-drawer {
   font-size: 0.9rem;
   font-weight: 700;
 }
+
+/* The languages of a track: chips, the one followed in the course colour. */
+.track-languages {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.25rem 0 0.75rem;
+}
+
+.track-languages.compact {
+  margin: 0;
+  gap: 0.2rem;
+}
+
+.track-languages-label {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.track-languages .chip {
+  min-height: 0;
+  padding: 0.2rem 0.7rem;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: 0 2px 0 var(--line);
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.track-languages.compact .chip {
+  padding: 0.05rem 0.45rem;
+  font-size: 0.75rem;
+}
+
+.track-languages .chip.active {
+  border-color: var(--subject);
+  background: var(--subject-soft, var(--surface-2));
+  color: var(--subject-ink, var(--subject));
+  box-shadow: none;
+}

@@ -56,6 +56,15 @@ export class SessionRun implements OnDestroy {
     this.started.set(kind === 'lesson');
   }
 
+  /**
+   * The session was opened again in another language: its questions start afresh from what the
+   * server knows, while the time spent and the verdicts of this sitting stay.
+   */
+  reloadQuestions(answered: ReadonlyMap<string, Verdict>): void {
+    this.questions.clear();
+    this.firstVerdicts.set(new Map([...answered, ...this.firstVerdicts()]));
+  }
+
   see(screen: number): void {
     if (!this.seen().has(screen)) {
       this.seen.set(new Set(this.seen()).add(screen));

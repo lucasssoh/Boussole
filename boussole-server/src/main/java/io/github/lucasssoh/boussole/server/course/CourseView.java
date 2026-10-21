@@ -12,11 +12,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/** A subject: its chapters and sessions, what is written and finished, and its lexicon. */
+/**
+ * A subject, in the language it is followed in ({@code lang}) among those it exists in: its
+ * chapters and sessions, what is written and finished, and its lexicon.
+ */
 record CourseView(
         String id,
         String name,
         String lang,
+        List<String> languages,
         String description,
         String sourcesDir,
         List<ChapterView> chapters,
@@ -30,6 +34,7 @@ record CourseView(
                 course.subject().id(),
                 course.subject().name(),
                 course.subject().lang(),
+                overview.languages(),
                 course.subject().description().orElse(null),
                 course.subject().sourcesDir(),
                 course.syllabus().chapters().stream()

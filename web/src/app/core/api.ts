@@ -14,6 +14,8 @@ export interface CourseSummary {
   /** When the learner last answered or finished something here, ISO 8601. */
   lastStudied: string | null;
   resume: ResumePoint | null;
+  /** The languages the track exists in; {@link lang} is the one shown. */
+  languages: string[];
   /** A track shipped inside Boussole: shown apart, and it earns no experience. */
   builtIn: boolean;
   /** The built-in guide a new Boussole opens on, shown beside the session to resume. */
@@ -32,7 +34,9 @@ export interface ResumePoint {
 export interface Course {
   id: string;
   name: string;
+  /** The language the track is followed in, one of its {@link languages}. */
   lang: string;
+  languages: string[];
   description: string | null;
   sourcesDir: string;
   chapters: Chapter[];
@@ -70,6 +74,9 @@ export interface LexiconTerm {
 
 export interface Session {
   subject: string;
+  /** The language the session is shown in, one of the {@link languages} of its track. */
+  lang: string;
+  languages: string[];
   id: string;
   title: string;
   kind: SessionKind;
