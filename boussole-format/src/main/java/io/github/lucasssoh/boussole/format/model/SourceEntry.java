@@ -6,11 +6,17 @@ import java.util.Optional;
 
 /**
  * An entry of {@code cursus/sources.yaml}: a document of the sources folder (or a glob pattern
- * naming several, such as {@code Annales/**}), what the course did with it, and the SHA-256 of
- * the document as the course used it, which tells when it changes.
+ * naming several, such as {@code Annales/**}), what the course did with it, the SHA-256 of the
+ * document as the course used it, which tells when it changes, and where it comes from.
  */
 public record SourceEntry(
-        String file, Optional<String> sha256, SourceStatus status, List<String> chapters, String note, SourcePosition position) {
+        String file,
+        Optional<String> sha256,
+        SourceStatus status,
+        List<String> chapters,
+        String note,
+        SourceProvenance provenance,
+        SourcePosition position) {
 
     public boolean isPattern() {
         return file.contains("*") || file.contains("?") || file.contains("{");

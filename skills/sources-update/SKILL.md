@@ -75,6 +75,11 @@ document gets its **new** `sha256` once the sessions follow it.
 
 ## 5. Check
 
+A document that comes from the web keeps where it comes from in its entry: `url`, `title`,
+`licence` and `retrieved` (`docs/FORMAT.md` §8). Never copy a page whose licence does not allow
+it: write a source note `web/<name>.md` in your own words instead, with its address and short
+quotes.
+
 Run `boussole validate .` until there is no error; `F033`–`F035` must be gone for every document
 you handled (`pending` ones stay, by design). Then write the new sessions in order, as usual
 (`seance-write`, `exam-build`).

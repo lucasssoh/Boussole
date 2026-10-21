@@ -419,6 +419,7 @@ chapter.
 | `F036` | warning | The same document (same SHA-256) in several places of the sources folder, more than one not `ignored`. |
 | `F037` | error | A `graph` line that is neither a node nor an edge, a node given twice, a loop, places given for some nodes only, or two nodes at the same place. |
 | `F038` | warning | A `video` file that browsers may not play (not `.mp4`, `.m4v`, `.webm` or `.ogv`): convert it, for example with `ffmpeg`. |
+| `F039` | warning | An entry of `cursus/sources.yaml` with a `url` but no `licence`. |
 | `F032` | warning | `video` that YouTube does not know (checked only with `--check-videos`). |
 | `P001` | warning | A notion without exercise or `mcq`. |
 | `P002` | warning | A notion with more than one `example`. |
@@ -493,6 +494,12 @@ document of the sources folder, so that Boussole can say what is new and what ch
 - file: Planning_TD.pdf
   status: ignored
   note: Administratif.
+- file: web/tutoriel-python.md     # notes of the agent on a web page
+  url: https://docs.python.org/fr/3/tutorial/
+  title: Le tutoriel Python
+  licence: PSF License
+  retrieved: 2026-10-21
+  chapters: [bases]
 ```
 
 | Field | Required | Meaning |
@@ -502,6 +509,16 @@ document of the sources folder, so that Boussole can say what is new and what ch
 | `status` | no | `used` (default): taken into the course. `ignored`: deliberately left out. `pending`: seen, to be taken in later. |
 | `chapters` | no | IDs of the chapters that draw on it. |
 | `note` | no | What it is, or why it is ignored or pending. |
+| `url` | no | The web page the document was taken from, or that it sums up: a whole address, `https://…`. |
+| `title` | no | The title of that page or work. |
+| `licence` | with `url` | The licence it is shared under, as its page says: `CC BY-SA 4.0`, `public domain`, `all rights reserved`… (`F039` without it). |
+| `retrieved` | no | The day it was retrieved, `2026-10-21`. |
+
+A track built without documents of the learner (the `cursus-discover` playbook) keeps its
+sources in the sources folder as well: a document whose licence allows a copy is downloaded
+there; any other page gets a **source note**, `web/<name>.md`, the agent's own summary of it
+with its address and short quotes, never a copy. Each one has its entry here, with `url` and
+`licence`, and the sessions cite them with `:pdf[…]{src=…}` or `:link[…]{url=…}`.
 
 A document is any file of the sources folder, sub-folders included, with one of these extensions: `pdf`, `ppt`, `pptx`,
 `odp`, `doc`, `docx`, `odt`, `md`, `txt`, `tex`, `zip`, `png`, `jpg`, `jpeg`, and the videos `mp4`, `m4v`,

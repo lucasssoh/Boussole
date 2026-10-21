@@ -18,6 +18,7 @@ import io.github.lucasssoh.boussole.format.validate.rule.SessionIdMatchRule;
 import io.github.lucasssoh.boussole.format.validate.rule.SingleExampleRule;
 import io.github.lucasssoh.boussole.format.validate.rule.SourceFileRule;
 import io.github.lucasssoh.boussole.format.validate.rule.SourceInventoryRule;
+import io.github.lucasssoh.boussole.format.validate.rule.SourceProvenanceRule;
 import io.github.lucasssoh.boussole.format.validate.rule.TimedSessionContentRule;
 import io.github.lucasssoh.boussole.format.validate.rule.TimedSessionFitRule;
 import io.github.lucasssoh.boussole.format.validate.rule.VideoExistsRule;
@@ -47,6 +48,7 @@ public final class Validator {
                 new ReferenceRule(),
                 new SourceFileRule(),
                 new SourceInventoryRule(),
+                new SourceProvenanceRule(),
                 new VideoExistsRule(),
                 new NotionExerciseRule(),
                 new SingleExampleRule(),

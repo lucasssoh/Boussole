@@ -34,6 +34,7 @@ are about the teaching contract and matter to the learner.
 | F027 | unknown or missing attribute | see the directive's attributes in FORMAT.md §5.5–5.6 |
 | F030 | reference to an ID that does not exist | add the term to the lexicon, or fix the ID |
 | F031 | source file or page not found | use the exact file name in the sources folder and a real page |
+| F039 | a document from the web without its licence | read the licence on its page and write it in `licence`; when the page gives none, write `all rights reserved` and make sure the file is a source note, not a copy |
 | F038 | a video file browsers may not play | ask the learner to convert it to MP4 or WebM (`ffmpeg -i in.mkv out.mp4`), then point `src` to the new file |
 | F037 | a `graph` line Boussole cannot read, a node twice, a loop, or places given for some nodes only | one node (`a "Label" @ 0,1`) or edge (`a -> b : 3`) per line; `@` on every node or none; FORMAT.md §5.5 |
 | F033 to F036 | a document is new, changed, gone, or the same as another | follow `sources-update`: take it into the course, then record it in `cursus/sources.yaml` |

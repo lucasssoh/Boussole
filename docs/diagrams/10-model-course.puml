@@ -58,6 +58,10 @@ class SourceEntry <<record>> {
   note : String
   +isPattern() : boolean
 }
+class SourceProvenance <<record>> {
+  url, title, licence : Optional<String>
+  retrieved : Optional<LocalDate>
+}
 enum SourceStatus {
   USED
   IGNORED
@@ -106,6 +110,7 @@ Course *-- "0..1" LearnerProfile : learner
 Course *-- "0..1" CourseSources : sources
 CourseSources *-- "*" SourceEntry : entries
 SourceEntry --> SourceStatus : status
+SourceEntry *-- SourceProvenance : provenance
 Course *-- "*" CourseSession : sessions read
 CourseSyllabus *-- "*" SyllabusChapter : chapters
 CourseSyllabus --> SyllabusStatus : status

@@ -35,6 +35,7 @@ package "validate" {
     class ReferenceRule <<F030>>
     class SourceFileRule <<F031>>
     class SourceInventoryRule <<F033-F036>>
+    class SourceProvenanceRule <<F039>>
     class VideoExistsRule <<F032>>
     class NotionExerciseRule <<P001>>
     class SingleExampleRule <<P002>>
@@ -82,6 +83,7 @@ ValidationRule <|.. FillGapsRule
 ValidationRule <|.. ReferenceRule
 ValidationRule <|.. SourceFileRule
 ValidationRule <|.. SourceInventoryRule
+ValidationRule <|.. SourceProvenanceRule
 SourceInventoryRule ..> SourceInventory
 ValidationRule <|.. VideoExistsRule
 ValidationRule <|.. NotionExerciseRule

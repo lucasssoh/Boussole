@@ -33,6 +33,7 @@ public enum DiagnosticCode {
     F036(WARNING, "same document in several places"),
     F037(ERROR, "graph malformed"),
     F038(WARNING, "video file a browser may not play"),
+    F039(WARNING, "document from the web without its licence"),
     P001(WARNING, "notion without exercise"),
     P002(WARNING, "notion with several examples"),
     P003(WARNING, "warmup not first, or practice not last"),
