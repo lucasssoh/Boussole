@@ -10,17 +10,17 @@ terms: [registre, validateur, agent]
 ::ref{id=g3-a1}
 :::::
 
-## Le registre des documents {#registre}
+## Le suivi des documents {#registre}
 
-Tu n'as pas tous tes documents le premier jour :
+**« Un nouveau poly est arrivé : qu'est-ce qui change ? »** Tu n'as pas tout le premier jour :
 
-- les transparents arrivent cours après cours ;
+- les transparents arrivent semaine après semaine ;
 - une version corrigée remplace l'ancienne.
 
-Le :term[registre]{id=registre} (`cursus/sources.yaml`) note ce que le cours a fait de chaque
-document, avec son **empreinte** : un code qui change dès que le fichier change.
+Le :term[suivi des documents]{id=registre} (`cursus/sources.yaml`) note ce que le parcours a
+fait de chaque document, avec son **empreinte** : un code qui change dès que le fichier change.
 
-Le :term[validateur]{id=validateur} compare le registre au dossier, sous-dossiers compris, et
+Le :term[contrôle qualité]{id=validateur} compare ce suivi au dossier, sous-dossiers compris, et
 prévient quand un document est :
 
 | Code | Le document est… |
@@ -37,13 +37,13 @@ Associe chaque avertissement à sa cause.
 
 :::answer
 F033 => un document nouveau, pas encore pris en compte
-F034 => un document modifié depuis que le cours l'a utilisé
-F035 => un document noté au registre mais disparu du dossier
+F034 => un document modifié depuis que le parcours l'a utilisé
+F035 => un document suivi mais disparu du dossier
 F036 => le même document à deux endroits
 :::
 
 :::hint
-Les numéros suivent l'ordre du texte : nouveau, modifié, disparu, en double.
+Les numéros suivent l'ordre du tableau : nouveau, modifié, disparu, en double.
 :::
 
 :::solution
@@ -54,23 +54,25 @@ l'agent.
 
 ## Ajouter un document {#ajouter}
 
-1. **Ajoute le fichier** dans le dossier du cours.
+Deux gestes suffisent :
+
+1. **Ajoute le fichier** dans le dossier du parcours.
 2. **Lance ton :term[agent]{id=agent}** comme d'habitude.
 
-L'agent commence toujours par le validateur. Il voit le nouveau document, le lit et l'intègre :
+L'agent commence par le contrôle qualité. Il voit le nouveau document, le lit et l'intègre :
 
 - il **ajoute** des séances, avec de nouveaux numéros ;
-- il ne renumérote ni ne réécrit ce que tu as déjà étudié ;
+- il garde intact ce que tu as déjà étudié ;
 - il te demande ton accord si le plan change.
 
 ::::mcq{#g4-a2}
-Tu ajoutes les transparents du cours 7. Que se passe-t-il pour tes séances déjà faites ?
+Tu ajoutes les transparents du cours 7. Que deviennent tes séances déjà faites ?
 
 - [ ] Elles sont réécrites pour intégrer le cours 7
-  > Non : les séances déjà écrites restent ; seule une version corrigée d'un document les ferait corriger.
+  > Les séances déjà écrites restent ; seule une version corrigée d'un document les ferait corriger.
 - [x] Elles restent telles quelles ; le cours 7 donne de nouvelles séances, à la suite
 - [ ] Elles sont renumérotées pour garder l'ordre
-  > Jamais : ta progression est attachée à leurs numéros.
+  > Ta progression est attachée à leurs numéros : ils ne bougent pas.
 
 :::hint
 À quoi est attachée ta progression ?
@@ -84,16 +86,16 @@ suite, avec de nouveaux numéros, et l'agent te montre ce qui change dans le pla
 
 :::::checkpoint
 ::::mcq{#g4-c1}
-Le validateur signale `F034` pour `cours3.pdf`. Que s'est-il passé ?
+Le contrôle qualité signale `F034` pour `cours3.pdf`. Que s'est-il passé ?
 
-- [x] `cours3.pdf` a changé depuis que le cours l'a utilisé
+- [x] `cours3.pdf` a changé depuis que le parcours l'a utilisé
 - [ ] `cours3.pdf` est nouveau
   > Un document nouveau donne `F033`.
 - [ ] `cours3.pdf` est en double
   > Un doublon donne `F036`.
 
 :::hint
-Relis la liste des quatre avertissements.
+Relis le tableau des quatre avertissements.
 :::
 
 :::solution

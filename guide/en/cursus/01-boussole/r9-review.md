@@ -1,10 +1,10 @@
 ---
 id: r9
 objectives:
-  - Recall the steps and rules of Boussole without help.
+  - Recall the essentials of Boussole without help.
 ---
 
-Five minutes, without looking back: the key questions of the guide.
+Five minutes, without looking back: the essentials of the guide.
 
 ::ref{id=g1-c1}
 

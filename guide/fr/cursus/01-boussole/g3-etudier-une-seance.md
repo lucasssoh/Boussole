@@ -1,8 +1,8 @@
 ---
 id: g3
 objectives:
-  - Avancer dans une séance écran par écran, avec la carte.
-  - Répondre, dévoiler un indice et lire la correction.
+  - Avancer dans une séance étape par étape, en suivant le Tracé.
+  - Répondre du premier coup, avec les coups de pouce, et lire la correction expliquée.
 terms: [cursus]
 ---
 
@@ -10,18 +10,18 @@ terms: [cursus]
 ::ref{id=g2-a2}
 :::::
 
-## Un écran à la fois {#ecrans}
+## Une étape à la fois {#ecrans}
 
-Une séance se lit **écran par écran** :
+**« Un chapitre d'un bloc, ça décourage. »** Une séance avance donc par **étapes** :
 
 - l'objectif ;
-- chaque explication, chaque exemple et chaque question, sur son propre écran ;
+- une explication, un exemple ou une question par étape ;
 - un bilan à la fin.
 
-**Suivant** et **Précédent** (ou les flèches du clavier) passent d'un écran à l'autre.
+**Suivant** et **Précédent**, ou les flèches du clavier, passent d'une étape à l'autre.
 
-À gauche, la **carte** montre toute la séance : une zone par partie (échauffement, notions,
-point de contrôle, exercices) et un rond par écran.
+**« Où j'en suis, et combien il en reste ? »** C'est le rôle du **Tracé**, à gauche : une zone
+par partie (échauffement, notions, point de contrôle, entraînement) et un rond par étape.
 
 | Rond | Sens |
 |---|---|
@@ -33,21 +33,21 @@ point de contrôle, exercices) et un rond par écran.
 Un clic sur un rond ouvert y mène.
 
 :::note
-Dans une leçon, **Suivant attend ta réponse** à la question affichée : la correction fait partie
-de la leçon.
+**Mode guidé** : dans une leçon, Suivant attend ta réponse à la question affichée. La correction
+fait partie de la leçon.
 :::
 
 ::::mcq{#g3-a1}
-Sur la carte, un rond porte un cadenas. Que veut-il dire ?
+Sur le Tracé, un rond porte un cadenas. Que veut-il dire ?
 
-- [ ] Cet écran est réservé à une version payante
-  > Boussole est gratuit ; rien n'est réservé.
+- [ ] Cette étape est facultative
+  > Toutes les étapes comptent : le cadenas attend seulement ta réponse.
 - [x] Une question avant lui attend encore ta réponse
-- [ ] L'agent n'a pas encore écrit cet écran
-  > Un écran pas encore écrit n'apparaît pas du tout sur la carte.
+- [ ] L'agent n'a pas encore écrit cette étape
+  > Une étape pas encore écrite n'apparaît pas sur le Tracé.
 
 :::hint
-Relis la dernière phrase avant la question.
+Relis la note sur le mode guidé.
 :::
 
 :::solution
@@ -58,47 +58,46 @@ avance question après question.
 
 ## Répondre et comprendre {#reponses}
 
-**Ta première réponse est définitive**, même si tu reviens sur la séance un autre jour. Alors :
+**« Je clique au hasard jusqu'à tomber juste. »** Pas ici : ta réponse compte **du premier
+coup**, même si tu reviens sur la séance un autre jour. Pour t'aider à bien répondre :
 
-- **avant de répondre**, le bouton **Indice** dévoile une aide, puis une autre, sans donner la
-  réponse ;
-- **quand plusieurs réponses sont justes**, Boussole te demande de confirmer avant d'envoyer ;
-- **juste après**, la bonne réponse passe au vert, la tienne au rouge si elle était fausse, et
-  un encadré **Pourquoi** explique.
+- **Coups de pouce** : avant de répondre, une aide, puis une autre, sans la réponse ;
+- **Dernière vérification** : quand plusieurs réponses sont justes, Boussole te demande de
+  confirmer avant d'envoyer ;
+- **Correction expliquée** : juste après, la bonne réponse passe au vert, la tienne au rouge si
+  elle était fausse, et un encadré **Pourquoi** explique.
 
-Pour la motivation :
-
-- chaque réponse rapporte de l'expérience, même fausse : essayer paie toujours ;
-- ta série de jours avance chaque jour où tu étudies.
+**« Je ne vois pas mes progrès. »** Chaque réponse rapporte de l'**expérience**, même fausse :
+essayer paie toujours. Ta **série** avance chaque jour où tu étudies.
 
 :::note
-Les révisions et les examens blancs sont chronométrés. Dans un examen blanc, la correction
-n'arrive qu'à la fin.
+Les révisions express et les examens blancs sont chronométrés. Dans un examen blanc, la
+correction arrive à la fin, comme à un vrai examen.
 :::
 
 ::::mcq{#g3-a2 multiple=true}
 Qu'est-ce qui est vrai ? (plusieurs réponses)
 
-- [x] Un indice peut se dévoiler avant de répondre
+- [x] Un coup de pouce peut se demander avant de répondre
 - [x] Une mauvaise réponse rapporte aussi de l'expérience
 - [ ] On peut répondre autant de fois qu'on veut à la même question
-  > Une seule réponse par question dans une séance : la correction s'affiche aussitôt.
+  > Dans une leçon, ta réponse compte du premier coup.
 - [ ] Dans un examen blanc, la correction s'affiche après chaque question
-  > Non : dans un examen blanc, elle attend la fin, comme à un vrai examen.
+  > Dans un examen blanc, elle attend la fin, comme à un vrai examen.
 
 :::hint
-Deux affirmations sont vraies ; relis ce que dit le texte des examens blancs.
+Deux affirmations sont vraies ; relis la note sur les examens blancs.
 :::
 
 :::solution
-Vrai : l'indice avant de répondre, et l'expérience même pour une réponse fausse. Faux : on ne
-répond qu'une fois, et un examen blanc garde ses corrections pour la fin.
+Vrai : le coup de pouce avant de répondre, et l'expérience même pour une réponse fausse. Faux :
+ta réponse compte du premier coup, et un examen blanc garde ses corrections pour la fin.
 :::
 ::::
 
 :::::checkpoint
 ::::exercise{#g3-c1 type=match}
-Associe chaque couleur de la carte à son sens.
+Associe chaque rond du Tracé à son sens.
 
 :::answer
 vert => vu, ou réponse juste

@@ -7,26 +7,26 @@ chapters:
       - id: g1
         title: Ce qu'est Boussole
         duration: 15
-        goal: Dire qui fait quoi entre tes documents, ton agent et Boussole.
+        goal: Dire quels problèmes Boussole résout, et qui fait quoi.
         file: g1-ce-qu-est-boussole.md
       - id: g2
-        title: Créer un cours
+        title: Préparer un parcours
         duration: 15
-        goal: Transformer un dossier de documents en cours, de la commande à la première séance.
-        file: g2-creer-un-cours.md
+        goal: Transformer un dossier de documents en parcours, de la commande à la première séance.
+        file: g2-preparer-un-parcours.md
       - id: g3
         title: Étudier une séance
         duration: 15
-        goal: Savoir avancer dans une séance, répondre, utiliser les indices et lire la correction.
+        goal: Avancer étape par étape, répondre du premier coup et lire la correction expliquée.
         file: g3-etudier-une-seance.md
       - id: g4
         title: Quand de nouveaux documents arrivent
         duration: 15
-        goal: Faire suivre le cours quand un document arrive ou change.
+        goal: Faire suivre le parcours quand un document arrive ou change.
         file: g4-nouveaux-documents.md
       - id: r9
-        title: Révision — Boussole en 5 minutes
+        title: Révision express — Boussole en 5 minutes
         kind: review
         duration: 5
-        goal: Retrouver sans aide les étapes et les règles de Boussole.
+        goal: Retrouver sans aide l'essentiel de Boussole.
         file: r9-revision.md

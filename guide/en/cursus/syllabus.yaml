@@ -7,26 +7,26 @@ chapters:
       - id: g1
         title: What Boussole is
         duration: 15
-        goal: Say who does what between your documents, your agent and Boussole.
+        goal: Say which problems Boussole solves, and who does what.
         file: g1-what-boussole-is.md
       - id: g2
-        title: Creating a course
+        title: Setting up a track
         duration: 15
-        goal: Turn a folder of documents into a course, from the command to the first session.
-        file: g2-creating-a-course.md
+        goal: Turn a folder of documents into a track, from the command to the first session.
+        file: g2-setting-up-a-track.md
       - id: g3
         title: Studying a session
         duration: 15
-        goal: Move through a session, answer, use hints and read the correction.
+        goal: Move step by step, answer on the first try and read the explained answer.
         file: g3-studying-a-session.md
       - id: g4
         title: When new documents arrive
         duration: 15
-        goal: Keep the course up to date when a document arrives or changes.
+        goal: Keep the track up to date when a document arrives or changes.
         file: g4-new-documents.md
       - id: r9
-        title: Review — Boussole in 5 minutes
+        title: Quick review — Boussole in 5 minutes
         kind: review
         duration: 5
-        goal: Recall the steps and rules of Boussole without help.
+        goal: Recall the essentials of Boussole without help.
         file: r9-review.md

@@ -1,8 +1,8 @@
 ---
 id: g3
 objectives:
-  - Move through a session screen by screen, with the map.
-  - Answer, reveal a hint and read the correction.
+  - Move through a session step by step, following the Trail.
+  - Answer on the first try, with nudges, and read the explained answer.
 terms: [cursus]
 ---
 
@@ -10,18 +10,18 @@ terms: [cursus]
 ::ref{id=g2-a2}
 :::::
 
-## One screen at a time {#screens}
+## One step at a time {#screens}
 
-A session is read **screen by screen**:
+**"A whole chapter in one go is discouraging."** So a session moves in **steps**:
 
 - the goal;
-- each explanation, each example and each question, on its own screen;
+- an explanation, an example or a question per step;
 - a wrap-up at the end.
 
-**Next** and **Previous** (or the arrow keys) move between them.
+**Next** and **Previous**, or the arrow keys, move from one step to the other.
 
-On the left, the **map** shows the whole session: a zone per part (warm-up, notions,
-checkpoint, practice) and a dot per screen.
+**"Where am I, and how much is left?"** That is what **the Trail** is for, on the left: a zone
+per part (warm-up, notions, checkpoint, practice) and a dot per step.
 
 | Dot | Meaning |
 |---|---|
@@ -33,21 +33,21 @@ checkpoint, practice) and a dot per screen.
 Clicking an open dot goes there.
 
 :::note
-In a lesson, **Next waits for your answer** to the question on screen: the correction is part of
-the lesson.
+**Guided mode**: in a lesson, Next waits for your answer to the question shown. The correction is
+part of the lesson.
 :::
 
 ::::mcq{#g3-a1}
-On the map, a dot shows a padlock. What does it mean?
+On the Trail, a dot has a padlock. What does it mean?
 
-- [ ] That screen is for a paid version
-  > Boussole is free; nothing is reserved.
+- [ ] This step is optional
+  > Every step counts: the padlock only waits for your answer.
 - [x] A question before it still waits for your answer
-- [ ] The agent has not written that screen yet
-  > A screen not written yet does not show on the map at all.
+- [ ] The agent has not written this step yet
+  > A step not written yet does not appear on the Trail.
 
 :::hint
-Read the last sentence before the question again.
+Read the note on guided mode again.
 :::
 
 :::solution
@@ -58,50 +58,49 @@ you move on question after question.
 
 ## Answering and understanding {#answers}
 
-**Your first answer is final**, even if you come back to the session another day. So:
+**"I click at random until I get it right."** Not here: your answer counts on the **first
+try**, even if you come back to the session another day. To help you answer well:
 
-- **before answering**, the **Hint** button reveals some help, then more, without giving the
-  answer away;
-- **when several answers are right**, Boussole asks you to confirm before sending;
-- **right after**, the right answer turns green, yours red if it was wrong, and a **Why** box
-  explains.
+- **Nudges**: before answering, some help, then more, without the answer;
+- **Final check**: when several answers are right, Boussole asks you to confirm before sending;
+- **Explained answer**: right after, the right answer turns green, yours red if it was wrong,
+  and a **Why** box explains.
 
-For motivation:
-
-- every answer earns experience, even a wrong one: trying always pays;
-- your streak of days grows each day you study.
+**"I can't see my progress."** Every answer earns **experience**, even a wrong one: trying always
+pays. Your **streak** grows each day you study.
 
 :::note
-Reviews and mock exams are timed. In a mock exam, the corrections come at the end.
+Quick reviews and mock exams are timed. In a mock exam, the corrections come at the end, as in a
+real exam.
 :::
 
 ::::mcq{#g3-a2 multiple=true}
-Which are true? (several answers)
+What is true? (several answers)
 
-- [x] A hint can be revealed before answering
+- [x] You can ask for a nudge before answering
 - [x] A wrong answer earns experience too
-- [ ] You may answer the same question as many times as you like
-  > One answer per question in a session: the correction shows right away.
+- [ ] You can answer the same question as many times as you like
+  > In a lesson, your answer counts on the first try.
 - [ ] In a mock exam, the correction shows after each question
-  > No: in a mock exam it waits for the end, as in a real exam.
+  > In a mock exam, it waits for the end, as in a real exam.
 
 :::hint
-Two statements are true; read what the text says about mock exams.
+Two statements are true; read the note on mock exams again.
 :::
 
 :::solution
-True: the hint before answering, and experience even for a wrong answer. False: you answer only
-once, and a mock exam keeps its corrections for the end.
+True: the nudge before answering, and experience even for a wrong answer. False: your answer
+counts on the first try, and a mock exam keeps its corrections for the end.
 :::
 ::::
 
 :::::checkpoint
 ::::exercise{#g3-c1 type=match}
-Match each mark of the map with its meaning.
+Match each dot of the Trail with its meaning.
 
 :::answer
-green => seen, or answered right
-red => answered wrong
+green => seen, or right answer
+red => wrong answer
 padlock => a question before it waits for your answer
 :::
 

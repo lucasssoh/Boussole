@@ -3,39 +3,39 @@
   aliases: [agent]
   definition: >
     An assistant that works in your files, such as Claude Code, Codex or Gemini CLI. It reads
-    your documents and writes the course.
+    your documents and writes the track.
 
 - id: skill
-  term: Skill
-  aliases: [skills]
+  term: Playbook
+  aliases: [playbooks, skill, skills]
   definition: >
-    A sheet of instructions for the agent, installed by `boussole init` in `.boussole/skills/`:
-    how to ask your preferences, plan, write a session, write exercises…
+    A sheet of instructions for your agent, installed by `boussole init`: how to learn your
+    learning style, make a plan, write a session, write exercises…
 
 - id: cursus
-  term: Course folder
+  term: Cursus folder
   aliases: [cursus]
   definition: >
-    The `cursus/` folder of a course: the plan (`syllabus.yaml`), the sessions, the lexicon.
-    Everything Boussole shows you comes from there.
+    The `cursus/` folder of a track: the plan (`syllabus.yaml`), the sessions, the lexicon.
+    Everything Boussole presents to you comes from there.
 
 - id: plan
-  term: Course plan
-  aliases: [plan, syllabus]
+  term: Plan
+  aliases: [plan for approval, syllabus]
   definition: >
     The list of chapters and sessions, with their length and goal. The agent proposes it,
     **only you approve it**.
 
 - id: validator
-  term: Validator
-  aliases: [boussole validate]
+  term: Quality check
+  aliases: [validator, boussole validate]
   definition: >
-    The `boussole validate` command: it checks that the course follows Boussole's format and says
-    exactly what to fix. The agent runs it after every change.
+    The `boussole validate` command: it checks that the track is well written and says exactly
+    what to fix. The agent runs it after every change.
 
 - id: record
-  term: Record of documents
-  aliases: [sources.yaml]
+  term: Document tracking
+  aliases: [record, sources.yaml]
   definition: >
-    The `cursus/sources.yaml` file: what the course did with each of your documents (used,
+    The `cursus/sources.yaml` file: what the track did with each of your documents (used,
     ignored, pending), with its fingerprint, to spot those that arrive or change.

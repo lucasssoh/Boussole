@@ -3,38 +3,38 @@
   aliases: [agent]
   definition: >
     Un assistant qui travaille dans tes fichiers, comme Claude Code, Codex ou Gemini CLI. C'est
-    lui qui lit tes documents et écrit le cours.
+    lui qui lit tes documents et écrit le parcours.
 
 - id: skill
-  term: Skill
-  aliases: [skills]
+  term: Fiche méthode
+  aliases: [fiches méthode, skill, skills]
   definition: >
-    Une fiche d'instructions pour l'agent, installée par `boussole init` dans `.boussole/skills/` :
-    comment poser tes préférences, planifier, écrire une séance, des exercices…
+    Une fiche d'instructions pour ton agent, installée par `boussole init` : comment connaître ta
+    façon d'apprendre, faire un plan, écrire une séance, des exercices…
 
 - id: cursus
   term: Cursus
   definition: >
-    Le dossier `cursus/` d'un cours : le plan (`syllabus.yaml`), les séances, le lexique. Tout
-    ce que Boussole t'affiche vient de là.
+    Le dossier `cursus/` d'un parcours : le plan (`syllabus.yaml`), les séances, le lexique.
+    Tout ce que Boussole te présente vient de là.
 
 - id: plan
-  term: Plan du cours
-  aliases: [plan, syllabus]
+  term: Plan
+  aliases: [plan à valider, syllabus]
   definition: >
     La liste des chapitres et des séances, avec leur durée et leur objectif. L'agent le propose,
-    **toi seul l'approuves**.
+    **toi seul le valides**.
 
 - id: validateur
-  term: Validateur
-  aliases: [boussole validate]
+  term: Contrôle qualité
+  aliases: [validateur, boussole validate]
   definition: >
-    La commande `boussole validate` : elle vérifie que le cours suit le format de Boussole et dit
+    La commande `boussole validate` : elle vérifie que le parcours est bien écrit et dit
     précisément quoi corriger. L'agent la lance après chaque changement.
 
 - id: registre
-  term: Registre des documents
-  aliases: [sources.yaml]
+  term: Suivi des documents
+  aliases: [registre, sources.yaml]
   definition: >
-    Le fichier `cursus/sources.yaml` : ce que le cours a fait de chacun de tes documents (utilisé,
-    ignoré, en attente), avec son empreinte, pour repérer ceux qui arrivent ou changent.
+    Le fichier `cursus/sources.yaml` : ce que le parcours a fait de chacun de tes documents
+    (utilisé, ignoré, en attente), avec son empreinte, pour repérer ceux qui arrivent ou changent.
