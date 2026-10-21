@@ -1,53 +1,57 @@
 ---
 id: g1
 objectives:
-  - Say what Boussole is for and what it saves you.
+  - Say what Boussole does, and in what spirit.
   - Say what your agent does, what Boussole does and what you do.
 terms: [agent, skill, cursus, plan]
 ---
 
-Welcome! This guide is itself a Boussole course: you go screen by screen and answer the
-questions. It stays on the home page, to come back to whenever you like. It does not count in
-your experience.
+**Welcome to Boussole, because you look a little lost.** Ha. Anyway…
+
+In this module, you will see:
+
+- what Boussole does, and in what spirit;
+- who does what, between you, your AI agent and Boussole;
+- how you move through a session.
 
 ## Why "Boussole" {#why}
 
-Boussole is French for compass. In front of a course, you sometimes feel lost: many documents,
-and no clear path.
+Boussole is French for compass. A folder of course documents is a map without a legend:
+everything is there, but where do you start?
 
-Boussole points the way. You know what to study, in what order, and where you are.
+Boussole turns it into a path:
 
-In practice:
+- **short sessions**, one notion at a time;
+- **questions at every step**, corrected on the spot, with the why;
+- **a heading**: you always know which session comes next.
 
-- **Your documents become a course.** Short sessions, with questions corrected at once.
-- **You know what to do next.** The home page offers the session to resume.
-- **You pay for no platform.** The course is made from your documents, on your machine.
-- **You spend fewer tokens.** Your agent does not reinvent the method each time: the
-  :term[skills]{id=skill} tell it what to write and how. Boussole tells it exactly what is
-  wrong. Then studying costs nothing more: Boussole corrects without AI.
+:::tip
+The spirit of Boussole: you learn by **answering**, not by rereading. Each session has you try
+before it moves on.
+:::
 
 ::::mcq{#g1-a0}
-When do you spend tokens with Boussole?
+In a Boussole session, what do you do most?
 
-- [x] When your agent writes the course
-- [ ] At each answer you give
-  > No: Boussole corrects with the answer written in the session, without AI.
-- [ ] Each time you open a session
-  > No: opening a session only reads files on your machine.
+- [ ] Read a long chapter from end to end
+  > A session is cut into short screens: an explanation, then a question.
+- [x] Answer questions, with the correction right after
+- [ ] Watch a video, then move on
+  > Videos come with the text; what matters are the questions.
 
 :::hint
-Who uses an AI: your agent, or Boussole?
+Read the tip again: how do you learn, with Boussole?
 :::
 
 :::solution
-Only when **your agent writes** the course. Once written, you study as much as you like without
-spending tokens: Boussole corrects by itself.
+**You answer.** Each notion is followed by a question, corrected at once with its explanation:
+trying is how you remember.
 :::
 ::::
 
 ## From documents to a course {#chain}
 
-Here is the way from a document to you.
+Here is the way from a document to your screen.
 
 ```mermaid
 flowchart LR
@@ -59,14 +63,16 @@ flowchart LR
   T -. "approve the plan" .-> A
 ```
 
-Boussole does not write the course. Your :term[AI agent]{id=agent} writes it, following the
-skills. The course goes into the :term[cursus folder]{id=cursus}, and Boussole shows it.
+1. Your :term[AI agent]{id=agent} reads your documents.
+2. It writes the course following the :term[skills]{id=skill} of Boussole: sheets that tell it
+   what a good session is.
+3. The course lands in the :term[cursus folder]{id=cursus}, and Boussole presents it to you.
 
 ::::mcq{#g1-a1}
 Who writes the sessions and quizzes of your course?
 
 - [ ] Boussole, with a built-in AI
-  > No: Boussole never calls an AI. It shows, checks and keeps your progress.
+  > Boussole presents and corrects the course; your agent writes it.
 - [x] Your AI agent, following Boussole's skills
 - [ ] You, by hand
   > You may touch up the files, but the agent writes the course.
@@ -77,8 +83,7 @@ Look at the diagram: which box writes into `cursus/`?
 
 :::solution
 Your **AI agent** (Claude Code, Codex, Gemini CLI…) writes the course, following the skills.
-Boussole calls no AI: it shows the course, checks it is well written and keeps your progress,
-on your machine.
+Boussole checks it is well written, presents it to you and follows your progress.
 :::
 ::::
 
@@ -90,13 +95,13 @@ on your machine.
 | **Your agent** | Reads the documents, proposes the :term[plan]{id=plan}, writes the sessions, checks them. |
 | **Boussole** | Installs the skills, checks the format, shows the course, corrects your answers, keeps your progress. |
 
-Everything stays on your machine: no account, no cloud. Your documents are never changed.
+Everything happens on your machine, next to your documents.
 
 ::::mcq{#g1-a2}
 What does Boussole do when you answer a quiz?
 
 - [ ] It sends your answer to an AI that judges it
-  > No: the right answer is written in the session file; Boussole compares, without any AI.
+  > The right answer and its explanation are already in the session: Boussole simply compares.
 - [x] It compares your answer with the one written in the session, and keeps your progress
 - [ ] Nothing, it only shows the text
   > It does correct: green when right, red otherwise, with the explanation.

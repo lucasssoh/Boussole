@@ -3,7 +3,7 @@
   aliases: [agent]
   definition: >
     An assistant that works in your files, such as Claude Code, Codex or Gemini CLI. It reads
-    your documents and writes the course; Boussole never calls an AI.
+    your documents and writes the course.
 
 - id: skill
   term: Skill

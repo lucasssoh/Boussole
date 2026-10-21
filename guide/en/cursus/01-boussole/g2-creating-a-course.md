@@ -34,7 +34,7 @@ Boussole adds to the folder:
 | `cursus/` | the course, which the agent will write |
 | `AGENTS.md`, `.boussole/` | the instructions for your :term[agent]{id=agent} |
 
-It never touches your documents.
+Your documents stay where they are.
 
 :::tip
 Then open your agent **in that folder** and simply ask: "Build the course."

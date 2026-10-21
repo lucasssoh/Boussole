@@ -66,11 +66,10 @@ avance question après question.
 - **juste après**, la bonne réponse passe au vert, la tienne au rouge si elle était fausse, et
   un encadré **Pourquoi** explique.
 
-Ce qui compte :
+Pour la motivation :
 
-- chaque réponse rapporte de l'expérience, même fausse ;
-- ta série de jours avance quand tu étudies ;
-- ce guide, lui, ne compte pas.
+- chaque réponse rapporte de l'expérience, même fausse : essayer paie toujours ;
+- ta série de jours avance chaque jour où tu étudies.
 
 :::note
 Les révisions et les examens blancs sont chronométrés. Dans un examen blanc, la correction

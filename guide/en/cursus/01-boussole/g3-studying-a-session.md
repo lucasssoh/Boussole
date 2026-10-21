@@ -66,11 +66,10 @@ you move on question after question.
 - **right after**, the right answer turns green, yours red if it was wrong, and a **Why** box
   explains.
 
-What counts:
+For motivation:
 
-- every answer earns experience, even a wrong one;
-- your streak of days grows when you study;
-- this guide does not count.
+- every answer earns experience, even a wrong one: trying always pays;
+- your streak of days grows each day you study.
 
 :::note
 Reviews and mock exams are timed. In a mock exam, the corrections come at the end.

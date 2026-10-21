@@ -35,7 +35,7 @@ Boussole ajoute dans le dossier :
 | `cursus/` | le cours, que l'agent va écrire |
 | `AGENTS.md`, `.boussole/` | les instructions pour ton :term[agent]{id=agent} |
 
-Il ne touche jamais à tes documents.
+Tes documents restent à leur place.
 
 :::tip
 Ouvre ensuite ton agent **dans ce dossier** et demande-lui simplement : « Construis le cours. »

@@ -3,7 +3,7 @@
   aliases: [agent]
   definition: >
     Un assistant qui travaille dans tes fichiers, comme Claude Code, Codex ou Gemini CLI. C'est
-    lui qui lit tes documents et écrit le cours ; Boussole n'appelle jamais d'IA.
+    lui qui lit tes documents et écrit le cours.
 
 - id: skill
   term: Skill
