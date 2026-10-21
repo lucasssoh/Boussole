@@ -130,10 +130,14 @@ Versions follow `MAJOR.MINOR.PATCH`.
 - A class added, removed or renamed, or a relation between classes changed, is reflected in
   [`docs/diagrams/`](docs/diagrams/README.md), rendered with `docs/diagrams/render.sh`, in the
   same commit.
+- Code, docs and diagrams move together: [`AGENTS.md`](AGENTS.md) lists, for each kind of change
+  (a block, an exercise type, a diagnostic code, a use case, a command, interface text), every
+  place it touches. `DocumentationSyncTest` fails the build when they drift apart.
 
 ## AI agents
 
-If you're an agent, everything above applies to you too. Also:
+If you're an agent, everything above applies to you too, and [`AGENTS.md`](AGENTS.md) is your
+starting point. Also:
 
 - Don't push, tag or publish a release unless you're asked to.
 - **Every commit you write ends with your `Co-Authored-By:` line**, as its last paragraph. No

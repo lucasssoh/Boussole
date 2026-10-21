@@ -39,6 +39,7 @@ apart on the home page to come back to.
 - [Course format](docs/FORMAT.md) — the contract between authors, agents and the application.
 - [Architecture](ARCHITECTURE.md) — modules, design patterns, conventions.
 - [Example subject](examples/reseaux).
+- [Working on Boussole](AGENTS.md) — for people and agents changing the code: what each kind of change touches.
 - [Contributing](CONTRIBUTING.md) — commits, versions, changelog, releases.
 
 ## License

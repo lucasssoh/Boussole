@@ -22,6 +22,11 @@ readable; the overview says where each area sits.
 To see them: open an `.svg` in a browser, or this page on GitHub. To edit them, any PlantUML
 editor works (the PlantUML extension of VS Code or IntelliJ shows a live preview).
 
+A diagram changes in the same commit as the code it draws; [`AGENTS.md`](../../AGENTS.md) says which
+diagrams each kind of change touches. `DocumentationSyncTest` fails the build when a block, a
+directive parser, a use case, a command or a component is missing from its diagram, or when a
+`.puml` changed without being rendered.
+
 After changing a `.puml` file, render again (needs `plantuml` and `graphviz`):
 
 ```

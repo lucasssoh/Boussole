@@ -395,6 +395,10 @@ On macOS and Windows the equivalent per-user folders are used.
 8. No emoji in the code, the interface or the command output: icons are SVG (§5), words say the rest.
 9. Code, comments, commits and documentation in English. Commits, versions and releases follow
    [`CONTRIBUTING.md`](CONTRIBUTING.md).
+10. **Docs follow the code, in the same commit.** [`AGENTS.md`](AGENTS.md) has a recipe per kind of
+    change (block, exercise type, diagnostic code, use case, command, interface text) listing
+    every file it touches; `DocumentationSyncTest` (in `boussole-cli`) fails the build when the
+    format, the diagrams or the interface types no longer match the code.
 
 ---
 

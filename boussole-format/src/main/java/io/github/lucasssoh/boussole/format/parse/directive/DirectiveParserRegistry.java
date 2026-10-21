@@ -4,6 +4,7 @@ import io.github.lucasssoh.boussole.format.model.block.CalloutKind;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,11 @@ public final class DirectiveParserRegistry {
                 new ExerciseDirectiveParser(),
                 new McqDirectiveParser(),
                 new RefDirectiveParser()));
+    }
+
+    /** The names of the directives known, such as {@code example} or {@code graph}. */
+    public Set<String> names() {
+        return parsers.keySet();
     }
 
     public Optional<DirectiveParser> find(String name) {

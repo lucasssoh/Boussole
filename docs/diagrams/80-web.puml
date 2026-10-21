@@ -75,9 +75,14 @@ package "shared" {
   class "subjectColor()" as SubjectColor
   class RichTextComponent
   class "drawMermaidDiagrams()" as Mermaid
+  class IconComponent <<SVG icons, no emoji>> {
+    +iconSvg(name) : string
+  }
 }
 
 SubjectListComponent --> LearnFacade
+QuestionFooterComponent ..> IconComponent : hint, arrows
+FillGaps ..> IconComponent : iconSvg()
 CoursePageComponent --> LearnFacade
 SessionPageComponent --> LearnFacade
 SessionPageComponent *-- SessionRun : provides
