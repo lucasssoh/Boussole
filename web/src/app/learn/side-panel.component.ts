@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, u
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { IconComponent } from '../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { BoussoleApi } from '../core/boussole-api';
 import { PagePreview } from '../core/api';
 import { LearnFacade } from './learn.facade';
+import { WebReferences } from './web-references';
 
 /**
  * The video (YouTube or a file of the sources), the document or the web page opened beside the
@@ -35,10 +35,17 @@ import { LearnFacade } from './learn.facade';
               <app-icon name="globe" [size]="40" />
               <strong>{{ preview.title ?? panel.label }}</strong>
               <span class="panel-host">{{ host(panel.url) }}</span>
-              <p>{{ (preview.reachable ? 'panel.webElsewhere' : 'panel.webUnreachable') | transloco }}</p>
-              <a class="button primary" [href]="panel.url" target="_blank" rel="noopener">
-                {{ 'panel.openSite' | transloco }} <app-icon name="arrow-right" />
-              </a>
+              @if (references.openedApart() === panel.url) {
+                <p>{{ 'panel.webApart' | transloco }}</p>
+                <button type="button" class="primary" (click)="openApart(panel.url)">
+                  {{ 'panel.backToSite' | transloco }} <app-icon name="arrow-right" />
+                </button>
+              } @else {
+                <p>{{ (preview.reachable ? 'panel.webElsewhere' : 'panel.webUnreachable') | transloco }}</p>
+                <button type="button" class="primary" (click)="openApart(panel.url)">
+                  {{ 'panel.openSite' | transloco }} <app-icon name="arrow-right" />
+                </button>
+              }
             </div>
           }
         } @else {
@@ -61,7 +68,7 @@ import { LearnFacade } from './learn.facade';
 export class SidePanelComponent {
   protected readonly learn = inject(LearnFacade);
   private readonly sanitizer = inject(DomSanitizer);
-  private readonly api = inject(BoussoleApi);
+  protected readonly references = inject(WebReferences);
 
   /** What the server learned of the web page open, once it answers. */
   protected readonly webPreview = signal<PagePreview | null>(null);
@@ -76,14 +83,20 @@ export class SidePanelComponent {
       const panel = this.learn.panel();
       untracked(() => this.webPreview.set(null));
       if (panel?.kind === 'web') {
-        const unreachable: PagePreview = { reachable: false, embeddable: false, title: null };
-        void this.api.previewPage(panel.url).catch(() => unreachable).then((preview) => {
+        void this.references.preview(panel.url).then((preview) => {
           if (this.learn.panel() === panel) {
             this.webPreview.set(preview);
           }
         });
       }
     });
+  }
+
+  /** In the reference window; a plain tab when the browser refuses the window. */
+  protected openApart(url: string): void {
+    if (!this.references.openWindow(url)) {
+      window.open(url, '_blank', 'noopener');
+    }
   }
 
   protected host(url: string): string {

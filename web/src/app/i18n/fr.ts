@@ -122,7 +122,9 @@ export const FR: Translations = {
     newTab: 'Ouvrir dans un onglet',
     opening: 'Ouverture du site…',
     openSite: 'Ouvrir le site',
-    webElsewhere: 'Ce site ne se laisse pas afficher ici : il s’ouvre dans un onglet, à côté.',
+    backToSite: 'Revenir à la fenêtre du site',
+    webApart: 'Ce site refuse de s’afficher ici : il est ouvert dans une fenêtre à part, à droite.',
+    webElsewhere: 'Ce site refuse de s’afficher ici. Ouvre-le dans une fenêtre à part, à droite :',
     webUnreachable: 'Ce site ne répond pas pour l’instant. Tu peux essayer de l’ouvrir dans un onglet.',
   },
 };

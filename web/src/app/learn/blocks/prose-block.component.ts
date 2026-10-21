@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, input }
 import { MarkdownRenderer } from '../../shared/markdown-renderer';
 import { drawMermaidDiagrams } from '../../shared/mermaid-diagrams';
 import { LearnFacade } from '../learn.facade';
+import { WebReferences } from '../web-references';
 import { FillGaps } from '../question/fill-gaps';
 
 /**
@@ -21,11 +22,13 @@ export class ProseBlockComponent {
   private readonly host: HTMLElement = inject(ElementRef).nativeElement;
   private readonly renderer = inject(MarkdownRenderer);
   private readonly learn = inject(LearnFacade);
+  private readonly references = inject(WebReferences);
 
   constructor() {
     effect(() => {
       this.host.innerHTML = this.renderer.render(this.markdown(), { base: this.learn.sessionBase() });
       this.defineTerms();
+      this.lookAtWebLinks();
       this.fill()?.mountIn(this.host);
       void drawMermaidDiagrams(this.host);
     });
@@ -34,7 +37,7 @@ export class ProseBlockComponent {
   protected onClick(event: MouseEvent): void {
     const web = (event.target as HTMLElement).closest<HTMLElement>('.web-link');
     if (web) {
-      this.learn.panel.set({ kind: 'web', label: web.querySelector('.pdf-label')?.textContent?.trim() ?? '', url: web.dataset['linkUrl'] ?? '' });
+      this.references.open(web.querySelector('.pdf-label')?.textContent?.trim() ?? '', web.dataset['linkUrl'] ?? '');
       return;
     }
     const link = (event.target as HTMLElement).closest<HTMLElement>('.pdf-link');
@@ -46,6 +49,13 @@ export class ProseBlockComponent {
         path: this.learn.sourcePath(link.dataset['pdfSrc'] ?? ''),
         page: Number.isInteger(page) && page > 0 ? page : null,
       });
+    }
+  }
+
+  /** The web pages cited in the text are looked at now, so that a click knows where they open. */
+  private lookAtWebLinks(): void {
+    for (const link of Array.from(this.host.querySelectorAll<HTMLElement>('.web-link'))) {
+      void this.references.preview(link.dataset['linkUrl'] ?? '');
     }
   }
 

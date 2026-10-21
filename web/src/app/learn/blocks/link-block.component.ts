@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { LinkBlockView } from '../../core/api';
 import { IconComponent } from '../../shared/icon.component';
 import { LearnFacade } from '../learn.facade';
+import { WebReferences } from '../web-references';
 
 /** A web page cited by the course: documentation, an article, a reference, opened beside the text. */
 @Component({
@@ -22,6 +23,11 @@ import { LearnFacade } from '../learn.facade';
 export class LinkBlockComponent {
   readonly link = input.required<LinkBlockView>();
   private readonly learn = inject(LearnFacade);
+  private readonly references = inject(WebReferences);
+
+  constructor() {
+    effect(() => void this.references.preview(this.link().url));
+  }
 
   protected readonly host = computed(() => {
     try {
@@ -37,6 +43,6 @@ export class LinkBlockComponent {
 
   protected open(): void {
     const { label, url } = this.link();
-    this.learn.panel.set({ kind: 'web', label, url });
+    this.references.open(label, url);
   }
 }

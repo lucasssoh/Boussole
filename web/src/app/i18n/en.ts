@@ -120,7 +120,9 @@ export const EN = {
     newTab: 'Open in a new tab',
     opening: 'Opening the site…',
     openSite: 'Open the site',
-    webElsewhere: 'This site does not let itself be shown here: it opens in a tab, next to Boussole.',
+    backToSite: 'Back to the site’s window',
+    webApart: 'This site refuses to show here: it is open in a window of its own, on the right.',
+    webElsewhere: 'This site refuses to show here. Open it in a window of its own, on the right:',
     webUnreachable: 'This site does not answer right now. You can try opening it in a tab.',
   },
 };

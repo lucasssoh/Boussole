@@ -51,6 +51,11 @@ package "learn.blocks" {
   class PdfBlockComponent
   class GraphBlockComponent
   class LinkBlockComponent
+  class WebReferences <<service>> {
+    +preview(url) : Promise<PagePreview>
+    +open(label, url)
+    +openWindow(url) : boolean
+  }
   class GraphDrawing <<drawGraph()>>
 }
 
@@ -100,7 +105,10 @@ BlockListComponent --> VideoBlockComponent
 BlockListComponent --> PdfBlockComponent
 BlockListComponent --> GraphBlockComponent
 BlockListComponent --> LinkBlockComponent
-SidePanelComponent ..> BoussoleApi : previewPage()
+SidePanelComponent ..> WebReferences : preview, window
+LinkBlockComponent ..> WebReferences : looks ahead, opens
+ProseBlockComponent ..> WebReferences : :link
+WebReferences ..> BoussoleApi : previewPage()
 GraphBlockComponent ..> GraphDrawing : pixels
 BlockListComponent --> McqBlockComponent
 BlockListComponent --> ExerciseBlockComponent
