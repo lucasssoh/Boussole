@@ -132,8 +132,9 @@ The tracks built into Boussole are ordinary subjects, written in the course form
 Boussole opens on (its subject ID is `BundledTracks.STARTER`), and the tracks to learn more,
 such as `course-format` (writing a track by hand). `BundledTracks` installs them, in every
 language, into the data folder at start, and `ServerSettings.builtIn` lists them after the learner's subjects, always:
-the home page shows the guide beside the session to resume (and resumes it only while there is
-no other subject), and the others under *To learn more*. They earn no experience and keep no
+the home page shows the guide first under *How to Boussole* (and resumes it only while there is
+no other subject), and the others on two shelves: *How to Boussole* for IDs starting with
+`boussole-`, *Discover* for the others. They earn no experience and keep no
 streak (`RewardedSubjects`, in the core). `GuideSubjectTest` keeps every track valid in both
 languages, with the same sessions.
 

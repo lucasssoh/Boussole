@@ -8,11 +8,14 @@ import { subjectColor } from '../shared/subject-color';
 import { LearnFacade } from './learn.facade';
 import { SessionGridComponent } from './session-grid.component';
 
+/** Built-in tracks whose ID starts so are about Boussole itself. */
+const HOW_TO = 'boussole-';
+
 /**
  * The home page: where to resume, on top (the session in progress in the subject studied last,
- * or the first session of a subject not started yet) with the guide to Boussole beside it, then
- * every subject with its progress, then the other tracks built into Boussole, to learn more. The
- * guide is what to resume only while there is no other subject.
+ * or the first session of a subject not started yet), every subject of the learner with its
+ * progress, then the tracks built into Boussole on two shelves: how to use Boussole, and others to
+ * discover. The guide is what to resume only while there is no other subject.
  */
 @Component({
   selector: 'app-subject-list',
@@ -38,14 +41,6 @@ import { SessionGridComponent } from './session-grid.component';
             </a>
           </section>
         }
-      }
-      @for (guide of besideResume(); track guide.id) {
-        <a class="card guide-card subject-scope" [routerLink]="['/subjects', guide.id]" [attr.lang]="guide.lang">
-          <span class="eyebrow">{{ 'home.guideTitle' | transloco }}</span>
-          <span class="card-title"><img src="favicon.svg" alt="" class="guide-logo" /> {{ guide.name }}</span>
-          <span class="card-text">{{ 'home.guideText' | transloco }}</span>
-          <span class="guide-go"><app-icon name="arrow-right" /></span>
-        </a>
       }
       </div>
       @if (resumeChapter(); as chapter) {
@@ -77,21 +72,22 @@ import { SessionGridComponent } from './session-grid.component';
           }
         </ul>
       }
-      @if (moreTracks().length > 0) {
-        <h2>{{ 'home.moreTitle' | transloco }}</h2>
-        <ul class="cards">
-          @for (track of moreTracks(); track track.id) {
-            <li>
-              <a class="card guide-card subject-scope" [routerLink]="['/subjects', track.id]" [attr.lang]="track.lang">
-                <span class="card-title"><img src="favicon.svg" alt="" class="guide-logo" /> {{ track.name }}</span>
-                @if (track.description) {
-                  <span class="card-text">{{ track.description }}</span>
-                }
-                <span class="guide-go"><app-icon name="arrow-right" /></span>
-              </a>
-            </li>
-          }
-        </ul>
+      @for (shelf of shelves(); track shelf.kind) {
+        @if (shelf.tracks.length > 0) {
+          <section class="shelf" [class]="'shelf ' + shelf.kind">
+            <h2>{{ 'home.' + shelf.kind | transloco }}</h2>
+            <ul class="cards">
+              @for (track of shelf.tracks; track track.id) {
+                <li>
+                  <a class="card shelf-card" [class.starter]="track.starter" [routerLink]="['/subjects', track.id]" [attr.lang]="track.lang">
+                    <span class="card-title">{{ track.name }}</span>
+                    <span class="card-meta">{{ (track.written === 1 ? 'home.session' : 'home.sessions') | transloco: { count: track.written } }}</span>
+                  </a>
+                </li>
+              }
+            </ul>
+          </section>
+        }
       }
     </main>
   `,
@@ -104,11 +100,17 @@ export class SubjectListComponent {
 
   protected readonly guides = computed(() => (this.learn.subjects() ?? []).filter((subject) => subject.builtIn && subject.starter));
 
-  /** The other built-in tracks, such as writing a track by hand. */
-  protected readonly moreTracks = computed(() => (this.learn.subjects() ?? []).filter((subject) => subject.builtIn && !subject.starter));
-
-  /** The guide sits beside the session to resume, unless it is that session. */
-  protected readonly besideResume = computed(() => this.guides().filter((guide) => guide.id !== this.resume()?.id));
+  /**
+   * The tracks built into Boussole, on two shelves: how to use Boussole (their IDs start with
+   * boussole-, the guide first), and the others, to discover.
+   */
+  protected readonly shelves = computed(() => {
+    const builtIn = (this.learn.subjects() ?? []).filter((subject) => subject.builtIn);
+    return [
+      { kind: 'howTo', tracks: builtIn.filter((track) => track.id.startsWith(HOW_TO)) },
+      { kind: 'discover', tracks: builtIn.filter((track) => !track.id.startsWith(HOW_TO)) },
+    ];
+  });
 
   /**
    * The subject studied last that has a session to resume, else the first one that has; the

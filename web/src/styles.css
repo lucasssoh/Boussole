@@ -27,6 +27,15 @@
   --hint-bg: #fff9db;
   --example-bg: #e7f5ff;
   --recall-bg: #f3f0ff;
+  --how-to-bg: #dff5ec;
+  --how-to-ink: #075341;
+  --how-to-line: #96dcc5;
+  --how-to-strong: #0b7a5f;
+  --how-to-deep: #075341;
+  --discover-bg: #fff3dc;
+  --discover-ink: #7a3d00;
+  --discover-line: #f2b45a;
+  --discover-strong: #e09a35;
   --streak: #e8590c;
   --radius: 18px;
   --content-width: 48rem;
@@ -57,6 +66,15 @@
     --hint-bg: rgb(255 212 59 / 0.12);
     --example-bg: rgb(116 192 252 / 0.12);
     --recall-bg: rgb(177 151 252 / 0.14);
+    --how-to-bg: #12322b;
+    --how-to-ink: #7fe0bd;
+    --how-to-line: #2f9e7c;
+    --how-to-strong: #3fbf96;
+    --how-to-deep: #0d5a45;
+    --discover-bg: #2e2412;
+    --discover-ink: #ffc876;
+    --discover-line: #b77a24;
+    --discover-strong: #5c3d0f;
     --streak: #ffa94d;
   }
 }
@@ -83,6 +101,15 @@
   --hint-bg: rgb(255 212 59 / 0.12);
   --example-bg: rgb(116 192 252 / 0.12);
   --recall-bg: rgb(177 151 252 / 0.14);
+  --how-to-bg: #12322b;
+  --how-to-ink: #7fe0bd;
+  --how-to-line: #2f9e7c;
+  --how-to-strong: #3fbf96;
+  --how-to-deep: #0d5a45;
+  --discover-bg: #2e2412;
+  --discover-ink: #ffc876;
+  --discover-line: #b77a24;
+  --discover-strong: #5c3d0f;
   --streak: #ffa94d;
 }
 
@@ -487,37 +514,58 @@ a:focus-visible {
   font-size: 1.15rem;
 }
 
-/* The guide stands apart from the subjects: the logo of Boussole instead of a colour dot. */
-.guide-card .card-title {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
+/* The tracks built into Boussole, on their shelves: a band of their own colour, white cards. */
+.shelf {
+  margin: 1.5rem 0;
+  padding: 1.1rem 1.25rem 1.25rem;
+  border-radius: 24px;
 }
 
-.guide-card .card-title::before {
-  display: none;
+.shelf h2 {
+  margin: 0 0 0.75rem;
 }
 
-.guide-logo {
-  width: 1.9rem;
-  height: 1.9rem;
-}
-
-.guide-card {
-  align-content: start;
-  position: relative;
-  padding-bottom: 2.6rem;
-}
-
-.guide-card .eyebrow {
+.shelf .cards {
   margin: 0;
 }
 
-.guide-go {
-  position: absolute;
-  right: 1.1rem;
-  bottom: 1rem;
-  color: var(--subject);
+.shelf.howTo {
+  background: var(--how-to-bg);
+}
+
+.shelf.howTo h2 {
+  color: var(--how-to-ink);
+}
+
+.shelf.howTo .shelf-card {
+  border-color: var(--how-to-line);
+  box-shadow: 0 6px 0 var(--how-to-line);
+}
+
+.shelf.howTo .shelf-card.starter {
+  border-color: var(--how-to-strong);
+  box-shadow: 0 6px 0 var(--how-to-deep);
+}
+
+.shelf.discover {
+  background: var(--discover-bg);
+}
+
+.shelf.discover h2 {
+  color: var(--discover-ink);
+}
+
+.shelf.discover .shelf-card {
+  border-color: var(--discover-line);
+  box-shadow: 0 6px 0 var(--discover-strong);
+}
+
+.shelf-card .card-title::before {
+  display: none;
+}
+
+.shelf-card:hover {
+  border-color: var(--text);
 }
 
 .card-text,
@@ -2214,7 +2262,7 @@ app-settings-drawer {
     .question-actions,
     .screen-nav > *,
     .resume-card,
-    .home-top > .guide-card,
+    .shelf,
     .session-grid > li,
     .grid-chapter-head,
     .cards > li,

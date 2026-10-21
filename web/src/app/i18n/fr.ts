@@ -7,12 +7,13 @@ export const FR: Translations = {
     unreachable: 'Boussole ne joint pas son serveur. Lance boussole open pour le démarrer.',
   },
   home: {
-    title: 'Tes parcours',
+    title: 'Mes parcours',
     empty: "Aucun parcours pour l'instant. Lance boussole open <dossier> sur un dossier de documents : supports de cours, manuel, documentation…",
     progress: '{{written}} séances écrites sur {{planned}} · {{finished}} terminées',
-    guideTitle: 'Bien démarrer',
-    guideText: "Ce que fait Boussole, et comment t'en servir.",
-    moreTitle: 'Pour en savoir plus',
+    howTo: 'Boussole, mode d’emploi',
+    discover: 'À découvrir',
+    session: '1 séance',
+    sessions: '{{count}} séances',
   },
   track: { languages: 'Langues du parcours', followIn: 'Suivre en :' },
   credits: {

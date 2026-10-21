@@ -114,8 +114,9 @@ translate and what to keep. A new interface language is another thing: `web/src/
 
 Each track of `guide/<track>/` has `en` and `fr` folders that say the same thing, with the same
 session IDs; both pass `boussole validate` (`GuideSubjectTest` checks every track). A new
-track only needs its folder: its subject ID starts with `boussole-`, and Boussole shows it under
-*To learn more*. New words of the product go into the lexicons. A change of the format
+track only needs its folder. Its subject ID says where the home page shows it: starting with
+`boussole-`, under *How to Boussole* (the guide, the format, rights and credits); any other ID,
+under *Discover* (tracks on other subjects, such as an introduction to AI agents). New words of the product go into the lexicons. A change of the format
 (`docs/FORMAT.md`) is taught in `guide/course-format` in the same commit.
 
 ## Writing for learners

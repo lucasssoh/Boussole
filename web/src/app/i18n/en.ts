@@ -5,12 +5,13 @@ export const EN = {
     unreachable: 'Boussole cannot reach its server. Run boussole open to start it.',
   },
   home: {
-    title: 'Your tracks',
+    title: 'My tracks',
     empty: 'No track yet. Run boussole open <folder> on a folder of documents: lecture notes, a manual, documentation…',
     progress: '{{written}} of {{planned}} sessions written · {{finished}} finished',
-    guideTitle: 'Getting started',
-    guideText: 'What Boussole does, and how to use it.',
-    moreTitle: 'To learn more',
+    howTo: 'How to Boussole',
+    discover: 'Discover',
+    session: '1 session',
+    sessions: '{{count}} sessions',
   },
   track: { languages: 'Languages of the track', followIn: 'Follow in:' },
   credits: {
