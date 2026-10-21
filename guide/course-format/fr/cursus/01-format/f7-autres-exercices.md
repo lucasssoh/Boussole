@@ -23,6 +23,9 @@ l'énoncé, `[[1]]`, `[[2]]`… marquent les trous ; dans `:::answer`, une ligne
 
 - Les réponses acceptées d'un trou à taper sont séparées par une barre `|` entourée d'espaces.
 - Les trous de l'énoncé et ceux de la réponse correspondent un à un (`F023` sinon).
+- Un trou peut se placer dans du code, en ligne ou dans un bloc, pour compléter une commande ou
+  une ligne de programme : `` `ip [[1]] show` ``. Hors de l'énoncé d'un exercice à trous,
+  `[[1]]` s'affiche tel quel.
 - Une liste ne sait pas afficher de maths : écris ses options en texte simple, avec `≤` ou `x²`
   plutôt que `$…$`.
 

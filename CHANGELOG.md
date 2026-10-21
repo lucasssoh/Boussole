@@ -48,4 +48,5 @@ minor release may break things and says so.
 - **Reviews and mock exams:** besides lessons, a course has timed sessions: a short review at the end of each chapter, and mock exams as long as the real ones. Their number of questions fits the time allowed, knowing that choosing an answer is quicker than building one; `boussole validate` warns when it does not.
 
 ### Fixed
+- **Fill-in exercises:** a gap written in code (`` `ip [[1]] show` `` or a code block) is a field to fill, as the validator already counted it; elsewhere than a fill statement, `[[N]]` shows as written instead of vanishing.
 - **Course format:** a task list inside fenced code, in the statement of an MCQ, is shown as code instead of being read as its choices.

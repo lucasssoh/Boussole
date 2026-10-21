@@ -26,7 +26,7 @@ export class ProseBlockComponent {
 
   constructor() {
     effect(() => {
-      this.host.innerHTML = this.renderer.render(this.markdown(), { base: this.learn.sessionBase() });
+      this.host.innerHTML = this.renderer.render(this.markdown(), { base: this.learn.sessionBase(), gaps: this.fill() !== null });
       this.defineTerms();
       this.lookAtWebLinks();
       this.fill()?.mountIn(this.host);

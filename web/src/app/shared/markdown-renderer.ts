@@ -7,6 +7,8 @@ import { iconSvg } from './icon.component';
 export interface MarkdownContext {
   /** The URL of the folder of the session file, ending with a slash. */
   base: string;
+  /** The statement of a fill exercise: its [[N]] are gaps, in the text and in code. Elsewhere they stay as written. */
+  gaps?: boolean;
 }
 
 const DIRECTIVE = /^:(term|pdf|link)\[([^\]\n]*)\](?:\{([^}\n]*)\})?/;
@@ -42,7 +44,21 @@ function createMarkdown(): MarkdownIt {
   markdown.renderer.rules['boussole_gap'] = (tokens, index) => `<span class="gap" data-gap="${Number(tokens[index].meta?.['number'])}"></span>`;
   resolveRelativeUrls(markdown);
   renderMermaid(markdown);
+  gapsInCode(markdown);
   return markdown;
+}
+
+/**
+ * A gap may sit in code too, to complete a line of a program: `for i in [[1]](10)`. Code is
+ * rendered as it is written, so its gaps become fields after the code is escaped.
+ */
+function gapsInCode(markdown: MarkdownIt): void {
+  const withGaps = (rule: RendererRule): RendererRule => (tokens, index, options, env, self) =>
+    !(env as MarkdownContext | undefined)?.gaps ? rule(tokens, index, options, env, self) : rule(tokens, index, options, env, self).replace(/\[\[(\d+)\]\]/g, (_, number: string) => `<span class="gap" data-gap="${Number(number)}"></span>`);
+  markdown.renderer.rules['code_inline'] = withGaps(markdown.renderer.rules['code_inline']!);
+  const fence = markdown.renderer.rules['fence']!;
+  markdown.renderer.rules['fence'] = (tokens, index, options, env, self) =>
+    tokens[index].info.trim() === 'mermaid' ? fence(tokens, index, options, env, self) : withGaps(fence)(tokens, index, options, env, self);
 }
 
 function directiveRule(state: StateInline, silent: boolean): boolean {
@@ -62,7 +78,7 @@ function directiveRule(state: StateInline, silent: boolean): boolean {
 }
 
 function gapRule(state: StateInline, silent: boolean): boolean {
-  if (state.src.charCodeAt(state.pos) !== 0x5b /* [ */) {
+  if (state.src.charCodeAt(state.pos) !== 0x5b /* [ */ || !(state.env as Partial<MarkdownContext> | undefined)?.gaps) {
     return false;
   }
   const match = GAP.exec(state.src.slice(state.pos));

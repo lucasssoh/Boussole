@@ -23,6 +23,8 @@ terms: [nudge, notion]
 
 - The accepted answers of a typed gap are separated by a bar `|` with spaces around it.
 - The gaps of the statement and those of the answer match one to one (`F023` otherwise).
+- A gap may sit in code, inline or in a block, to complete a command or a line of a program:
+  `` `ip [[1]] show` ``. Outside the statement of a fill exercise, `[[1]]` shows as written.
 - A list cannot show maths: write its options in plain text, with `≤` or `x²` rather than `$…$`.
 
 :::tip

@@ -24,7 +24,18 @@ describe('MarkdownRenderer', () => {
   });
 
   it('marks the gaps of a fill exercise', () => {
-    expect(renderer.render('La contrainte [[1]] est lâche.', context)).toContain('<span class="gap" data-gap="1"></span>');
+    expect(renderer.render('La contrainte [[1]] est lâche.', { ...context, gaps: true })).toContain('<span class="gap" data-gap="1"></span>');
+  });
+
+  it('marks the gaps written in code, inline or in a block', () => {
+    const html = renderer.render('Complète `for i in [[1]](10):`\n\n```python\nprint([[2]])\n```', { ...context, gaps: true });
+
+    expect(html).toContain('<code>for i in <span class="gap" data-gap="1"></span>(10):</code>');
+    expect(html).toContain('print(<span class="gap" data-gap="2"></span>)');
+  });
+
+  it('leaves [[N]] as written outside a fill exercise, to show the syntax', () => {
+    expect(renderer.render('Un trou s’écrit `[[1]]`, ou [[1]].', context)).toContain('<code>[[1]]</code>, ou [[1]].');
   });
 
   it('resolves an image against the folder of the session file', () => {
