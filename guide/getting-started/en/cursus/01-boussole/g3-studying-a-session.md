@@ -4,6 +4,10 @@ objectives:
   - Move through a session step by step, following the Trail.
   - Answer on the first try, with nudges, and read the explained answer.
 terms: [step, trail, guided-mode, first-try, nudge, final-check, streak, quick-review]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup

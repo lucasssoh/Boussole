@@ -92,6 +92,7 @@ Follow `cursus-plan` with these sources as the documents. Then, in every session
   `::link[…]{url=…}` for a page worth reading in full; `:pdf[…]{src=… page=…}` for a downloaded
   document. The learner opens them beside the text.
 - List the source notes and documents of the session in its `sources` front matter.
+- Say who wrote each session in its `written_by` (your exact model ID, your tool, today's date).
 - When two sources disagree, follow the leading one and say so in a `:::note`.
 - Exercises you write yourself are yours: check their answers (run the code, redo the
   computation) before writing the solution.

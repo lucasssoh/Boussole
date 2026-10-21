@@ -4,6 +4,10 @@ objectives:
   - Write the lexicon of a track and point to it with `:term`.
   - Keep track of the documents of a track.
 terms: [lexicon, document-tracking, identifier, validator]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup

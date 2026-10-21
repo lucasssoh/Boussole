@@ -4,6 +4,10 @@ objectives:
   - Préparer un parcours avec `boussole init`.
   - Suivre ton agent du plan à la première séance.
 terms: [agent, plan, validateur, lien]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup

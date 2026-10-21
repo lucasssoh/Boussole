@@ -4,6 +4,10 @@ objectives:
   - Say what each file of a track holds.
   - Create the smallest valid track and check it with the validator.
 terms: [track, syllabus, session, lexicon, document-tracking, identifier, validator]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 **Want to write a track yourself, without an agent?** A text editor is enough: a
@@ -59,6 +63,9 @@ description: Create a repository, record your changes and read the history.
 - `name`: the name shown.
 - `lang`: the language of the content (`en`, `fr`, `de`…).
 - `description`: one or two sentences, optional.
+- `authors` and `contributors`: who makes and signs the track (a person, a university with
+  `organisation: true`), and who contributed, with their `role`. Optional, shown on the track's
+  page.
 - `sources`, optional: the folder of the documents, `sources` by default.
 :::
 

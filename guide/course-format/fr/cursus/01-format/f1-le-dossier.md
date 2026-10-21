@@ -4,6 +4,10 @@ objectives:
   - Dire ce que contient chaque fichier d'un parcours.
   - Créer le plus petit parcours valide et le vérifier avec le validateur.
 terms: [track, syllabus, session, lexicon, document-tracking, identifier, validator]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 **Envie d'écrire un parcours toi-même, sans agent ?** Un éditeur de texte suffit : un
@@ -59,6 +63,9 @@ description: Créer un dépôt, enregistrer ses changements et lire l'historique
 - `name` : le nom affiché.
 - `lang` : la langue du contenu (`fr`, `en`, `de`…).
 - `description` : une ou deux phrases, facultative.
+- `authors` et `contributors` : qui fait et signe le parcours (une personne, une université avec
+  `organisation: true`), et qui y a contribué, avec son `role`. Facultatifs, affichés sur la page
+  du parcours.
 - `sources`, facultatif : le dossier des documents, `sources` par défaut.
 :::
 

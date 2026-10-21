@@ -78,6 +78,10 @@ session should be split, and propose how.
   few nodes; never invent a figure the sources do not support.
 - **Answers are never in the text**: the solution of an exercise is only in its `:::solution`.
   An `:::example` is the only place where a worked answer is visible.
+- **Say who wrote it**: the front matter gets `written_by` with your **exact model ID** (the one
+  you run as, such as `claude-opus-5-5`, never a guess or a family name), the `tool` you run in
+  and today's `date`. When you revise a session someone else wrote, keep their line and add
+  yours with `role: revised`. The learner sees it.
 - Front matter: `objectives` (the goal, possibly split in two or three), `terms` (every lexicon
   ID used in the session), `prerequisites` (full session IDs), `sources` (files and pages).
 - Exercise IDs: `<session>-w1` (warmup), `<session>-a1` (À toi), `<session>-c1` (checkpoint),

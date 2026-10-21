@@ -4,6 +4,10 @@ objectives:
   - Écrire un QCM avec ses retours, ses coups de pouce et sa solution.
   - Écrire un exercice à réponse numérique ou textuelle.
 terms: [nudge, identifier, notion]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup

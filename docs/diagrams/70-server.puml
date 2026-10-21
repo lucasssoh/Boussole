@@ -23,6 +23,7 @@ class LearningConfiguration <<@Configuration>>
 
 package "course" {
   class CourseController <<GET /api/subjects…>>
+  class CreditViews <<authors, contributors, who wrote each session>>
   class CourseSummaryView <<record>>
   class CourseView <<record>>
   class ResumeView <<record>>
@@ -98,6 +99,8 @@ StatsController --> core
 ReferenceController --> core : PreviewWebPage
 CourseController ..> ResumeView : session to resume
 SessionController ..> SessionView
+CourseView ..> CreditViews
+SessionView ..> CreditViews : writtenBy
 SessionView *-- PartView : parts
 PartView ..> BlockViewMapper
 ExerciseController ..> AttemptRequest : body

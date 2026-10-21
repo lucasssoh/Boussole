@@ -5,6 +5,7 @@ import io.github.lucasssoh.boussole.format.validate.rule.ClosingRule;
 import io.github.lucasssoh.boussole.format.validate.rule.DeclaredTermsRule;
 import io.github.lucasssoh.boussole.format.validate.rule.DuplicateIdRule;
 import io.github.lucasssoh.boussole.format.validate.rule.FillGapsRule;
+import io.github.lucasssoh.boussole.format.validate.rule.AuthorshipRule;
 import io.github.lucasssoh.boussole.format.validate.rule.HintPresenceRule;
 import io.github.lucasssoh.boussole.format.validate.rule.IdSyntaxRule;
 import io.github.lucasssoh.boussole.format.validate.rule.MissingSessionFileRule;
@@ -54,6 +55,7 @@ public final class Validator {
                 new SingleExampleRule(),
                 new PartOrderRule(),
                 new HintPresenceRule(),
+                new AuthorshipRule(),
                 new McqFeedbackRule(),
                 new DeclaredTermsRule(),
                 new ClosingRule(),

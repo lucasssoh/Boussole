@@ -3,3 +3,7 @@ id: boussole-format
 name: Écrire un parcours à la main
 lang: fr
 description: Le format des parcours, pièce par pièce, pour écrire le tien dans un éditeur de texte.
+authors:
+  - name: Boussole
+    organisation: true
+    url: https://github.com/lucasssoh/boussole

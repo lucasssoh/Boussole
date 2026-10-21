@@ -4,6 +4,10 @@ objectives:
   - Écrire un plan avec ses chapitres et ses séances.
   - Choisir le type, la durée et l'objectif d'une séance, et le statut du plan.
 terms: [syllabus, chapter, session, identifier, quick-review, mock-exam]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup

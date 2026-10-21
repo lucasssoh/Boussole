@@ -1,5 +1,6 @@
 package io.github.lucasssoh.boussole.server.session;
 
+import io.github.lucasssoh.boussole.server.course.CreditViews;
 import io.github.lucasssoh.boussole.server.block.BlockView;
 import io.github.lucasssoh.boussole.server.block.BlockViewMapper;
 import io.github.lucasssoh.boussole.server.block.SourcePaths;
@@ -45,7 +46,8 @@ record SessionView(
         List<PartView> parts,
         double questionMinutes,
         String previous,
-        String next) {
+        String next,
+        List<CreditViews.AuthorshipView> writtenBy) {
 
     static SessionView of(OpenedSession opened) {
         Course course = opened.course();
@@ -77,7 +79,8 @@ record SessionView(
                 session.session().parts().stream().map(part -> PartView.of(part, mapper)).toList(),
                 questionMinutes(opened),
                 index > 0 ? written.get(index - 1) : null,
-                index >= 0 && index + 1 < written.size() ? written.get(index + 1) : null);
+                index >= 0 && index + 1 < written.size() ? written.get(index + 1) : null,
+                header.writtenBy().stream().map(CreditViews.AuthorshipView::of).toList());
     }
 
     private static double questionMinutes(OpenedSession opened) {

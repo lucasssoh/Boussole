@@ -27,6 +27,34 @@ import { TrackLanguagesComponent } from './track-languages.component';
             @if (course.description) {
               <p class="lead">{{ course.description }}</p>
             }
+            @if (course.authors.length > 0 || course.contributors.length > 0 || course.writtenWith.length > 0) {
+              <dl class="credits">
+                @if (course.authors.length > 0) {
+                  <dt>{{ 'credits.by' | transloco }}</dt>
+                  <dd>
+                    @for (author of course.authors; track author.name; let last = $last) {
+                      @if (author.url) { <a [href]="author.url" target="_blank" rel="noopener">{{ author.name }}</a> } @else { {{ author.name }} }{{ last ? '' : ', ' }}
+                    }
+                  </dd>
+                }
+                @if (course.contributors.length > 0) {
+                  <dt>{{ 'credits.with' | transloco }}</dt>
+                  <dd>
+                    @for (contributor of course.contributors; track contributor.name; let last = $last) {
+                      {{ contributor.name }}{{ contributor.role ? ' (' + contributor.role + ')' : '' }}{{ last ? '' : ', ' }}
+                    }
+                  </dd>
+                }
+                @if (course.writtenWith.length > 0) {
+                  <dt>{{ 'credits.writtenWith' | transloco }}</dt>
+                  <dd>
+                    @for (writer of course.writtenWith; track writer.who; let last = $last) {
+                      <span [class.model-name]="writer.model">{{ writer.who }}</span> ({{ (writer.sessions === 1 ? 'credits.session' : 'credits.sessions') | transloco: { count: writer.sessions } }}){{ last ? '' : ', ' }}
+                    }
+                  </dd>
+                }
+              </dl>
+            }
             @if (course.resume; as next) {
               <p>
                 <a class="button primary" [routerLink]="['/subjects', course.id, 'sessions', next.id]">

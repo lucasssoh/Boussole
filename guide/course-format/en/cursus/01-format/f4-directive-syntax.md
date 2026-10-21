@@ -4,6 +4,10 @@ objectives:
   - Recognize the three forms of directive and write their attributes.
   - Nest blocks with the right number of colons.
 terms: [directive, notion, nudge]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup

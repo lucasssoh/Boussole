@@ -65,6 +65,8 @@ description: M1 networking course, network and transport layers.
 | `lang` | yes | BCP 47 tag (`fr`, `en`, `de`…): the language of the sources, hence of the course. |
 | `sources` | no | Folder of the learner's documents, relative to the subject. Default `sources`. |
 | `description` | no | One or two sentences. |
+| `authors` | no | Who makes and signs the track: people or organisations. Each a `name`, optionally `organisation: true` and a `url`. |
+| `contributors` | no | Who helped: each a `name`, optionally a `role` (`exercises of chapter 3`, `review`) and a `url`. |
 
 ---
 
@@ -167,6 +169,7 @@ sources:
 | `prerequisites` | no | Full session IDs the learner should have done before. |
 | `terms` | no | Lexicon IDs used in the session, shown as its vocabulary list. |
 | `sources` | no | Files of `sources/`, optionally with `#page=N`. |
+| `written_by` | no (`P012` without it) | Who wrote the session, then who revised or translated it, one line each: a `model` (an AI, by its **exact ID**, such as `claude-opus-5-5`) with the `tool` that ran it, or a `name` (a person); a `date` (`2026-10-21`); a `role`, `wrote` (default), `revised` or `translated`. The learner sees it on the first step of the session. |
 
 A value holding `: ` (colon and space) reads as a key and its value in YAML: put it in quotes,
 `- "Lire un diagnostic : du fichier au message."` (`F001` otherwise).
@@ -439,6 +442,7 @@ chapter.
 | `P009` | warning | A review or exam holding a notion or an `example`. |
 | `P010` | warning | Wrong choice of a `mcq` without feedback. |
 | `P011` | warning | A `graph` of more than 12 nodes. |
+| `P012` | warning | A session without `written_by`: the learner cannot see who wrote it. |
 
 `P001`, `P002`, `P006` and `P007` apply to lessons only; `P004` does not apply to exams, which
 show no hints.

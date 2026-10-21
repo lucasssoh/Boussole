@@ -4,6 +4,10 @@ objectives:
   - Read a diagnostic of the validator, from the file to the message.
   - Fix the most common errors, in a loop, until it says "no problem".
 terms: [validator, diagnostic, identifier]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup

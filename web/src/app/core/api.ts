@@ -42,6 +42,9 @@ export interface Course {
   chapters: Chapter[];
   lexicon: LexiconTerm[];
   resume: ResumePoint | null;
+  authors: Credit[];
+  contributors: Credit[];
+  writtenWith: Writer[];
 }
 
 export interface Chapter {
@@ -72,6 +75,31 @@ export interface LexiconTerm {
   see: string[];
 }
 
+/** Who wrote, revised or translated a session: an AI ({@link model}, {@link tool}) or a person ({@link name}). */
+export interface Authorship {
+  model: string | null;
+  tool: string | null;
+  name: string | null;
+  /** 2026-10-21, or null. */
+  date: string | null;
+  role: 'wrote' | 'revised' | 'translated';
+}
+
+/** An author or a contributor of a track. */
+export interface Credit {
+  name: string;
+  organisation: boolean;
+  role: string | null;
+  url: string | null;
+}
+
+/** A model or a person, and how many sessions of the track they wrote. */
+export interface Writer {
+  who: string;
+  model: boolean;
+  sessions: number;
+}
+
 export interface Session {
   subject: string;
   /** The language the session is shown in, one of the {@link languages} of its track. */
@@ -92,6 +120,7 @@ export interface Session {
   questionMinutes: number;
   previous: string | null;
   next: string | null;
+  writtenBy: Authorship[];
 }
 
 export interface SessionPart {

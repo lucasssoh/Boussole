@@ -2,6 +2,10 @@
 id: r9
 objectives:
   - Recall the essentials of Boussole without help.
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 Five minutes, without looking back: the essentials of the guide.

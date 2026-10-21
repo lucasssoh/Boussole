@@ -75,12 +75,12 @@ class ValidateCommandTest {
                       - {id: s1, title: Un, duration: 60, goal: Faire., file: s1.md}
                       - {id: s2, title: Deux, duration: 60, goal: Faire., file: s2.md}
                 """);
-        write("cursus/01-ch/s1.md", "---\nid: s1\nobjectives: [Faire.]\n---\n:::exemple\n:::\n");
+        write("cursus/01-ch/s1.md", "---\nid: s1\nobjectives: [Faire.]\nwritten_by:\n  - name: Test\n---\n:::exemple\n:::\n");
 
         int status = run("validate", dir.toString());
 
         assertThat(status).isEqualTo(1);
-        assertThat(out.toString()).isEqualTo(dir + "/cursus/01-ch/s1.md:5: error F020 unknown directive `exemple`\n"
+        assertThat(out.toString()).isEqualTo(dir + "/cursus/01-ch/s1.md:7: error F020 unknown directive `exemple`\n"
                 + dir + "/cursus/syllabus.yaml:8: warning F011 session `s2` is not written yet: cursus/01-ch/s2.md\n"
                 + dir + ": 1 error, 1 warning; 1 of 2 sessions written.\n");
     }

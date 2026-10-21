@@ -4,6 +4,10 @@ objectives:
   - Write a plan with its chapters and sessions.
   - Choose the kind, duration and goal of a session, and the status of the plan.
 terms: [syllabus, chapter, session, identifier, quick-review, mock-exam]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup

@@ -4,6 +4,10 @@ objectives:
   - Set up a track with `boussole init`.
   - Follow your agent from the plan to the first session.
 terms: [agent, plan, validator, link]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup

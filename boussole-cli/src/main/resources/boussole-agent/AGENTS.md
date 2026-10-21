@@ -47,6 +47,8 @@ Rules:
 - Write only `subject.yaml`, `learner.yaml` and files under `cursus/`; and, for a track without
   documents (**cursus-discover**), the sources you download or the source notes you write in
   {{sources}}, never anything else there.
+- **Every session you write, revise or translate says so** in its `written_by`: your exact model
+  ID (the one you run as), your tool, today's date, and `role`. Never remove another author's line.
 - Every session follows `learner.yaml`: how notions are ordered, the quick checks, how sessions
   close.
 - The course is written in the language given by `lang` in `subject.yaml`.

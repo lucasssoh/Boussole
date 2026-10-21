@@ -43,6 +43,7 @@ are about the teaching contract and matter to the learner.
 | P001–P005 | teaching contract | add the exercise, keep one example, move warmup/practice, add hints (MCQs too: one or two, never the answer), list terms |
 | P006, P007 | the session does not follow `learner.yaml` | close it as `closing` asks; add the quick MCQ before the example |
 | P011 | a `graph` of more than 12 nodes | split it into two graphs, or keep only what the explanation needs |
+| P012 | a session without `written_by` | add your line: `- model: <your exact model ID>`, `tool: <the tool you run in>`, `date: <today>`; never guess another author |
 | P008 | the questions of a review or exam do not fill its time | add or remove questions (estimated times in `exam-build`), or set `minutes=` on a long one |
 | P009 | a review or exam holds a notion or a worked example | move it to a lesson; a timed session only asks questions |
 | P010 | a wrong MCQ choice has no feedback | add `  > why it is wrong` under it |

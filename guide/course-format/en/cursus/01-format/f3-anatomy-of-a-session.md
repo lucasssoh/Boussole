@@ -4,6 +4,10 @@ objectives:
   - Write the front matter of a session.
   - Put the body of a session in the right order, from the warmup to the practice.
 terms: [front-matter, session, notion, identifier, lexicon, worked-example]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup
@@ -23,6 +27,7 @@ file.
 | `terms` | no | the identifiers of the :term[lexicon]{id=lexicon} used in the session |
 | `prerequisites` | no | the **full** identifiers of the sessions to do before |
 | `sources` | no | the documents of `sources/`, with `#page=N` if needed |
+| `written_by` | no | who wrote the session: an AI `model` (its exact ID) and its `tool`, or a `name`; the `date`; the `role` (`wrote`, `revised`, `translated`). The learner sees it. |
 
 :::warning
 A sentence holding ": " (colon and space) reads in YAML as a key and its value: put it in quotes,

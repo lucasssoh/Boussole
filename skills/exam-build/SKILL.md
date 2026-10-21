@@ -88,3 +88,6 @@ In the syllabus, the session reads:
 
 Then run `boussole validate .` until it ends without error, and fix `P008` and `P009` (no notion,
 no worked example) for this session.
+
+A review or a mock exam you build says who wrote it like a lesson: `written_by` with your
+exact model ID, your tool and today's date.

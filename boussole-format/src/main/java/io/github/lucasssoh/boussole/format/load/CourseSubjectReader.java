@@ -1,5 +1,8 @@
 package io.github.lucasssoh.boussole.format.load;
 
+import io.github.lucasssoh.boussole.format.model.SubjectCredit;
+import java.util.ArrayList;
+import java.util.List;
 import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCollector;
 import io.github.lucasssoh.boussole.format.model.CourseSubject;
@@ -40,6 +43,21 @@ final class CourseSubjectReader {
                 map.requiredText("lang"),
                 map.text("sources").orElse("sources"),
                 map.text("description"),
+                credits(map, "authors", diagnostics),
+                credits(map, "contributors", diagnostics),
                 map.positionOf("id")));
+    }
+
+    /** {@code authors} or {@code contributors}: each a {@code name}, and a {@code role}, {@code url}, {@code organisation: true}. */
+    private static List<SubjectCredit> credits(YamlMap map, String key, DiagnosticCollector diagnostics) {
+        List<SubjectCredit> credits = new ArrayList<>();
+        for (YamlMap credit : map.maps(key)) {
+            String name = credit.requiredText("name");
+            if (!name.isBlank()) {
+                credits.add(new SubjectCredit(name.strip(), credit.flag("organisation").orElse(false),
+                        credit.text("role").map(String::strip), credit.text("url").map(String::strip)));
+            }
+        }
+        return List.copyOf(credits);
     }
 }

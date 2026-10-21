@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 /**
  * A subject, in the language it is followed in ({@code lang}) among those it exists in: its
- * chapters and sessions, what is written and finished, and its lexicon.
+ * chapters and sessions, what is written and finished, its lexicon, who makes it and with what.
  */
 record CourseView(
         String id,
@@ -25,7 +25,10 @@ record CourseView(
         String sourcesDir,
         List<ChapterView> chapters,
         List<TermView> lexicon,
-        ResumeView resume) {
+        ResumeView resume,
+        List<CreditViews.CreditView> authors,
+        List<CreditViews.CreditView> contributors,
+        List<CreditViews.WriterView> writtenWith) {
 
     static CourseView of(CourseOverview overview) {
         Course course = overview.course();
@@ -41,7 +44,10 @@ record CourseView(
                         .map(chapter -> ChapterView.of(chapter, written, overview.finishedSessions(), overview.sessionProgress()))
                         .toList(),
                 course.lexicon().terms().stream().map(TermView::of).toList(),
-                ResumeView.of(overview).orElse(null));
+                ResumeView.of(overview).orElse(null),
+                CreditViews.credits(course.subject().authors()),
+                CreditViews.credits(course.subject().contributors()),
+                CreditViews.writers(course));
     }
 
     record ChapterView(String id, String title, List<SessionEntryView> sessions) {

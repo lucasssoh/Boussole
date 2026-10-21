@@ -4,6 +4,10 @@ objectives:
   - Avancer dans une séance étape par étape, en suivant le Tracé.
   - Répondre du premier coup, avec les coups de pouce, et lire la correction expliquée.
 terms: [etape, trace, mode-guide, premier-coup, coup-de-pouce, derniere-verification, serie, revision-express]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup

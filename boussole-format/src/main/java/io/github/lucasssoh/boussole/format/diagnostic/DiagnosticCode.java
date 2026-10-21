@@ -46,7 +46,8 @@ public enum DiagnosticCode {
     P008(WARNING, "timed session whose questions do not fit its time"),
     P009(WARNING, "timed session with a notion or a worked example"),
     P010(WARNING, "MCQ wrong choice without feedback"),
-    P011(WARNING, "graph too large to read at a glance");
+    P011(WARNING, "graph too large to read at a glance"),
+    P012(WARNING, "session that does not say who wrote it");
 
     private final DiagnosticSeverity severity;
     private final String summary;

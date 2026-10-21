@@ -89,3 +89,6 @@ three sentences), step by step for a calculation. End with the result in bold.
 
 Run `boussole validate .`: every exercise needs exactly one `solution`, an `answer` of its type
 (none for `free`), and the gaps of a `fill` must match its answer.
+
+When you change an exercise in a session written by someone else, add your line to its
+`written_by` with `role: revised` (your exact model ID, your tool, today's date).

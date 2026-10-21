@@ -4,6 +4,10 @@ objectives:
   - Reconnaître les trois formes de directive et écrire leurs attributs.
   - Imbriquer des blocs avec le bon nombre de deux-points.
 terms: [directive, notion, nudge]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup

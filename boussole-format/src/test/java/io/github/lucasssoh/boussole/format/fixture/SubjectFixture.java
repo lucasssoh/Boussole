@@ -47,9 +47,10 @@ public final class SubjectFixture {
         return session(id, "", body);
     }
 
-    /** A session whose front matter has these extra YAML lines. */
+    /** A session whose front matter has these extra YAML lines; it credits a person named Test unless they say who wrote it. */
     public SubjectFixture session(String id, String frontMatter, String body) {
-        return sessionFile(id, "---\nid: " + id + "\nobjectives: [Faire quelque chose.]\n" + frontMatter + "---\n" + body);
+        String author = frontMatter.contains("written_by") ? "" : "written_by:\n  - name: Test\n";
+        return sessionFile(id, "---\nid: " + id + "\nobjectives: [Faire quelque chose.]\n" + frontMatter + author + "---\n" + body);
     }
 
     /** A session file written exactly as given. */

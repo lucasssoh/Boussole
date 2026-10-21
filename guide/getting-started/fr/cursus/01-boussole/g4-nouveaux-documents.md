@@ -4,6 +4,10 @@ objectives:
   - Dire comment Boussole repère un document nouveau ou modifié.
   - Savoir quoi demander à ton agent quand un document arrive.
 terms: [registre, validateur, agent]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup

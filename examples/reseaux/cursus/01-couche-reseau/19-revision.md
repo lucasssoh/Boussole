@@ -3,6 +3,9 @@ id: r19
 objectives:
   - Retrouver sans notes ce que la couche 3 apporte, en temps limité.
 terms: [mac]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
 ---
 
 Révision de la séance sur le rôle de la couche réseau : 5 minutes, 3 questions.

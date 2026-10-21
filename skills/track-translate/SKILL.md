@@ -39,6 +39,9 @@ choices, feedback, hints, solutions, captions, lexicon terms and definitions, la
   gaps `[[N]]` and their kind, the same items to order and pairs to match, the same numbers;
 - code, commands, file names, maths and URLs, unless they are prose.
 
+Each session you translate keeps its `written_by` lines and gets yours, `role: translated`, with
+your exact model ID, your tool and today's date.
+
 The accepted answers of a typed gap or a `text` exercise are written in the new language: list
 the usual spellings (`1: routing | the routing`). A number stays the same.
 

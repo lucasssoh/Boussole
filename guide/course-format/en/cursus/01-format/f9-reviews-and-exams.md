@@ -4,6 +4,10 @@ objectives:
   - Write a quick review or a mock exam, with `::ref` and new questions.
   - Fit the number of questions to the time allowed.
 terms: [quick-review, mock-exam, nudge, notion, worked-example]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup

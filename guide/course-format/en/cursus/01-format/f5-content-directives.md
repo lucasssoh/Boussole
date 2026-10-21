@@ -5,6 +5,10 @@ objectives:
   - Open a document, a video or a web page beside the text.
   - Draw a diagram with `graph` or `mermaid`, and write maths.
 terms: [worked-example, directive, lexicon, notion]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup

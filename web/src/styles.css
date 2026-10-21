@@ -2414,3 +2414,37 @@ app-settings-drawer {
   color: var(--subject-ink, var(--subject));
   box-shadow: none;
 }
+
+/* Who makes a track, and with which models: plain, under its description. */
+.credits {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.2rem 0.75rem;
+  margin: 0 0 1.25rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.credits dt {
+  font-weight: 800;
+}
+
+.credits dd {
+  margin: 0;
+}
+
+.model-name,
+.written-by {
+  font-variant-numeric: tabular-nums;
+}
+
+.model-name {
+  font-family: var(--mono);
+  font-size: 0.9em;
+}
+
+.written-by {
+  margin-top: 1.5rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}

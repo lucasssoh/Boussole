@@ -6,6 +6,9 @@ objectives:
 terms: [trame, mac, agregation, circuit-virtuel, forwarding]
 sources:
   - Reseaux_Cours_Intro_2026.pdf#page=14
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
 ---
 
 :::::warmup

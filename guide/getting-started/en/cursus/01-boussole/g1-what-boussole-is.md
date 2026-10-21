@@ -4,6 +4,10 @@ objectives:
   - Say which problems Boussole solves, and how.
   - Say what your agent does, what Boussole does and what you do.
 terms: [track, step, agent, skill, cursus, plan]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 **Too many documents, no path?** That is what Boussole is for.

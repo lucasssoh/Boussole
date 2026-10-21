@@ -4,6 +4,10 @@ objectives:
   - Écrire une révision express ou un examen blanc, avec `::ref` et des questions neuves.
   - Ajuster le nombre de questions au temps accordé.
 terms: [quick-review, mock-exam, nudge, notion, worked-example]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup

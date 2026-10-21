@@ -4,6 +4,10 @@ objectives:
   - Dire quels problèmes Boussole résout, et comment.
   - Dire ce que fait ton agent, ce que fait Boussole et ce que tu fais.
 terms: [parcours, etape, agent, skill, cursus, plan]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 **Trop de documents, pas de chemin ?** Boussole est fait pour ça.

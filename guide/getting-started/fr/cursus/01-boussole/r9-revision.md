@@ -2,6 +2,10 @@
 id: r9
 objectives:
   - Retrouver sans aide l'essentiel de Boussole.
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 Cinq minutes, sans relire : l'essentiel du guide.

@@ -2,6 +2,10 @@
 id: r1
 objectives:
   - Recall the essentials of the track format without help.
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 Ten minutes, without rereading: the files, the sessions, the questions and the validator.

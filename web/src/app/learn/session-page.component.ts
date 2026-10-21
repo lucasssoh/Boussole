@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { IconComponent } from '../shared/icon.component';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { storedValue, storeValue } from '../core/local-preferences';
 import { ServerSettingsService } from '../core/server-settings.service';
 import { StatsService } from '../core/stats.service';
@@ -9,6 +9,8 @@ import { RichTextComponent } from '../shared/rich-text.component';
 import { subjectColor } from '../shared/subject-color';
 import { BlockListComponent } from './blocks/block-list.component';
 import { clock } from './blocks/video-block.component';
+import { LanguageService } from '../core/language.service';
+import { authorshipLine } from './credits';
 import { LearnFacade } from './learn.facade';
 import { TrackLanguagesComponent } from './track-languages.component';
 import { SessionPathComponent } from './session-path.component';
@@ -86,6 +88,9 @@ import { SidePanelComponent } from './side-panel.component';
               }
               @if (timed()) {
                 <p class="note">{{ 'timed.intro' | transloco: { minutes: current.duration, questions: roundedQuestionMinutes() } }}</p>
+              }
+              @if (writtenBy(); as line) {
+                <p class="written-by">{{ line }}</p>
               }
             }
             @case ('end') {
@@ -165,6 +170,8 @@ export class SessionPageComponent {
   readonly screenParam = input<string | undefined>(undefined, { alias: 'screen' });
 
   protected readonly learn = inject(LearnFacade);
+  private readonly transloco = inject(TranslocoService);
+  private readonly language = inject(LanguageService);
   protected readonly run = inject(SessionRun);
   private readonly router = inject(Router);
   private readonly settings = inject(ServerSettingsService);
@@ -188,6 +195,12 @@ export class SessionPageComponent {
     return part?.kind === 'notion' ? (part.title ?? '') : (this.opened()?.title ?? '');
   });
   protected readonly timed = computed(() => this.opened()?.kind !== 'lesson');
+  /** Who wrote the session, shown on its first step: how it was made is never hidden. */
+  protected readonly writtenBy = computed(() => {
+    const opened = this.opened();
+    const language = this.language.current();
+    return opened ? authorshipLine(opened.writtenBy, (key, values) => this.transloco.translate(key, values, language), language) : '';
+  });
   protected readonly color = computed(() => subjectColor(this.subject()));
   /**
    * The last screen the learner may reach: in a lesson, the first question not answered yet in

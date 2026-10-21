@@ -4,6 +4,10 @@ objectives:
   - Écrire l'en-tête d'une séance.
   - Ranger le corps d'une séance dans le bon ordre, de l'échauffement à l'entraînement.
 terms: [front-matter, session, notion, identifier, lexicon, worked-example]
+written_by:
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-10-21
 ---
 
 :::::warmup
@@ -22,6 +26,7 @@ terms: [front-matter, session, notion, identifier, lexicon, worked-example]
 | `terms` | non | les identifiants du :term[lexique]{id=lexicon} employés dans la séance |
 | `prerequisites` | non | les identifiants **complets** des séances à faire avant |
 | `sources` | non | les documents de `sources/`, avec `#page=N` si besoin |
+| `written_by` | non | qui a écrit la séance : un `model` d'IA (son identifiant exact) et son `tool`, ou un `name` ; la `date` ; le `role` (`wrote`, `revised`, `translated`). L'apprenant le voit. |
 
 :::warning
 Une phrase qui contient « : » (deux-points et espace) se lit en YAML comme une clé et sa valeur :

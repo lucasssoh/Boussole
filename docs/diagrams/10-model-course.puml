@@ -58,6 +58,21 @@ class SourceEntry <<record>> {
   note : String
   +isPattern() : boolean
 }
+class Authorship <<record>> {
+  model, tool, name : Optional<String>
+  date : Optional<LocalDate>
+  +who() : String
+}
+enum AuthorshipRole {
+  WROTE
+  REVISED
+  TRANSLATED
+}
+class SubjectCredit <<record>> {
+  name : String
+  organisation : boolean
+  role, url : Optional<String>
+}
 class SourceProvenance <<record>> {
   url, title, licence : Optional<String>
   retrieved : Optional<LocalDate>
@@ -133,4 +148,8 @@ Part o-- "*" Block : blocks
 
 class Block <<sealed interface>>
 note bottom of Block : see 11-model-blocks
+CourseSubject *-- "*" SubjectCredit : authors, contributors
+SessionFrontMatter *-- "*" Authorship : writtenBy
+Authorship --> AuthorshipRole : role
+
 @enduml

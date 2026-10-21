@@ -3,3 +3,7 @@ id: boussole-guide
 name: Getting started with Boussole
 lang: en
 description: What Boussole does, and how to set up your first track.
+authors:
+  - name: Boussole
+    organisation: true
+    url: https://github.com/lucasssoh/boussole
