@@ -65,6 +65,15 @@ export interface SessionEntry {
   questions: number;
   answered: number;
   right: number;
+  /** Its prerequisites not finished yet: guided mode opens it once they are, free mode advises them. */
+  waitingFor: Prerequisite[];
+}
+
+/** A session to finish first: of this track (its title) or of another (its full ID as title). */
+export interface Prerequisite {
+  subject: string;
+  session: string;
+  title: string;
 }
 
 export interface LexiconTerm {

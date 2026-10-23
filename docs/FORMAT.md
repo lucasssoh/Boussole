@@ -166,7 +166,7 @@ sources:
 |---|---|---|
 | `id` | yes | Must match the session's `id` in the syllabus. |
 | `objectives` | yes | One to five sentences starting with a verb. |
-| `prerequisites` | no | Full session IDs the learner should have done before. |
+| `prerequisites` | no | Full session IDs the learner should have finished before: only those really needed, not simply the previous session. In guided mode the session waits until they are finished; in free mode Boussole advises them. *Resume* goes to a session whose prerequisites are finished. |
 | `terms` | no | Lexicon IDs used in the session, shown as its vocabulary list. |
 | `sources` | no | Files of `sources/`, optionally with `#page=N`. |
 | `written_by` | no (`P012` without it) | Who wrote the session, then who revised or translated it, one line each: a `model` (an AI, by its **exact ID**, such as `claude-opus-5-5`) with the `tool` that ran it, or a `name` (a person); a `date` (`2026-10-21`); a `role`, `wrote` (default), `revised` or `translated`. The learner sees it on the first step of the session. |

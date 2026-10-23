@@ -112,6 +112,12 @@ class ServerApiTest {
     }
 
     @Test
+    void a_session_says_which_prerequisites_it_waits_for() throws Exception {
+        assertThat(get("/api/subjects/reseaux").body())
+                .contains("\"waitingFor\":[{\"subject\":\"reseaux\",\"session\":\"s11\",\"title\":\"Rôle de la couche réseau\"}]");
+    }
+
+    @Test
     void a_finished_session_shows_in_the_course() throws Exception {
         assertThat(post("/api/subjects/reseaux/sessions/s11/finish", "{\"spentSeconds\":3000}").body()).contains("\"xpGained\":20");
         assertThat(get("/api/subjects/reseaux").body()).contains("\"id\":\"s11\"", "\"finished\":true");

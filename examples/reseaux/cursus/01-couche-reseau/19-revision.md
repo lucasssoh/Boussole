@@ -2,6 +2,7 @@
 id: r19
 objectives:
   - Retrouver sans notes ce que la couche 3 apporte, en temps limité.
+prerequisites: [reseaux.couche-reseau.s11]
 terms: [mac]
 written_by:
   - model: claude-opus-5-5

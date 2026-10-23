@@ -24,7 +24,7 @@ written_by:
 | `id` | oui | le même `id` que la séance dans le plan |
 | `objectives` | oui | de une à cinq phrases, chacune commence par un verbe |
 | `terms` | non | les identifiants du :term[lexique]{id=lexicon} employés dans la séance |
-| `prerequisites` | non | les identifiants **complets** des séances à faire avant |
+| `prerequisites` | non | les identifiants **complets** des séances à terminer avant : seulement celles vraiment nécessaires. En mode guidé, la séance les attend. |
 | `sources` | non | les documents de `sources/`, avec `#page=N` si besoin |
 | `written_by` | non | qui a écrit la séance : un `model` d'IA (son identifiant exact) et son `tool`, ou un `name` ; la `date` ; le `role` (`wrote`, `revised`, `translated`). L'apprenant le voit. |
 

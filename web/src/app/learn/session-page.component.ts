@@ -14,7 +14,7 @@ import { authorshipLine } from './credits';
 import { LearnFacade } from './learn.facade';
 import { TrackLanguagesComponent } from './track-languages.component';
 import { SessionPathComponent } from './session-path.component';
-import { BlockView, Verdict } from '../core/api';
+import { BlockView, Prerequisite, Verdict } from '../core/api';
 import { SessionScreen, sessionPlan } from './session-screens';
 import { SessionRun } from './session-run';
 import { SidePanelComponent } from './side-panel.component';
@@ -86,6 +86,21 @@ import { SidePanelComponent } from './side-panel.component';
                   </ul>
                 </div>
               }
+              @if (waitingFor().length > 0) {
+                <div class="frame waiting-for" [class.locked]="locked()">
+                  <h2><app-icon [name]="locked() ? 'lock' : 'arrow-right'" /> {{ (locked() ? 'session.waitingTitle' : 'session.advisedTitle') | transloco }}</h2>
+                  <ul>
+                    @for (prerequisite of waitingFor(); track prerequisite.subject + prerequisite.session) {
+                      <li>
+                        <a [routerLink]="['/subjects', prerequisite.subject, 'sessions', prerequisite.session]"><app-rich-text [text]="prerequisite.title" /></a>
+                      </li>
+                    }
+                  </ul>
+                  @if (locked()) {
+                    <p class="note">{{ 'session.waitingNote' | transloco }}</p>
+                  }
+                </div>
+              }
               @if (timed()) {
                 <p class="note">{{ 'timed.intro' | transloco: { minutes: current.duration, questions: roundedQuestionMinutes() } }}</p>
               }
@@ -143,10 +158,10 @@ import { SidePanelComponent } from './side-panel.component';
             <button type="button" (click)="goTo(index() - 1)"><app-icon name="arrow-left" /> {{ 'session.previousScreen' | transloco }}</button>
           }
           @if (screen().kind === 'start' && timed() && !run.started()) {
-            <button type="button" class="primary" (click)="run.start(); goTo(1)">{{ 'timed.start' | transloco }} <app-icon name="arrow-right" /></button>
+            <button type="button" class="primary" [disabled]="locked()" (click)="run.start(); goTo(1)">{{ 'timed.start' | transloco }} <app-icon name="arrow-right" /></button>
           } @else if (index() < plan().screens.length - 1) {
             @if (index() >= gate()) {
-              <span class="gate-note">{{ 'session.answerFirst' | transloco }}</span>
+              <span class="gate-note">{{ (locked() ? 'session.prerequisitesFirst' : 'session.answerFirst') | transloco }}</span>
             }
             <button type="button" class="primary" [disabled]="index() >= gate()" (click)="goTo(index() + 1)">
               {{ (screen().kind === 'start' ? 'session.begin' : 'session.nextScreen') | transloco }} <app-icon name="arrow-right" />
@@ -202,13 +217,24 @@ export class SessionPageComponent {
     return opened ? authorshipLine(opened.writtenBy, (key, values) => this.transloco.translate(key, values, language), language) : '';
   });
   protected readonly color = computed(() => subjectColor(this.subject()));
+  /** The prerequisites of this session not finished yet, from its track. */
+  protected readonly waitingFor = computed<Prerequisite[]>(() => {
+    const entry = this.learn.course()?.chapters.flatMap((chapter) => chapter.sessions).find((found) => found.id === this.session());
+    return entry && !entry.finished ? entry.waitingFor : [];
+  });
+  /** In guided mode, a session waits for its prerequisites; in free mode, they are advice. */
+  protected readonly locked = computed(() => this.waitingFor().length > 0 && !this.settings.freeNavigation());
   /**
    * The last screen the learner may reach: in a lesson, the first question not answered yet in
    * this sitting, since the correction is part of the lesson. Practice exercises, free exercises
-   * and timed sessions never hold the learner, nor does free_navigation in config.yaml.
+   * and timed sessions never hold the learner, nor does free_navigation in config.yaml. A session
+   * waiting for its prerequisites, in guided mode, stays on its first screen.
    */
   protected readonly gate = computed(() => {
     const screens = this.plan().screens;
+    if (this.locked()) {
+      return 0;
+    }
     if (this.opened()?.kind !== 'lesson' || this.settings.freeNavigation()) {
       return screens.length - 1;
     }

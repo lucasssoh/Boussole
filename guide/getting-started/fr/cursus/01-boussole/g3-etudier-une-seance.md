@@ -38,7 +38,9 @@ Un clic sur un rond ouvert y mène.
 
 :::note
 :term[Mode guidé]{id=mode-guide} : dans une leçon, Suivant attend ta réponse à la question
-affichée. La correction fait partie de la leçon.
+affichée. La correction fait partie de la leçon. Une séance qui en demande d'autres avant
+montre un cadenas tant qu'elles ne sont pas terminées, avec un lien vers chacune ; sans le mode
+guidé, elle les conseille seulement.
 :::
 
 ::::mcq{#g3-a1}

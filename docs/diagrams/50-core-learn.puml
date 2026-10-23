@@ -43,6 +43,7 @@ package "learn" {
     languages : List<String>
     finishedSessions : Set<String>
     lastStudied : Optional<Instant>
+    waitingFor : Map<String, List<SessionId>>
     resume : Optional<String>
   }
   class CourseOverviews

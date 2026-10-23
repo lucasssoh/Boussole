@@ -700,6 +700,23 @@ a.session-card:active {
   color: var(--muted);
 }
 
+/* Waiting for its prerequisites, in guided mode: it opens once they are finished. */
+.session-card.locked {
+  border-style: dashed;
+  background: transparent;
+  box-shadow: 0 3px 0 var(--line);
+}
+
+.session-card.locked .session-mark {
+  color: var(--muted);
+}
+
+.session-card-after {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
 .session-card-top {
   display: flex;
   align-items: center;
@@ -1201,6 +1218,27 @@ a.session-card:active {
 .screen-start h1,
 .screen-end h1 {
   margin-top: 1rem;
+}
+
+.waiting-for {
+  margin-top: 0;
+}
+
+.waiting-for h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.waiting-for ul {
+  margin: 0.4rem 0 0;
+}
+
+.waiting-for.locked {
+  border-color: var(--partly-strong);
+  background: var(--partly-bg);
 }
 
 .objectives {

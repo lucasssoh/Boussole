@@ -10,10 +10,12 @@ import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionProgress;
 import io.github.lucasssoh.boussole.core.learn.reward.RewardedSubjects;
+import io.github.lucasssoh.boussole.format.model.SessionId;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -144,6 +146,24 @@ class LearningTest {
         new FinishSession(content, progress, RewardedSubjects.all(), clock).finish(new SessionKey("reseaux", "r19"), Duration.ofMinutes(5));
 
         assertThat(new OpenCourse(content, progress).open("reseaux", Optional.empty()).resume()).contains("s11");
+    }
+
+    @Test
+    void a_session_waits_for_its_prerequisites_until_they_are_finished() {
+        assertThat(new OpenCourse(content, progress).open("reseaux", Optional.empty()).waitingFor())
+                .containsOnlyKeys("r19")
+                .containsEntry("r19", List.of(new SessionId("reseaux", "couche-reseau", "s11")));
+
+        new FinishSession(content, progress, RewardedSubjects.all(), clock).finish(new SessionKey("reseaux", "s11"), Duration.ofMinutes(52));
+
+        assertThat(new OpenCourse(content, progress).open("reseaux", Optional.empty()).waitingFor()).isEmpty();
+    }
+
+    @Test
+    void the_course_resumes_in_a_session_whose_prerequisites_are_finished() {
+        new FinishSession(content, progress, RewardedSubjects.all(), clock).finish(new SessionKey("reseaux", "s11"), Duration.ofMinutes(52));
+
+        assertThat(new OpenCourse(content, progress).open("reseaux", Optional.empty()).resume()).contains("r19");
     }
 
     @Test

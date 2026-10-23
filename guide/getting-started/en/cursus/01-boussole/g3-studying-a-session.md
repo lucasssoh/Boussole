@@ -38,7 +38,8 @@ Clicking an open dot goes there.
 
 :::note
 :term[Guided mode]{id=guided-mode}: in a lesson, Next waits for your answer to the question
-shown. The correction is part of the lesson.
+shown. The correction is part of the lesson. A session that needs others first shows a lock
+until they are finished, with links to them; without guided mode, it only advises them.
 :::
 
 ::::mcq{#g3-a1}

@@ -3,6 +3,7 @@ package io.github.lucasssoh.boussole.server.course;
 import io.github.lucasssoh.boussole.core.learn.CourseOverview;
 import io.github.lucasssoh.boussole.format.model.Course;
 import io.github.lucasssoh.boussole.format.model.LexiconTerm;
+import io.github.lucasssoh.boussole.format.model.SessionId;
 import io.github.lucasssoh.boussole.format.model.SyllabusChapter;
 import io.github.lucasssoh.boussole.format.model.SyllabusSession;
 import java.util.List;
@@ -33,6 +34,8 @@ record CourseView(
     static CourseView of(CourseOverview overview) {
         Course course = overview.course();
         Set<String> written = course.sessions().stream().map(found -> found.entry().id()).collect(Collectors.toSet());
+        Map<String, String> titles = course.syllabus().chapters().stream().flatMap(chapter -> chapter.sessions().stream())
+                .collect(Collectors.toMap(SyllabusSession::id, SyllabusSession::title, (first, second) -> first));
         return new CourseView(
                 course.subject().id(),
                 course.subject().name(),
@@ -41,7 +44,7 @@ record CourseView(
                 course.subject().description().orElse(null),
                 course.subject().sourcesDir(),
                 course.syllabus().chapters().stream()
-                        .map(chapter -> ChapterView.of(chapter, written, overview.finishedSessions(), overview.sessionProgress()))
+                        .map(chapter -> ChapterView.of(chapter, written, overview, titles))
                         .toList(),
                 course.lexicon().terms().stream().map(TermView::of).toList(),
                 ResumeView.of(overview).orElse(null),
@@ -52,16 +55,22 @@ record CourseView(
 
     record ChapterView(String id, String title, List<SessionEntryView> sessions) {
 
-        static ChapterView of(
-                SyllabusChapter chapter, Set<String> written, Set<String> finished, Map<String, SessionProgress> progress) {
+        static ChapterView of(SyllabusChapter chapter, Set<String> written, CourseOverview overview, Map<String, String> titles) {
+            String subject = overview.course().subject().id();
             return new ChapterView(chapter.id(), chapter.title(), chapter.sessions().stream()
-                    .map(entry -> SessionEntryView.of(entry, written.contains(entry.id()), finished.contains(entry.id()),
-                            progress.getOrDefault(entry.id(), new SessionProgress(0, 0, 0))))
+                    .map(entry -> SessionEntryView.of(entry, written.contains(entry.id()), overview.finishedSessions().contains(entry.id()),
+                            overview.sessionProgress().getOrDefault(entry.id(), new SessionProgress(0, 0, 0)),
+                            overview.waitingFor().getOrDefault(entry.id(), List.of()).stream()
+                                    .map(id -> PrerequisiteView.of(id, subject, titles))
+                                    .toList()))
                     .toList());
         }
     }
 
-    /** {@code questions}, {@code answered}, {@code right}: how far the learner is in the session. */
+    /**
+     * {@code questions}, {@code answered}, {@code right}: how far the learner is in the session;
+     * {@code waitingFor}: its prerequisites not finished yet.
+     */
     record SessionEntryView(
             String id,
             String title,
@@ -72,11 +81,23 @@ record CourseView(
             boolean finished,
             int questions,
             int answered,
-            int right) {
+            int right,
+            List<PrerequisiteView> waitingFor) {
 
-        static SessionEntryView of(SyllabusSession entry, boolean written, boolean finished, SessionProgress progress) {
+        static SessionEntryView of(
+                SyllabusSession entry, boolean written, boolean finished, SessionProgress progress, List<PrerequisiteView> waitingFor) {
             return new SessionEntryView(entry.id(), entry.title(), entry.kind().name().toLowerCase(Locale.ROOT),
-                    entry.duration(), entry.goal(), written, finished, progress.questions(), progress.answered(), progress.right());
+                    entry.duration(), entry.goal(), written, finished, progress.questions(), progress.answered(), progress.right(),
+                    waitingFor);
+        }
+    }
+
+    /** A prerequisite not finished: a session of this subject has its title, one of another its full ID. */
+    record PrerequisiteView(String subject, String session, String title) {
+
+        static PrerequisiteView of(SessionId id, String subject, Map<String, String> titles) {
+            String title = id.subject().equals(subject) ? titles.getOrDefault(id.session(), id.toString()) : id.toString();
+            return new PrerequisiteView(id.subject(), id.session(), title);
         }
     }
 

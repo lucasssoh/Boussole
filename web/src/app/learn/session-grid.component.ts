@@ -1,13 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IconComponent } from '../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Chapter, Course } from '../core/api';
+import { Chapter, Course, SessionEntry } from '../core/api';
+import { ServerSettingsService } from '../core/server-settings.service';
 import { RichTextComponent } from '../shared/rich-text.component';
 
 /**
  * The sessions of a course as a grid of cards, chapter by chapter: finished, to resume, written,
- * or not written yet. A written session is a link; one not written yet is shown flat.
+ * or not written yet. A written session is a link; one not written yet is shown flat. A session
+ * waiting for its prerequisites says which: locked in guided mode, advised after them in free mode.
  */
 @Component({
   selector: 'app-session-grid',
@@ -28,12 +30,15 @@ import { RichTextComponent } from '../shared/rich-text.component';
                   [class]="'session-card ' + entry.kind"
                   [class.finished]="entry.finished"
                   [class.resume]="entry.id === resume()"
+                  [class.locked]="locked(entry)"
                   [routerLink]="['/subjects', course().id, 'sessions', entry.id]"
                 >
                   <span class="session-card-top">
                     <span class="session-mark">
                       @if (entry.finished) {
                         <app-icon name="check" />
+                      } @else if (locked(entry)) {
+                        <app-icon name="lock" />
                       } @else if (entry.id === resume()) {
                         <app-icon name="play" />
                       }
@@ -45,6 +50,11 @@ import { RichTextComponent } from '../shared/rich-text.component';
                   </span>
                   <span class="session-card-title"><app-rich-text [text]="entry.title" /></span>
                   <span class="session-card-goal"><app-rich-text [text]="entry.goal" /></span>
+                  @if (!entry.finished && entry.waitingFor.length > 0) {
+                    <span class="session-card-after">
+                      {{ (settings.freeNavigation() ? 'course.advisedAfter' : 'course.after') | transloco: { titles: titles(entry) } }}
+                    </span>
+                  }
                   @if (entry.questions > 0) {
                     <span class="session-progress" [attr.aria-label]="'course.progressLabel' | transloco: entry">
                       <span class="session-progress-track">
@@ -82,7 +92,17 @@ export class SessionGridComponent {
   readonly chapters = input<Chapter[] | null>(null);
   readonly resume = input<string | null>(null);
 
+  protected readonly settings = inject(ServerSettingsService);
+
   protected readonly shown = computed(() => this.chapters() ?? this.course().chapters);
+
+  protected locked(entry: SessionEntry): boolean {
+    return !entry.finished && entry.waitingFor.length > 0 && !this.settings.freeNavigation();
+  }
+
+  protected titles(entry: SessionEntry): string {
+    return entry.waitingFor.map((prerequisite) => prerequisite.title).join(', ');
+  }
 
   protected finishedIn(chapter: Chapter): number {
     return chapter.sessions.filter((entry) => entry.finished).length;

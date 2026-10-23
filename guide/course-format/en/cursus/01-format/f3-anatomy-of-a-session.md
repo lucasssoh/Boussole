@@ -25,7 +25,7 @@ file.
 | `id` | yes | the same `id` as the session in the plan |
 | `objectives` | yes | one to five sentences, each starting with a verb |
 | `terms` | no | the identifiers of the :term[lexicon]{id=lexicon} used in the session |
-| `prerequisites` | no | the **full** identifiers of the sessions to do before |
+| `prerequisites` | no | the **full** identifiers of the sessions to finish before: only those really needed. In guided mode, the session waits for them. |
 | `sources` | no | the documents of `sources/`, with `#page=N` if needed |
 | `written_by` | no | who wrote the session: an AI `model` (its exact ID) and its `tool`, or a `name`; the `date`; the `role` (`wrote`, `revised`, `translated`). The learner sees it. |
 
