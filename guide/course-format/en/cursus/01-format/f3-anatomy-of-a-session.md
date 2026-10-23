@@ -112,7 +112,7 @@ flowchart LR
 
 | Part | How to write it | Required |
 |---|---|---|
-| Warmup | a `:::::warmup` block, first: a few questions on the previous session | no, and never in the first session |
+| Warmup | a `:::::warmup` block, first: a few questions on the previous session and on older ones | no, and never in the first session |
 | Introduction | text before the first notion | no |
 | Notions | each one starts with `## Title {#id}` and runs until the next `##` heading | at least one, in practice |
 | Checkpoint | a `:::::checkpoint` block: a short quiz on the whole session | no, but advised |
@@ -173,7 +173,7 @@ The front matter is always at the very top, the practice always at the very bott
 :::
 
 :::hint
-The warmup goes back over the previous session: it opens the session, even before the
+The warmup goes back over earlier sessions: it opens the session, even before the
 introduction.
 :::
 

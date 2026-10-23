@@ -43,14 +43,21 @@ Example: a 20-minute review → 14 single-choice MCQs and 2 numeric exercises (1
 - **Cover every goal** of the sessions concerned at least once, weighted by how much of the
   course each takes.
 - **Review**: reuse the lessons' questions with `::ref{id=…}` (retrieving what was learnt is what
-  makes it stay), and add variants with new values.
+  makes it stay), and add variants that change the **setting or the question asked**, not only
+  the values. About a quarter of a chapter review comes from **earlier chapters**, and at least
+  one question asks **which method applies** between two close notions.
+- **Cumulative review** (planned by `cursus-plan` mid-track and before each exam): questions
+  from every chapter so far, weighted towards those studied longest ago.
 - **Mock exam**: read the **past exams** in the sources first, and mirror them: same kinds of
   questions, same balance between chapters, same difficulty, same length. Write new questions;
   do not reuse the lessons'. Say in the statement when a question is adapted from a past exam.
-- Order: easy to hard within a review; as the real exam does within a mock exam.
+- Order: **mixed** within a review: notions, types of question and chapters alternate, never
+  grouped notion by notion (mixing makes the learner pick the method, as the exam does). Within
+  a mock exam, as the real exam does.
 - Every question still has its `solution`, explaining why the right answer is right, and every
   wrong MCQ choice its feedback: in a review the learner sees them right after each answer, in
-  an exam when the time is up. In a review, every question has hints; in an exam, none.
+  an exam when the time is up. In a review, every question has hints, one or two at most
+  (the learner has seen the notion already); in an exam, none.
 
 ## 3. Write it
 

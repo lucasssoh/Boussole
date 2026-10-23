@@ -54,17 +54,39 @@ draw maths: write them in plain text with Unicode (`≤`, `x₁`, `u²`), never 
 ## Distractors and feedback
 
 - Each wrong choice of an MCQ is a **real mistake** a learner makes: a confusion between two
-  notions, a forgotten step, an off-by-one. Never filler.
+  notions, a forgotten step, an off-by-one. Never filler. Take them first from the mistakes the
+  documents point out (the teacher's warnings, the corrections of tutorial sheets and past
+  exams).
 - **Subtle, not obvious:** a wrong choice looks like the right one and differs by one thing (a
   sign, a bound, a condition, a word such as "always" or "at most"); a learner who has only
   skimmed the notion should hesitate. Same form, same length and same register as the right
   choice, so that neither its length nor its wording gives it away.
 - No "all of the above", "none of the above" or joke choice; the right choice is not always in
   the same place.
-- **Every wrong choice gets feedback** (`  > …` under it) that says **why it is wrong** and what
-  to look at, without giving the right answer away. The learner who picks it sees it in red,
+- **Every wrong choice gets feedback** (`  > …` under it) that **names the mistake** behind it,
+  says why it is wrong and what to look at, without giving the right answer away. The learner who picks it sees it in red,
   with this feedback under it, right after answering (`boussole validate` warns, P010).
 - A right choice may have feedback too, to confirm what makes it right.
+
+## Answer + reason
+
+For a notion about an idea rather than a calculation, ask the answer **and why**: a `fill` with
+two choice gaps, the second offering the right reason among reasons that are real
+misconceptions. A learner who picks the right answer for a wrong reason is caught, and choosing
+the reason makes them explain it to themself.
+
+```markdown
+::::exercise{#s21-a2 type=fill}
+A switch [[1]] forward a frame to every port, because [[2]].
+
+:::answer
+1: choice *may | never | always
+2: choice *its table does not know the destination address yet | it works at layer 3 | a switch has no table
+:::
+::::
+```
+
+(Solutions and hints as for any exercise; trimmed here.)
 
 ## Quick checks
 
@@ -76,7 +98,8 @@ calculation. Its ID follows the « À toi » numbering (`<session>-a1`…).
 
 **Every exercise and every MCQ has hints**, quick checks included (`boussole validate` warns,
 P004); only an exam has none. The learner reveals them one at a time, before answering.
-For an MCQ, one or two hints; for an exercise, two or three, from vague to precise:
+For an MCQ, one or two hints; for an exercise, two or three, from vague to precise (fewer in the
+final practice and in reviews, where the method has been seen already):
 
 1. **Where to look**: which notion or step applies.
 2. **How to start**: the method, the first step, the formula.
@@ -91,6 +114,10 @@ wrong one in red, and the `:::solution` beside the question. So the solution **e
 the right answer is right**: the reasoning or the worked steps, not just the result, so that a
 learner who got it wrong understands what to change. Keep it short for a quick MCQ (two or
 three sentences), step by step for a calculation. End with the result in bold.
+
+The solution of a `free` exercise, where the learner grades themself, ends with **three to six
+points to check** (« Ta réponse doit… »): what a right answer contains. Comparing against a list
+is far more reliable than comparing against a whole text.
 
 ## Check
 

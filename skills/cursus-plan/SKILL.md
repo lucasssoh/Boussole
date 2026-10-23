@@ -44,7 +44,15 @@ write sessions here: the learner approves the plan first.
   (`kind: review`, 10 to 20 minutes) at the end of each chapter, and **mock exams**
   (`kind: exam`) before each real exam, as long as the real one (from the past exams, or ask the
   learner). Their `duration` is the time allowed, not an estimate. They are built with the
-  `exam-build` skill.
+  `exam-build` skill. Add a **cumulative review** (`kind: review`, 20 to 30 minutes) halfway
+  through the track and before each exam, on every chapter so far: what was learnt weeks ago is
+  what is forgotten, and asking it again then is what makes it stay.
+- **List the notions and what each needs.** For each notion, the earlier notions it uses. A
+  notion used before the session that teaches it is a mistake of the plan: move it, or plan its
+  session earlier. These dependencies become the `prerequisites` of the sessions: only those
+  really needed, since in guided mode a session waits for them.
+- **Note the usual mistakes** the documents point out (warnings of the teacher, corrections of
+  tutorial sheets, comments on past exams): they become the wrong choices of the MCQs.
 - A project brief gets its own chapter, cut into sessions by the steps of the project.
 
 ## 3. Write the syllabus
@@ -83,8 +91,8 @@ Then run `boussole validate .` and fix every error (see the `cursus-fix` skill).
 
 ## 4. Stop and present
 
-Show the learner a table: chapter, session, estimated duration, goal, and the pages of the sources each
-session draws on. Give the total number of sessions and hours. Point out what you were unsure
+Show the learner a table: chapter, session, estimated duration, goal, the pages of the sources each
+session draws on, and the sessions it needs first. Give the total number of sessions and hours. Point out what you were unsure
 of: notions you added because a prerequisite seemed missing, parts of the documents you left
 out and why.
 

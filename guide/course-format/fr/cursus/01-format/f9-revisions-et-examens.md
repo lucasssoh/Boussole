@@ -29,7 +29,7 @@ facultative, puis des exercices, des QCM et des `::ref`. Ni :term[notion]{id=not
 
 **Comment reposer une question d'une leçon sans la recopier ?** Avec `::ref{id=…}` : la question,
 définie ailleurs dans le parcours, s'affiche ici telle quelle. C'est aussi ainsi qu'un échauffement
-revient sur la séance précédente. Un `::ref` vers un identifiant qui n'existe pas est une erreur
+revient sur les séances d'avant. Un `::ref` vers un identifiant qui n'existe pas est une erreur
 (`F030`).
 
 :::example[La révision express des bases de Git]

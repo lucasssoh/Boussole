@@ -29,7 +29,7 @@ introduction, then exercises, MCQs and `::ref`s. No :term[notion]{id=notion}, no
 
 **How do you ask a question of a lesson again without copying it?** With `::ref{id=…}`: the
 question, defined elsewhere in the track, shows here as it is. This is also how a warmup goes back
-over the previous session. A `::ref` to an identifier that does not exist is an error (`F030`).
+over earlier sessions. A `::ref` to an identifier that does not exist is an error (`F030`).
 
 :::example[The quick review of Git basics]
 ```markdown

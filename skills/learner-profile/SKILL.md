@@ -31,18 +31,21 @@ answer instead ("Other"): use it as the learner's own words.
 | Header | Question | Options (default first) |
 |---|---|---|
 | Goal | What do you aim for in this subject? | A good grade · Pass · Among the best · Understand deeply |
+| Background | Where do you start from in this field? | Discovering it · Seen the basics in class · Reviewing for the exam |
 | Size | How much should a session hold, timed at a normal pace? (You may go faster or slower; a session ends with its closing, not with a timer.) | About 60 min · About 45 min · About 30 min · About 90 min |
 | Explaining | How should notions be explained? | Short, to the point · Detailed, step by step |
-| Order | For each notion, what comes first? | A worked example, then I try · I try first, then the example |
 
 **Second call**
 
 | Header | Question | Options (default first) |
 |---|---|---|
-| Quick quiz | A short quiz right after each point is explained, to check you followed? | No · Yes |
+| Order | For each notion, what comes first? | A worked example, then I try · I try first, then the example (put *I try first* first when they answered *Reviewing for the exam*) |
+| Quick quiz | A short quiz right after each point is explained? Answering from memory right away is what makes it stay. | Yes · No |
 | Closing | How should a session end? | A short quiz on the session · An exercise · Both |
 | Videos | Videos beside the text? | A few, where they help · None · As many as useful |
-| Background | Where do you start from in this field? | Discovering it · Seen the basics in class · Reviewing for the exam |
+
+The default order follows where they start from: someone who discovers the field learns more
+from a worked example first; someone who already knows the basics, from trying first.
 
 When the learner picked "Other" anywhere, keep their words in `background` or `notes`. Do not ask a
 third round; anything else they want to say, they will tell you.
@@ -58,8 +61,10 @@ can answer in one line (`1: … 2b 3c …`) or reply "defaults":
    with its closing, not with a timer): a) about 30 min b) about 45 min c) about 60 min *(default)*
    d) about 90 min
 4. **Explanations**: a) short, to the point *(default)* b) detailed, step by step
-5. **For each notion**: a) see a worked example, then try *(default)* b) try first, then the example
-6. **A short quiz right after each point**: a) yes b) no *(default)*
+5. **For each notion**: a) see a worked example, then try *(default when discovering the field)*
+   b) try first, then the example *(default when reviewing for the exam)*
+6. **A short quiz right after each point** (answering from memory right away is what makes it
+   stay): a) yes *(default)* b) no
 7. **To close a session**: a) a short quiz *(default)* b) an exercise c) both
 8. **Videos**: a) none b) a few, where they help *(default)* c) as many as useful
 9. **Anything else** about how you learn? (free, optional)

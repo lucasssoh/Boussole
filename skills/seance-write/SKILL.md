@@ -8,7 +8,7 @@ description: Write one session of a Boussole course from the approved syllabus a
 For lessons (`kind: lesson`, the default). Reviews and exams are built with `exam-build`.
 
 Prerequisites: `cursus/syllabus.yaml` has `status: approved`. Write the sessions **in the order of
-the syllabus**: each warmup asks about the previous session of the same subject.
+the syllabus**: each warmup asks about earlier sessions of the same subject.
 
 Read first: `learner.yaml` (how this learner learns: it shapes everything below),
 `.boussole/FORMAT.md` (the format), the syllabus entry of the session (title, duration, goal,
@@ -20,10 +20,13 @@ file. If `learner.yaml` is missing, follow the `learner-profile` skill first.
 The learner understands by **doing**, not by reading. Every session follows this shape, adjusted
 by `learner.yaml` as the table after it says:
 
-1. **Warmup** (`:::::warmup`, 5 minutes, first): two or three quick questions on the
-   **previous session of the same subject** — the learner may have studied something else in
-   between. Reuse earlier exercises with `::ref{id=…}` or write new short ones. The first
-   session of a subject has no warmup.
+1. **Warmup** (`:::::warmup`, 5 minutes, first): two or three quick questions on **earlier
+   sessions of the same subject**: one on the previous session, and **one or two from two to
+   five sessions back**, or from an earlier chapter. Asking only about the previous session
+   checks what is still fresh; what was learnt a while ago is what is about to be forgotten, and
+   retrieving it then is what makes it stay. Reuse earlier exercises with `::ref{id=…}` (prefer
+   those the learner is likely to have forgotten, not the easiest) or write new short ones. The
+   first session of a subject has no warmup; the second asks only about the first.
 2. **Notions**, each a level-2 heading with an ID: `## Le masque de sous-réseau {#masque}`.
    For each notion, in this order:
    1. `:::recall` of the terms and prerequisites the notion needs, **just before** it needs
@@ -32,14 +35,24 @@ by `learner.yaml` as the table after it says:
       lexicon on first use with `:term[…]{id=…}`. Point to the source page with
       `::pdf[…]{src=… page=…}`.
    3. **One** `:::example`, fully worked, step by step. One example per notion, never more:
-      further cases become exercises.
+      further cases become exercises. **Fade the help** along a chapter: in its first session
+      the examples are complete; later, once the method has been shown, a notion that applies
+      it again may follow its short example with a **half-solved** `fill` (the first steps
+      given, the last ones to complete) before the learner does it alone.
    4. **Right away**, one or two exercises or MCQs of the **same kind** as the example
       (« À toi »). Every question, quick checks included, has hints, feedback on each wrong
       choice and a solution that explains why the right answer is right (`exercise-author`).
+      Among a notion's questions, one **changes the setting** (another context, the question
+      asked the other way round), not only the values, so that the learner recognises the
+      method rather than the example. For a notion about an idea rather than a calculation, an
+      **answer + reason** question (`exercise-author`) shows whether it is understood.
 3. **Closing**, as `closing` asks: a **checkpoint** (`:::::checkpoint`), three to five questions
    on the whole session, passing it means the goal is reached; and/or a **practice**
    (`:::::practice`, last), exercises closer to the exam, often taken from the tutorial sheets
-   or past exams of the sources (say so in the statement).
+   or past exams of the sources (say so in the statement). The closing **mixes** the notions
+   of the session rather than taking them one after the other, and asks at least once **which
+   method applies** (two close notions, such as two formulas or two algorithms, opposed in one
+   question): choosing the method is part of what the exam checks.
 
 How `learner.yaml` changes this shape (without the file, use the defaults):
 
@@ -67,6 +80,10 @@ session should be split, and propose how.
 - **Faithful to the sources**: same notations, same vocabulary, same conventions as the
   teacher. If the documents and your knowledge disagree, follow the documents and add a
   `:::note` explaining the difference.
+- **Nothing that only decorates**: an anecdote, an image or a video that does not serve the
+  goal takes attention away from it. Leave it out.
+- **Go from one form to another**: when the course shows the same thing in several forms (a
+  formula, a graph, a table, code), ask at least one question that goes from one to the other.
 - **No hidden prerequisites**: anything the documents take for granted gets a `:::recall` or a
   short explanation.
 - **Cite what you rely on**: a page of the documents is a `:pdf[…]{src=… page=…}`, a web page a

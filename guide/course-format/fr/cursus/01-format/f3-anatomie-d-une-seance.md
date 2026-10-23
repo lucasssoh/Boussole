@@ -111,7 +111,7 @@ flowchart LR
 
 | Partie | Comment l'écrire | Obligatoire |
 |---|---|---|
-| Échauffement | un bloc `:::::warmup`, en premier : quelques questions sur la séance précédente | non, et jamais dans la première séance |
+| Échauffement | un bloc `:::::warmup`, en premier : quelques questions sur la séance précédente et sur de plus anciennes | non, et jamais dans la première séance |
 | Introduction | du texte avant la première notion | non |
 | Notions | chacune commence par `## Titre {#id}` et court jusqu'au titre `##` suivant | au moins une, en pratique |
 | Point de contrôle | un bloc `:::::checkpoint` : un court quiz sur toute la séance | non, mais conseillé |
@@ -172,7 +172,7 @@ L'en-tête est toujours tout en haut, l'entraînement toujours tout en bas.
 :::
 
 :::hint
-L'échauffement revient sur la séance précédente : il ouvre la séance, avant même l'introduction.
+L'échauffement revient sur les séances d'avant : il ouvre la séance, avant même l'introduction.
 :::
 
 :::solution

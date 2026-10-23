@@ -192,7 +192,8 @@ The body must not contain a level-1 heading (`#`): the title comes from the syll
 
 A session is read top to bottom in this order:
 
-1. `:::warmup` — optional, first. Five minutes on the previous session of the **same subject**.
+1. `:::warmup` — optional, first. Five minutes on earlier sessions of the **same subject**: the
+   previous one, and one or two questions from further back, before they are forgotten.
 2. **Notions** — each level-2 heading is a notion and carries an ID:
    `## Ce que la couche 3 apporte {#couche3}`. A notion runs until the next level-2 heading or
    section. Notion IDs are unique in their session.
@@ -391,7 +392,7 @@ a later session.
 #### Reusing an exercise
 
 `::ref{id=s10-a3}` shows an exercise defined elsewhere in the subject. This is how a warmup asks
-again a question of the previous session, and how a review asks again the questions of a
+again a question of an earlier session, and how a review asks again the questions of a
 chapter.
 
 ---
