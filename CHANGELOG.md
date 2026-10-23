@@ -52,6 +52,9 @@ minor release may break things and says so.
 - **Course format, validation:** `boussole validate --check-videos` also asks YouTube whether each video exists.
 - **Reviews and mock exams:** besides lessons, a course has timed sessions: a short review at the end of each chapter, and mock exams as long as the real ones. Their number of questions fits the time allowed, knowing that choosing an answer is quicker than building one; `boussole validate` warns when it does not.
 
+### Changed
+- **MCQs:** the `exercise-author` playbook now writes four choices, whose wrong ones are real mistakes that differ from the right one by a single detail, so that a question checks understanding rather than a quick read.
+
 ### Fixed
 - **MCQs:** one choice per line, so that a formula has the whole width instead of being cut.
 - **Drop-down lists** (choice gaps, matching) look like the rest of the interface: the arrow of Boussole, in relief, with a hover; « Choose… » reads as a prompt, not as an answer.

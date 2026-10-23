@@ -48,12 +48,19 @@ draw maths: write them in plain text with Unicode (`≤`, `x₁`, `u²`), never 
 - `text`: list the spellings a learner would reasonably type (with and without article,
   abbreviation and full name). Use `re:` only when a list cannot do it.
 - `mcq`: exactly one ticked choice, unless `multiple=true` and the statement says "all that
-  apply". Three or four choices.
+  apply". **Four choices**; three only when no fourth real mistake exists (never a filler to
+  reach four).
 
 ## Distractors and feedback
 
 - Each wrong choice of an MCQ is a **real mistake** a learner makes: a confusion between two
   notions, a forgotten step, an off-by-one. Never filler.
+- **Subtle, not obvious:** a wrong choice looks like the right one and differs by one thing (a
+  sign, a bound, a condition, a word such as "always" or "at most"); a learner who has only
+  skimmed the notion should hesitate. Same form, same length and same register as the right
+  choice, so that neither its length nor its wording gives it away.
+- No "all of the above", "none of the above" or joke choice; the right choice is not always in
+  the same place.
 - **Every wrong choice gets feedback** (`  > …` under it) that says **why it is wrong** and what
   to look at, without giving the right answer away. The learner who picks it sees it in red,
   with this feedback under it, right after answering (`boussole validate` warns, P010).
