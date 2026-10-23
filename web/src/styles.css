@@ -253,6 +253,49 @@ textarea {
   font-weight: 700;
 }
 
+/* Drop-down lists: in relief like every other control, with the arrow of the interface; the
+   empty choice (« Choisir… ») reads as a prompt, not as an answer. */
+select {
+  appearance: none;
+  min-height: 2.4rem;
+  padding-right: 2.3rem;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position: calc(100% - 1.15rem) 52%, calc(100% - 0.8rem) 52%;
+  background-size: 0.35rem 0.35rem;
+  background-repeat: no-repeat;
+  box-shadow: 0 3px 0 var(--line);
+  cursor: pointer;
+  transition: transform 0.08s, box-shadow 0.08s, border-color 0.08s;
+}
+
+select:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--subject) 55%, var(--line));
+}
+
+select:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--line);
+}
+
+select:has(option[value='']:checked) {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+select option {
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
+}
+
+select:disabled {
+  background-image: none;
+  padding-right: 0.7rem;
+  box-shadow: none;
+}
+
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
