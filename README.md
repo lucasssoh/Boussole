@@ -73,5 +73,9 @@ boussole open examples/reseaux
 7420) and adds the folder to `~/.config/boussole/config.yaml`; `boussole stop` stops it. Your
 progress is kept in `~/.local/share/boussole/state.db`.
 
+`boussole open <folder> --resume` opens the session to resume of that track, the one in
+progress or else the next one: the command for a reminder in your calendar that says it is
+time to study.
+
 To work on the interface, run `boussole serve`, then `npm start` in `web/`
 (http://localhost:4200, calls to `/api` go to the server).

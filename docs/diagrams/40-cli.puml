@@ -44,6 +44,7 @@ package "cli" {
 package "cli.serve" {
   class OpenCommand <<@Command open>> {
     folder : Path
+    resume : boolean
     +call() : Integer
   }
   class ServeCommand <<@Command serve>> {
@@ -54,6 +55,8 @@ package "cli.serve" {
     +call() : Integer
   }
   class ServerProbe {
+    ~url(String) : String
+    ~sessionToResume(String) : Optional<String>
     ~isBoussole() : boolean
     ~portTaken() : boolean
     ~waitUntilUp(Duration) : boolean

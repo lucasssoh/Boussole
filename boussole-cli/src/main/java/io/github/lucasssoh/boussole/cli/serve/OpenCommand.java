@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Model.CommandSpec;
+import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Spec;
 
@@ -28,7 +29,8 @@ import picocli.CommandLine.Spec;
         mixinStandardHelpOptions = true,
         description = {
             "Open Boussole in the browser, starting the server in the background if needed.",
-            "With a subject folder, open that subject, adding it to config.yaml the first time."
+            "With a subject folder, open that subject, adding it to config.yaml the first time;",
+            "with --resume, open its session to resume, the one in progress or else the next one."
         })
 public final class OpenCommand implements Callable<Integer> {
 
@@ -36,6 +38,9 @@ public final class OpenCommand implements Callable<Integer> {
 
     @Parameters(paramLabel = "FOLDER", arity = "0..1", description = "A subject folder, the one holding subject.yaml.")
     private Path folder;
+
+    @Option(names = "--resume", description = "Open the session to resume of the subject, rather than its page: for a reminder that starts a session.")
+    private boolean resume;
 
     @Spec
     private CommandSpec spec;
@@ -79,7 +84,8 @@ public final class OpenCommand implements Callable<Integer> {
                 return ExitCode.UNUSABLE;
             }
         }
-        String url = probe.url(subject.map(id -> "subjects/" + id).orElse(""));
+        String url = probe.url(subject.map(id -> "subjects/" + id
+                + (resume ? probe.sessionToResume(id).map(session -> "/sessions/" + session).orElse("") : "")).orElse(""));
         out.println((BrowserOpener.open(url) ? "Opened " : "Open ") + url);
         return ExitCode.OK;
     }

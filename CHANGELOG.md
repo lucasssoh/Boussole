@@ -7,6 +7,7 @@ minor release may break things and says so.
 ## Unreleased
 
 ### Added
+- **`boussole open <folder> --resume`:** opens the session to resume of a track (the one in progress, or else the next one) rather than its page, for a reminder in your calendar that starts a session.
 - **Authors, rights and credits:** a built-in track, in English and French, on respecting the work of others: who owns a course document, reading a licence (Creative Commons and others), citing and quoting, the credits Boussole shows (`written_by`, `authors`, `contributors`, sources and their licences), and sharing a track: whoever shares documents is responsible for having the right to. General information, not legal advice.
 - **Who wrote it:** each session says who wrote, revised or translated it (`written_by`: the AI model by its exact ID and the tool, or a person, with the date), shown on its first step; a track credits its authors (people or organisations, such as a university) and contributors, shown on its page with the models it was written with. The playbooks fill it in; a session without it is reported (`P012`).
 - **Translating a track:** the `track-translate` playbook writes a version of a track in another language next to it, translating only the text and pointing to the original's documents (`sources: "../python/sources"`, which Boussole now serves). *Writing a track by hand* teaches versions.
