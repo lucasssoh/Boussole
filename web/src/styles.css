@@ -1774,8 +1774,15 @@ a.session-card:active {
   margin: 1rem 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-  gap: 0.9rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+/* One choice per line, so that a formula has the whole width; one too wide scrolls on its own. */
+.choices .choice-text {
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .choices li {
