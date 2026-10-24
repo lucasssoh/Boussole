@@ -150,6 +150,7 @@ picocli. One class per command.
 | `boussole init SUBJECT_DIR` | Creates `subject.yaml`, `cursus/` and the agent instructions. |
 | `boussole validate SUBJECT_DIR [--check-videos]` | Runs the validator. |
 | `boussole sources SUBJECT_DIR [--all]` | Lists the documents against `cursus/sources.yaml`: new, changed, pending, gone, with the entries to add. |
+| `boussole index SUBJECT_DIR [--before SESSION]` | Lists every question of a subject, one per line, with how many times it is asked again (`::ref`): agents pick warmup and review questions there. |
 | `boussole remind EVENT` (V2) | Shows the reminder of an event (called by system timers). |
 | `boussole import-legacy …` (planned) | Imports the former Markdown sessions and Boussole settings. |
 

@@ -24,8 +24,11 @@ by `learner.yaml` as the table after it says:
    sessions of the same subject**: one on the previous session, and **one or two from two to
    five sessions back**, or from an earlier chapter. Asking only about the previous session
    checks what is still fresh; what was learnt a while ago is what is about to be forgotten, and
-   retrieving it then is what makes it stay. Reuse earlier exercises with `::ref{id=…}` (prefer
-   those the learner is likely to have forgotten, not the easiest) or write new short ones. The
+   retrieving it then is what makes it stay. Reuse earlier exercises with `::ref{id=…}` or
+   write new short ones. Pick them from `boussole index . --before <session>`, which lists every
+   earlier question with how many times it is already asked again (`again`): prefer those asked
+   again rarely, from different notions, so that the warmups of the track do not keep asking the
+   same few questions; never a question of an exam. The
    first session of a subject has no warmup; the second asks only about the first.
 2. **Notions**, each a level-2 heading with an ID: `## Le masque de sous-réseau {#masque}`.
    For each notion, in this order:

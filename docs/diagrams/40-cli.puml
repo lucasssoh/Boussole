@@ -15,6 +15,10 @@ package "cli" {
     folder : Path
     all : boolean
   }
+  class IndexCommand <<@Command index>> {
+    folder : Path
+    before : String
+  }
   class TrackVersionFolders <<siblings, config.yaml>> {
     +{static} of(folder, id, subjects) : List<Path>
   }
@@ -114,6 +118,7 @@ NewCommand --> AgentKitInstaller : agent kit
 NewCommand ..> BoussoleConfigFile : tracks_dir, adds the track
 BoussoleCommand --> ValidateCommand : subcommand
 BoussoleCommand --> SourcesCommand : subcommand
+BoussoleCommand --> IndexCommand : subcommand
 BoussoleCommand --> ManifestVersion
 ValidateCommand --> SubjectInspector : inspects
 ValidateCommand ..> YoutubeOEmbedCatalog : --check-videos

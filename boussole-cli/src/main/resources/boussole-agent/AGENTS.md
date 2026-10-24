@@ -38,6 +38,31 @@ Where to start:
 - `status: approved` → write the first session of the syllabus that has no file yet, one at a
   time, in order: **seance-write** for a lesson, **exam-build** for a review or an exam.
 
+Writing or revising many sessions (a whole track, several chapters):
+
+- **One agent per chapter**, never one agent for the whole track: an agent that carries the
+  whole track re-reads it at every step, which multiplies the cost. Three at a time at most,
+  so that a usage limit does not stop them all half-way.
+- **Each agent writes only in its chapter's folder** (`cursus/<chapter>/`). Everything else is
+  read-only for it: the other chapters, `syllabus.yaml`, `lexique.yaml`, `sources.yaml`,
+  `learner.yaml`. It never renames or deletes a session or exercise ID, which other chapters
+  `::ref`. A change to a shared file (a new term, a change of the plan) goes in its report, and
+  the agent that coordinates makes it, one at a time.
+- Each agent checks with `boussole validate .` and fixes what concerns its chapter; the
+  coordinator runs it on the whole track at the end.
+- `boussole index .` lists every question of the track: an agent picks its warmup and review
+  questions there rather than opening every session.
+
+Which model, when you can choose (in Claude Code, the `model` of an agent):
+
+| Task | Model |
+|---|---|
+| The plan; writing a lesson, its examples and the wrong choices of its MCQs | your most capable |
+| A review or warmup made of `::ref`, prerequisites, fixing what the validator reports, a translation | a mid-sized one |
+| Listing, checking the form | a fast one |
+
+When in doubt, the most capable: a wrong course costs more than the tokens it saved.
+
 Rules:
 
 - **Never modify, move or delete the learner's documents**, in {{sources}}.
@@ -59,4 +84,5 @@ Rules:
   ```
 
   Run it after every change, until it ends without error, before saying a task is done.
-  `boussole sources .` is the same command with `sources` in place of `validate`.
+  `boussole sources .` and `boussole index .` are the same command with `sources` or `index` in
+  place of `validate`.

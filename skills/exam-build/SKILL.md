@@ -43,7 +43,8 @@ Example: a 20-minute review → 14 single-choice MCQs and 2 numeric exercises (1
 - **Cover every goal** of the sessions concerned at least once, weighted by how much of the
   course each takes.
 - **Review**: reuse the lessons' questions with `::ref{id=…}` (retrieving what was learnt is what
-  makes it stay), and add variants that change the **setting or the question asked**, not only
+  makes it stay), chosen from `boussole index . --before <session>`, those asked again rarely
+  first, and add variants that change the **setting or the question asked**, not only
   the values. About a quarter of a chapter review comes from **earlier chapters**, and at least
   one question asks **which method applies** between two close notions.
 - **Cumulative review** (planned by `cursus-plan` mid-track and before each exam): questions
