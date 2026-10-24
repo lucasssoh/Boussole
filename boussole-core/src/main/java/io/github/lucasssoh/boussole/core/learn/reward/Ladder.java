@@ -10,8 +10,8 @@ import java.util.List;
  * and each tier asks far more than the one before.
  *
  * <ul>
- *   <li>{@link #CULTURE}, the general rank: breadth. Sage and Grand Sage also ask for several
- *       fields ({@link #fieldsFor(int)}).</li>
+ *   <li>{@link #CULTURE}, the general rank: breadth. Sage and Grand Sage also ask for
+ *       specialties ({@link Specialties}).</li>
  *   <li>{@link #SPECIALTY}, one rank per field: depth.</li>
  * </ul>
  */
@@ -23,8 +23,6 @@ public enum Ladder {
 
     public static final int DIVISIONS = 5;
     public static final int LEVELS_PER_DIVISION = 14;
-    /** The share of the points a field must hold to count among the fields of a culture rank. */
-    public static final double FIELD_SHARE = 0.10;
 
     private final List<String> tiers;
     private final double[] from;
@@ -67,13 +65,5 @@ public enum Ladder {
         }
         steps.add(new Step(top(), 0, from[top()]));
         return List.copyOf(steps);
-    }
-
-    /** The fields a culture tier asks for: 3 for Sage, 5 for Grand Sage, else 1. */
-    public int fieldsFor(int tier) {
-        if (this != CULTURE) {
-            return 1;
-        }
-        return tier >= top() ? 5 : tier == top() - 1 ? 3 : 1;
     }
 }

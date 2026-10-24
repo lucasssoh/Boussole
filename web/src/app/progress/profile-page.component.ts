@@ -5,15 +5,12 @@ import { AchievementProgress, LadderStep } from '../core/api';
 import { BoussoleApi } from '../core/boussole-api';
 import { StatsService } from '../core/stats.service';
 import { RankEmblemComponent } from '../shared/rank-emblem.component';
-import { divisionProgress, roman, tierColors } from '../shared/ranks';
+import { CRITICAL_THINKING, divisionProgress, isStrong, roman, tierColors } from '../shared/ranks';
 import { RankNames } from './rank-names';
-
-/** The share of the points a field must hold to count for Sage and Grand Sage. */
-const FIELD_SHARE = 0.1;
 
 /**
  * The learner's page: their card (emblem, culture rank, level, points, records), the route of the
- * divisions around theirs, the next division, the fields Sage asks for, each specialty, and the
+ * divisions around theirs, the next division, the specialties Sage asks for, each specialty, and the
  * achievements, kept for good.
  */
 @Component({
@@ -70,13 +67,17 @@ const FIELD_SHARE = 0.1;
             </section>
           }
           <section class="profile-panel">
-            <span class="panel-label">{{ (rank.tier === 'sage' || rank.tier === 'grand-sage' ? 'profile.forGrandSage' : 'profile.forSage') | transloco }}</span>
-            <strong class="panel-value">{{ 'profile.fields' | transloco: { count: wideFields(), needed: fieldsNeeded() } }}</strong>
+            <span class="panel-label">{{ (towardGrandSage() ? 'profile.forGrandSage' : 'profile.forSage') | transloco }}</span>
+            <strong class="panel-value">{{ 'profile.specialistsCount' | transloco: { count: strongSpecialties(), needed: 3 } }}</strong>
             <div class="field-marks">
-              @for (mark of fieldMarks(); track $index) {
+              @for (mark of specialtyMarks(); track $index) {
                 <span class="field-mark" [class.filled]="mark"></span>
               }
             </div>
+            <span class="panel-note">{{ 'profile.atSpecialist' | transloco }}</span>
+            @if (towardGrandSage()) {
+              <span class="panel-note" [class.met]="criticalThinking()">{{ 'profile.criticalThinking' | transloco }}</span>
+            }
           </section>
         </div>
 
@@ -137,18 +138,19 @@ export class ProfilePageComponent {
     const current = this.stats.stats();
     return current ? divisionProgress(current.culture, current.points) : 0;
   });
-  protected readonly wideFields = computed(() => {
-    const current = this.stats.stats();
-    return current ? current.fields.filter((field) => current.points > 0 && field.points >= FIELD_SHARE * current.points).length : 0;
-  });
-  protected readonly fieldsNeeded = computed(() => {
+  /** Past Sage, the specialties count besides critical thinking, which Grand Sage asks for too. */
+  protected readonly towardGrandSage = computed(() => {
     const tier = this.stats.stats()?.culture.tier;
-    return tier === 'sage' || tier === 'grand-sage' ? 5 : 3;
+    return tier === 'sage' || tier === 'grand-sage';
   });
-  protected readonly fieldMarks = computed(() =>
-    Array.from({ length: this.fieldsNeeded() }, (_, index) => index < this.wideFields()),
+  protected readonly strongSpecialties = computed(() =>
+    (this.stats.stats()?.fields ?? [])
+      .filter((field) => isStrong(field.specialty.tier) && !(this.towardGrandSage() && field.domain === CRITICAL_THINKING)).length,
   );
-
+  protected readonly criticalThinking = computed(() =>
+    (this.stats.stats()?.fields ?? []).some((field) => field.domain === CRITICAL_THINKING && isStrong(field.specialty.tier)),
+  );
+  protected readonly specialtyMarks = computed(() => Array.from({ length: 3 }, (_, index) => index < this.strongSpecialties()));
   private readonly allAchievements = signal<AchievementProgress[]>([]);
   /** Those reached first, the highest first; then the nearest to their next level. */
   protected readonly achievements = computed(() =>

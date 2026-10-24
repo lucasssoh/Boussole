@@ -72,7 +72,8 @@ description: M1 networking course, network and transport layers.
 
 The fields follow the detailed fields of the UNESCO International Standard Classification of
 Education (ISCED-F 2013), whose code each keeps; information technology is one field, as at
-its narrow level. Any other value is an error (`F001`).
+its narrow level; `critical-thinking` is a field of Boussole's own. Any other value is an error
+(`F001`).
 
 | `domain` | ISCED-F 2013 |
 |---|---|
@@ -122,6 +123,7 @@ its narrow level. Any other value is an error (`F001`).
 | `personal-services` | 101 |
 | `security-and-defence` | 103 |
 | `transport` | 104 |
+| `critical-thinking` | — (Boussole's own: epistemology, logic, zetetics, the scientific method, cognitive biases; Grand Sage asks for it) |
 
 ---
 

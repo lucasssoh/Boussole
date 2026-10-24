@@ -6,8 +6,8 @@ import java.util.Optional;
 /**
  * The field of knowledge a track belongs to, from the detailed fields of the UNESCO
  * International Standard Classification of Education (ISCED-F 2013), whose code each keeps;
- * information technology stays one field, as in its narrow level. Written in {@code subject.yaml}
- * as {@code domain}.
+ * information technology stays one field, as in its narrow level; and one field of Boussole's own,
+ * {@link #CRITICAL_THINKING}. Written in {@code subject.yaml} as {@code domain}.
  */
 public enum Domain {
     PERSONAL_DEVELOPMENT("personal-development", "0031"),
@@ -55,7 +55,12 @@ public enum Domain {
     SPORTS("sports", "1014"),
     PERSONAL_SERVICES("personal-services", "101"),
     SECURITY_AND_DEFENCE("security-and-defence", "103"),
-    TRANSPORT("transport", "104");
+    TRANSPORT("transport", "104"),
+    /**
+     * Boussole's own field, outside ISCED: epistemology, logic, zetetics, the scientific method,
+     * cognitive biases; thinking well about what one knows. Grand Sage asks for it.
+     */
+    CRITICAL_THINKING("critical-thinking", "");
 
     private final String id;
     private final String isced;
@@ -70,7 +75,7 @@ public enum Domain {
         return id;
     }
 
-    /** Its ISCED-F 2013 code. */
+    /** Its ISCED-F 2013 code; empty for a field of Boussole's own. */
     public String isced() {
         return isced;
     }

@@ -3328,3 +3328,11 @@ app-settings-drawer {
   }
 }
 
+.ladder-asks {
+  color: var(--text);
+}
+
+.panel-note.met {
+  color: var(--correct);
+}
+

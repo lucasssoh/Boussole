@@ -100,8 +100,8 @@
   aliases: [tiers]
   definition: >
     A step of the climb: Curious, Apprentice, Initiate, Scholar, Savant, Master, Sage, each in
-    divisions from V to I, then Grand Sage, without end. Points take you up; Sage and Grand Sage
-    also ask for several fields of knowledge.
+    divisions from V to I, then Grand Sage, without end. Points take you up; Sage also asks for
+    three specialties at Specialist, Grand Sage for critical thinking besides.
 
 - id: link
   term: Link

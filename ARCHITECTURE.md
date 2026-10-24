@@ -93,9 +93,10 @@ hook), multiplies it by the occasion (`PointRules`: the first answer whole, half
 session that asks it again, nothing more in the same session) and by the level of the track
 (`TrackLevel`), and keeps the points with the attempt. `FinishSession` adds a tenth, rounded up
 last, the first time a session ends without a mistake. `ReadStudyStats` adds them up from the
-history, and places them on two `Ladder`s (`Rank`): the culture, whose Sage and Grand Sage also
-ask for several fields (each at least a tenth of the points), and the specialty of each field
-(`FieldStanding`). Tiers are split into divisions V to I of 14 levels; the top one never ends.
+history, and places them on two `Ladder`s (`Rank`): the culture, and the specialty of each field
+(`FieldStanding`). Sage also asks for three specialties at Specialist or above; Grand Sage for
+three besides critical thinking, and critical thinking itself (`Specialties`), a field of
+Boussole's own. Tiers are split into divisions V to I of 14 levels; the top one never ends.
 `TrackScores` tells what a track gives: every occasion a written session gives to answer a
 question (its own whole, one asked again at half), what the first answer there earned and what it
 missed; the page of a track shows it, earned, missed and still to play. `ReadAchievements`

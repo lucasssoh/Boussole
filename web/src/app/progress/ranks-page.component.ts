@@ -15,11 +15,11 @@ interface TierRow {
   from: number;
   firstLevel: number;
   lastLevel: number | null;
-  fields: number;
+  asks: string | null;
 }
 
-/** The fields the culture tiers ask for, past their points. */
-const FIELDS: Readonly<Record<string, number>> = { sage: 3, 'grand-sage': 5 };
+/** What the top culture tiers ask for, past their points. */
+const ASKS: Readonly<Record<string, string>> = { sage: 'ranks.asksSage', 'grand-sage': 'ranks.asksGrandSage' };
 
 /**
  * The tiers: the culture, overall, beside the specialties, one branch per field the learner has
@@ -42,7 +42,10 @@ const FIELDS: Readonly<Record<string, number>> = { sage: 3, 'grand-sage': 5 };
                 <app-rank-emblem [tier]="row.tier" [size]="34" />
                 <div class="ladder-name">
                   <strong>{{ names.rank(row.tier, 0) }}</strong>
-                  <span>{{ 'ranks.from' | transloco: { points: names.points(row.from) } }}@if (row.fields > 0) { · {{ 'ranks.fields' | transloco: { count: row.fields } }}}</span>
+                  <span>{{ 'ranks.from' | transloco: { points: names.points(row.from) } }}</span>
+                  @if (row.asks) {
+                    <span class="ladder-asks">{{ row.asks | transloco }}</span>
+                  }
                 </div>
                 <div class="ladder-divisions">
                   @for (step of row.steps; track step.firstLevel) {
@@ -136,7 +139,7 @@ function rows(steps: LadderStep[], culture: boolean): TierRow[] {
       row.steps.push(step);
     } else {
       found.push({ tier: step.tier, steps: [step], from: step.from, firstLevel: step.firstLevel, lastLevel: null,
-        fields: culture ? (FIELDS[step.tier] ?? 0) : 0 });
+        asks: culture ? (ASKS[step.tier] ?? null) : null });
     }
   }
   found.forEach((row, index) => (row.lastLevel = found[index + 1] ? found[index + 1].firstLevel - 1 : null));

@@ -205,6 +205,7 @@ export const FR: Translations = {
     'personal-services': 'Services à la personne',
     'security-and-defence': 'Sécurité et défense',
     transport: 'Transport',
+    'critical-thinking': 'Esprit critique',
   },
   profile: {
     title: 'Profil',
@@ -220,7 +221,9 @@ export const FR: Translations = {
     ranks: 'Paliers',
     forSage: 'Pour Sage',
     forGrandSage: 'Pour Grand Sage',
-    fields: '{{count}} / {{needed}} domaines',
+    specialistsCount: '{{count}} / {{needed}} spécialités',
+    atSpecialist: 'au palier Spécialiste ou au-dessus',
+    criticalThinking: 'et Esprit critique au palier Spécialiste',
     specialties: 'Spécialités',
     noSpecialty: 'Pas encore de spécialité.',
     achievements: 'Succès',
@@ -233,7 +236,8 @@ export const FR: Translations = {
     levels: 'niveaux {{from}} à {{to}}',
     levelsFrom: 'niveau {{from}} et au-delà',
     from: '{{points}} pts',
-    fields: '{{count}} domaines',
+    asksSage: '3 spécialités au palier Spécialiste',
+    asksGrandSage: 'Sage, et Esprit critique au palier Spécialiste en plus',
     nextDivision: 'encore {{points}} points avant la division suivante',
   },
   promotion: {

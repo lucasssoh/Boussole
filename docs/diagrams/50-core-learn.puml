@@ -142,13 +142,19 @@ package "learn.reward" {
   enum Ladder {
     CULTURE
     SPECIALTY
-    +fieldsFor(tier) : int
   }
   class Rank <<record>> {
     tier, division, level : int
     intoLevel, levelSize, nextAt : double
-    fieldsMissing : int
-    +{static} of(Ladder, points, fields) : Rank
+    specialtiesMissing : int
+    criticalThinkingMissing : boolean
+    +{static} of(Ladder, points, Specialties) : Rank
+  }
+  class Specialties <<record>> {
+    atLevel, besideCriticalThinking : int
+    criticalThinking : boolean
+    LEVEL = "specialist"
+    FOR_SAGE = 3
   }
   class AttemptRecord <<record>>
   class SessionFinishedRecord <<record>>
@@ -218,6 +224,7 @@ CourseOverviews ..> SessionProgress : per session
 ReadStudyStats --> ProgressRepository : history
 ReadStudyStats ..> Rank : culture, specialty
 Rank --> Ladder
+Rank ..> Specialties : Sage, Grand Sage
 ReadStudyStats --> ContentRepository : fields
 QuestionScore ..> GapSentences : fill
 ReadAchievements ..> AchievementProgress

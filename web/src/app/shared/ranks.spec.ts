@@ -14,7 +14,7 @@ describe('ranks', () => {
   });
 
   it('measures how far into its division a rank is', () => {
-    const rank = { tier: 'curious', division: 5, level: 1, intoLevel: 0, levelSize: 1, divisionFrom: 100, nextAt: 200, fieldsMissing: 0 };
+    const rank = { tier: 'curious', division: 5, level: 1, intoLevel: 0, levelSize: 1, divisionFrom: 100, nextAt: 200, specialtiesMissing: 0, criticalThinkingMissing: false };
     expect(divisionProgress(rank, 150)).toBe(0.5);
     expect(divisionProgress(rank, 250)).toBe(1);
   });

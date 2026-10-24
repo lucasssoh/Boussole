@@ -88,14 +88,15 @@ class StatsController {
 
     /**
      * A rank: its tier, its division (5 to 1, 0 in the top tier), its level and how far into it,
-     * where its division starts and the next one, and the fields still missing to rise above.
+     * where its division starts and the next one, and what the culture still asks to rise above:
+     * specialties at Specialist, critical thinking.
      */
     record RankView(String tier, int division, int level, double intoLevel, double levelSize, double divisionFrom, double nextAt,
-            int fieldsMissing) {
+            int specialtiesMissing, boolean criticalThinkingMissing) {
 
         static RankView of(Rank rank) {
             return new RankView(rank.tierId(), rank.division(), rank.level(), rank.intoLevel(), rank.levelSize(), rank.divisionFrom(),
-                    rank.nextAt(), rank.fieldsMissing());
+                    rank.nextAt(), rank.specialtiesMissing(), rank.criticalThinkingMissing());
         }
     }
 

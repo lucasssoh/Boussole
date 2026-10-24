@@ -22,8 +22,8 @@ import java.util.stream.Stream;
 
 /**
  * Points, ranks and streak, computed from the history of attempts and finished sessions of the
- * subjects that are rewarded. A subject's points go to its field (its {@code domain}); a field
- * counts for the culture rank once it holds {@link Ladder#FIELD_SHARE} of all the points.
+ * subjects that are rewarded. A subject's points go to its field (its {@code domain}), whose
+ * specialty they raise; the culture asks for specialties at its top ({@link Specialties}).
  */
 public final class ReadStudyStats {
 
@@ -57,7 +57,6 @@ public final class ReadStudyStats {
         Map<Domain, Double> byField = new EnumMap<>(Domain.class);
         bySubject.forEach((subject, earned) -> Optional.ofNullable(domains.get(subject))
                 .ifPresent(domain -> byField.merge(domain, earned, Double::sum)));
-        int fields = (int) byField.values().stream().filter(earned -> points > 0 && earned >= Ladder.FIELD_SHARE * points).count();
         List<FieldStanding> standings = byField.entrySet().stream()
                 .map(entry -> new FieldStanding(entry.getKey(), entry.getValue(), Rank.of(Ladder.SPECIALTY, entry.getValue())))
                 .sorted(Comparator.comparingDouble(FieldStanding::points).reversed())
@@ -66,7 +65,7 @@ public final class ReadStudyStats {
         Set<LocalDate> days = new TreeSet<>();
         attempts.forEach(attempt -> days.add(day(attempt.at())));
         LocalDate today = LocalDate.now(clock);
-        return new StudyStats(points, Rank.of(Ladder.CULTURE, points, fields), standings, streak(days, today), days.contains(today),
+        return new StudyStats(points, Rank.of(Ladder.CULTURE, points, specialties(standings)), standings, streak(days, today), days.contains(today),
                 records(attempts, finished, days));
     }
 
@@ -99,6 +98,14 @@ public final class ReadStudyStats {
             }
         }
         return best;
+    }
+
+    /** The specialties at Specialist or above, those besides critical thinking, and critical thinking. */
+    private static Specialties specialties(List<FieldStanding> standings) {
+        int level = Ladder.SPECIALTY.tiers().indexOf(Specialties.LEVEL);
+        List<Domain> strong = standings.stream().filter(field -> field.rank().tier() >= level).map(FieldStanding::domain).toList();
+        boolean critical = strong.contains(Domain.CRITICAL_THINKING);
+        return new Specialties(strong.size(), strong.size() - (critical ? 1 : 0), critical);
     }
 
     /** Days in a row ending today, or yesterday while today has nothing yet. */

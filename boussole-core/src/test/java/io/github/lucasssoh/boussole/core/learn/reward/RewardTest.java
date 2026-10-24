@@ -65,20 +65,33 @@ class RewardTest {
         }
 
         @Test
-        void sage_and_grand_sage_ask_for_several_fields() {
-            Rank alone = Rank.of(Ladder.CULTURE, 300_000, 1);
-            Rank wide = Rank.of(Ladder.CULTURE, 300_000, 3);
+        void sage_asks_for_three_specialties_at_specialist() {
+            Rank alone = Rank.of(Ladder.CULTURE, 300_000, new Specialties(1, 1, false));
+            Rank three = Rank.of(Ladder.CULTURE, 300_000, new Specialties(3, 3, false));
 
             assertThat(alone.tierId()).isEqualTo("master");
             assertThat(alone.division()).isEqualTo(1);
-            assertThat(alone.fieldsMissing()).isEqualTo(2);
-            assertThat(wide.tierId()).isEqualTo("sage");
-            assertThat(wide.fieldsMissing()).isZero();
+            assertThat(alone.specialtiesMissing()).isEqualTo(2);
+            assertThat(three.tierId()).isEqualTo("sage");
+            assertThat(three.specialtiesMissing()).isZero();
+        }
+
+        @Test
+        void grand_sage_asks_for_critical_thinking_besides_three_specialties() {
+            Rank withinThree = Rank.of(Ladder.CULTURE, 500_000, new Specialties(3, 2, true));
+            Rank without = Rank.of(Ladder.CULTURE, 500_000, new Specialties(4, 4, false));
+            Rank both = Rank.of(Ladder.CULTURE, 500_000, new Specialties(4, 3, true));
+
+            assertThat(withinThree.tierId()).isEqualTo("sage");
+            assertThat(withinThree.specialtiesMissing()).isEqualTo(1);
+            assertThat(without.tierId()).isEqualTo("sage");
+            assertThat(without.criticalThinkingMissing()).isTrue();
+            assertThat(both.tierId()).isEqualTo("grand-sage");
         }
 
         @Test
         void grand_sage_has_no_division_and_no_end() {
-            Rank rank = Rank.of(Ladder.CULTURE, 2_000_000, 5);
+            Rank rank = Rank.of(Ladder.CULTURE, 2_000_000, new Specialties(4, 3, true));
 
             assertThat(rank.tierId()).isEqualTo("grand-sage");
             assertThat(rank.division()).isZero();

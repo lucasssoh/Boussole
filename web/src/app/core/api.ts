@@ -337,8 +337,9 @@ export interface Rank {
   levelSize: number;
   divisionFrom: number;
   nextAt: number;
-  /** The fields still missing to rise above, when the points alone would. */
-  fieldsMissing: number;
+  /** What the culture still asks to rise above, when the points alone would. */
+  specialtiesMissing: number;
+  criticalThinkingMissing: boolean;
 }
 
 export interface FieldStanding {

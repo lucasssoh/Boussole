@@ -26,6 +26,18 @@ export function tierColors(tier: string): readonly [string, string] {
 /** The tiers of the culture ladder, from the lowest. */
 export const CULTURE_TIERS: readonly string[] = ['curious', 'apprentice', 'initiate', 'scholar', 'savant', 'master', 'sage', 'grand-sage'];
 
+/** The tiers of the specialty ladder, from the lowest. */
+export const SPECIALTY_TIERS: readonly string[] = ['novice', 'practitioner', 'proficient', 'expert', 'specialist', 'authority', 'luminary'];
+
+/** The specialty tier that counts for Sage and Grand Sage, and the field Grand Sage asks for besides. */
+export const STRONG_SPECIALTY = 'specialist';
+export const CRITICAL_THINKING = 'critical-thinking';
+
+/** Whether a specialty is at Specialist or above. */
+export function isStrong(tier: string): boolean {
+  return SPECIALTY_TIERS.indexOf(tier) >= SPECIALTY_TIERS.indexOf(STRONG_SPECIALTY);
+}
+
 /** Where a culture rank stands, higher being better: the tier first, then the division, I above V. */
 export function rankOrder(rank: { tier: string; division: number }): number {
   return CULTURE_TIERS.indexOf(rank.tier) * 10 + (rank.division === 0 ? 9 : 6 - rank.division);

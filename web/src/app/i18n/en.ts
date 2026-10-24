@@ -203,6 +203,7 @@ export const EN = {
     'personal-services': 'Personal services',
     'security-and-defence': 'Security and defence',
     transport: 'Transport',
+    'critical-thinking': 'Critical thinking',
   },
   profile: {
     title: 'Profile',
@@ -218,7 +219,9 @@ export const EN = {
     ranks: 'Tiers',
     forSage: 'For Sage',
     forGrandSage: 'For Grand Sage',
-    fields: '{{count}} / {{needed}} fields',
+    specialistsCount: '{{count}} / {{needed}} specialties',
+    atSpecialist: 'at Specialist or above',
+    criticalThinking: 'and Critical thinking at Specialist',
     specialties: 'Specialties',
     noSpecialty: 'No specialty yet.',
     achievements: 'Achievements',
@@ -231,7 +234,8 @@ export const EN = {
     levels: 'levels {{from}} to {{to}}',
     levelsFrom: 'level {{from}} and beyond',
     from: '{{points}} pts',
-    fields: '{{count}} fields',
+    asksSage: '3 specialties at Specialist',
+    asksGrandSage: 'Sage, and Critical thinking at Specialist besides',
     nextDivision: '{{points}} points to the next division',
   },
   promotion: {
