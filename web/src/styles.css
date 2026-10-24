@@ -2696,7 +2696,7 @@ app-settings-drawer {
   gap: 1.75rem;
   padding: 2rem 2rem 1.75rem;
   border-radius: var(--radius);
-  background: color-mix(in srgb, var(--tier-deep) 30%, #10161a);
+  background: var(--ambiance, linear-gradient(135deg, color-mix(in srgb, var(--tier-deep) 38%, #10161a), color-mix(in srgb, var(--tier-deep) 18%, #0b1013)));
   color: #f5f1ea;
 }
 
@@ -2708,13 +2708,27 @@ app-settings-drawer {
 }
 
 .profile-emblem {
+  position: relative;
   display: grid;
   place-items: center;
-  width: 9.5rem;
-  height: 9.5rem;
+  width: 10.5rem;
+  height: 11.5rem;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 30%, transparent), transparent);
+}
+
+.profile-emblem::after {
+  content: '';
+  position: absolute;
+  bottom: 0.1rem;
+  width: 6.5rem;
+  height: 0.9rem;
   border-radius: 50%;
-  background: var(--ambiance);
-  box-shadow: 0 0 0 4px var(--surface), 0 0 0 7px var(--tier);
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.45), transparent);
+}
+
+.profile-emblem .rank-emblem {
+  position: relative;
+  z-index: 1;
 }
 
 .profile-who {
@@ -2734,7 +2748,7 @@ app-settings-drawer {
   font-weight: 900;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--tier) 60%, #ffffff);
+  color: color-mix(in srgb, var(--accent) 60%, #ffffff);
 }
 
 .profile-level {
@@ -2742,13 +2756,13 @@ app-settings-drawer {
   align-items: center;
   gap: 0.6rem;
   font-weight: 800;
-  color: color-mix(in srgb, var(--tier) 50%, #ffffff);
+  color: color-mix(in srgb, var(--accent) 50%, #ffffff);
 }
 
 .level-chip {
   padding: 0.2rem 0.65rem;
   border-radius: 10px;
-  background: var(--tier);
+  background: var(--accent, var(--tier));
   color: #10161a;
   font-weight: 900;
 }
@@ -2767,13 +2781,14 @@ app-settings-drawer {
   gap: 1rem;
   padding: 0.55rem 0.9rem;
   border-radius: 14px;
-  background: color-mix(in srgb, var(--tier-deep) 40%, #10161a);
+  background: rgb(255 255 255 / 0.07);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
 }
 
 .profile-records dt {
   font-size: 0.82rem;
   font-weight: 800;
-  color: color-mix(in srgb, var(--tier) 55%, #ffffff);
+  color: color-mix(in srgb, var(--accent) 55%, #ffffff);
 }
 
 .profile-records dd {
@@ -2990,6 +3005,14 @@ app-settings-drawer {
 @media (max-width: 640px) {
   .profile-banner {
     padding: 1.25rem;
+  }
+
+  .profile-emblem {
+    margin-inline: auto;
+  }
+
+  .profile-records {
+    flex-basis: 100%;
   }
 
   .route-step span {

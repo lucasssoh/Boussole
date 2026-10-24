@@ -4,7 +4,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { AchievementProgress, LadderStep } from '../core/api';
 import { BoussoleApi } from '../core/boussole-api';
 import { StatsService } from '../core/stats.service';
-import { emblemAmbiance } from '../shared/emblem';
+import { emblemAmbiance, emblemLook, emblemStep } from '../shared/emblem';
 import { RankEmblemComponent } from '../shared/rank-emblem.component';
 import { CRITICAL_THINKING, divisionProgress, isStrong, roman, tierColors } from '../shared/ranks';
 import { RankNames } from './rank-names';
@@ -22,9 +22,9 @@ import { RankNames } from './rank-names';
     <main class="page wide profile">
       @if (stats.stats(); as current) {
         @let rank = current.culture;
-        <section class="profile-banner" [style.--tier]="colors()[0]" [style.--tier-deep]="colors()[1]">
+        <section class="profile-banner" [style.--tier]="colors()[0]" [style.--tier-deep]="colors()[1]" [style.--ambiance]="ambiance()" [style.--accent]="accent()">
           <div class="profile-card">
-            <div class="profile-emblem" [style.--ambiance]="ambiance()"><app-rank-emblem [tier]="rank.tier" [division]="rank.division" [size]="100" [lively]="true" /></div>
+            <div class="profile-emblem"><app-rank-emblem [tier]="rank.tier" [division]="rank.division" [size]="124" [lively]="true" /></div>
             <div class="profile-who">
               <span class="profile-ladder">{{ 'profile.culture' | transloco }}</span>
               <h1>{{ names.rank(rank.tier, rank.division) }}</h1>
@@ -122,7 +122,13 @@ export class ProfilePageComponent {
   protected readonly roman = roman;
 
   protected readonly colors = computed(() => tierColors(this.stats.stats()?.culture.tier ?? 'curious'));
-  protected readonly ambiance = computed(() => emblemAmbiance(this.stats.stats()?.culture.tier ?? 'curious'));
+  /** The colour that reads on the banner: the tier's, or the gold of the Grand Sage. */
+  protected readonly accent = computed(() => emblemLook(this.stats.stats()?.culture.tier ?? 'curious').auraColor);
+  /** The night of the highest tiers behind the banner; the others keep its dusk. */
+  protected readonly ambiance = computed(() => {
+    const tier = this.stats.stats()?.culture.tier ?? 'curious';
+    return emblemStep(tier) >= 5 ? emblemAmbiance(tier) : null;
+  });
   protected readonly firstTry = computed(() => {
     const records = this.stats.stats()?.records;
     return records && records.firstTryAnswered > 0 ? `${Math.round((100 * records.firstTryRight) / records.firstTryAnswered)} %` : '—';
