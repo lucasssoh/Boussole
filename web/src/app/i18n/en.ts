@@ -231,6 +231,7 @@ export const EN = {
   ranks: {
     title: 'Tiers',
     since: 'from {{points}} points',
+    points: '{{points}} pts',
     asksSage: 'and three specialties at Specialist',
     asksGrandSage: 'and Critical thinking at Specialist, besides the three specialties of Sage',
     about: {
