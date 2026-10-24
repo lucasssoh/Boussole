@@ -51,6 +51,7 @@ package "learn" {
   class SessionGridComponent <<the sessions of a chapter as a grid, on the home page>>
   class CourseMapComponent <<the map of a track: chapters, then a chapter zoomed into its sessions>>
   class "graph-layout.ts" as GraphLayout <<floors, order without crossings, links routed>>
+  class "chapterColor()" as ChapterColor <<the colour of a chapter, by its place>>
   class TrackLanguagesComponent <<the languages of a track, chips>>
   class SidePanelComponent <<video, PDF or web page>>
 }
@@ -111,6 +112,7 @@ FillGaps ..> IconComponent : iconSvg()
 CoursePageComponent --> LearnFacade
 CoursePageComponent --> CourseMapComponent : the map
 CourseMapComponent ..> GraphLayout
+CourseMapComponent ..> ChapterColor
 SessionPageComponent --> LearnFacade
 SessionPageComponent *-- SessionRun : provides
 SessionPageComponent ..> SessionPlan : screens

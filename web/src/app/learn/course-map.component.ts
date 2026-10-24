@@ -6,6 +6,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { Chapter, Course, SessionEntry } from '../core/api';
 import { ServerSettingsService } from '../core/server-settings.service';
 import { Link, layOut, reduceLinks } from '../shared/graph-layout';
+import { chapterColor } from '../shared/chapter-color';
 import { IconComponent } from '../shared/icon.component';
 import { RichTextComponent } from '../shared/rich-text.component';
 
@@ -14,6 +15,8 @@ type NodeState = 'done' | 'next' | 'open' | 'locked' | 'unwritten';
 
 interface MapNode {
   id: string;
+  /** The colour of its chapter. */
+  tint: string;
   title: string;
   state: NodeState;
   /** Its floor: the nodes and links come in floor after floor, breadth first. */
@@ -31,6 +34,7 @@ interface MapNode {
 interface MapLink {
   d: string;
   lit: boolean;
+  tint: string;
   floor: number;
 }
 
@@ -43,9 +47,9 @@ interface MapView {
 
 /** The size of a block, and the room between floors; smaller on a narrow screen, where the mark sits above the title. */
 const CHAPTER = { width: 240, height: 100, step: 152 };
-const SESSION = { width: 220, height: 80, step: 128 };
+const SESSION = { width: 220, height: 90, step: 136 };
 const COMPACT_CHAPTER = { width: 150, height: 104, step: 146 };
-const COMPACT_SESSION = { width: 140, height: 92, step: 132 };
+const COMPACT_SESSION = { width: 140, height: 100, step: 140 };
 const COMPACT_BELOW = 640;
 const TOP = 16;
 /** Below this room per block, the map scrolls sideways rather than squeezing it. */
@@ -68,18 +72,18 @@ const ZOOM_MS = 380;
   host: { class: 'course-map', '[class.compact]': 'compact()' },
   template: `
     @if (openChapter(); as chapter) {
-      <div class="map-head">
+      <div class="map-head" [style.--tint]="tintOf(chapter.id)">
         <button type="button" class="back" [attr.aria-label]="'map.chapters' | transloco" [title]="'map.chapters' | transloco" (click)="close()"><app-icon name="arrow-left" /></button>
-        <h3><app-rich-text [text]="chapter.title" /></h3>
+        <h3><span class="map-dot" aria-hidden="true"></span><app-rich-text [text]="chapter.title" /></h3>
       </div>
     }
     <div class="map-scroll">
       @if (view(); as current) {
-        <div class="map-canvas" [class.zooming]="zooming()" [style.width.px]="current.width" [style.height.px]="current.height"
+        <div class="map-canvas" [class.inside]="openChapter()" [style.--tint]="openChapter() ? tintOf(openChapter()!.id) : null" [class.zooming]="zooming()" [style.width.px]="current.width" [style.height.px]="current.height"
           [style.transform-origin]="origin()">
           <svg class="map-links" [attr.width]="current.width" [attr.height]="current.height" aria-hidden="true">
             @for (link of current.links; track $index) {
-              <path [attr.d]="link.d" [class.lit]="link.lit" [style.--i]="link.floor" pathLength="1"></path>
+              <path [attr.d]="link.d" [class.lit]="link.lit" [style.--i]="link.floor" [style.--tint]="link.tint" pathLength="1"></path>
             }
           </svg>
           @for (node of current.nodes; track node.id) {
@@ -90,7 +94,7 @@ const ZOOM_MS = 380;
                   <span class="map-meta">{{ 'course.notWritten' | transloco }}</span>
                 </span>
               } @else {
-                <a [class]="'map-node session ' + node.state + ' ' + node.kind" [style.--i]="node.floor"
+                <a [class]="'map-node session ' + node.state + ' ' + node.kind" [style.--i]="node.floor" [style.--tint]="node.tint"
                   [style.left.px]="node.x - node.width / 2" [style.top.px]="node.y - node.height / 2" [style.width.px]="node.width" [style.height.px]="node.height"
                   [routerLink]="['/subjects', course().id, 'sessions', node.id]"
                   [attr.title]="node.waitingFor ? (afterKey() | transloco: { titles: node.waitingFor }) : null">
@@ -111,7 +115,7 @@ const ZOOM_MS = 380;
                 </a>
               }
             } @else {
-              <button type="button" [class]="'map-node chapter ' + node.state" [style.--i]="node.floor"
+              <button type="button" [class]="'map-node chapter ' + node.state" [style.--i]="node.floor" [style.--tint]="node.tint"
                 [style.left.px]="node.x - node.width / 2" [style.top.px]="node.y - node.height / 2" [style.width.px]="node.width" [style.height.px]="node.height"
                 [attr.title]="node.waitingFor ? (afterKey() | transloco: { titles: node.waitingFor }) : null"
                 (click)="open(node.id)">
@@ -191,6 +195,11 @@ export class CourseMapComponent {
     void this.router.navigate([], { relativeTo: this.route, queryParams: { chapter: null }, queryParamsHandling: 'merge', replaceUrl: true });
   }
 
+  /** The colour of a chapter, by its place in the track. */
+  protected tintOf(chapter: string): string {
+    return chapterColor(this.course().chapters.findIndex((found) => found.id === chapter));
+  }
+
   protected afterKey(): string {
     return this.settings.freeNavigation() ? 'course.advisedAfter' : 'course.after';
   }
@@ -213,9 +222,9 @@ export class CourseMapComponent {
       const waiting = chapter.waitingFor.length > 0;
       const state: NodeState = written.length === 0 ? 'unwritten' : done === written.length ? 'done'
         : waiting && !this.settings.freeNavigation() ? 'locked' : holds ? 'next' : 'open';
-      return { title: chapter.title, state, done, total: written.length,
+      return { tint: this.tintOf(id), title: chapter.title, state, done, total: written.length,
         waitingFor: waiting ? chapter.waitingFor.map((wait) => titles.get(wait.id) ?? wait.title).join(', ') : undefined };
-    }, (id) => this.chapterDone(chapters.find((found) => found.id === id)!));
+    }, (id) => this.chapterDone(chapters.find((found) => found.id === id)!), (id) => this.tintOf(id));
   }
 
   private sessionsView(chapter: Chapter): MapView {
@@ -225,9 +234,9 @@ export class CourseMapComponent {
     return this.place(ids, reduceLinks(ids, links), this.compact() ? COMPACT_SESSION : SESSION, (id) => {
       const entry = chapter.sessions.find((found) => found.id === id)!;
       const waits = [...chapterWaits, ...entry.waitingFor.map((prerequisite) => prerequisite.title)];
-      return { title: entry.title, state: this.sessionState(entry, waits.length > 0), kind: entry.kind,
+      return { tint: this.tintOf(chapter.id), title: entry.title, state: this.sessionState(entry, waits.length > 0), kind: entry.kind,
         waitingFor: !entry.finished && waits.length > 0 ? waits.join(', ') : undefined };
-    }, (id) => chapter.sessions.find((found) => found.id === id)?.finished ?? false);
+    }, (id) => chapter.sessions.find((found) => found.id === id)?.finished ?? false, () => this.tintOf(chapter.id));
   }
 
   private sessionState(entry: SessionEntry, waiting: boolean): NodeState {
@@ -250,7 +259,8 @@ export class CourseMapComponent {
 
   /** The blocks on their floors, each floor spread over the width, and the links as curves leaving under a block and reaching the next from above. */
   private place(ids: string[], links: Link[], size: { width: number; height: number; step: number },
-    describe: (id: string) => Omit<MapNode, 'id' | 'floor' | 'x' | 'y' | 'width' | 'height'>, finished: (id: string) => boolean): MapView {
+    describe: (id: string) => Omit<MapNode, 'id' | 'floor' | 'x' | 'y' | 'width' | 'height'>, finished: (id: string) => boolean,
+    tint: (id: string) => string): MapView {
     const layout = layOut(ids, links);
     // a block takes a full share of its floor, a link passing through a third of one
     const weight = (slot: (typeof layout.floors)[number][number]) => ('node' in slot ? 1 : THROUGH);
@@ -295,7 +305,7 @@ export class CourseMapComponent {
         const bend = (points[k].y - points[k - 1].y) * 0.55;
         d += ` C${points[k - 1].x} ${points[k - 1].y + bend} ${points[k].x} ${points[k].y - bend} ${points[k].x} ${points[k].y}`;
       }
-      return { d, lit: finished(route.link[0]), floor: layout.floor.get(route.link[1]) ?? 0 };
+      return { d, lit: finished(route.link[0]), tint: tint(route.link[0]), floor: layout.floor.get(route.link[1]) ?? 0 };
     });
     return { nodes, links: mapLinks, width, height: TOP * 2 + size.height + (layout.floors.length - 1) * size.step };
   }

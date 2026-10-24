@@ -6,6 +6,7 @@ import { storedValue, storeValue } from '../core/local-preferences';
 import { ServerSettingsService } from '../core/server-settings.service';
 import { StatsService } from '../core/stats.service';
 import { RichTextComponent } from '../shared/rich-text.component';
+import { chapterColor } from '../shared/chapter-color';
 import { subjectColor } from '../shared/subject-color';
 import { formatPoints } from '../shared/ranks';
 import { BlockListComponent } from './blocks/block-list.component';
@@ -71,7 +72,7 @@ import { SidePanelComponent } from './side-panel.component';
           @switch (shown.kind) {
             @case ('start') {
               <p class="eyebrow">
-                {{ current.chapterTitle }} ·
+                <span class="chapter-pill" [style.--tint]="chapterTint()"><span class="map-dot" aria-hidden="true"></span>{{ current.chapterTitle }}</span>
                 <span class="tag" [class]="current.kind">{{ 'kind.' + current.kind | transloco }}</span>
                 {{ (timed() ? 'course.timed' : 'course.estimate') | transloco: { minutes: current.duration } }}
               </p>
@@ -236,6 +237,11 @@ export class SessionPageComponent {
     return opened ? authorshipLine(opened.writtenBy, (key, values) => this.transloco.translate(key, values, language), language) : '';
   });
   protected readonly color = computed(() => subjectColor(this.subject()));
+  /** The colour of the chapter of this session, the one it wears on the map of the track. */
+  protected readonly chapterTint = computed(() => {
+    const chapters = this.learn.course()?.chapters ?? [];
+    return chapterColor(chapters.findIndex((chapter) => chapter.sessions.some((entry) => entry.id === this.session())));
+  });
   /**
    * What this session waits for, from its track: the chapters its chapter waits for, each linked
    * to the session of it to go on with, then its own prerequisites not finished yet.
