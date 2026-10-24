@@ -25,7 +25,7 @@ file.
 | `id` | yes | the same `id` as the session in the plan |
 | `objectives` | yes | one to five sentences, each starting with a verb |
 | `terms` | no | the identifiers of the :term[lexicon]{id=lexicon} used in the session |
-| `prerequisites` | no | the **full** identifiers of the sessions to finish before: only those really needed. In guided mode, the session waits for them. |
+| `prerequisites` | no | the **full** identifiers of the sessions to finish before: only those really needed. In guided mode, the session waits for them; a session of another chapter makes the whole chapter wait. |
 | `sources` | no | the documents of `sources/`, with `#page=N` if needed |
 | `written_by` | no | who wrote the session: an AI `model` (its exact ID) and its `tool`, or a `name`; the `date`; the `role` (`wrote`, `revised`, `translated`). The learner sees it. |
 
@@ -53,6 +53,10 @@ sources:
 - `terms` cites terms of the lexicon (session f8); a term missing from the lexicon is an error.
 - `sources` points to page 32 of the book kept in `sources/`.
 :::
+
+A prerequisite taken from another chapter makes the **whole** chapter wait: a chapter is finished
+before the chapters that need it are opened. On the map of the track, the chapters follow one
+another this way, and two chapters waiting for each other are an error (`F044`).
 
 ::::mcq{#f3-a1}
 The file `s2-first-commit.md` starts with `id: s1`. What does the validator say?

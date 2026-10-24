@@ -142,6 +142,13 @@ class ServerApiTest {
     }
 
     @Test
+    void a_chapter_says_which_chapters_it_waits_for() throws Exception {
+        assertThat(get("/api/subjects/reseaux").body())
+                .contains("{\"id\":\"couche-reseau\",\"title\":", "\"after\":[],\"waitingFor\":[],\"sessions\":[",
+                        "\"after\":[\"s11\"]");
+    }
+
+    @Test
     void a_finished_session_shows_in_the_course() throws Exception {
         assertThat(post("/api/subjects/reseaux/sessions/s11/finish", "{\"spentSeconds\":3000}").body()).contains("\"bonus\":0.0");
         assertThat(get("/api/subjects/reseaux").body()).contains("\"id\":\"s11\"", "\"finished\":true");

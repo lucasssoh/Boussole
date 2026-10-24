@@ -49,6 +49,9 @@ export const EN = {
     after: 'After: {{titles}}',
     advisedAfter: 'Best after: {{titles}}',
   },
+  map: {
+    chapters: 'All the chapters',
+  },
   session: {
     objectives: 'By the end of this session, you can',
     prerequisites: 'You need',

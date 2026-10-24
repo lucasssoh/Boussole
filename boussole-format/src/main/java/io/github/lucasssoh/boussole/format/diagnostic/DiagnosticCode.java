@@ -38,6 +38,7 @@ public enum DiagnosticCode {
     F041(WARNING, "session written in another version, not yet in this one"),
     F042(ERROR, "question asked again before it is taught"),
     F043(ERROR, "hook question outside the warmup"),
+    F044(ERROR, "chapters that wait for one another"),
     P001(WARNING, "notion without exercise"),
     P002(WARNING, "notion with several examples"),
     P003(WARNING, "warmup not first, or practice not last"),

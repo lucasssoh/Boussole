@@ -121,7 +121,8 @@ session should be split, and propose how.
   ID used in the session), `prerequisites` (full session IDs), `sources` (files and pages).
 - `prerequisites` lists only the sessions this one **really needs** (a notion it uses without
   explaining it again), never simply the previous one: in guided mode the learner cannot begin
-  the session until they are finished, so a needless prerequisite blocks them for nothing.
+  the session until they are finished, so a needless prerequisite blocks them for nothing; one
+  in another chapter makes the whole chapter wait for that chapter.
 - Exercise IDs: `<session>-w1` (warmup), `<session>-a1` (À toi), `<session>-c1` (checkpoint),
   `<session>-p1` (practice).
 

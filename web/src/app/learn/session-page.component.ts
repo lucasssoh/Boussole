@@ -155,7 +155,7 @@ import { SidePanelComponent } from './side-panel.component';
                 <p class="verdict correct">{{ 'session.finished' | transloco: { minutes: finishedIn() } }}</p>
               }
               <nav class="session-nav">
-                <a [routerLink]="['/subjects', current.subject]"><app-icon name="arrow-left" /> {{ learn.course()?.name }}</a>
+                <a [routerLink]="['/subjects', current.subject]" [queryParams]="{ chapter: current.chapterId }"><app-icon name="arrow-left" /> {{ learn.course()?.name }}</a>
                 @if (current.next) {
                   <a class="next" [routerLink]="['/subjects', current.subject, 'sessions', current.next]">{{ 'session.next' | transloco }} <app-icon name="arrow-right" /></a>
                 }
@@ -236,10 +236,21 @@ export class SessionPageComponent {
     return opened ? authorshipLine(opened.writtenBy, (key, values) => this.transloco.translate(key, values, language), language) : '';
   });
   protected readonly color = computed(() => subjectColor(this.subject()));
-  /** The prerequisites of this session not finished yet, from its track. */
+  /**
+   * What this session waits for, from its track: the chapters its chapter waits for, each linked
+   * to the session of it to go on with, then its own prerequisites not finished yet.
+   */
   protected readonly waitingFor = computed<Prerequisite[]>(() => {
-    const entry = this.learn.course()?.chapters.flatMap((chapter) => chapter.sessions).find((found) => found.id === this.session());
-    return entry && !entry.finished ? entry.waitingFor : [];
+    const course = this.learn.course();
+    const chapter = course?.chapters.find((found) => found.sessions.some((entry) => entry.id === this.session()));
+    const entry = chapter?.sessions.find((found) => found.id === this.session());
+    if (!course || !chapter || !entry || entry.finished) {
+      return [];
+    }
+    const chapters = chapter.waitingFor
+      .filter((wait) => wait.next !== null)
+      .map((wait) => ({ subject: course.id, session: wait.next!, title: wait.title }));
+    return [...chapters, ...entry.waitingFor];
   });
   /** In guided mode, a session waits for its prerequisites; in free mode, they are advice. */
   protected readonly locked = computed(() => this.waitingFor().length > 0 && !this.settings.freeNavigation());

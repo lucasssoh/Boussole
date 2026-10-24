@@ -29,6 +29,8 @@ package "course" {
   class ResumeView <<record>>
   class "CourseView.ScoreView" as ScoreView <<record: earned, missed, possible>>
   class "CourseView.PrerequisiteView" as PrerequisiteView <<record>>
+  class "CourseView.ChapterView" as ChapterView <<record: after, waitingFor, sessions>>
+  class "CourseView.ChapterWaitView" as ChapterWaitView <<record: a chapter to finish first, its next session>>
 }
 package "session" {
   class SessionController <<…/sessions/{id}>>
@@ -102,6 +104,8 @@ StatsController --> core
 StatsController ..> StatsView
 ReferenceController --> core : PreviewWebPage
 CourseController ..> ResumeView : session to resume
+CourseView *-- ChapterView : chapters
+ChapterView *-- ChapterWaitView : waitingFor
 CourseView *-- PrerequisiteView : a session waits for
 CourseView *-- ScoreView : score
 SessionController ..> SessionView

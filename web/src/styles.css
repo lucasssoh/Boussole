@@ -3292,6 +3292,242 @@ app-settings-drawer {
   }
 }
 
+.course-map {
+  display: block;
+}
+
+.map-head {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.map-head h3 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.map-scroll {
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.map-canvas {
+  position: relative;
+}
+
+/* A click on a chapter: the map grows from it and fades, its sessions come in. */
+.map-canvas.zooming {
+  animation: map-zoom 0.38s cubic-bezier(0.6, 0, 0.3, 1) forwards;
+}
+
+@keyframes map-zoom {
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.map-links {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+.map-links path {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  animation: map-draw 0.35s ease-out backwards;
+  animation-delay: calc(var(--i, 0) * 140ms - 90ms);
+}
+
+.map-links path.lit {
+  stroke: var(--brand);
+  stroke-width: 4;
+}
+
+@keyframes map-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+.map-node {
+  position: absolute;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr auto;
+  align-items: center;
+  column-gap: 0.7rem;
+  min-height: 0;
+  padding: 0.55rem 0.9rem;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 5px 0 var(--line);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  animation: bubble 0.45s var(--spring) backwards;
+  animation-delay: calc(var(--i, 0) * 140ms);
+  transition: transform 0.15s;
+}
+
+.map-node:hover {
+  transform: translateY(-2px);
+}
+
+.map-node:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--line);
+}
+
+.map-mark {
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  color: var(--brand);
+}
+
+.map-title {
+  font-size: 0.92rem;
+  font-weight: 900;
+  line-height: 1.25;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.map-meta {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.map-node.chapter {
+  grid-template-rows: auto 1fr auto;
+}
+
+.map-node.chapter .map-mark {
+  grid-row: 1 / span 3;
+}
+
+.map-count {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: var(--muted);
+}
+
+.map-node.chapter .map-title {
+  padding-right: 2.2rem;
+}
+
+.map-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.map-bar span {
+  display: block;
+  height: 100%;
+  background: var(--brand);
+}
+
+/* Finished: checked, quiet. */
+.map-node.done {
+  border-color: color-mix(in srgb, var(--brand) 55%, var(--line));
+  background: color-mix(in srgb, var(--brand) 9%, var(--surface));
+  box-shadow: 0 5px 0 color-mix(in srgb, var(--brand) 30%, var(--line));
+}
+
+/* Next: the one to go on with stands out. */
+.map-node.next {
+  border: 3px solid var(--brand);
+  box-shadow: 0 5px 0 color-mix(in srgb, var(--brand) 70%, black), 0 0 0 7px color-mix(in srgb, var(--brand) 14%, transparent);
+}
+
+.map-node.next .map-mark {
+  background: var(--brand);
+  color: #ffffff;
+}
+
+.map-node.open .map-mark {
+  box-shadow: inset 0 0 0 2px var(--brand);
+}
+
+/* Not open yet: greyed, locked. */
+.map-node.locked {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+
+.map-node.locked .map-mark {
+  color: var(--muted);
+}
+
+.map-node.unwritten {
+  border-style: dashed;
+  background: transparent;
+  box-shadow: none;
+  color: var(--muted);
+}
+
+span.map-node.unwritten {
+  cursor: default;
+}
+
+.map-node.review,
+.map-node.mock,
+.map-node.exam {
+  border-radius: 22px;
+}
+
+/* On a narrow screen: the mark above the title, the count beside the mark. */
+.course-map.compact .map-node {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+  align-items: start;
+  row-gap: 0.25rem;
+  padding: 0.45rem 0.55rem;
+}
+
+.course-map.compact .map-mark,
+.course-map.compact .map-node.chapter .map-mark {
+  grid-row: auto;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.course-map.compact .map-title {
+  font-size: 0.78rem;
+  padding-right: 0;
+}
+
+.course-map.compact .map-node.chapter .map-title {
+  padding-right: 0;
+}
+
+.course-map.compact .map-count {
+  top: 0.55rem;
+  right: 0.55rem;
+}
+
 .panel-note.met {
   color: var(--correct);
 }

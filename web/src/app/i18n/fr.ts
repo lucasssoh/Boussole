@@ -51,6 +51,9 @@ export const FR: Translations = {
     after: 'Après : {{titles}}',
     advisedAfter: 'Conseillée après : {{titles}}',
   },
+  map: {
+    chapters: 'Tous les chapitres',
+  },
   session: {
     objectives: 'À la fin de cette séance, tu sais',
     prerequisites: 'Il te faut',

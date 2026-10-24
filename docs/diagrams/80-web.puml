@@ -48,7 +48,9 @@ package "learn" {
   }
   class "sessionPlan()" as SessionPlan <<start, explanation, example, question…, end>>
   class SessionPathComponent <<the session as a path of nodes>>
-  class SessionGridComponent <<the sessions as a grid, by chapter>>
+  class SessionGridComponent <<the sessions of a chapter as a grid, on the home page>>
+  class CourseMapComponent <<the map of a track: chapters, then a chapter zoomed into its sessions>>
+  class "graph-layout.ts" as GraphLayout <<floors, order without crossings, links routed>>
   class TrackLanguagesComponent <<the languages of a track, chips>>
   class SidePanelComponent <<video, PDF or web page>>
 }
@@ -107,6 +109,8 @@ SessionPageComponent --> TrackLanguagesComponent : switch, same place
 QuestionFooterComponent ..> IconComponent : hint, arrows
 FillGaps ..> IconComponent : iconSvg()
 CoursePageComponent --> LearnFacade
+CoursePageComponent --> CourseMapComponent : the map
+CourseMapComponent ..> GraphLayout
 SessionPageComponent --> LearnFacade
 SessionPageComponent *-- SessionRun : provides
 SessionPageComponent ..> SessionPlan : screens

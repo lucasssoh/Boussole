@@ -7,14 +7,14 @@ import { subjectColor } from '../shared/subject-color';
 import { formatPoints } from '../shared/ranks';
 import { LanguageService } from '../core/language.service';
 import { TrackScore } from '../core/api';
-import { SessionGridComponent } from './session-grid.component';
+import { CourseMapComponent } from './course-map.component';
 import { LearnFacade } from './learn.facade';
 import { TrackLanguagesComponent } from './track-languages.component';
 
 /** A subject: its plan, and its lexicon. */
 @Component({
   selector: 'app-course-page',
-  imports: [IconComponent, RichTextComponent, RouterLink, SessionGridComponent, TranslocoPipe, TrackLanguagesComponent],
+  imports: [CourseMapComponent, IconComponent, RichTextComponent, RouterLink, TranslocoPipe, TrackLanguagesComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'subject-scope', '[style.--subject]': 'color()' },
   template: `
@@ -89,7 +89,7 @@ import { TrackLanguagesComponent } from './track-languages.component';
               <p class="note">{{ 'course.allDone' | transloco }}</p>
             }
             <h2>{{ 'course.sessions' | transloco }}</h2>
-            <app-session-grid [course]="course" [resume]="course.resume?.id ?? null" />
+            <app-course-map [course]="course" [resume]="course.resume?.id ?? null" />
             @if (course.lexicon.length > 0) {
               <details class="lexicon">
                 <summary>{{ 'course.lexicon' | transloco }} ({{ course.lexicon.length }})</summary>

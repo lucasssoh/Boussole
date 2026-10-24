@@ -80,7 +80,7 @@ const FIRST_NODE = 52;
   template: `
     @let current = session();
     <div class="path-head">
-      <a class="path-back" [routerLink]="['/subjects', current.subject]"><app-icon name="arrow-left" /> {{ learn.course()?.name }}</a>
+      <a class="path-back" [routerLink]="['/subjects', current.subject]" [queryParams]="{ chapter: current.chapterId }"><app-icon name="arrow-left" /> {{ learn.course()?.name }}</a>
       <h2 class="path-title"><app-rich-text [text]="current.title" /></h2>
       <p class="path-time">
         {{ (current.kind === 'lesson' ? 'course.estimate' : 'course.timed') | transloco: { minutes: current.duration } }}

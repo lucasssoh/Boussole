@@ -38,6 +38,7 @@ are about the teaching contract and matter to the learner.
 | F040 | this version of the track differs from another language: an ID or what a question asks | keep every ID of the other version (sessions, `{#notion}`, exercises) and the same choices, gaps, items; translate only the text |
 | F041 | a session written in another language is not translated yet | translate it with `track-translate`, keeping every ID |
 | F043 | a question with `hook=true` outside the warmup | move it into the warmup, or remove `hook=true` |
+| F044 | chapters that wait for one another, through the prerequisites of their sessions | keep the chapters in one order: move the session that needs a later chapter after it, or remove a prerequisite that is not really needed |
 | F042 | a `::ref` asks a question of this session or of a later one | point to a question of an earlier session (`boussole index . --before <session>`), or write a new question |
 | F038 | a video file browsers may not play | ask the learner to convert it to MP4 or WebM (`ffmpeg -i in.mkv out.mp4`), then point `src` to the new file |
 | F037 | a `graph` line Boussole cannot read, a node twice, a loop, or places given for some nodes only | one node (`a "Label" @ 0,1`) or edge (`a -> b : 3`) per line; `@` on every node or none; FORMAT.md §5.5 |

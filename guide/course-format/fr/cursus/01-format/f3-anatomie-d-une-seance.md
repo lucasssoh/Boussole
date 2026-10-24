@@ -24,7 +24,7 @@ written_by:
 | `id` | oui | le même `id` que la séance dans le plan |
 | `objectives` | oui | de une à cinq phrases, chacune commence par un verbe |
 | `terms` | non | les identifiants du :term[lexique]{id=lexicon} employés dans la séance |
-| `prerequisites` | non | les identifiants **complets** des séances à terminer avant : seulement celles vraiment nécessaires. En mode guidé, la séance les attend. |
+| `prerequisites` | non | les identifiants **complets** des séances à terminer avant : seulement celles vraiment nécessaires. En mode guidé, la séance les attend ; une séance d'un autre chapitre fait attendre tout le chapitre. |
 | `sources` | non | les documents de `sources/`, avec `#page=N` si besoin |
 | `written_by` | non | qui a écrit la séance : un `model` d'IA (son identifiant exact) et son `tool`, ou un `name` ; la `date` ; le `role` (`wrote`, `revised`, `translated`). L'apprenant le voit. |
 
@@ -52,6 +52,10 @@ sources:
 - `terms` cite des termes du lexique (séance f8) ; un terme absent du lexique est une erreur.
 - `sources` pointe la page 32 du manuel rangé dans `sources/`.
 :::
+
+Un prérequis pris dans un autre chapitre fait attendre **tout** le chapitre : on termine un
+chapitre avant d'ouvrir ceux qui en ont besoin. Sur la carte du parcours, les chapitres
+s'enchaînent ainsi, et deux chapitres qui s'attendent l'un l'autre sont une erreur (`F044`).
 
 ::::mcq{#f3-a1}
 Le fichier `s2-premier-commit.md` commence par `id: s1`. Que dit le validateur ?

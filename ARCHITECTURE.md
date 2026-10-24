@@ -324,7 +324,7 @@ local network (`HttpWebPages`). Under `/api/subjects/{subject}`:
 
 ```
 GET  /api/subjects?lang=                 tracks (once each, in lang when they have it), progress, the session to resume
-GET  …?lang=                             chapters, sessions (written, finished), lexicon, the languages of the track
+GET  …?lang=                             chapters (the chapters each waits for), sessions (written, finished, the sessions of their chapter they need), lexicon, the languages of the track
 GET  …/sessions/{session}                parts and blocks; questions without answers
 POST …/sessions/{session}/finish         { spentSeconds }
 POST …/exercises/{id}/attempts?session=  verdict, each part judged and the correction, recorded

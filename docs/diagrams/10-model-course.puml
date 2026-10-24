@@ -38,6 +38,12 @@ enum Domain {
   +isced() : String
 }
 class CourseSyllabus <<record>>
+class ChapterLinks <<record>> {
+  after : Map<String, Set<String>>
+  +{static} of(Course) : ChapterLinks
+  +direct() : Map<String, Set<String>>
+  +loop() : Optional<List<String>>
+}
 enum SyllabusStatus {
   PROPOSED
   APPROVED
@@ -140,6 +146,7 @@ Course *-- "1" CourseSubject : subject
 CourseSubject --> TrackLevel : level
 CourseSubject --> Domain : domain
 Course *-- "1" CourseSyllabus : syllabus
+ChapterLinks ..> Course : from the prerequisites
 Course *-- "1" CourseLexicon : lexicon
 Course *-- "0..1" LearnerProfile : learner
 Course *-- "0..1" CourseSources : sources

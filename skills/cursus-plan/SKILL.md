@@ -56,7 +56,10 @@ write sessions here: the learner approves the plan first.
 - **List the notions and what each needs.** For each notion, the earlier notions it uses. A
   notion used before the session that teaches it is a mistake of the plan: move it, or plan its
   session earlier. These dependencies become the `prerequisites` of the sessions: only those
-  really needed, since in guided mode a session waits for them.
+  really needed, since in guided mode a session waits for them. A prerequisite in another
+  chapter makes the whole chapter wait for that chapter: order the chapters so that each needs
+  only earlier ones (`F044` otherwise), and keep what a chapter needs from another as small as
+  the notions allow.
 - **Note the usual mistakes** the documents point out (warnings of the teacher, corrections of
   tutorial sheets, comments on past exams): they become the wrong choices of the MCQs.
 - A project brief gets its own chapter, cut into sessions by the steps of the project.

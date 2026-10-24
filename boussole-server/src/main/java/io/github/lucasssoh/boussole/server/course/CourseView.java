@@ -50,7 +50,7 @@ record CourseView(
                 course.subject().description().orElse(null),
                 course.subject().sourcesDir(),
                 course.syllabus().chapters().stream()
-                        .map(chapter -> ChapterView.of(chapter, written, overview, titles))
+                        .map(chapter -> ChapterView.of(chapter, written, overview, titles, course.syllabus().chapters()))
                         .toList(),
                 course.lexicon().terms().stream().map(TermView::of).toList(),
                 ResumeView.of(overview).orElse(null),
@@ -62,12 +62,32 @@ record CourseView(
                 new ScoreView(overview.score().earned(), overview.score().missed(), overview.score().possible()));
     }
 
-    record ChapterView(String id, String title, List<SessionEntryView> sessions) {
+    /**
+     * A chapter: {@code after}, the chapters it waits for, those another path gives left out (what a
+     * map of the chapters draws); {@code waitingFor}, those of them not finished yet.
+     */
+    record ChapterView(String id, String title, List<String> after, List<ChapterWaitView> waitingFor, List<SessionEntryView> sessions) {
 
-        static ChapterView of(SyllabusChapter chapter, Set<String> written, CourseOverview overview, Map<String, String> titles) {
+        static ChapterView of(SyllabusChapter chapter, Set<String> written, CourseOverview overview, Map<String, String> titles,
+                List<SyllabusChapter> chapters) {
             String subject = overview.course().subject().id();
-            return new ChapterView(chapter.id(), chapter.title(), chapter.sessions().stream()
+            List<String> after = chapters.stream()
+                    .map(SyllabusChapter::id)
+                    .filter(overview.chapterLinks().getOrDefault(chapter.id(), Set.of())::contains)
+                    .toList();
+            List<ChapterWaitView> waitingFor = overview.chapterWaitingFor().getOrDefault(chapter.id(), List.of()).stream()
+                    .flatMap(id -> chapters.stream().filter(found -> found.id().equals(id)))
+                    .map(found -> ChapterWaitView.of(found, written, overview))
+                    .toList();
+            Map<String, List<String>> before = overview.course().sessions().stream()
+                    .filter(session -> session.chapter().id().equals(chapter.id()))
+                    .collect(Collectors.toMap(session -> session.entry().id(), session -> session.session().header().prerequisites().stream()
+                            .filter(id -> id.startsWith(subject + "." + chapter.id() + "."))
+                            .map(id -> id.substring(id.lastIndexOf('.') + 1))
+                            .toList()));
+            return new ChapterView(chapter.id(), chapter.title(), after, waitingFor, chapter.sessions().stream()
                     .map(entry -> SessionEntryView.of(entry, written.contains(entry.id()), overview.finishedSessions().contains(entry.id()),
+                            before.getOrDefault(entry.id(), List.of()),
                             overview.sessionProgress().getOrDefault(entry.id(), new SessionProgress(0, 0, 0)),
                             overview.waitingFor().getOrDefault(entry.id(), List.of()).stream()
                                     .map(id -> PrerequisiteView.of(id, subject, titles))
@@ -77,8 +97,9 @@ record CourseView(
     }
 
     /**
-     * {@code questions}, {@code answered}, {@code right}: how far the learner is in the session;
-     * {@code waitingFor}: its prerequisites not finished yet.
+     * {@code after}: the sessions of its chapter it needs, finished or not (what a map of the chapter
+     * draws); {@code questions}, {@code answered}, {@code right}: how far the learner is in the
+     * session; {@code waitingFor}: its prerequisites not finished yet.
      */
     record SessionEntryView(
             String id,
@@ -88,16 +109,30 @@ record CourseView(
             String goal,
             boolean written,
             boolean finished,
+            List<String> after,
             int questions,
             int answered,
             int right,
             List<PrerequisiteView> waitingFor) {
 
-        static SessionEntryView of(
-                SyllabusSession entry, boolean written, boolean finished, SessionProgress progress, List<PrerequisiteView> waitingFor) {
+        static SessionEntryView of(SyllabusSession entry, boolean written, boolean finished, List<String> after,
+                SessionProgress progress, List<PrerequisiteView> waitingFor) {
             return new SessionEntryView(entry.id(), entry.title(), entry.kind().name().toLowerCase(Locale.ROOT),
-                    entry.duration(), entry.goal(), written, finished, progress.questions(), progress.answered(), progress.right(),
+                    entry.duration(), entry.goal(), written, finished, after, progress.questions(), progress.answered(), progress.right(),
                     waitingFor);
+        }
+    }
+
+    /** A chapter to finish first: its title, and the session of it to go on with, the first written not finished. */
+    record ChapterWaitView(String id, String title, String next) {
+
+        static ChapterWaitView of(SyllabusChapter chapter, Set<String> written, CourseOverview overview) {
+            String next = chapter.sessions().stream()
+                    .map(SyllabusSession::id)
+                    .filter(id -> written.contains(id) && !overview.finishedSessions().contains(id))
+                    .findFirst()
+                    .orElse(null);
+            return new ChapterWaitView(chapter.id(), chapter.title(), next);
         }
     }
 

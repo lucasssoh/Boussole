@@ -61,7 +61,18 @@ export interface TrackScore {
 export interface Chapter {
   id: string;
   title: string;
+  /** The chapters it waits for, those another path gives left out: what the map draws. */
+  after: string[];
+  /** Those of them not finished yet: guided mode opens the chapter once they are, free mode advises them. */
+  waitingFor: ChapterWait[];
   sessions: SessionEntry[];
+}
+
+/** A chapter to finish first: its title, and the session of it to go on with. */
+export interface ChapterWait {
+  id: string;
+  title: string;
+  next: string | null;
 }
 
 export interface SessionEntry {
@@ -72,6 +83,8 @@ export interface SessionEntry {
   goal: string;
   written: boolean;
   finished: boolean;
+  /** The sessions of its chapter it needs, finished or not: what the map of the chapter draws. */
+  after: string[];
   /** Its questions (those asked again included), how many the learner answered, how many right. */
   questions: number;
   answered: number;

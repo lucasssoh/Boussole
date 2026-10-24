@@ -44,6 +44,8 @@ package "learn" {
     finishedSessions : Set<String>
     lastStudied : Optional<Instant>
     waitingFor : Map<String, List<SessionId>>
+    chapterLinks : Map<String, Set<String>>
+    chapterWaitingFor : Map<String, List<String>>
     score : TrackScore
     resume : Optional<String>
   }
@@ -234,6 +236,7 @@ ReadAchievements ..> TrackScores : finished tracks, mock exams
 ReadAchievements --> ProgressRepository : history
 StudyStats --> Records
 CourseOverviews ..> TrackScores : score
+CourseOverviews ..> ChapterLinks : chapters in order
 TrackScores ..> QuestionScore : possible
 PreviewWebPage --> WebPages : pages
 PreviewWebPage ..> PagePreview

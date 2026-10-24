@@ -2,6 +2,7 @@ package io.github.lucasssoh.boussole.core.learn;
 
 import io.github.lucasssoh.boussole.core.learn.progress.LastActivity;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
+import io.github.lucasssoh.boussole.format.model.ChapterLinks;
 import io.github.lucasssoh.boussole.format.model.Course;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionProgress;
@@ -31,8 +32,35 @@ final class CourseOverviews {
         Set<String> finished = progress.finishedSessions(subject);
         Optional<LastActivity> last = progress.lastActivity(subject);
         Map<String, List<SessionId>> waiting = waitingFor(course, finished);
+        ChapterLinks links = ChapterLinks.of(course);
+        Map<String, List<String>> chapterWaiting = chapterWaitingFor(course, links, finished);
         return new CourseOverview(course, languages, finished, sessionProgress(course, progress.exercises(subject)),
-                last.map(LastActivity::at), waiting, TrackScores.of(course, progress.attemptHistory()), resume(course, finished, waiting, last));
+                last.map(LastActivity::at), waiting, links.direct(), chapterWaiting, TrackScores.of(course, progress.attemptHistory()),
+                resume(course, finished, waiting, chapterWaiting, last));
+    }
+
+    /**
+     * The chapters still waiting for others: a chapter is finished when every written session of it
+     * is, and one waits for each chapter it needs ({@link ChapterLinks}) not finished yet.
+     */
+    private static Map<String, List<String>> chapterWaitingFor(Course course, ChapterLinks links, Set<String> finished) {
+        Set<String> done = course.syllabus().chapters().stream()
+                .filter(chapter -> course.sessions().stream()
+                        .filter(session -> session.chapter().id().equals(chapter.id()))
+                        .allMatch(session -> finished.contains(session.entry().id())))
+                .map(chapter -> chapter.id())
+                .collect(Collectors.toSet());
+        Map<String, List<String>> waiting = new HashMap<>();
+        for (var chapter : course.syllabus().chapters()) {
+            List<String> missing = links.after(chapter.id()).stream()
+                    .filter(before -> !done.contains(before))
+                    .sorted()
+                    .toList();
+            if (!missing.isEmpty()) {
+                waiting.put(chapter.id(), missing);
+            }
+        }
+        return waiting;
     }
 
     /** The written sessions whose prerequisites are not all finished, with those not finished. */
@@ -79,19 +107,25 @@ final class CourseOverviews {
 
     /**
      * The session of the last answer while it is not finished, else the first written session not
-     * finished whose prerequisites are, else the first not finished.
+     * finished whose prerequisites are and whose chapter waits for no other, else the first not finished.
      */
-    private static Optional<String> resume(
-            Course course, Set<String> finished, Map<String, List<SessionId>> waiting, Optional<LastActivity> last) {
+    private static Optional<String> resume(Course course, Set<String> finished, Map<String, List<SessionId>> waiting,
+            Map<String, List<String>> chapterWaiting, Optional<LastActivity> last) {
         Set<String> written = course.sessions().stream().map(session -> session.entry().id()).collect(Collectors.toSet());
         Optional<String> current = last.filter(activity -> !activity.finished())
                 .flatMap(LastActivity::session)
                 .filter(session -> written.contains(session) && !finished.contains(session));
+        Set<String> waitingChapters = course.sessions().stream()
+                .filter(session -> chapterWaiting.containsKey(session.chapter().id()))
+                .map(session -> session.entry().id())
+                .collect(Collectors.toSet());
         List<String> unfinished = course.sessions().stream()
                 .map(session -> session.entry().id())
                 .filter(session -> !finished.contains(session))
                 .toList();
-        return current.or(() -> unfinished.stream().filter(session -> !waiting.containsKey(session)).findFirst())
+        return current.or(() -> unfinished.stream()
+                        .filter(session -> !waiting.containsKey(session) && !waitingChapters.contains(session))
+                        .findFirst())
                 .or(() -> unfinished.stream().findFirst());
     }
 }

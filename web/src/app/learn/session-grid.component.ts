@@ -30,15 +30,15 @@ import { RichTextComponent } from '../shared/rich-text.component';
                   [class]="'session-card ' + entry.kind"
                   [class.finished]="entry.finished"
                   [class.resume]="entry.id === resume()"
-                  [class.locked]="locked(entry)"
-                  [attr.title]="waiting(entry) ? (afterKey() | transloco: { titles: titles(entry) }) : null"
+                  [class.locked]="locked(chapter, entry)"
+                  [attr.title]="waiting(chapter, entry) ? (afterKey() | transloco: { titles: titles(chapter, entry) }) : null"
                   [routerLink]="['/subjects', course().id, 'sessions', entry.id]"
                 >
                   <span class="session-card-top">
                     <span class="session-mark">
                       @if (entry.finished) {
                         <app-icon name="check" />
-                      } @else if (locked(entry)) {
+                      } @else if (locked(chapter, entry)) {
                         <app-icon name="lock" />
                       } @else if (entry.id === resume()) {
                         <app-icon name="play" />
@@ -51,8 +51,8 @@ import { RichTextComponent } from '../shared/rich-text.component';
                   </span>
                   <span class="session-card-title"><app-rich-text [text]="entry.title" /></span>
                   <span class="session-card-goal"><app-rich-text [text]="entry.goal" /></span>
-                  @if (waiting(entry)) {
-                    <span class="visually-hidden">{{ afterKey() | transloco: { titles: titles(entry) } }}</span>
+                  @if (waiting(chapter, entry)) {
+                    <span class="visually-hidden">{{ afterKey() | transloco: { titles: titles(chapter, entry) } }}</span>
                   }
                   @if (entry.questions > 0) {
                     <span class="session-progress" [attr.aria-label]="'course.progressLabel' | transloco: entry">
@@ -95,21 +95,21 @@ export class SessionGridComponent {
 
   protected readonly shown = computed(() => this.chapters() ?? this.course().chapters);
 
-  /** The sessions to finish first, said on hover and to screen readers rather than on the card. */
-  protected waiting(entry: SessionEntry): boolean {
-    return !entry.finished && entry.waitingFor.length > 0;
+  /** The chapters and sessions to finish first, said on hover and to screen readers rather than on the card. */
+  protected waiting(chapter: Chapter, entry: SessionEntry): boolean {
+    return !entry.finished && (chapter.waitingFor.length > 0 || entry.waitingFor.length > 0);
   }
 
   protected afterKey(): string {
     return this.settings.freeNavigation() ? 'course.advisedAfter' : 'course.after';
   }
 
-  protected locked(entry: SessionEntry): boolean {
-    return this.waiting(entry) && !this.settings.freeNavigation();
+  protected locked(chapter: Chapter, entry: SessionEntry): boolean {
+    return this.waiting(chapter, entry) && !this.settings.freeNavigation();
   }
 
-  protected titles(entry: SessionEntry): string {
-    return entry.waitingFor.map((prerequisite) => prerequisite.title).join(', ');
+  protected titles(chapter: Chapter, entry: SessionEntry): string {
+    return [...chapter.waitingFor.map((wait) => wait.title), ...entry.waitingFor.map((prerequisite) => prerequisite.title)].join(', ');
   }
 
   protected finishedIn(chapter: Chapter): number {
