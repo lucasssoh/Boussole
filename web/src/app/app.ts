@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { LadderStep, Rank } from './core/api';
 import { LanguageService } from './core/language.service';
@@ -12,13 +12,17 @@ import { SettingsDrawerComponent } from './core/settings-drawer.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, TranslocoPipe, SettingsDrawerComponent, RankEmblemComponent, PromotionComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslocoPipe, SettingsDrawerComponent, RankEmblemComponent, PromotionComponent],
   template: `
     <header class="top-bar">
       <a class="brand" routerLink="/">
         <img class="brand-logo" src="favicon.svg" alt="" width="32" height="32" />
-        Boussole
+        <span class="brand-name">Boussole</span>
       </a>
+      <nav class="top-links">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'app.home' | transloco }}</a>
+        <a routerLink="/ranks" routerLinkActive="active">{{ 'profile.ranks' | transloco }}</a>
+      </nav>
       @if (stats.stats(); as current) {
         @let rank = current.culture;
         <a class="player-stats" routerLink="/profile" [attr.aria-label]="'stats.label' | transloco: { rank: rankName(rank.tier, rank.division), level: rank.level, points: points(current.points), streakDays: current.streakDays }">
@@ -34,9 +38,9 @@ import { SettingsDrawerComponent } from './core/settings-drawer.component';
           </span>
         </a>
       }
-      <nav class="top-actions">
+      <div class="top-actions">
         <app-settings-drawer />
-      </nav>
+      </div>
     </header>
     <router-outlet />
     @if (stats.promotion(); as promotion) {

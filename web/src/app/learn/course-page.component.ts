@@ -26,6 +26,7 @@ import { TrackLanguagesComponent } from './track-languages.component';
       @if (learn.course()?.id === subject() ? learn.course() : null; as course) {
         <div class="course-layout" [attr.lang]="course.lang">
           <aside class="course-side">
+            <a class="back" routerLink="/" [attr.aria-label]="'app.home' | transloco" [title]="'app.home' | transloco"><app-icon name="arrow-left" /></a>
             <h1>{{ course.name }}</h1>
             <app-track-languages [languages]="course.languages" [current]="course.lang" (choose)="followIn(course.id, $event)" />
             @if (course.description) {

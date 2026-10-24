@@ -255,16 +255,49 @@ a:focus-visible {
 .top-actions {
   display: flex;
   gap: 0.25rem;
-  margin-left: auto;
   font-size: 0.9rem;
 }
 
+/* The places of Boussole, beside its name. */
+.top-links {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.top-links a {
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  color: var(--muted);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.top-links a:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.top-links a.active {
+  background: color-mix(in srgb, var(--brand) 12%, transparent);
+  color: var(--brand);
+}
+
+/* The learner on the right: emblem, rank and level, the bar to the next division, the streak. */
 .player-stats {
+  margin-left: auto;
   color: inherit;
   text-decoration: none;
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  padding: 0.3rem 0.9rem 0.3rem 0.5rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  transition: background 0.15s;
+}
+
+.player-stats:hover {
+  background: color-mix(in srgb, var(--brand) 10%, var(--surface-2));
 }
 
 .rank-emblem {
@@ -402,6 +435,18 @@ a:focus-visible {
 @media (max-width: 720px) {
   .level-bar {
     display: none;
+  }
+
+  .top-bar {
+    gap: 0.5rem;
+  }
+
+  .brand-name {
+    display: none;
+  }
+
+  .top-links a {
+    padding: 0.35rem 0.6rem;
   }
 }
 
@@ -3606,7 +3651,8 @@ span.map-node.unwritten {
   font-size: 0.85rem;
 }
 
-.course-go {
+.course-go,
+.course-side .back {
   justify-self: start;
 }
 

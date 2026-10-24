@@ -67,6 +67,7 @@ minor release may break things and says so.
 - **Reviews and mock exams:** besides lessons, a course has timed sessions: a short review at the end of each chapter, and mock exams as long as the real ones. Their number of questions fits the time allowed, knowing that choosing an answer is quicker than building one; `boussole validate` warns when it does not.
 
 ### Changed
+- **Header:** the name of Boussole, then its places (*Tracks*, *Tiers*, the current one marked), and on the right your emblem, rank, level, bar and streak in one pill, beside the settings. On a phone, the logo alone. The page of a track has an arrow back to the home page.
 - **Smooth everywhere:** a page that waits for its content shows the needle of Boussole turning (only after a moment, so that a quick page never flickers), Boussole opens on its own splash, pages fade into one another, and leaving a chapter of the map steps back rather than cuts. The terms of the lexicon show their mathematics.
 - **One theme, Brume:** a soft light ground for reading (a haze of blue, cards of an off-white, ink-blue text rather than black), the green of Boussole for what you do; the night is kept for the places of the game: the high tiers, the achievements, a new division. The light or dark setting is gone.
 - **Opening a page:** the blocks pop in one after the other (cards, questions, framed blocks, tiers), the text around them no longer bounces.
