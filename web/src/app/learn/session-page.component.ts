@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { IconComponent } from '../shared/icon.component';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -286,11 +286,13 @@ export class SessionPageComponent {
   protected readonly remaining = computed(() => clock(this.run.remainingSeconds() ?? 0));
 
   constructor() {
+    inject(DestroyRef).onDestroy(() => this.stats.studying.set(false));
     effect(() => {
       const subject = this.subject();
       const session = this.session();
       untracked(() => {
         this.finishedIn.set(null);
+        this.stats.studying.set(true);
         void this.learn.openSession(subject, session).then(
           () => {
             const opened = this.learn.session();
@@ -379,6 +381,7 @@ export class SessionPageComponent {
     this.run.end();
     this.run.earnBonus(await this.learn.finishSession(seconds));
     this.stats.refresh();
+    this.stats.studying.set(false);
     this.finishedIn.set(Math.max(1, Math.round(seconds / 60)));
   }
 

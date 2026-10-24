@@ -11,8 +11,6 @@ const METALS: Readonly<Record<string, { step: number; colors: readonly [string, 
   luminary: { step: 6, colors: ['#9fb3c8', '#2a3a48', '#ffffff', '#1d2b33', '#0f1c1f'] },
 };
 
-const RING = 2 * Math.PI * 33.4;
-
 const BEAMS = Array.from({ length: 12 }, (_, k) => {
   const angle = (k * Math.PI) / 6 - Math.PI / 2;
   const at = (radius: number, shift: number) =>
@@ -25,12 +23,17 @@ const CLAMPS = [45, 135, 225, 315].map((degrees) => {
   return { x: (32 + 30 * Math.cos(angle)).toFixed(1), y: (36 + 30 * Math.sin(angle)).toFixed(1), a: degrees + 90 };
 });
 
+/** The metal of a specialty tier: its step, colour, deep and light. */
+export function specialtyMetal(tier: string): { step: number; color: string; deep: string; light: string } {
+  const { step, colors } = METALS[tier] ?? METALS['novice'];
+  return { step, color: colors[0], deep: colors[1], light: colors[2] };
+}
+
 let medallions = 0;
 
 /**
  * The emblem of a specialty: a round medallion, like a lens in its mount, in a metal more noble
- * tier after tier, around an instrument of optics, from the reading stone to the prism; a ring
- * around it fills up to the next tier. Decorative.
+ * tier after tier, around an instrument of optics, from the reading stone to the prism. Decorative.
  */
 @Component({
   selector: 'app-specialty-emblem',
@@ -87,10 +90,6 @@ let medallions = 0;
       @if (s >= 3) {
         <circle cx="32" cy="36" r="36.6" fill="none" [attr.stroke]="url('metal')" stroke-width="2.2"></circle>
         <circle cx="32" cy="36" r="34" fill="none" [attr.stroke]="m.deep" stroke-width="3" stroke-dasharray="0.6 2.9" opacity="0.75"></circle>
-      }
-      @if (progress() !== null) {
-        <circle cx="32" cy="36" r="33.4" fill="none" class="ring-track" stroke-width="2.6"></circle>
-        <circle cx="32" cy="36" r="33.4" fill="none" [attr.stroke]="m.color" stroke-width="2.6" stroke-linecap="round" [attr.stroke-dasharray]="dash()" transform="rotate(-90 32 36)"></circle>
       }
       <g [attr.filter]="url('shadow')">
         @if (s >= 4) {
@@ -194,8 +193,6 @@ let medallions = 0;
 export class SpecialtyEmblemComponent {
   readonly tier = input.required<string>();
   readonly size = input(48);
-  /** How far toward the next tier, from 0 to 1; null shows no ring. */
-  readonly progress = input<number | null>(null);
 
   protected readonly id = 'medallion-' + medallions++;
   protected readonly beams = BEAMS;
@@ -209,7 +206,6 @@ export class SpecialtyEmblemComponent {
       auraOpacity: [0, 0.3, 0.36, 0.44, 0.52, 0.62, 0.8][step],
     };
   });
-  protected readonly dash = computed(() => `${(RING * Math.min(1, Math.max(0, this.progress() ?? 0))).toFixed(1)} 999`);
 
   protected url(part: string): string {
     return `url(#${this.id}-${part})`;

@@ -40,7 +40,12 @@ export function isStrong(tier: string): boolean {
 
 /** Where a culture rank stands, higher being better: the tier first, then the division, I above V. */
 export function rankOrder(rank: { tier: string; division: number }): number {
-  return CULTURE_TIERS.indexOf(rank.tier) * 10 + (rank.division === 0 ? 9 : 6 - rank.division);
+  return ladderOrder(CULTURE_TIERS, rank);
+}
+
+/** Where a rank stands on its ladder, the culture or a specialty, higher being better. */
+export function ladderOrder(tiers: readonly string[], rank: { tier: string; division: number }): number {
+  return tiers.indexOf(rank.tier) * 10 + (rank.division === 0 ? 9 : 6 - rank.division);
 }
 
 const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V'];

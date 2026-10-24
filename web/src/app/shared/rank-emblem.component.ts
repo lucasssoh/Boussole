@@ -7,7 +7,8 @@ let emblems = 0;
 /**
  * The emblem of a rank: a gem around an instrument of navigation, ornamented tier after tier, and
  * its division in relief. The aura and ornaments overflow the box. Lively, the light moves (the
- * aura breathes, a sheen crosses the gem), unless the system asks for less motion. Decorative.
+ * aura breathes, a sheen crosses the gem), unless the system asks for less motion. Its pieces (aura,
+ * ring, laurel, gem, rivets, dial, instrument, lamp, numeral) can come apart and together. Decorative.
  */
 @Component({
   selector: 'app-rank-emblem',
@@ -15,7 +16,7 @@ let emblems = 0;
   template: `
     @let l = look();
     @let s = l.step;
-    <svg [attr.width]="size()" [attr.height]="size() * 1.25" viewBox="-4 -12 72 90" aria-hidden="true" [class.lively]="lively()">
+    <svg [attr.width]="size()" [attr.height]="size() * 1.25" viewBox="-4 -12 72 90" aria-hidden="true" [class.lively]="lively()" [class.moving]="moving()">
       <defs>
         <linearGradient [attr.id]="id + '-face'" x1="0" y1="0" x2="0.35" y2="1">
           <stop offset="0" [attr.stop-color]="l.light"></stop>
@@ -64,6 +65,7 @@ let emblems = 0;
         <filter [attr.id]="id + '-lift'" x="-30%" y="-40%" width="160%" height="180%"><feDropShadow dx="0" dy="1.4" stdDeviation="1" flood-color="#0f1c1f" flood-opacity="0.45"></feDropShadow></filter>
       </defs>
 
+      <g class="part part-aura">
       @if (s >= 1) {
         <g class="emblem-aura" [class.breathing]="s >= 5" [attr.opacity]="l.auraOpacity" [style.--aura-low]="l.auraLow" [style.--aura-high]="l.auraHigh" [attr.filter]="url('glow')">
           <ellipse cx="32" cy="37" [attr.rx]="l.auraR" [attr.ry]="l.auraRy" [attr.fill]="url('aura')"></ellipse>
@@ -73,6 +75,8 @@ let emblems = 0;
           </g>
         </g>
       }
+      </g>
+      <g class="part part-ring">
       @if (s >= 7) {
         <circle cx="32" cy="36" r="46" fill="none" [attr.stroke]="url('metal')" stroke-width="2.2" stroke-dasharray="2 5"></circle>
       }
@@ -85,35 +89,45 @@ let emblems = 0;
         <circle cx="32" cy="36" r="40" fill="none" [attr.stroke]="url('metal')" stroke-width="2.6"></circle>
         <circle cx="32" cy="36" r="36.6" fill="none" [attr.stroke]="l.ornamentDeep" stroke-width="3.4" stroke-dasharray="0.7 3.1" opacity="0.8"></circle>
       }
+      </g>
 
-      <g [attr.filter]="url('shadow')">
+      <g [attr.filter]="moving() ? null : url('shadow')">
         @if (s >= 3) {
+          <g class="part part-laurel">
           <path [attr.d]="stems" fill="none" [attr.stroke]="l.leafDeep" stroke-width="1.3" stroke-linecap="round"></path>
           @for (leaf of leaves; track $index) {
             <path d="M0 0 Q3.2 -4.6 0 -10 Q-3.2 -4.6 0 0 Z" [attr.transform]="'translate(' + leaf.x + ' ' + leaf.y + ') rotate(' + leaf.a + ')'" [attr.fill]="url('leaf')" [attr.stroke]="l.leafDeep" stroke-width="0.5"></path>
           }
+          </g>
         }
+        <g class="part part-body">
         <path [attr.d]="hex" [attr.fill]="l.deep" [attr.stroke]="l.deep" stroke-width="1.5" stroke-linejoin="round"></path>
         <path [attr.d]="hex" [attr.fill]="url('face')" transform="translate(32 36) scale(0.86) translate(-32 -36)"></path>
         <path d="M32 9.5 L32 17 M55 22.7 L47.6 26.6 M55 49.3 L47.6 45.4 M32 62.5 L32 55 M9 49.3 L16.4 45.4 M9 22.7 L16.4 26.6" stroke="#ffffff" stroke-width="1" opacity="0.4"></path>
         <path d="M11 22 L32 9.8 L53 22" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.55"></path>
+        </g>
         @if (s >= 1) {
-          <path [attr.d]="hex" fill="none" [attr.stroke]="l.trimColor" stroke-width="1.4" opacity="0.85" transform="translate(32 36) scale(0.74) translate(-32 -36)"></path>
+          <path class="part part-trim" [attr.d]="hex" fill="none" [attr.stroke]="l.trimColor" stroke-width="1.4" opacity="0.85" transform="translate(32 36) scale(0.74) translate(-32 -36)"></path>
         }
         @if (s >= 2) {
+          <g class="part part-rivets">
           @for (rivet of rivets; track $index) {
             <circle [attr.cx]="rivet.x" [attr.cy]="rivet.y" r="1.8" [attr.fill]="url('metal')" [attr.stroke]="l.deep" stroke-width="0.5"></circle>
           }
+          </g>
         }
         @if (s >= 4) {
-          <g [attr.clip-path]="url('clip')">
+          <g class="part part-body" [attr.clip-path]="url('clip')">
             <g class="emblem-sheen" [style.--flow]="l.flow">
               <rect x="-30" y="-10" width="26" height="100" [attr.fill]="url('sheen')" transform="skewX(-20)"></rect>
             </g>
           </g>
         }
-        <circle cx="32" cy="36" r="17.6" [attr.fill]="l.deep"></circle>
-        <circle cx="32" cy="36" r="16" [attr.fill]="url('disc')"></circle>
+        <g class="part part-disc">
+          <circle cx="32" cy="36" r="17.6" [attr.fill]="l.deep"></circle>
+          <circle cx="32" cy="36" r="16" [attr.fill]="url('disc')"></circle>
+        </g>
+        <g class="part part-needle">
         <g transform="translate(16 20) scale(0.32)" stroke-linejoin="round">
           @switch (s) {
             @case (0) {
@@ -170,19 +184,31 @@ let emblems = 0;
             }
           }
         </g>
+        </g>
+        <g class="part part-disc">
         <path d="M59.71 20 L59.71 52 L32 68" fill="none" [attr.stroke]="l.light" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" opacity="0.35" transform="translate(32 36) scale(0.82) translate(-32 -36)"></path>
         <ellipse cx="26" cy="28" rx="9" ry="4.6" [attr.fill]="url('gloss')" transform="rotate(-30 26 28)"></ellipse>
         <circle cx="23.2" cy="25.6" r="1" fill="#ffffff" opacity="0.85"></circle>
+        </g>
         @if (s >= 5) {
+          <g class="part part-lamp">
           <path d="M32 -10.5 C29.6 -7.4 29.4 -5.2 32 -3.6 C34.6 -5.2 34.4 -7.4 32 -10.5 Z" fill="#ffd43b" stroke="#f08c00" stroke-width="0.7"></path>
           <path d="M32 -8.2 C31 -6.8 31 -5.8 32 -5 C33 -5.8 33 -6.8 32 -8.2 Z" fill="#fff9db"></path>
           <path d="M23 1 Q32 7 41 1 Q38 -3 32 -3 Q26 -3 23 1 Z" [attr.fill]="url('metal')" [attr.stroke]="l.ornamentDeep" stroke-width="0.9"></path>
           <path d="M41 1 Q45 -1 46.5 -3.5" fill="none" [attr.stroke]="l.ornamentDeep" stroke-width="1.4" stroke-linecap="round"></path>
+          </g>
         }
       </g>
 
+      @if (formerNumeral(); as glyphs) {
+        <g class="part part-former-numeral" stroke-width="1.8" stroke-linejoin="round">
+          <path [attr.d]="glyphs" [attr.fill]="l.deep" [attr.stroke]="l.deep" transform="translate(0 2.2)"></path>
+          <path [attr.d]="glyphs" [attr.fill]="l.mid" [attr.stroke]="l.mid" transform="translate(0 0.8)"></path>
+          <path [attr.d]="glyphs" [attr.fill]="url('face')" [attr.stroke]="url('face')"></path>
+        </g>
+      }
       @if (numeral(); as glyphs) {
-        <g [attr.filter]="url('lift')" stroke-width="1.8" stroke-linejoin="round">
+        <g class="part part-numeral" [attr.filter]="moving() ? null : url('lift')" stroke-width="1.8" stroke-linejoin="round">
           <path [attr.d]="glyphs" [attr.fill]="l.deep" [attr.stroke]="l.deep" transform="translate(0 2.2)"></path>
           <path [attr.d]="glyphs" [attr.fill]="l.deep" [attr.stroke]="l.deep" transform="translate(0 1.5)"></path>
           <path [attr.d]="glyphs" [attr.fill]="l.mid" [attr.stroke]="l.mid" transform="translate(0 0.8)"></path>
@@ -191,13 +217,20 @@ let emblems = 0;
         </g>
       }
       @if (s >= 6) {
+        <g class="part part-aura">
         @for (mote of motes; track $index) {
           <circle class="emblem-mote" [attr.cx]="mote.x" [attr.cy]="mote.y" [attr.r]="mote.r" [attr.fill]="l.auraLight" [style.--duration]="mote.duration" [style.--delay]="mote.delay"></circle>
         }
+        </g>
       }
     </svg>
   `,
-  host: { class: 'rank-emblem' },
+  host: {
+    class: 'rank-emblem',
+    '[class.assembling]': "motion() === 'assemble'",
+    '[class.leaving]': "motion() === 'leave'",
+    '[class.renumbering]': '!!formerNumeral()',
+  },
 })
 export class RankEmblemComponent {
   readonly tier = input.required<string>();
@@ -205,6 +238,13 @@ export class RankEmblemComponent {
   readonly division = input(0);
   readonly size = input(28);
   readonly lively = input(false);
+  /**
+   * How the emblem comes: still; put together piece by piece (a new tier); or taken apart (the
+   * tier left). The pieces are the same in every emblem, so every tier comes and goes the same way.
+   */
+  readonly motion = input<'still' | 'assemble' | 'leave'>('still');
+  /** The division just left in the same tier: its numeral flies off and the new one falls in. */
+  readonly formerDivision = input<number | null>(null);
 
   protected readonly id = 'emblem-' + emblems++;
   protected readonly hex = HEX;
@@ -218,6 +258,13 @@ export class RankEmblemComponent {
     const division = this.division();
     return division > 0 && this.look().step < 7 ? numeralPath(roman(division)) : '';
   });
+
+  protected readonly formerNumeral = computed(() => {
+    const former = this.formerDivision();
+    return former && former !== this.division() && this.look().step < 7 ? numeralPath(roman(former)) : '';
+  });
+  /** While moving, the drop shadows of the SVG give way to one of CSS, which follows the pieces. */
+  protected readonly moving = computed(() => this.motion() !== 'still' || !!this.formerNumeral());
 
   protected url(part: string): string {
     return `url(#${this.id}-${part})`;

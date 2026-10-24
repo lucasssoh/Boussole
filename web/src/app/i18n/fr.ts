@@ -255,6 +255,7 @@ export const FR: Translations = {
     division: 'Nouvelle division',
     next: 'Prochain cap : {{rank}} · {{points}} points',
     continue: 'Continuer',
+    newPill: 'Ta nouvelle pastille',
     leave: {
       curious: 'Tu n’es plus seulement curieux.',
       apprentice: 'Tu quittes les Apprentis.',
@@ -283,8 +284,9 @@ export const FR: Translations = {
     luminary: 'Sommité',
   },
   stats: {
-    level: 'niveau {{level}}',
-    points: '{{points}} / {{next}} points',
+    level: 'Niveau {{level}}',
+    fieldLevel: '{{field}} · niveau {{level}}',
+    bounds: '{{from}} → {{to}}',
     streak: "jours d'affilée",
     label: "{{rank}}, niveau {{level}}, {{points}} points, {{streakDays}} jours d'affilée",
   },

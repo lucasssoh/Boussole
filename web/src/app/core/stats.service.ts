@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { StudyStats } from './api';
 import { BoussoleApi } from './boussole-api';
 import { storeValue, storedText } from './local-preferences';
@@ -10,7 +10,9 @@ const SEEN = 'rank.seen';
 
 /**
  * The learner's points, ranks and streak, shown in the header and refreshed after each answer;
- * and the division newly reached since the learner last saw their rank, until they close it.
+ * and the division newly reached since the learner last saw their rank, until they close it. During
+ * a session, it waits: nothing comes between the learner and the question, and the moment is
+ * shown once the session is over, from the rank the learner started from to the one reached.
  */
 @Injectable({ providedIn: 'root' })
 export class StatsService {
@@ -18,6 +20,9 @@ export class StatsService {
 
   readonly stats = signal<StudyStats | null>(null);
   readonly promotion = signal<{ from: Reached; to: Reached } | null>(null);
+  /** Whether a session is being studied. */
+  readonly studying = signal(false);
+  readonly shownPromotion = computed(() => (this.studying() ? null : this.promotion()));
 
   refresh(): void {
     this.api.stats().then((stats) => {
@@ -35,7 +40,7 @@ export class StatsService {
     const seen = parse(storedText(SEEN));
     storeValue(SEEN, `${reached.tier}:${reached.division}`);
     if (seen && rankOrder(reached) > rankOrder(seen)) {
-      this.promotion.set({ from: seen, to: reached });
+      this.promotion.update((waiting) => ({ from: waiting?.from ?? seen, to: reached }));
     }
   }
 }

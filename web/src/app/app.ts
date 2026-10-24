@@ -1,18 +1,18 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { LadderStep, Rank } from './core/api';
+import { LadderStep } from './core/api';
 import { LanguageService } from './core/language.service';
-import { RankEmblemComponent } from './shared/rank-emblem.component';
+import { RankPillComponent } from './shared/rank-pill.component';
 import { PromotionComponent } from './shared/promotion.component';
-import { divisionProgress, formatPoints, roman, tierColors } from './shared/ranks';
+import { formatPoints, roman } from './shared/ranks';
 import { ServerSettingsService } from './core/server-settings.service';
 import { StatsService } from './core/stats.service';
 import { SettingsDrawerComponent } from './core/settings-drawer.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslocoPipe, SettingsDrawerComponent, RankEmblemComponent, PromotionComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslocoPipe, SettingsDrawerComponent, RankPillComponent, PromotionComponent],
   template: `
     <header class="top-bar">
       <a class="brand" routerLink="/">
@@ -26,16 +26,12 @@ import { SettingsDrawerComponent } from './core/settings-drawer.component';
       @if (stats.stats(); as current) {
         @let rank = current.culture;
         <a class="player-stats" routerLink="/profile" [attr.aria-label]="'stats.label' | transloco: { rank: rankName(rank.tier, rank.division), level: rank.level, points: points(current.points), streakDays: current.streakDays }">
-          <app-rank-emblem [tier]="rank.tier" [division]="rank.division" [size]="28" />
-          <span class="level-bar">
-            <span class="level-line">{{ rankName(rank.tier, rank.division) }} · {{ 'stats.level' | transloco: { level: rank.level } }}</span>
-            <span class="xp-track"><span class="xp-fill" [style.width.%]="100 * progress(rank, current.points)" [style.background]="color(rank.tier)"></span></span>
-            <span class="level-points">{{ 'stats.points' | transloco: { points: points(current.points), next: points(ceil(rank.nextAt)) } }}</span>
-          </span>
-          <span class="streak" [class.cold]="!current.studiedToday">
-            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 5 5 5 10a5 5 0 01-10 0c0-2 1-3.5 2-4.5 0 2 1 3 2 3-1-3 0-6 1-8.5z"></path></svg>
-            {{ current.streakDays }}
-          </span>
+          <app-rank-pill [rank]="rank" [points]="current.points">
+            <span class="streak" [class.cold]="!current.studiedToday">
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 5 5 5 10a5 5 0 01-10 0c0-2 1-3.5 2-4.5 0 2 1 3 2 3-1-3 0-6 1-8.5z"></path></svg>
+              {{ current.streakDays }}
+            </span>
+          </app-rank-pill>
         </a>
       }
       <div class="top-actions">
@@ -43,8 +39,8 @@ import { SettingsDrawerComponent } from './core/settings-drawer.component';
       </div>
     </header>
     <router-outlet />
-    @if (stats.promotion(); as promotion) {
-      <app-promotion [from]="promotion.from" [to]="promotion.to" [next]="nextStep()" (closed)="stats.closePromotion()" />
+    @if (stats.shownPromotion(); as promotion) {
+      <app-promotion [from]="promotion.from" [to]="promotion.to" [next]="nextStep()" [rank]="stats.stats()?.culture ?? null" [points]="stats.stats()?.points ?? 0" (closed)="stats.closePromotion()" />
     }
   `,
 })
@@ -70,18 +66,6 @@ export class App {
     }
     const here = current.route.findIndex((step) => step.tier === current.culture.tier && step.division === Math.max(current.culture.division, 0));
     return here >= 0 ? (current.route[here + 1] ?? null) : null;
-  }
-
-  protected ceil(points: number): number {
-    return Math.ceil(points);
-  }
-
-  protected progress(rank: Rank, points: number): number {
-    return divisionProgress(rank, points);
-  }
-
-  protected color(tier: string): string {
-    return tierColors(tier)[0];
   }
 
   constructor() {

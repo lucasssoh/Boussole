@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, ElementRef, afterNextRender, computed, inject, input, output } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { LadderStep } from '../core/api';
+import { LadderStep, Rank } from '../core/api';
 import { RankNames } from '../progress/rank-names';
-import { emblemAmbiance, emblemInk } from './emblem';
 import { RankEmblemComponent } from './rank-emblem.component';
+import { RankPillComponent } from './rank-pill.component';
 import { tierColors } from './ranks';
 
 /** A rank reached: its tier and division. */
@@ -13,45 +13,66 @@ export interface Reached {
 }
 
 /**
- * The moment a new division is reached: the whole screen dims, the former emblem gives way to the
- * new one, with the next step ahead. Shown once per division; Escape or the button closes it.
+ * The moment a new division is reached, once the session is over: the screen dims and the emblem
+ * alone stands over it. A new division: its numeral flies off and the new one falls in. A new
+ * tier: the former emblem comes apart and the new one is put together piece by piece, with light
+ * turning behind it, a word for the tier left, and the new pill. Escape or the button closes it.
  */
 @Component({
   selector: 'app-promotion',
-  imports: [RankEmblemComponent, TranslocoPipe],
+  imports: [RankEmblemComponent, RankPillComponent, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'promotion', role: 'dialog', 'aria-modal': 'true', '[attr.aria-label]': 'title()', '(document:keydown.escape)': 'closed.emit()' },
+  host: {
+    class: 'promotion',
+    role: 'dialog',
+    'aria-modal': 'true',
+    '[class.new-tier]': 'newTier()',
+    '[attr.aria-label]': 'title()',
+    '[style.--tier]': 'colors()[0]',
+    '(document:keydown.escape)': 'closed.emit()',
+  },
   template: `
-    <div class="promotion-card" [style.--tier]="colors()[0]" [style.--tier-deep]="colors()[1]">
-      <span class="promotion-label">{{ (newTier() ? 'promotion.tier' : 'promotion.division') | transloco }}</span>
-      <div class="promotion-emblems" [style.--ambiance]="ambiance()" [style.--stage-ink]="ink()">
-        <span class="promotion-former"><app-rank-emblem [tier]="from().tier" [division]="from().division" [size]="56" /></span>
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-        <span class="promotion-new"><app-rank-emblem [tier]="to().tier" [division]="to().division" [size]="112" [lively]="true" /></span>
-      </div>
-      <h2>{{ title() }}</h2>
+    <span class="promotion-label">{{ (newTier() ? 'promotion.tier' : 'promotion.division') | transloco }}</span>
+    <div class="promotion-emblems">
+      <span class="promotion-halo" aria-hidden="true"></span>
       @if (newTier()) {
-        <p class="promotion-leave">{{ 'promotion.leave.' + from().tier | transloco }}</p>
+        <span class="promotion-rays" aria-hidden="true"></span>
+        <app-rank-emblem class="promotion-former" [tier]="from().tier" [division]="from().division" [size]="SIZE" motion="leave" />
+        <app-rank-emblem [tier]="to().tier" [division]="to().division" [size]="SIZE" motion="assemble" [lively]="true" />
+      } @else {
+        <app-rank-emblem [tier]="to().tier" [division]="to().division" [size]="SIZE" [formerDivision]="from().division" [lively]="true" />
       }
-      @if (next(); as step) {
-        <p class="promotion-next">{{ 'promotion.next' | transloco: { rank: names.rank(step.tier, step.division), points: names.points(step.from) } }}</p>
-      }
-      <button type="button" class="primary" (click)="closed.emit()">{{ 'promotion.continue' | transloco }}</button>
     </div>
+    <h2>{{ title() }}</h2>
+    @if (newTier()) {
+      <p class="promotion-leave">{{ 'promotion.leave.' + from().tier | transloco }}</p>
+      @if (rank(); as reached) {
+        <div class="promotion-pill">
+          <span class="promotion-pill-label">{{ 'promotion.newPill' | transloco }}</span>
+          <app-rank-pill [rank]="reached" [points]="points()" />
+        </div>
+      }
+    }
+    @if (next(); as step) {
+      <p class="promotion-next">{{ 'promotion.next' | transloco: { rank: names.rank(step.tier, step.division), points: names.points(step.from) } }}</p>
+    }
+    <button type="button" class="primary" (click)="closed.emit()">{{ 'promotion.continue' | transloco }}</button>
   `,
 })
 export class PromotionComponent {
   readonly from = input.required<Reached>();
   readonly to = input.required<Reached>();
   readonly next = input<LadderStep | null>(null);
+  /** The learner's rank and points, for the new pill. */
+  readonly rank = input<Rank | null>(null);
+  readonly points = input(0);
   readonly closed = output<void>();
 
+  protected readonly SIZE = 150;
   protected readonly names = inject(RankNames);
   protected readonly newTier = computed(() => this.from().tier !== this.to().tier);
   protected readonly title = computed(() => this.names.rank(this.to().tier, this.to().division));
   protected readonly colors = computed(() => tierColors(this.to().tier));
-  protected readonly ambiance = computed(() => emblemAmbiance(this.to().tier));
-  protected readonly ink = computed(() => emblemInk(this.to().tier));
 
   constructor() {
     const host = inject(ElementRef<HTMLElement>);

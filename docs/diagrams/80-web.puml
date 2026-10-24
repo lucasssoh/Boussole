@@ -93,10 +93,12 @@ package "shared" {
   class MarkdownRenderer <<markdown-it + KaTeX>>
   class "subjectColor()" as SubjectColor
   class RankEmblemComponent <<the gem of a rank, its division in relief>>
-  class "emblem.ts" as Emblem <<instruments, ornaments, aura, ambiance per tier>>
-  class SpecialtyEmblemComponent <<the medallion of a specialty, its ring up to the next tier>>
+  class "emblem.ts" as Emblem <<instruments, ornaments, aura per tier; pieces that come apart>>
+  class SpecialtyEmblemComponent <<the medallion of a specialty>>
+  class RankPillComponent <<emblem, level, bounds of the division; the body fills as a gauge>>
+  class "pill-frame.ts" as PillFrame <<a frame per tier, culture and specialty>>
   class RankRouteComponent <<every division as its emblem, the learner's in the middle>>
-  class PromotionComponent <<a new division, full screen, dimmed behind>>
+  class PromotionComponent <<after a session: the emblem over a veil, put together again>>
   class "ranks.ts" as Ranks <<tier colours, roman divisions, points>>
   class RichTextComponent
   class "drawMermaidDiagrams()" as Mermaid
@@ -122,13 +124,19 @@ SessionPageComponent --> SessionPathComponent
 QuestionState ..> StatsService : refresh after an answer
 RankEmblemComponent ..> Emblem : look and geometry
 RankEmblemComponent ..> Ranks : roman divisions
-PromotionComponent ..> Emblem : ambiance
-StatsService ..> PromotionComponent : a division newly reached
+PromotionComponent --> RankEmblemComponent : leave, assemble, renumber
+PromotionComponent --> RankPillComponent : the new pill
+RankPillComponent --> RankEmblemComponent
+RankPillComponent --> SpecialtyEmblemComponent
+RankPillComponent ..> PillFrame
+PillFrame ..> Emblem : colours
+StatsService ..> PromotionComponent : a division newly reached, held while studying
+SessionPageComponent ..> StatsService : studying
 ProfilePageComponent ..> StatsService : stats
 ProfilePageComponent ..> RankEmblemComponent
 ProfilePageComponent --> RankRouteComponent : the route of the culture
 RankRouteComponent ..> RankEmblemComponent
-ProfilePageComponent ..> SpecialtyEmblemComponent : each specialty
+ProfilePageComponent --> RankPillComponent : each specialty
 RanksPageComponent ..> BoussoleApi : ranks
 ProfilePageComponent ..> RankNames
 RanksPageComponent ..> RankNames

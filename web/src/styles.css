@@ -282,22 +282,217 @@ a:focus-visible {
   color: var(--brand);
 }
 
-/* The learner on the right: emblem, rank and level, the bar to the next division, the streak. */
+/* The learner on the right: their rank as a pill, with the streak. */
 .player-stats {
   margin-left: auto;
   color: inherit;
   text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.3rem 0.9rem 0.3rem 0.5rem;
-  border-radius: 999px;
-  background: var(--surface-2);
-  transition: background 0.15s;
+  border-radius: 10px;
+  transition: translate 0.15s;
 }
 
 .player-stats:hover {
-  background: color-mix(in srgb, var(--brand) 10%, var(--surface-2));
+  translate: 0 -1px;
+}
+
+/*
+ * A rank as a pill: the frame of its tier, the body filling like a gauge (--share, from 0 to 1),
+ * the level and the bounds of the division. Registered, --share can glide.
+ */
+@property --share {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+.rank-pill {
+  position: relative;
+  display: inline-flex;
+  border-radius: 10px;
+  transition: --share 0.6s ease-out;
+}
+
+.rank-pill.instant {
+  transition: none;
+}
+
+.rank-pill-aura {
+  position: absolute;
+  inset: -5px;
+  border-radius: 12px;
+  background: var(--aura);
+  filter: blur(9px);
+  opacity: var(--glow);
+  pointer-events: none;
+}
+
+.rank-pill.breathing .rank-pill-aura {
+  animation: pill-breathe 5s ease-in-out infinite;
+}
+
+.rank-pill.crossed .rank-pill-aura {
+  animation: pill-flash 0.9s ease-out;
+}
+
+.rank-pill-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.2rem 0.9rem 0.2rem 0.35rem;
+  border-radius: 10px;
+  border: var(--frame-width) solid transparent;
+  background:
+    linear-gradient(90deg, var(--fill) 0 calc(var(--share) * 100%), var(--edge) calc(var(--share) * 100%) calc(var(--share) * 100% + 2px), var(--rest) calc(var(--share) * 100% + 2px) 100%) padding-box,
+    var(--frame) border-box;
+  box-shadow: 0 2px 0 var(--press), var(--ring);
+}
+
+.rank-pill-body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: var(--stars);
+  pointer-events: none;
+}
+
+.rank-pill-body > * {
+  position: relative;
+}
+
+.rank-pill-text {
+  display: grid;
+  min-width: 7.5rem;
+  text-align: left;
+}
+
+.rank-pill-level {
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--ink);
+  white-space: nowrap;
+  transform-origin: left center;
+}
+
+.rank-pill-level.bumped {
+  animation: pill-bump 0.45s ease-out;
+}
+
+.rank-pill-bounds {
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--sub);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.rank-pill .streak {
+  margin-left: auto;
+}
+
+.rank-pill.dark .streak {
+  color: #ffd8a8;
+}
+
+.rank-pill.dark .streak svg {
+  fill: #ffd8a8;
+}
+
+.rank-pill-stud {
+  position: absolute;
+  z-index: 2;
+  bottom: calc(var(--frame-width) / -2 - 2.5px);
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: var(--stud);
+  box-shadow: 0 0 0 1px var(--stud-ring);
+}
+
+.rank-pill-stud.top {
+  top: calc(var(--frame-width) / -2 - 2.5px);
+  bottom: auto;
+}
+
+.rank-pill-gem {
+  position: absolute;
+  z-index: 2;
+  left: calc(50% - 4px);
+  top: calc(var(--frame-width) / -2 - 4px);
+  width: 8px;
+  height: 8px;
+  rotate: 45deg;
+  border-radius: 1.5px;
+  background: var(--gem);
+  box-shadow: 0 0 0 1.5px var(--gem-ring);
+}
+
+.rank-pill-shine {
+  position: absolute !important;
+  inset: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.rank-pill-shine span {
+  position: absolute;
+  inset: 0;
+  translate: -110% 0;
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.85) 50%, transparent 70%);
+}
+
+.rank-pill.crossed .rank-pill-shine span {
+  animation: pill-shine 0.6s ease-in-out;
+}
+
+.rank-pill .specialty-emblem.arriving {
+  animation: pill-arrive 0.5s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+@keyframes pill-breathe {
+  50% {
+    opacity: calc(var(--glow) * 1.6);
+  }
+}
+
+@keyframes pill-flash {
+  40% {
+    opacity: 1;
+  }
+}
+
+@keyframes pill-bump {
+  40% {
+    scale: 1.15;
+  }
+}
+
+@keyframes pill-shine {
+  to {
+    translate: 110% 0;
+  }
+}
+
+@keyframes pill-arrive {
+  from {
+    opacity: 0;
+    scale: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rank-pill {
+    transition: none;
+  }
+
+  .rank-pill *,
+  .rank-pill-aura {
+    animation: none !important;
+  }
 }
 
 .rank-emblem {
@@ -307,6 +502,130 @@ a:focus-visible {
 
 .rank-emblem svg {
   overflow: visible;
+}
+
+/*
+ * The pieces of an emblem, each turning and scaling about its own centre (the laurel grows from
+ * its foot). Assembling, they come one after another from --assemble-at; leaving, they scatter;
+ * renumbering, the former numeral flies off and the new one falls in, and the gem swells.
+ */
+.rank-emblem svg.moving {
+  filter: drop-shadow(0 1.6px 1.2px rgb(15 28 31 / 0.32));
+}
+
+.rank-emblem .part {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.rank-emblem .part-laurel {
+  transform-origin: 50% 100%;
+}
+
+.rank-emblem {
+  --assemble-at: 0s;
+}
+
+.assembling .part {
+  animation: var(--piece) var(--length) cubic-bezier(0.3, 0.7, 0.4, 1) calc(var(--assemble-at) + var(--after)) both;
+}
+
+.assembling .part-body { --piece: piece-body; --length: 0.55s; --after: 0s; }
+.assembling .part-disc { --piece: piece-disc; --length: 0.55s; --after: 0.35s; }
+.assembling .part-needle { --piece: piece-needle; --length: 0.75s; --after: 0.7s; }
+.assembling .part-trim,
+.assembling .part-rivets { --piece: piece-pop; --length: 0.4s; --after: 1.05s; }
+.assembling .part-laurel { --piece: piece-pop; --length: 0.5s; --after: 1.2s; }
+.assembling .part-lamp { --piece: piece-drop; --length: 0.4s; --after: 1.4s; }
+.assembling .part-ring { --piece: piece-ring; --length: 0.55s; --after: 1.6s; }
+.assembling .part-aura { --piece: piece-aura; --length: 0.7s; --after: 1.85s; }
+.assembling .part-numeral { --piece: piece-numeral; --length: 0.45s; --after: 2.2s; }
+
+.leaving .part {
+  animation: piece-away 0.6s cubic-bezier(0.5, 0, 0.8, 0.4) var(--after) both;
+}
+
+.leaving .part-aura { --away: scale(0.4); --after: 0s; }
+.leaving .part-ring { --away: rotate(40deg) scale(1.5); --after: 0.05s; }
+.leaving .part-numeral { --away: translate(0, 30px) scale(1.4); --after: 0.1s; }
+.leaving .part-laurel { --away: translate(0, 40px) scale(0.7); --after: 0.15s; }
+.leaving .part-lamp { --away: translate(0, -40px); --after: 0.15s; }
+.leaving .part-trim,
+.leaving .part-rivets { --away: scale(2.2); --after: 0.2s; }
+.leaving .part-needle { --away: translate(0, -50px) rotate(400deg); --after: 0.2s; }
+.leaving .part-disc { --away: translate(12px, -35px) rotate(120deg) scale(0.8); --after: 0.25s; }
+.leaving .part-body { --away: translate(-10px, 30px) rotate(-35deg) scale(0.5); --after: 0.3s; }
+
+.renumbering .part-former-numeral {
+  animation: numeral-away 0.45s ease-in 0.4s both;
+}
+
+.renumbering .part-numeral {
+  animation: piece-numeral 0.5s cubic-bezier(0.3, 0.7, 0.4, 1) 0.75s both;
+}
+
+.renumbering .part-body {
+  animation: piece-swell 0.5s ease-out 1s;
+}
+
+.renumbering .part-aura {
+  animation: piece-bloom 0.8s ease-out 1s;
+}
+
+@keyframes piece-body {
+  from { opacity: 0; transform: rotate(-30deg) scale(0.3); }
+  70% { opacity: 1; transform: rotate(3deg) scale(1.08); }
+}
+
+@keyframes piece-disc {
+  from { opacity: 0; transform: translate(0, -40px) rotate(-180deg); }
+  70% { opacity: 1; transform: translate(0, 2px); }
+}
+
+@keyframes piece-needle {
+  from { opacity: 0; transform: rotate(-300deg); }
+  64% { opacity: 1; transform: rotate(25deg); }
+}
+
+@keyframes piece-pop {
+  from { opacity: 0; transform: scale(0.01); }
+  60% { opacity: 1; transform: scale(1.3); }
+}
+
+@keyframes piece-drop {
+  from { opacity: 0; transform: translate(0, -30px); }
+  66% { opacity: 1; transform: translate(0, 2px); }
+}
+
+@keyframes piece-ring {
+  from { opacity: 0; transform: rotate(-40deg) scale(1.6); }
+  75% { opacity: 1; transform: scale(0.97); }
+}
+
+@keyframes piece-aura {
+  from { opacity: 0; transform: scale(0.4); }
+  60% { opacity: 1; transform: scale(1.1); }
+}
+
+@keyframes piece-numeral {
+  from { opacity: 0; transform: translate(0, -22px) scale(1.8); }
+  62% { opacity: 1; transform: translate(0, 1px) scale(0.92); }
+}
+
+@keyframes piece-away {
+  to { opacity: 0; transform: var(--away); }
+}
+
+@keyframes numeral-away {
+  to { opacity: 0; transform: translate(0, -6px) scale(1.5); }
+}
+
+@keyframes piece-swell {
+  40% { transform: scale(1.05); }
+}
+
+@keyframes piece-bloom {
+  40% { transform: scale(1.25); }
 }
 
 .emblem-mote {
@@ -375,24 +694,11 @@ a:focus-visible {
   .rank-emblem * {
     animation: none !important;
   }
-}
 
-.level-bar {
-  display: grid;
-  gap: 0.2rem;
-  width: 12rem;
-}
-
-.level-line {
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: var(--text);
-}
-
-.level-points {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--muted);
+  .rank-emblem.leaving,
+  .rank-emblem .part-former-numeral {
+    display: none;
+  }
 }
 
 .xp-track {
@@ -409,10 +715,6 @@ a:focus-visible {
   border-radius: 999px;
   background: var(--subject);
   transition: width 0.4s ease-out;
-}
-
-.level-bar .xp-fill {
-  background: var(--brand);
 }
 
 .streak {
@@ -433,7 +735,7 @@ a:focus-visible {
 }
 
 @media (max-width: 720px) {
-  .level-bar {
+  .player-stats .rank-pill-text {
     display: none;
   }
 
@@ -2839,27 +3141,8 @@ app-settings-drawer {
 .specialties {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.specialty {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 0.4rem 1.4rem 0.4rem 0.5rem;
-  border-radius: 999px;
-  background: var(--surface);
-  box-shadow: inset 0 0 0 1px var(--line);
-}
-
-.specialty div {
-  display: grid;
-}
-
-.specialty-rank {
-  font-size: 0.9rem;
-  font-weight: 900;
-  color: var(--muted);
+  gap: 1.4rem 1.6rem;
+  padding-top: 0.4rem;
 }
 
 .specialty-emblem {
@@ -2869,10 +3152,6 @@ app-settings-drawer {
 
 .specialty-emblem svg {
   overflow: visible;
-}
-
-.specialty-emblem .ring-track {
-  stroke: color-mix(in srgb, currentColor 12%, transparent);
 }
 
 .medals {
@@ -3015,28 +3294,34 @@ app-settings-drawer {
   background: var(--wrong-strong);
 }
 
+/*
+ * A new division or tier, once the session is over: the screen dims and blurs, the emblem stands
+ * alone over it, then its name and the rest appear one after another.
+ */
 .promotion {
   position: fixed;
   inset: 0;
   z-index: 100;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
   padding: 1rem;
-  background: rgb(8 12 14 / 0.82);
-  animation: promotion-in 0.3s ease-out;
+  text-align: center;
+  color: #ffffff;
+  background: rgb(16 26 36 / 0.74);
+  backdrop-filter: blur(12px);
+  animation: promotion-in 0.4s ease-out;
+  --text-at: 1.2s;
 }
 
-.promotion-card {
-  width: min(32rem, 100%);
-  display: grid;
-  justify-items: center;
-  gap: 0.9rem;
-  padding: 2.25rem 2rem;
-  border-radius: 24px;
-  background: var(--surface);
-  color: var(--text);
-  text-align: center;
-  box-shadow: 0 8px 0 var(--tier-deep);
+.promotion.new-tier {
+  --text-at: 2.4s;
+}
+
+.promotion > * {
+  animation: promotion-in 0.5s ease-out both;
 }
 
 .promotion-label {
@@ -3044,47 +3329,93 @@ app-settings-drawer {
   font-weight: 900;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--tier-deep) 80%, var(--text));
+  color: color-mix(in srgb, var(--tier) 35%, #ffffff);
+  animation-delay: 0.2s !important;
 }
 
 .promotion-emblems {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1.25rem;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 2.25rem 1rem 1.75rem;
-  border-radius: 18px;
-  background: var(--ambiance);
-  color: var(--stage-ink);
+  position: relative;
+  display: grid;
+  place-items: center;
+  margin: 0.5rem 0 0.25rem;
+  animation: none !important;
 }
 
-.promotion-former {
-  opacity: 0.45;
+.promotion-emblems > app-rank-emblem {
+  grid-area: 1 / 1;
 }
 
-.promotion-new {
-  animation: promotion-rise 0.6s 0.2s ease-out both;
+.promotion-emblems .rank-emblem {
+  --assemble-at: 0.9s;
 }
 
-.promotion-card h2 {
+.promotion-halo {
+  position: absolute;
+  width: 22rem;
+  height: 22rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--tier) 45%, transparent), transparent 65%);
+  animation: promotion-in 1s 0.5s ease-out both;
+  pointer-events: none;
+}
+
+.promotion-rays {
+  position: absolute;
+  width: 52rem;
+  height: 52rem;
+  background: repeating-conic-gradient(rgb(214 230 250 / 0.22) 0 5deg, transparent 5deg 20deg);
+  mask: radial-gradient(circle, #000 0, transparent 52%);
+  animation: promotion-turn 60s linear infinite, promotion-in 1.2s 2.2s ease-out both;
+  pointer-events: none;
+}
+
+.promotion h2 {
   margin: 0;
-  font-size: 2.4rem;
+  font-size: 2.6rem;
+  text-shadow: 0 2px 12px rgb(8 12 14 / 0.5);
+  animation-delay: var(--text-at) !important;
 }
 
-.promotion-card p {
+.promotion.new-tier h2 {
+  font-size: 3rem;
+}
+
+.promotion p {
   margin: 0;
+  text-shadow: 0 2px 12px rgb(8 12 14 / 0.5);
 }
 
 .promotion-leave {
-  font-size: 1.05rem;
-  color: var(--muted);
+  font-size: 1.1rem;
+  animation-delay: calc(var(--text-at) + 0.2s) !important;
+}
+
+.promotion-pill {
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  margin: 0.4rem 0 0.2rem;
+  color: var(--text);
+  animation-delay: calc(var(--text-at) + 0.5s) !important;
+}
+
+.promotion-pill-label {
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.7);
 }
 
 .promotion-next {
   font-weight: 800;
-  color: color-mix(in srgb, var(--tier-deep) 80%, var(--text));
+  opacity: 0.9;
+  animation-delay: calc(var(--text-at) + 0.6s) !important;
+}
+
+.promotion button {
+  margin-top: 0.6rem;
+  animation-delay: calc(var(--text-at) + 0.8s) !important;
 }
 
 @keyframes promotion-in {
@@ -3093,17 +3424,18 @@ app-settings-drawer {
   }
 }
 
-@keyframes promotion-rise {
-  from {
-    opacity: 0;
-    scale: 0.6;
+@keyframes promotion-turn {
+  to {
+    rotate: 360deg;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .promotion,
-  .promotion-new {
-    animation: none;
+  .promotion > *,
+  .promotion-halo,
+  .promotion-rays {
+    animation: none !important;
   }
 }
 

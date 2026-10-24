@@ -23,12 +23,6 @@ const STEP: Readonly<Record<string, number>> = {
   curious: 0, apprentice: 1, initiate: 2, scholar: 3, savant: 4, master: 5, sage: 6, 'grand-sage': 7,
 };
 
-/** The sky at the height of each step: the haze near the ground, the blue, the deep blue of altitude, then space. */
-export const ALTITUDE: readonly string[] = ['#fbf3e4', '#d7ebf8', '#a9d1f2', '#6aa7e4', '#2f6cc0', '#16306e', '#0a1233', '#020409'];
-
-/** The sky behind a large emblem: its altitude, plain, with stars from the night of Master. */
-const AMBIANCE: readonly string[] = ALTITUDE.map((color, step) => (step >= 5 ? stars(step === 5 ? '#c5d6ff' : '#fff3c4') + color : color));
-
 export interface EmblemLook {
   step: number;
   color: string;
@@ -76,10 +70,6 @@ export function emblemLook(tier: string): EmblemLook {
     blur: 2 + step * 0.7,
     flow: ['', '', '', '', '7s', '6s', '5.2s', '4.6s'][step],
   };
-}
-
-export function emblemAmbiance(tier: string): string {
-  return AMBIANCE[emblemStep(tier)];
 }
 
 const CX = 32;
@@ -164,22 +154,4 @@ function mix(a: string, b: string): string {
   const channels = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
   const [x, y] = [channels(a), channels(b)];
   return '#' + x.map((v, i) => Math.round((v + y[i]) / 2).toString(16).padStart(2, '0')).join('');
-}
-
-function stars(tint: string): string {
-  const places = [[8, 22], [17, 70], [29, 35], [41, 80], [52, 18], [63, 62], [74, 30], [86, 74], [93, 26], [36, 12]];
-  return places
-    .map(([x, y], k) => {
-      const size = k % 3 ? 1 : 1.6;
-      return `radial-gradient(${size}px ${size}px at ${x}% ${y}%, ${tint}, transparent), `;
-    })
-    .join('');
-}
-
-/** From this step on, the sky is dark enough for light text. */
-export const NIGHT = 4;
-
-/** The ink that reads on the sky of a step: dark low in the sky, light from the deep blue of Savant. */
-export function emblemInk(tier: string): string {
-  return emblemStep(tier) >= NIGHT ? '#f5f1ea' : '#13233a';
 }

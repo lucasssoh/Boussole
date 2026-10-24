@@ -253,6 +253,7 @@ export const EN = {
     division: 'New division',
     next: 'Next: {{rank}} · {{points}} points',
     continue: 'Continue',
+    newPill: 'Your new badge',
     leave: {
       curious: 'You are no longer just curious.',
       apprentice: 'You leave the apprentices behind.',
@@ -281,8 +282,9 @@ export const EN = {
     luminary: 'Luminary',
   },
   stats: {
-    level: 'level {{level}}',
-    points: '{{points}} / {{next}} points',
+    level: 'Level {{level}}',
+    fieldLevel: '{{field}} · level {{level}}',
+    bounds: '{{from}} → {{to}}',
     streak: 'days in a row',
     label: '{{rank}}, level {{level}}, {{points}} points, {{streakDays}} days in a row',
   },

@@ -1,25 +1,25 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { AchievementProgress, FieldStanding, LadderStep } from '../core/api';
+import { AchievementProgress, LadderStep } from '../core/api';
 import { BoussoleApi } from '../core/boussole-api';
 import { StatsService } from '../core/stats.service';
 import { emblemLook } from '../shared/emblem';
 import { LoadingComponent } from '../shared/loading.component';
 import { RankEmblemComponent } from '../shared/rank-emblem.component';
-import { SpecialtyEmblemComponent } from '../shared/specialty-emblem.component';
+import { RankPillComponent } from '../shared/rank-pill.component';
 import { CRITICAL_THINKING, divisionProgress, isStrong, roman } from '../shared/ranks';
 import { RankNames } from './rank-names';
 import { RankRouteComponent } from './rank-route.component';
 
 /**
  * The learner's page: their card (emblem, culture rank, level, points, records), the route of the
- * divisions with theirs in the middle, the next division, the specialties Sage asks for, each specialty, and the
+ * divisions with theirs in the middle, the next division, the specialties Sage asks for, each specialty as a pill, and the
  * achievements, kept for good.
  */
 @Component({
   selector: 'app-profile-page',
-  imports: [LoadingComponent, RankEmblemComponent, RankRouteComponent, RouterLink, SpecialtyEmblemComponent, TranslocoPipe],
+  imports: [LoadingComponent, RankEmblemComponent, RankRouteComponent, RouterLink, RankPillComponent, TranslocoPipe],
   host: { class: 'profile' },
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -83,13 +83,7 @@ import { RankRouteComponent } from './rank-route.component';
           }
           <div class="specialties">
             @for (field of current.fields; track field.domain) {
-              <section class="specialty" [title]="'profile.points' | transloco: { points: names.points(field.points) }">
-                <app-specialty-emblem [tier]="field.specialty.tier" [size]="56" [progress]="specialtyProgress(field)" />
-                <div>
-                  <strong>{{ names.field(field.domain) }}</strong>
-                  <span class="specialty-rank">{{ names.rank(field.specialty.tier, 0) }}</span>
-                </div>
-              </section>
+              <app-rank-pill class="specialty" ladder="specialty" [rank]="field.specialty" [points]="field.points" [field]="names.field(field.domain)" [emblemSize]="34" [title]="names.rank(field.specialty.tier, field.specialty.division) + ' · ' + ('profile.points' | transloco: { points: names.points(field.points) })" />
             }
           </div>
         </div>
@@ -159,8 +153,6 @@ export class ProfilePageComponent {
   /** Every division of the culture, and where the learner's is among them. */
   protected readonly cultureSteps = signal<LadderStep[]>([]);
   protected readonly hereIndex = computed(() => Math.max(0, this.cultureSteps().findIndex((step) => this.isHere(step))));
-  /** Where each specialty tier starts, to fill the ring up to the next one. */
-  private readonly specialtyTiers = signal<LadderStep[]>([]);
   private readonly allAchievements = signal<AchievementProgress[]>([]);
   /** The achievements reached, the highest first. */
   protected readonly reached = computed(() =>
@@ -173,10 +165,7 @@ export class ProfilePageComponent {
     this.stats.refresh();
     const api = inject(BoussoleApi);
     api.achievements().then((achievements) => this.allAchievements.set(achievements), () => undefined);
-    api.ranks().then((ladders) => {
-      this.cultureSteps.set(ladders.culture);
-      this.specialtyTiers.set(ladders.specialty.filter((step, index, all) => all[index - 1]?.tier !== step.tier));
-    }, () => undefined);
+    api.ranks().then((ladders) => this.cultureSteps.set(ladders.culture), () => undefined);
   }
 
   /** The value counted, out of what the next level asks; the value alone once every level is reached. */
@@ -189,17 +178,6 @@ export class ProfilePageComponent {
   private toNext(achievement: AchievementProgress): number {
     const next = achievement.thresholds[achievement.level];
     return next === undefined ? 1 : achievement.value / next;
-  }
-
-  /** How far a specialty is from the start of its tier to the next; full at the top. */
-  protected specialtyProgress(field: FieldStanding): number | null {
-    const tiers = this.specialtyTiers();
-    const index = tiers.findIndex((step) => step.tier === field.specialty.tier);
-    if (index < 0) {
-      return null;
-    }
-    const next = tiers[index + 1];
-    return next ? (field.points - tiers[index].from) / (next.from - tiers[index].from) : 1;
   }
 
   protected toGo(from: number, points: number): number {
