@@ -98,10 +98,8 @@
   term: Palier
   aliases: [paliers]
   definition: >
-    Une marche de l'ascension : Curieux, Apprenti, Initié, Érudit, Savant, Maître, Sage, chacun en
-    divisions de V à I, puis Grand Sage, sans fin. Les points te font monter ; Sage demande aussi
-    trois spécialités au palier Spécialiste ; Grand Sage, cinq hors Esprit critique, et l'Esprit
-    critique au palier Spécialiste en plus.
+    Une marche de l'ascension, de Curieux à Grand Sage. Les points te font monter ; la page
+    Paliers montre ce que chacun demande.
 
 - id: lien
   term: Lien
