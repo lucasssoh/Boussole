@@ -7,6 +7,7 @@ minor release may break things and says so.
 ## Unreleased
 
 ### Added
+- **Profile:** your card (emblem, culture rank, level, points, best streak, flawless sessions, first try), the route of the divisions around yours, the next one, the fields Sage asks for, and your specialty in each field. **Tiers:** both ladders, culture and specialty, division by division. The header leads there.
 - **Course format:** `subject.yaml` says how demanding a track is (`level`: discovery, secondary, bachelor, master, research) and its field (`domain`, from the fields of the UNESCO classification ISCED-F 2013); the `cursus-plan` playbook sets them and shows them in the plan; without them, a warning (`P013`). `hook=true` marks a hook question, a guess in the warmup that earns no points (`F043` elsewhere).
 - **Validator:** a `::ref` that asks a question of the same session or of a later one is an error (`F042`): a warmup or a review asks only about what was studied before.
 - **`boussole index <folder>`:** every question of a track on one line, with how many times it is already asked again elsewhere: the agent picks its warmup and review questions there, the least asked first, so that warmups vary. The `AGENTS.md` installed in a track says how to write many sessions at once (one agent per chapter, each writing only in its folder) and which model suits which task.

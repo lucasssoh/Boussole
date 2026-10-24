@@ -86,6 +86,13 @@ class RewardTest {
         }
 
         @Test
+        void the_steps_go_from_division_v_of_the_first_tier_to_the_top() {
+            assertThat(Ladder.CULTURE.steps()).hasSize(7 * 5 + 1);
+            assertThat(Ladder.CULTURE.steps().getFirst()).isEqualTo(new Ladder.Step(0, 5, 0));
+            assertThat(Ladder.CULTURE.steps().getLast()).isEqualTo(new Ladder.Step(7, 0, 404845));
+        }
+
+        @Test
         void a_specialty_has_its_own_titles() {
             assertThat(Rank.of(Ladder.SPECIALTY, 5000).tierId()).isEqualTo("proficient");
             assertThat(Rank.of(Ladder.SPECIALTY, 100_000).tierId()).isEqualTo("luminary");
@@ -131,6 +138,18 @@ class RewardTest {
                 assertThat(field.points()).isEqualTo(30);
                 assertThat(field.rank().tierId()).isEqualTo("novice");
             });
+        }
+
+        @Test
+        void keeps_the_records_best_streak_flawless_sessions_and_first_tries() {
+            answer("oc", "a", "2026-10-10T08:00:00Z", 1);
+            answer("oc", "a", "2026-10-11T08:00:00Z", 0);
+            answer("oc", "b", "2026-10-12T08:00:00Z", 0);
+            answer("oc", "c", "2026-10-20T08:00:00Z", 1);
+            finished.add(new SessionFinishedRecord("oc", "s1", Instant.parse("2026-10-20T09:00:00Z"), 2));
+            finished.add(new SessionFinishedRecord("oc", "s1", Instant.parse("2026-10-21T09:00:00Z"), 0));
+
+            assertThat(statsOn("2026-10-21").records()).isEqualTo(new Records(3, 1, 1, 2, 3));
         }
 
         @Test

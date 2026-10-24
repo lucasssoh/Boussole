@@ -7,5 +7,7 @@ export const routes: Routes = [
     path: 'subjects/:subject/sessions/:session',
     loadComponent: () => import('./learn/session-page.component').then((m) => m.SessionPageComponent),
   },
+  { path: 'profile', loadComponent: () => import('./progress/profile-page.component').then((m) => m.ProfilePageComponent) },
+  { path: 'ranks', loadComponent: () => import('./progress/ranks-page.component').then((m) => m.RanksPageComponent) },
   { path: '**', redirectTo: '' },
 ];

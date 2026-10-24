@@ -45,7 +45,8 @@ package "exercise" {
   class SolutionView <<record>>
 }
 package "reward" {
-  class StatsController <<GET /api/stats>>
+  class StatsController <<GET /api/stats, /api/ranks>>
+  class "StatsController.StatsView" as StatsView <<record: points, ranks, records, route>>
 }
 package "files" {
   class SubjectFileController <<…/files/**, …/lang/{lang}/files/**>>
@@ -97,6 +98,7 @@ SessionController --> core
 ExerciseController --> core
 SubjectFileController --> core
 StatsController --> core
+StatsController ..> StatsView
 ReferenceController --> core : PreviewWebPage
 CourseController ..> ResumeView : session to resume
 CourseView *-- PrerequisiteView : a session waits for

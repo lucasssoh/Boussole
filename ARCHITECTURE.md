@@ -290,7 +290,10 @@ web/src/app/
 - **The look**: rounded, colourful; relief marks what can be pressed, and only that, the Nunito font bundled with the
   interface. Each subject has its colour (`subjectColor()`), set as `--subject` on the page.
   The header shows the rank (`RankEmblemComponent`), the level, the points and the streak
-  (`StatsService`); each answer shows what it was worth and the points it earned.
+  (`StatsService`), and leads to the profile (`ProfilePageComponent`: the card, the route of
+  divisions, the next one, the fields Sage asks for, each specialty) and to the tiers
+  (`RanksPageComponent`, both ladders); each answer shows what it was worth and the points it
+  earned.
 - **Bubbles**: entering a page or a screen, its elements pop in one after the other (the
   `bubble` keyframes, a rank `--i` per element). They animate `scale`, `translate` and
   `opacity`, never `transform`, so that centring and pressing are left alone; nothing moves when
@@ -322,7 +325,8 @@ GET  …/exercises/{id}/solution           after an attempt (at once for a free 
 GET  …/files/{path}                      a file of the subject folder: PDFs, videos (range requests), images
 GET  …/lang/{lang}/files/{path}          the same, in one version of the track (the language in the path keeps relative links)
 GET  /api/references/preview?url=        whether a web page a course cites may show beside the text
-GET  /api/stats                          points, culture rank, specialty of each field, streak
+GET  /api/stats                          points, culture rank, specialty of each field, streak, records, route
+GET  /api/ranks                          both ladders: every division, where it starts, its first level
 GET  /api/server                         lets boussole open recognise a running Boussole
 POST /api/server/stop                    boussole stop
 ```

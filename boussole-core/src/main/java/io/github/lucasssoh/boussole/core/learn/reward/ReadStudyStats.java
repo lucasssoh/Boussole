@@ -1,7 +1,10 @@
 package io.github.lucasssoh.boussole.core.learn.reward;
 
 import io.github.lucasssoh.boussole.core.learn.ContentRepository;
+import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
+import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
+import io.github.lucasssoh.boussole.format.model.block.McqBlock;
 import io.github.lucasssoh.boussole.format.model.Domain;
 import java.time.Clock;
 import java.time.Instant;
@@ -15,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Points, ranks and streak, computed from the history of attempts and finished sessions of the
@@ -62,7 +66,39 @@ public final class ReadStudyStats {
         Set<LocalDate> days = new TreeSet<>();
         attempts.forEach(attempt -> days.add(day(attempt.at())));
         LocalDate today = LocalDate.now(clock);
-        return new StudyStats(points, Rank.of(Ladder.CULTURE, points, fields), standings, streak(days, today), days.contains(today));
+        return new StudyStats(points, Rank.of(Ladder.CULTURE, points, fields), standings, streak(days, today), days.contains(today),
+                records(attempts, finished, days));
+    }
+
+    private Records records(List<AttemptRecord> attempts, List<SessionFinishedRecord> finished, Set<LocalDate> days) {
+        Set<String> hooks = content.courses().stream()
+                .flatMap(course -> course.blocks().flatMap(block -> switch (block) {
+                    case McqBlock mcq when mcq.hook() -> Stream.of(course.subject().id() + "/" + mcq.id());
+                    case ExerciseBlock exercise when exercise.hook() -> Stream.of(course.subject().id() + "/" + exercise.id());
+                    default -> Stream.<String>empty();
+                }))
+                .collect(Collectors.toSet());
+        Map<String, Verdict> first = new HashMap<>();
+        attempts.forEach(attempt -> first.putIfAbsent(attempt.subject() + "/" + attempt.exercise(), attempt.verdict()));
+        hooks.forEach(first::remove);
+        int right = (int) first.values().stream().filter(verdict -> verdict == Verdict.CORRECT).count();
+        int sessions = (int) finished.stream().map(session -> session.subject() + "/" + session.session()).distinct().count();
+        int flawless = (int) finished.stream().filter(session -> session.bonus() > 0).count();
+        return new Records(longestRun(days), sessions, flawless, right, first.size());
+    }
+
+    private static int longestRun(Set<LocalDate> days) {
+        int best = 0;
+        for (LocalDate day : days) {
+            if (!days.contains(day.minusDays(1))) {
+                int run = 0;
+                while (days.contains(day.plusDays(run))) {
+                    run++;
+                }
+                best = Math.max(best, run);
+            }
+        }
+        return best;
     }
 
     /** Days in a row ending today, or yesterday while today has nothing yet. */

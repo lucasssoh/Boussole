@@ -22,6 +22,12 @@ package "core" {
   class "api.ts" as Api <<types of the HTTP API>>
 }
 
+package "progress" {
+  class ProfilePageComponent <<page profile>>
+  class RanksPageComponent <<page ranks>>
+  class RankNames <<service: ranks, fields, points>>
+}
+
 package "learn" {
   class LearnFacade <<facade>> {
     subjects, course, session, panel : Signal
@@ -104,6 +110,11 @@ SessionPageComponent ..> ServerSettingsService : free navigation?
 SessionPageComponent --> SessionPathComponent
 QuestionState ..> StatsService : refresh after an answer
 RankEmblemComponent ..> Ranks : colours
+ProfilePageComponent ..> StatsService : stats
+ProfilePageComponent ..> RankEmblemComponent
+RanksPageComponent ..> BoussoleApi : ranks
+ProfilePageComponent ..> RankNames
+RanksPageComponent ..> RankNames
 SessionPageComponent --> BlockListComponent : the screen shown
 SessionRun o-- QuestionState : kept for the sitting
 SessionPageComponent --> SidePanelComponent

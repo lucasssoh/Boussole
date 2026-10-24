@@ -336,13 +336,37 @@ export interface FieldStanding {
   specialty: Rank;
 }
 
-/** Points, the culture rank, the specialty in each field and the streak of days. */
+/** What the learner keeps for good. */
+export interface Records {
+  bestStreak: number;
+  sessionsFinished: number;
+  flawlessSessions: number;
+  firstTryRight: number;
+  firstTryAnswered: number;
+}
+
+/** A division of a ladder: its tier, its number (5 to 1; 0 for the top tier), where it starts, its first level. */
+export interface LadderStep {
+  tier: string;
+  division: number;
+  from: number;
+  firstLevel: number;
+}
+
+export interface Ladders {
+  culture: LadderStep[];
+  specialty: LadderStep[];
+}
+
+/** Points, the culture rank, the specialty in each field, the streak of days, the records, and the divisions around. */
 export interface StudyStats {
   points: number;
   culture: Rank;
   fields: FieldStanding[];
   streakDays: number;
   studiedToday: boolean;
+  records: Records;
+  route: LadderStep[];
 }
 
 export interface RevealedHint {

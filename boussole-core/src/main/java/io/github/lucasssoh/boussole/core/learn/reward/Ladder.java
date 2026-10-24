@@ -1,5 +1,6 @@
 package io.github.lucasssoh.boussole.core.learn.reward;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,6 +51,22 @@ public enum Ladder {
     double divisionSize(int tier) {
         int last = Math.min(tier, top() - 1);
         return (from[last + 1] - from[last]) / DIVISIONS;
+    }
+
+    /** One division of the ladder: its tier, its number (5 to 1; 0 for the top tier) and where it starts. */
+    public record Step(int tier, int division, double from) {
+    }
+
+    /** Every division, from Curious V (or Novice V) to the start of the top tier. */
+    public List<Step> steps() {
+        List<Step> steps = new ArrayList<>();
+        for (int tier = 0; tier < top(); tier++) {
+            for (int index = 0; index < DIVISIONS; index++) {
+                steps.add(new Step(tier, DIVISIONS - index, from[tier] + index * divisionSize(tier)));
+            }
+        }
+        steps.add(new Step(top(), 0, from[top()]));
+        return List.copyOf(steps);
     }
 
     /** The fields a culture tier asks for: 3 for Sage, 5 for Grand Sage, else 1. */

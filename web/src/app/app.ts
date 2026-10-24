@@ -20,7 +20,7 @@ import { SettingsDrawerComponent } from './core/settings-drawer.component';
       </a>
       @if (stats.stats(); as current) {
         @let rank = current.culture;
-        <div class="player-stats" [attr.aria-label]="'stats.label' | transloco: { rank: rankName(rank.tier, rank.division), level: rank.level, points: points(current.points), streakDays: current.streakDays }">
+        <a class="player-stats" routerLink="/profile" [attr.aria-label]="'stats.label' | transloco: { rank: rankName(rank.tier, rank.division), level: rank.level, points: points(current.points), streakDays: current.streakDays }">
           <app-rank-emblem [tier]="rank.tier" [size]="28" />
           <span class="level-bar">
             <span class="level-line">{{ rankName(rank.tier, rank.division) }} · {{ 'stats.level' | transloco: { level: rank.level } }}</span>
@@ -31,7 +31,7 @@ import { SettingsDrawerComponent } from './core/settings-drawer.component';
             <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 5 5 5 10a5 5 0 01-10 0c0-2 1-3.5 2-4.5 0 2 1 3 2 3-1-3 0-6 1-8.5z"></path></svg>
             {{ current.streakDays }}
           </span>
-        </div>
+        </a>
       }
       <nav class="top-actions">
         <app-settings-drawer />

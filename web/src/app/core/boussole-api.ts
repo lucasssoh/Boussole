@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { AttemptRequest, AttemptResult, Course, CourseSummary, PagePreview, RevealedHint, RevealedSolution, ServerInfo, Session, StudyStats } from './api';
+import { AttemptRequest, AttemptResult, Course, CourseSummary, Ladders, PagePreview, RevealedHint, RevealedSolution, ServerInfo, Session, StudyStats } from './api';
 
 /** The calls to the local server. Answers only come with an attempt or a solution asked for. */
 @Injectable({ providedIn: 'root' })
@@ -27,6 +27,10 @@ export class BoussoleApi {
 
   stats(): Promise<StudyStats> {
     return this.get('/api/stats');
+  }
+
+  ranks(): Promise<Ladders> {
+    return this.get('/api/ranks');
   }
 
   finishSession(subject: string, session: string, spentSeconds: number): Promise<{ bonus: number }> {
