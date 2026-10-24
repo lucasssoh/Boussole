@@ -55,6 +55,8 @@ format: 1
 id: git-bases
 name: Les bases de Git
 lang: fr
+level: discovery
+domain: information-technology
 description: Créer un dépôt, enregistrer ses changements et lire l'historique.
 ```
 
@@ -62,6 +64,10 @@ description: Créer un dépôt, enregistrer ses changements et lire l'historique
 - `id` : l':term[identifiant]{id=identifier} du parcours, en minuscules, chiffres et `-`.
 - `name` : le nom affiché.
 - `lang` : la langue du contenu (`fr`, `en`, `de`…).
+- `level` : ce qu'il faut pour suivre le parcours, `discovery`, `secondary`, `bachelor`, `master`
+  ou `research`. Plus il est exigeant, plus ses questions rapportent.
+- `domain` : son domaine, dans la liste du format (`information-technology`, `mathematics`,
+  `philosophy-and-ethics`…).
 - `description` : une ou deux phrases, facultative.
 - `authors` et `contributors` : qui fait et signe le parcours (une personne, une université avec
   `organisation: true`), et qui y a contribué, avec son `role`. Facultatifs, affichés sur la page

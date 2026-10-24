@@ -38,6 +38,8 @@ package "validate" {
     class SourceInventoryRule <<F033-F036>>
     class SourceProvenanceRule <<F039>>
     class AuthorshipRule <<P012>>
+    class TrackProfileRule <<P013>>
+    class HookPlaceRule <<F043>>
     class VideoExistsRule <<F032>>
     class NotionExerciseRule <<P001>>
     class SingleExampleRule <<P002>>
@@ -88,6 +90,8 @@ ValidationRule <|.. SourceFileRule
 ValidationRule <|.. SourceInventoryRule
 ValidationRule <|.. SourceProvenanceRule
 ValidationRule <|.. AuthorshipRule
+ValidationRule <|.. TrackProfileRule
+ValidationRule <|.. HookPlaceRule
 SourceInventoryRule ..> SourceInventory
 ValidationRule <|.. VideoExistsRule
 ValidationRule <|.. NotionExerciseRule

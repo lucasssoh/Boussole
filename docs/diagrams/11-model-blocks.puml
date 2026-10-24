@@ -78,6 +78,7 @@ enum GraphLayout {
 class ExerciseBlock <<record>> {
   id : String
   minutes : OptionalInt
+  hook : boolean
 }
 enum ExerciseType {
   NUMERIC
@@ -91,6 +92,7 @@ class McqBlock <<record>> {
   id : String
   multiple : boolean
   minutes : OptionalInt
+  hook : boolean
 }
 class McqChoice <<record>> {
   text : String

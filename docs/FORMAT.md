@@ -67,6 +67,61 @@ description: M1 networking course, network and transport layers.
 | `description` | no | One or two sentences. |
 | `authors` | no | Who makes and signs the track: people or organisations. Each a `name`, optionally `organisation: true` and a `url`. |
 | `contributors` | no | Who helped: each a `name`, optionally a `role` (`exercises of chapter 3`, `review`) and a `url`. |
+| `level` | no (`P013` without it) | What it takes to follow the track: `discovery` (nothing), `secondary` (secondary school), `bachelor`, `master` or `research`. The points of its questions are multiplied by 1, 1.5, 2, 3 or 4. |
+| `domain` | no (`P013` without it) | Its field of knowledge, one of the list below. |
+
+The fields follow the detailed fields of the UNESCO International Standard Classification of
+Education (ISCED-F 2013), whose code each keeps; information technology is one field, as at
+its narrow level. Any other value is an error (`F001`).
+
+| `domain` | ISCED-F 2013 |
+|---|---|
+| `personal-development` | 0031 |
+| `education` | 011 |
+| `audiovisual-media` | 0211 |
+| `design` | 0212 |
+| `fine-arts` | 0213 |
+| `crafts` | 0214 |
+| `music-and-performing-arts` | 0215 |
+| `religion-and-theology` | 0221 |
+| `history-and-archaeology` | 0222 |
+| `philosophy-and-ethics` | 0223 |
+| `languages` | 0231 |
+| `literature-and-linguistics` | 0232 |
+| `economics` | 0311 |
+| `political-science` | 0312 |
+| `psychology` | 0313 |
+| `sociology-and-cultural-studies` | 0314 |
+| `journalism` | 0321 |
+| `library-and-archives` | 0322 |
+| `business-and-management` | 041 |
+| `law` | 0421 |
+| `biology` | 0511 |
+| `biochemistry` | 0512 |
+| `environmental-sciences` | 052 |
+| `chemistry` | 0531 |
+| `earth-sciences` | 0532 |
+| `physics` | 0533 |
+| `mathematics` | 0541 |
+| `statistics` | 0542 |
+| `information-technology` | 061 |
+| `engineering` | 071 |
+| `manufacturing` | 072 |
+| `architecture-and-construction` | 073 |
+| `agriculture` | 081 |
+| `forestry-and-fisheries` | 082 |
+| `veterinary` | 0841 |
+| `medicine` | 0912 |
+| `dentistry` | 0911 |
+| `nursing-and-care` | 0913 |
+| `pharmacy` | 0916 |
+| `health-technology-and-therapy` | 0914 |
+| `social-work` | 092 |
+| `hospitality-and-tourism` | 1013 |
+| `sports` | 1014 |
+| `personal-services` | 101 |
+| `security-and-defence` | 103 |
+| `transport` | 104 |
 
 ---
 
@@ -300,7 +355,9 @@ Where each directive may appear:
 
 Every exercise has an `id` that is **unique in the subject and never reused**. An exercise or a
 MCQ may also have `minutes=N`, the time it takes at a normal pace when it differs from the
-estimate of its type:
+estimate of its type. `hook=true` marks a **hook**: a guess, in the warmup, on what the session is
+about to teach; it earns no points and is not counted in *first try* (`F043` elsewhere than in a
+warmup). The time each type takes:
 
 | Question | Estimated minutes |
 |---|---|
@@ -434,6 +491,7 @@ chapter.
 | `F040` | error | Two versions of a track (same `id`, other `lang`) differ: sessions, notion or question IDs, or what a question asks (§9); or two versions in the same language. |
 | `F041` | warning | A session written in another version of the track, not yet in this one (§9). |
 | `F042` | error | A `::ref` to a question of the same session or of a later one, in the order of the syllabus: a warmup or a review asks only about what was studied before. |
+| `F043` | error | A question with `hook=true` outside the warmup. |
 | `F032` | warning | `video` that YouTube does not know (checked only with `--check-videos`). |
 | `P001` | warning | A notion without exercise or `mcq`. |
 | `P002` | warning | A notion with more than one `example`. |
@@ -447,6 +505,7 @@ chapter.
 | `P010` | warning | Wrong choice of a `mcq` without feedback. |
 | `P011` | warning | A `graph` of more than 12 nodes. |
 | `P012` | warning | A session without `written_by`: the learner cannot see who wrote it. |
+| `P013` | warning | `subject.yaml` without `level` or `domain`. |
 
 `P001`, `P002`, `P006` and `P007` apply to lessons only; `P004` does not apply to exams, which
 show no hints.

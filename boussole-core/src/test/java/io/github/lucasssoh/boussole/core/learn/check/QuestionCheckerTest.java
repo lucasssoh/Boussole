@@ -34,7 +34,7 @@ class QuestionCheckerTest {
 
     private static ExerciseBlock exercise(ExerciseType type, Answer answer) {
         return new ExerciseBlock("s11-a1", type, List.of(), Optional.ofNullable(answer), List.of(), Optional.empty(),
-                OptionalInt.empty(), HERE);
+                OptionalInt.empty(), false, HERE);
     }
 
     private static McqChoice choice(String text, boolean correct, String feedback) {
@@ -47,7 +47,7 @@ class QuestionCheckerTest {
         private final McqBlock datagram = new McqBlock("s11-a2", false, List.of(), List.of(
                 choice("Datagramme", false, "Non : aucun état."),
                 choice("Circuit virtuel", true, null),
-                choice("Les deux", false, null)), List.of(), Optional.empty(), OptionalInt.empty(), HERE);
+                choice("Les deux", false, null)), List.of(), Optional.empty(), OptionalInt.empty(), false, HERE);
 
         @Test
         void the_right_choice_is_correct() {
@@ -66,7 +66,7 @@ class QuestionCheckerTest {
         void some_right_choices_of_several_are_partly_right() {
             McqBlock several = new McqBlock("c1", true, List.of(), List.of(
                     choice("a", true, null), choice("b", true, null), choice("c", false, null)),
-                    List.of(), Optional.empty(), OptionalInt.empty(), HERE);
+                    List.of(), Optional.empty(), OptionalInt.empty(), false, HERE);
 
             assertThat(checker.check(several, new ChoicesResponse(Set.of(0))).verdict()).isEqualTo(Verdict.PARTLY);
             assertThat(checker.check(several, new ChoicesResponse(Set.of(0, 1))).verdict()).isEqualTo(Verdict.CORRECT);

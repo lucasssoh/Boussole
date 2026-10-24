@@ -14,6 +14,7 @@ import io.github.lucasssoh.boussole.format.validate.rule.PartOrderRule;
 import io.github.lucasssoh.boussole.format.validate.rule.McqChoicesRule;
 import io.github.lucasssoh.boussole.format.validate.rule.McqFeedbackRule;
 import io.github.lucasssoh.boussole.format.validate.rule.QuickCheckRule;
+import io.github.lucasssoh.boussole.format.validate.rule.HookPlaceRule;
 import io.github.lucasssoh.boussole.format.validate.rule.ReferenceOrderRule;
 import io.github.lucasssoh.boussole.format.validate.rule.ReferenceRule;
 import io.github.lucasssoh.boussole.format.validate.rule.SessionIdMatchRule;
@@ -21,6 +22,7 @@ import io.github.lucasssoh.boussole.format.validate.rule.SingleExampleRule;
 import io.github.lucasssoh.boussole.format.validate.rule.SourceFileRule;
 import io.github.lucasssoh.boussole.format.validate.rule.SourceInventoryRule;
 import io.github.lucasssoh.boussole.format.validate.rule.SourceProvenanceRule;
+import io.github.lucasssoh.boussole.format.validate.rule.TrackProfileRule;
 import io.github.lucasssoh.boussole.format.validate.rule.TimedSessionContentRule;
 import io.github.lucasssoh.boussole.format.validate.rule.TimedSessionFitRule;
 import io.github.lucasssoh.boussole.format.validate.rule.VideoExistsRule;
@@ -49,6 +51,7 @@ public final class Validator {
                 new FillGapsRule(),
                 new ReferenceRule(),
                 new ReferenceOrderRule(),
+                new HookPlaceRule(),
                 new SourceFileRule(),
                 new SourceInventoryRule(),
                 new SourceProvenanceRule(),
@@ -58,6 +61,7 @@ public final class Validator {
                 new PartOrderRule(),
                 new HintPresenceRule(),
                 new AuthorshipRule(),
+                new TrackProfileRule(),
                 new McqFeedbackRule(),
                 new DeclaredTermsRule(),
                 new ClosingRule(),

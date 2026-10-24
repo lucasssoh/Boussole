@@ -23,6 +23,12 @@ write sessions here: the learner approves the plan first.
    care: they show what the learner will be asked to do.
 5. Check `lang` in `subject.yaml`: it must be the language of the documents (BCP 47: `fr`,
    `en`…). Correct it if it is not.
+6. Set `level` and `domain` in `subject.yaml` (`.boussole/FORMAT.md` §2). `level` is what it
+   takes to follow the track **without too much trouble**, judged from the documents and what
+   they take for granted, not from the learner: `discovery` (nothing), `secondary`, `bachelor`,
+   `master` or `research`. A first-year master course is `master`, even for a learner who finds it
+   easy. `domain` is its field, from the list of §2 only. Both show in the plan you present (§4),
+   so that the learner can question them before approving.
 
 ## 2. Cut the course
 
@@ -91,7 +97,7 @@ Then run `boussole validate .` and fix every error (see the `cursus-fix` skill).
 
 ## 4. Stop and present
 
-Show the learner a table: chapter, session, estimated duration, goal, the pages of the sources each
+Give the track's `level` and `domain` first, then show the learner a table: chapter, session, estimated duration, goal, the pages of the sources each
 session draws on, and the sessions it needs first. Give the total number of sessions and hours. Point out what you were unsure
 of: notions you added because a prerequisite seemed missing, parts of the documents you left
 out and why.

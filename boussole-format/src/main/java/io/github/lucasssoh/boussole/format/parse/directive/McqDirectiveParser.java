@@ -11,7 +11,7 @@ import java.util.Set;
 final class McqDirectiveParser implements DirectiveParser {
 
     private static final DirectiveSpec SPEC =
-            new DirectiveSpec("mcq", DirectiveKind.CONTAINER, Set.of("id"), Set.of("multiple", "minutes"), DirectivePlaces.FLOW);
+            new DirectiveSpec("mcq", DirectiveKind.CONTAINER, Set.of("id"), Set.of("multiple", "minutes", "hook"), DirectivePlaces.FLOW);
 
     @Override
     public DirectiveSpec spec() {
@@ -35,6 +35,7 @@ final class McqDirectiveParser implements DirectiveParser {
                 parts.hints(),
                 parts.solution(directive, context),
                 directive.attributes().positiveInteger("minutes"),
+                directive.attributes().flag("hook"),
                 context.position(directive.line())));
     }
 }

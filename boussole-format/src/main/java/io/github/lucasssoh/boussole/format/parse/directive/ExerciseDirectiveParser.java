@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 final class ExerciseDirectiveParser implements DirectiveParser {
 
     private static final DirectiveSpec SPEC = new DirectiveSpec(
-            "exercise", DirectiveKind.CONTAINER, Set.of("id", "type"), Set.of("tolerance", "unit", "strict", "minutes"), DirectivePlaces.FLOW);
+            "exercise", DirectiveKind.CONTAINER, Set.of("id", "type"), Set.of("tolerance", "unit", "strict", "minutes", "hook"), DirectivePlaces.FLOW);
 
     /** Attributes every type accepts, besides {@code id} and {@code type}. */
-    private static final Set<String> COMMON = Set.of("minutes");
+    private static final Set<String> COMMON = Set.of("minutes", "hook");
 
     @Override
     public DirectiveSpec spec() {
@@ -50,6 +50,7 @@ final class ExerciseDirectiveParser implements DirectiveParser {
                 parts.hints(),
                 parts.solution(directive, context),
                 directive.attributes().positiveInteger("minutes"),
+                directive.attributes().flag("hook"),
                 context.position(directive.line())));
     }
 

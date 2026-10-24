@@ -55,6 +55,8 @@ format: 1
 id: git-basics
 name: Git basics
 lang: en
+level: discovery
+domain: information-technology
 description: Create a repository, record your changes and read the history.
 ```
 
@@ -62,6 +64,10 @@ description: Create a repository, record your changes and read the history.
 - `id`: the :term[identifier]{id=identifier} of the track, in lowercase letters, digits and `-`.
 - `name`: the name shown.
 - `lang`: the language of the content (`en`, `fr`, `de`…).
+- `level`: what it takes to follow the track, `discovery`, `secondary`, `bachelor`, `master` or
+  `research`. The more demanding, the more its questions earn.
+- `domain`: its field of knowledge, from the list of the format (`information-technology`,
+  `mathematics`, `philosophy-and-ethics`…).
 - `description`: one or two sentences, optional.
 - `authors` and `contributors`: who makes and signs the track (a person, a university with
   `organisation: true`), and who contributed, with their `role`. Optional, shown on the track's

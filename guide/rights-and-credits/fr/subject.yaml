@@ -2,6 +2,8 @@ format: 1
 id: boussole-credits
 name: Auteurs, droits et crédits
 lang: fr
+level: discovery
+domain: law
 description: "Respecter le travail des autres quand tu construis, utilises et partages un parcours : qui a fait quoi, licences, citations, et crédits dans Boussole."
 authors:
   - name: Boussole

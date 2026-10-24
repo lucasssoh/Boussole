@@ -64,7 +64,7 @@ class ValidateCommandTest {
 
     @Test
     void problemsAreListedWithTheirPlace() throws IOException {
-        write("subject.yaml", "format: 1\nid: t\nname: T\nlang: fr\n");
+        write("subject.yaml", "format: 1\nid: t\nname: T\nlang: fr\nlevel: master\ndomain: information-technology\n");
         write("cursus/syllabus.yaml", """
                 status: approved
                 chapters:
@@ -87,7 +87,7 @@ class ValidateCommandTest {
 
     @Test
     void warningsAloneDoNotFail() throws IOException {
-        write("subject.yaml", "format: 1\nid: t\nname: T\nlang: fr\n");
+        write("subject.yaml", "format: 1\nid: t\nname: T\nlang: fr\nlevel: master\ndomain: information-technology\n");
         write("cursus/syllabus.yaml", "status: approved\nchapters:\n  - {id: ch, title: C, dir: 01-ch, sessions: [{id: s1, title: Un, duration: 60, goal: Faire., file: s1.md}]}\n");
 
         assertThat(run("validate", "--errors-only", dir.toString())).isZero();

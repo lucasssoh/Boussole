@@ -18,6 +18,23 @@ class CourseSubject <<record>> {
   id, name, lang : String
   sourcesDir : String
   description : Optional<String>
+  level : Optional<TrackLevel>
+  domain : Optional<Domain>
+}
+enum TrackLevel {
+  DISCOVERY
+  SECONDARY
+  BACHELOR
+  MASTER
+  RESEARCH
+  +coefficient() : double
+}
+enum Domain {
+  INFORMATION_TECHNOLOGY
+  MATHEMATICS
+  PHILOSOPHY_AND_ETHICS
+  …
+  +isced() : String
 }
 class CourseSyllabus <<record>>
 enum SyllabusStatus {
@@ -119,6 +136,8 @@ class CheckpointPart <<record>>
 class PracticePart <<record>>
 
 Course *-- "1" CourseSubject : subject
+CourseSubject --> TrackLevel : level
+CourseSubject --> Domain : domain
 Course *-- "1" CourseSyllabus : syllabus
 Course *-- "1" CourseLexicon : lexicon
 Course *-- "0..1" LearnerProfile : learner

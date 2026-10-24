@@ -37,6 +37,7 @@ are about the teaching contract and matter to the learner.
 | F039 | a document from the web without its licence | read the licence on its page and write it in `licence`; when the page gives none, write `all rights reserved` and make sure the file is a source note, not a copy |
 | F040 | this version of the track differs from another language: an ID or what a question asks | keep every ID of the other version (sessions, `{#notion}`, exercises) and the same choices, gaps, items; translate only the text |
 | F041 | a session written in another language is not translated yet | translate it with `track-translate`, keeping every ID |
+| F043 | a question with `hook=true` outside the warmup | move it into the warmup, or remove `hook=true` |
 | F042 | a `::ref` asks a question of this session or of a later one | point to a question of an earlier session (`boussole index . --before <session>`), or write a new question |
 | F038 | a video file browsers may not play | ask the learner to convert it to MP4 or WebM (`ffmpeg -i in.mkv out.mp4`), then point `src` to the new file |
 | F037 | a `graph` line Boussole cannot read, a node twice, a loop, or places given for some nodes only | one node (`a "Label" @ 0,1`) or edge (`a -> b : 3`) per line; `@` on every node or none; FORMAT.md §5.5 |
@@ -44,6 +45,7 @@ are about the teaching contract and matter to the learner.
 | P001–P005 | teaching contract | add the exercise, keep one example, move warmup/practice, add hints (MCQs too: one or two, never the answer), list terms |
 | P006, P007 | the session does not follow `learner.yaml` | close it as `closing` asks; add the quick MCQ before the example |
 | P011 | a `graph` of more than 12 nodes | split it into two graphs, or keep only what the explanation needs |
+| P013 | `subject.yaml` without `level` or `domain` | write them as the `cursus-plan` playbook says, and show them to the learner |
 | P012 | a session without `written_by` | add your line: `- model: <your exact model ID>`, `tool: <the tool you run in>`, `date: <today>`; never guess another author |
 | P008 | the questions of a review or exam do not fill its time | add or remove questions (estimated times in `exam-build`), or set `minutes=` on a long one |
 | P009 | a review or exam holds a notion or a worked example | move it to a lesson; a timed session only asks questions |

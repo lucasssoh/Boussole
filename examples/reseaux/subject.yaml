@@ -2,4 +2,6 @@ format: 1
 id: reseaux
 name: Réseaux
 lang: fr
+level: master
+domain: information-technology
 description: Cours de réseaux de M1 — couche réseau et couche transport.

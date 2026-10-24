@@ -6,6 +6,8 @@ import java.util.List;
 import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCollector;
 import io.github.lucasssoh.boussole.format.model.CourseSubject;
+import io.github.lucasssoh.boussole.format.model.Domain;
+import io.github.lucasssoh.boussole.format.model.TrackLevel;
 import io.github.lucasssoh.boussole.format.yaml.YamlMap;
 import java.util.Optional;
 
@@ -45,7 +47,18 @@ final class CourseSubjectReader {
                 map.text("description"),
                 credits(map, "authors", diagnostics),
                 credits(map, "contributors", diagnostics),
+                map.text("level").map(String::strip).flatMap(id -> known(TrackLevel.of(id), map, "level", id, diagnostics,
+                        "`level` is discovery, secondary, bachelor, master or research, not `" + id + "`")),
+                map.text("domain").map(String::strip).flatMap(id -> known(Domain.of(id), map, "domain", id, diagnostics,
+                        "`domain` `" + id + "` is not in the list of docs/FORMAT.md §2 (such as information-technology, mathematics, philosophy-and-ethics)")),
                 map.positionOf("id")));
+    }
+
+    private static <T> Optional<T> known(Optional<T> value, YamlMap map, String key, String id, DiagnosticCollector diagnostics, String message) {
+        if (value.isEmpty()) {
+            diagnostics.report(DiagnosticCode.F001, map.positionOf(key), message);
+        }
+        return value;
     }
 
     /** {@code authors} or {@code contributors}: each a {@code name}, and a {@code role}, {@code url}, {@code organisation: true}. */

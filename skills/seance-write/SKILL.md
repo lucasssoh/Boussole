@@ -34,8 +34,8 @@ by `learner.yaml` as the table after it says:
    or from what they already know (« À ton avis… », « Devine… »), never one that needs the new
    notion. Trying to answer before the lesson, even wrongly, makes the lesson stick better
    (the pretesting effect). Write it as a new question (never a `::ref` to a later session), say
-   in its statement that it is a guess, and let its solution open the session with no blame:
-   nobody is expected to know yet. The
+   in its statement that it is a guess, mark it `hook=true` (it earns no points), and let its
+   solution open the session with no blame: nobody is expected to know yet. The
    first session of a subject has no warmup; the second asks only about the first.
 2. **Notions**, each a level-2 heading with an ID: `## Le masque de sous-réseau {#masque}`.
    For each notion, in this order:

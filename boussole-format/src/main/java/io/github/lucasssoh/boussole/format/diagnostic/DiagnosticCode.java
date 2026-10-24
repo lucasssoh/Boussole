@@ -37,6 +37,7 @@ public enum DiagnosticCode {
     F040(ERROR, "versions of a track differ"),
     F041(WARNING, "session written in another version, not yet in this one"),
     F042(ERROR, "question asked again before it is taught"),
+    F043(ERROR, "hook question outside the warmup"),
     P001(WARNING, "notion without exercise"),
     P002(WARNING, "notion with several examples"),
     P003(WARNING, "warmup not first, or practice not last"),
@@ -48,7 +49,8 @@ public enum DiagnosticCode {
     P009(WARNING, "timed session with a notion or a worked example"),
     P010(WARNING, "MCQ wrong choice without feedback"),
     P011(WARNING, "graph too large to read at a glance"),
-    P012(WARNING, "session that does not say who wrote it");
+    P012(WARNING, "session that does not say who wrote it"),
+    P013(WARNING, "track that does not say how demanding it is or its field");
 
     private final DiagnosticSeverity severity;
     private final String summary;

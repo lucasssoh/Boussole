@@ -126,7 +126,7 @@ public final class SubjectFixture {
     }
 
     public InspectionReport inspect() {
-        write("subject.yaml", subjectYaml.orElse("format: 1\nid: test\nname: Test\nlang: fr\n"));
+        write("subject.yaml", subjectYaml.orElse("format: 1\nid: test\nname: Test\nlang: fr\nlevel: bachelor\ndomain: information-technology\n"));
         write("cursus/syllabus.yaml", syllabusYaml.orElseGet(this::syllabus));
         lexiconYaml.ifPresent(yaml -> write("cursus/lexique.yaml", yaml));
         learnerYaml.ifPresent(yaml -> write("learner.yaml", yaml));

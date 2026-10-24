@@ -28,6 +28,8 @@ class AuthorshipRuleTest {
                         id: t
                         name: T
                         lang: fr
+                        level: master
+                        domain: information-technology
                         authors:
                           - name: Université de Nantes
                             organisation: true

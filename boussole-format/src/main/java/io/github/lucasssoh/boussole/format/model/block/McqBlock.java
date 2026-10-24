@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
 
-/** A multiple-choice exercise: the ticked choices are the answer. */
+/**
+ * A multiple-choice exercise: the ticked choices are the answer. A {@code hook} is a guess on what
+ * the session is about to teach, asked in its warmup, which earns no points.
+ */
 public record McqBlock(
         String id,
         boolean multiple,
@@ -14,6 +17,7 @@ public record McqBlock(
         List<ExerciseHint> hints,
         Optional<ExerciseSolution> solution,
         OptionalInt minutes,
+        boolean hook,
         SourcePosition position)
         implements Block {
 }
