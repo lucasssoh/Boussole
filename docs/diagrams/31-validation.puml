@@ -33,6 +33,7 @@ package "validate" {
     class McqChoicesRule <<F022>>
     class FillGapsRule <<F023>>
     class ReferenceRule <<F030>>
+    class ReferenceOrderRule <<F042>>
     class SourceFileRule <<F031>>
     class SourceInventoryRule <<F033-F036>>
     class SourceProvenanceRule <<F039>>
@@ -82,6 +83,7 @@ ValidationRule <|.. MissingSessionFileRule
 ValidationRule <|.. McqChoicesRule
 ValidationRule <|.. FillGapsRule
 ValidationRule <|.. ReferenceRule
+ValidationRule <|.. ReferenceOrderRule
 ValidationRule <|.. SourceFileRule
 ValidationRule <|.. SourceInventoryRule
 ValidationRule <|.. SourceProvenanceRule

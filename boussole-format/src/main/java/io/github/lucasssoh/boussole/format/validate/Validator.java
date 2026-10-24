@@ -14,6 +14,7 @@ import io.github.lucasssoh.boussole.format.validate.rule.PartOrderRule;
 import io.github.lucasssoh.boussole.format.validate.rule.McqChoicesRule;
 import io.github.lucasssoh.boussole.format.validate.rule.McqFeedbackRule;
 import io.github.lucasssoh.boussole.format.validate.rule.QuickCheckRule;
+import io.github.lucasssoh.boussole.format.validate.rule.ReferenceOrderRule;
 import io.github.lucasssoh.boussole.format.validate.rule.ReferenceRule;
 import io.github.lucasssoh.boussole.format.validate.rule.SessionIdMatchRule;
 import io.github.lucasssoh.boussole.format.validate.rule.SingleExampleRule;
@@ -47,6 +48,7 @@ public final class Validator {
                 new McqChoicesRule(),
                 new FillGapsRule(),
                 new ReferenceRule(),
+                new ReferenceOrderRule(),
                 new SourceFileRule(),
                 new SourceInventoryRule(),
                 new SourceProvenanceRule(),

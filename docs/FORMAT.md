@@ -432,6 +432,7 @@ chapter.
 | `F039` | warning | An entry of `cursus/sources.yaml` with a `url` but no `licence`. |
 | `F040` | error | Two versions of a track (same `id`, other `lang`) differ: sessions, notion or question IDs, or what a question asks (§9); or two versions in the same language. |
 | `F041` | warning | A session written in another version of the track, not yet in this one (§9). |
+| `F042` | error | A `::ref` to a question of the same session or of a later one, in the order of the syllabus: a warmup or a review asks only about what was studied before. |
 | `F032` | warning | `video` that YouTube does not know (checked only with `--check-videos`). |
 | `P001` | warning | A notion without exercise or `mcq`. |
 | `P002` | warning | A notion with more than one `example`. |

@@ -72,4 +72,18 @@ class ReferenceRuleTest {
                         "`terms` lists `ip`, which is not in the lexicon",
                         "prerequisite `test.ch.s9` is not a session of the syllabus (write <subject>.<chapter>.<session>)");
     }
+
+    @Test
+    void aRefAsksOnlyAboutAnEarlierSession() {
+        var report = SubjectFixture.in(dir)
+                .session("s1", notion("a", "e1"))
+                .session("s2", ":::::warmup\n::ref{id=e1}\n::ref{id=e3}\n:::::\n" + notion("b", "e2"))
+                .session("s3", ":::::warmup\n::ref{id=e3}\n:::::\n" + notion("c", "e3"))
+                .inspect();
+
+        assertThat(report.withCode(DiagnosticCode.F042)).extracting(diagnostic -> diagnostic.message())
+                .containsExactlyInAnyOrder(
+                        "`::ref{id=e3}` asks a question of `s3`, which comes after `s2`: ask again only questions of earlier sessions, or write a new question here",
+                        "`::ref{id=e3}` asks a question of `s3`, which is this session: ask again only questions of earlier sessions, or write a new question here");
+    }
 }
