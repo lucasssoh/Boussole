@@ -21,7 +21,7 @@ const ASKS: Readonly<Record<string, string>> = { sage: 'ranks.asksSage', 'grand-
 
 /**
  * The tiers of the culture, from Curious to Grand Sage: each with its emblem, in its hour of the
- * day, what it stands for, and where it starts; the learner's with their division.
+ * day, what it stands for, and what it asks; the learner's framed.
  */
 @Component({
   selector: 'app-ranks-page',
@@ -35,7 +35,7 @@ const ASKS: Readonly<Record<string, string>> = { sage: 'ranks.asksSage', 'grand-
         @for (row of tiers(); track row.tier) {
           @let here = row.tier === culture()?.tier;
           <li class="tier-card" [class.here]="here" [style.background]="ambiance(row.tier)" [style.color]="ink(row.tier)">
-            <app-rank-emblem [tier]="row.tier" [division]="here ? (culture()?.division ?? 0) : 0" [size]="128" [lively]="here" />
+            <app-rank-emblem [tier]="row.tier" [size]="128" [lively]="here" />
             <div class="tier-text">
               <h2>{{ names.rank(row.tier, 0) }}</h2>
               <p>{{ 'ranks.about.' + row.tier | transloco }}</p>
