@@ -2442,34 +2442,34 @@ app-settings-drawer {
   }
 }
 
+/* Blocks pop in, never words: framed blocks, questions, cards, not the text around them. */
 :is(
-    .screen > *,
-    .screen > app-block-list > *,
+    .screen > app-block-list > :not(app-prose-block),
     .choices > li,
     .question-actions,
     .screen-nav > *,
     .resume-card,
     .shelf,
     .session-grid > li,
-    .grid-chapter-head,
     .cards > li,
     .bilan-stat,
-    .page h1,
-    .page h2
+    .tier-band,
+    .specialty,
+    .medal
   ) {
   animation: bubble 0.45s var(--spring) backwards;
   animation-delay: calc(min(var(--i, 0), 14) * var(--bubble-step));
 }
 
 /* The rank of each element among its siblings. */
-:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav, .home-top) > :nth-child(2) { --i: 1; }
-:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(3) { --i: 2; }
-:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(4) { --i: 3; }
-:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(5) { --i: 4; }
-:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(6) { --i: 5; }
-:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(7) { --i: 6; }
-:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(8) { --i: 7; }
-:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav) > :nth-child(n + 9) { --i: 8; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav, .tiers, .specialties, .medals, .home-top) > :nth-child(2) { --i: 1; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav, .tiers, .specialties, .medals) > :nth-child(3) { --i: 2; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav, .tiers, .specialties, .medals) > :nth-child(4) { --i: 3; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav, .tiers, .specialties, .medals) > :nth-child(5) { --i: 4; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav, .tiers, .specialties, .medals) > :nth-child(6) { --i: 5; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav, .tiers, .specialties, .medals) > :nth-child(7) { --i: 6; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav, .tiers, .specialties, .medals) > :nth-child(8) { --i: 7; }
+:is(.screen, .screen > app-block-list, .choices, .session-grid, .cards, .bilan-stats, .screen-nav, .tiers, .specialties, .medals) > :nth-child(n + 9) { --i: 8; }
 
 /* The choices of a question come after its statement, the buttons after the choices. */
 .choices > li {
@@ -3182,10 +3182,12 @@ app-settings-drawer {
 
 .sky {
   position: relative;
-  display: block;
   overflow: hidden;
+  margin-top: 1.25rem;
+  border-radius: 28px;
   background: var(--sky);
   color: #1d2b33;
+  box-shadow: 0 6px 0 rgb(0 0 0 / 0.08);
 }
 
 .sky-layer {
@@ -3212,21 +3214,11 @@ app-settings-drawer {
   }
 }
 
-.sky-inner {
-  position: relative;
-  max-width: 72rem;
-  margin: 0 auto;
-  padding: 1.5rem 1.5rem 5rem;
-}
-
-.sky .crumbs a {
-  color: #0b5c48;
-}
-
 .tiers {
+  position: relative;
   display: grid;
-  margin: 1rem 0 0;
-  padding: 0;
+  margin: 0;
+  padding: 1rem 3rem;
   list-style: none;
 }
 
@@ -3329,6 +3321,10 @@ app-settings-drawer {
 }
 
 @media (max-width: 640px) {
+  .tiers {
+    padding: 0.5rem 1rem;
+  }
+
   .tier-band,
   .tier-band.right {
     flex-direction: column;

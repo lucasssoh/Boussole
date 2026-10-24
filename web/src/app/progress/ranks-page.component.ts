@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, afterNextRender, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, afterNextRender, computed, inject, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { LadderStep } from '../core/api';
@@ -19,8 +19,8 @@ interface Tier {
 /** What the top culture tiers ask for, past their points. */
 const ASKS: Readonly<Record<string, string>> = { sage: 'ranks.asksSage', 'grand-sage': 'ranks.asksGrandSage' };
 
-/** Where the bands start, in percent of the sky's height, below the title. */
-const TOP = 8;
+/** Where the bands start, in percent of the sky's height. */
+const TOP = 0;
 
 /** A point of the sky, in percent of its width and height. */
 interface Speck {
@@ -42,8 +42,11 @@ interface Speck {
   selector: 'app-ranks-page',
   imports: [RankEmblemComponent, RouterLink, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'sky', '[style.--sky]': 'sky()' },
   template: `
+    <main class="page wide">
+    <p class="crumbs"><a routerLink="/profile">{{ 'profile.title' | transloco }}</a></p>
+    <h1>{{ 'ranks.title' | transloco }}</h1>
+    <div class="sky" #frame [style.--sky]="sky()">
     <svg class="sky-layer" aria-hidden="true">
       <defs>
         <filter id="sky-cloud" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="18"></feGaussianBlur></filter>
@@ -65,9 +68,6 @@ interface Speck {
       }
       <path [attr.d]="trail()" fill="none" stroke="url(#sky-trail)" stroke-width="4" stroke-dasharray="2 12" stroke-linecap="round"></path>
     </svg>
-    <main class="sky-inner">
-      <p class="crumbs"><a routerLink="/profile">{{ 'profile.title' | transloco }}</a></p>
-      <h1>{{ 'ranks.title' | transloco }}</h1>
       <ol class="tiers">
         @for (row of tiers(); track row.tier; let index = $index) {
           <li class="tier-band" [class.right]="index % 2 === 1" [class.night]="night(row.tier)" [class.here]="row.tier === culture()?.tier">
@@ -103,6 +103,7 @@ interface Speck {
           </li>
         }
       </ol>
+    </div>
     </main>
   `,
 })
@@ -110,7 +111,7 @@ export class RanksPageComponent {
   protected readonly names = inject(RankNames);
   private readonly stats = inject(StatsService);
   private readonly steps = signal<LadderStep[]>([]);
-  private readonly host: HTMLElement = inject(ElementRef).nativeElement;
+  private readonly frame = viewChild.required<ElementRef<HTMLElement>>('frame');
 
   protected readonly culture = computed(() => this.stats.stats()?.culture ?? null);
   private readonly fields = computed(() => this.stats.stats()?.fields ?? []);
@@ -145,7 +146,7 @@ export class RanksPageComponent {
     inject(BoussoleApi).ranks().then((ladders) => this.steps.set(ladders.culture), () => undefined);
     this.stats.refresh();
     const observer = new ResizeObserver(() => this.drawTrail());
-    afterNextRender(() => observer.observe(this.host));
+    afterNextRender(() => observer.observe(this.frame().nativeElement));
     inject(DestroyRef).onDestroy(() => observer.disconnect());
   }
 
@@ -155,8 +156,9 @@ export class RanksPageComponent {
 
   /** Each stretch leaves an emblem downward and reaches the next from above. */
   private drawTrail(): void {
-    const origin = this.host.getBoundingClientRect();
-    const points = [...this.host.querySelectorAll('.tier-mark')].map((mark) => {
+    const frame = this.frame().nativeElement;
+    const origin = frame.getBoundingClientRect();
+    const points = [...frame.querySelectorAll('.tier-mark')].map((mark) => {
       const box = mark.getBoundingClientRect();
       return [box.left + box.width / 2 - origin.left, box.top + box.height / 2 - origin.top];
     });
