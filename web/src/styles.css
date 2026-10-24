@@ -6,12 +6,12 @@
 
 :root {
   color-scheme: light;
-  --bg: #f1fbf7;
+  --bg: #f2f7fa;
   --surface: #ffffff;
-  --surface-2: #e6f8f1;
-  --text: #1d2b33;
-  --muted: #55716a;
-  --line: #d3f0e5;
+  --surface-2: #e4eef2;
+  --text: #13233a;
+  --muted: #5a6f80;
+  --line: #d6e4ea;
   --brand: #0b7a5f;
   --subject: #0b7a5f;
   --on-subject: #ffffff;
@@ -49,12 +49,12 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
-    --bg: #0f1c1f;
-    --surface: #172a2e;
-    --surface-2: #1e353a;
-    --text: #e3f2ee;
-    --muted: #94b3ac;
-    --line: #29454b;
+    --bg: #0a1430;
+    --surface: #111f45;
+    --surface-2: #182955;
+    --text: #e3eef5;
+    --muted: #90a7c4;
+    --line: #213360;
     --brand: #63e6be;
     --on-subject: #ffffff;
     --correct: #8ce99a;
@@ -69,18 +69,15 @@
     --hint-bg: rgb(255 212 59 / 0.12);
     --example-bg: rgb(116 192 252 / 0.12);
     --recall-bg: rgb(177 151 252 / 0.14);
-  --beyond-bg: rgb(247 131 172 / 0.12);
-  --beyond-line: #c2255c;
-  --beyond-ink: #faa2c1;
     --beyond-bg: rgb(247 131 172 / 0.12);
     --beyond-line: #c2255c;
     --beyond-ink: #faa2c1;
-    --how-to-bg: #12322b;
+    --how-to-bg: #0f2c3c;
     --how-to-ink: #7fe0bd;
     --how-to-line: #2f9e7c;
     --how-to-strong: #3fbf96;
     --how-to-deep: #0d5a45;
-    --discover-bg: #2e2412;
+    --discover-bg: #2a2418;
     --discover-ink: #ffc876;
     --discover-line: #b77a24;
     --discover-strong: #5c3d0f;
@@ -90,12 +87,12 @@
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #0f1c1f;
-  --surface: #172a2e;
-  --surface-2: #1e353a;
-  --text: #e3f2ee;
-  --muted: #94b3ac;
-  --line: #29454b;
+  --bg: #0a1430;
+  --surface: #111f45;
+  --surface-2: #182955;
+  --text: #e3eef5;
+  --muted: #90a7c4;
+  --line: #213360;
   --brand: #63e6be;
   --on-subject: #ffffff;
   --correct: #8ce99a;
@@ -110,12 +107,15 @@
   --hint-bg: rgb(255 212 59 / 0.12);
   --example-bg: rgb(116 192 252 / 0.12);
   --recall-bg: rgb(177 151 252 / 0.14);
-  --how-to-bg: #12322b;
+  --beyond-bg: rgb(247 131 172 / 0.12);
+  --beyond-line: #c2255c;
+  --beyond-ink: #faa2c1;
+  --how-to-bg: #0f2c3c;
   --how-to-ink: #7fe0bd;
   --how-to-line: #2f9e7c;
   --how-to-strong: #3fbf96;
   --how-to-deep: #0d5a45;
-  --discover-bg: #2e2412;
+  --discover-bg: #2a2418;
   --discover-ink: #ffc876;
   --discover-line: #b77a24;
   --discover-strong: #5c3d0f;
@@ -2696,7 +2696,7 @@ app-settings-drawer {
   gap: 1.75rem;
   padding: 2rem 2rem 1.75rem;
   border-radius: var(--radius);
-  background: var(--ambiance, linear-gradient(135deg, color-mix(in srgb, var(--tier-deep) 38%, #10161a), color-mix(in srgb, var(--tier-deep) 18%, #0b1013)));
+  background: var(--ambiance, linear-gradient(135deg, color-mix(in srgb, var(--tier-deep) 38%, #0a1430), color-mix(in srgb, var(--tier-deep) 18%, #060c20)));
   color: #f5f1ea;
 }
 
