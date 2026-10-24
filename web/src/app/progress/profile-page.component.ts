@@ -5,6 +5,7 @@ import { AchievementProgress, FieldStanding, LadderStep } from '../core/api';
 import { BoussoleApi } from '../core/boussole-api';
 import { StatsService } from '../core/stats.service';
 import { emblemLook } from '../shared/emblem';
+import { LoadingComponent } from '../shared/loading.component';
 import { RankEmblemComponent } from '../shared/rank-emblem.component';
 import { SpecialtyEmblemComponent } from '../shared/specialty-emblem.component';
 import { CRITICAL_THINKING, divisionProgress, isStrong, roman } from '../shared/ranks';
@@ -18,7 +19,7 @@ import { RankRouteComponent } from './rank-route.component';
  */
 @Component({
   selector: 'app-profile-page',
-  imports: [RankEmblemComponent, RankRouteComponent, RouterLink, SpecialtyEmblemComponent, TranslocoPipe],
+  imports: [LoadingComponent, RankEmblemComponent, RankRouteComponent, RouterLink, SpecialtyEmblemComponent, TranslocoPipe],
   host: { class: 'profile' },
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -113,6 +114,8 @@ import { RankRouteComponent } from './rank-route.component';
           </div>
         </div>
       </section>
+    } @else {
+      <app-loading />
     }
   `,
 })

@@ -5,6 +5,7 @@ import { LadderStep } from '../core/api';
 import { BoussoleApi } from '../core/boussole-api';
 import { StatsService } from '../core/stats.service';
 import { IconComponent } from '../shared/icon.component';
+import { LoadingComponent } from '../shared/loading.component';
 import { RankEmblemComponent } from '../shared/rank-emblem.component';
 import { CRITICAL_THINKING, isStrong } from '../shared/ranks';
 import { RankNames } from './rank-names';
@@ -30,12 +31,15 @@ const HERE_SIZE = 128;
  */
 @Component({
   selector: 'app-ranks-page',
-  imports: [IconComponent, RankEmblemComponent, RouterLink, TranslocoPipe],
+  imports: [IconComponent, LoadingComponent, RankEmblemComponent, RouterLink, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <main class="page wide ranks">
       <a class="back" routerLink="/profile" [attr.aria-label]="'profile.title' | transloco" [title]="'profile.title' | transloco"><app-icon name="arrow-left" /></a>
       <h1>{{ 'ranks.title' | transloco }}</h1>
+      @if (tiers().length === 0) {
+        <app-loading />
+      }
       <ol class="tier-row" [style.--line-top]="lineTop + 'px'" [style.--box]="boxHeight + 'px'">
         @for (row of tiers(); track row.tier; let index = $index) {
           @let here = row.tier === culture()?.tier;

@@ -1,6 +1,7 @@
 /** The interface in English. French has the same keys (fr.ts). */
 export const EN = {
   app: {
+    loading: 'Loading',
     home: 'Tracks',
     unreachable: 'Boussole cannot reach its server. Run boussole open to start it.',
   },

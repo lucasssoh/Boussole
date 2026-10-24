@@ -6,6 +6,7 @@ import { CourseSummary } from '../core/api';
 import { RichTextComponent } from '../shared/rich-text.component';
 import { subjectColor } from '../shared/subject-color';
 import { LearnFacade } from './learn.facade';
+import { LoadingComponent } from '../shared/loading.component';
 import { SessionGridComponent } from './session-grid.component';
 
 /** Built-in tracks whose ID starts so are about Boussole itself. */
@@ -19,7 +20,7 @@ const HOW_TO = 'boussole-';
  */
 @Component({
   selector: 'app-subject-list',
-  imports: [IconComponent, RouterLink, TranslocoPipe, RichTextComponent, SessionGridComponent],
+  imports: [IconComponent, LoadingComponent, RouterLink, TranslocoPipe, RichTextComponent, SessionGridComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <main class="page wide">
@@ -49,6 +50,9 @@ const HOW_TO = 'boussole-';
             <app-session-grid [course]="course" [chapters]="[chapter]" [resume]="course.resume?.id ?? null" />
           </div>
         }
+      }
+      @if (learn.subjects() === null && !learn.unreachable()) {
+        <app-loading />
       }
       @if (ownSubjects(); as subjects) {
         <h2>{{ 'home.title' | transloco }}</h2>

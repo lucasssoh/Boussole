@@ -58,6 +58,7 @@ const COMPACT_MIN_SLOT = 124;
 /** A link passing through a floor takes this part of the room of a block. */
 const THROUGH = 0.35;
 const ZOOM_MS = 380;
+const LEAVE_MS = 240;
 
 /**
  * The map of a track: its chapters as blocks linked by what comes before what, a chapter waiting
@@ -79,7 +80,7 @@ const ZOOM_MS = 380;
     }
     <div class="map-scroll">
       @if (view(); as current) {
-        <div class="map-canvas" [class.inside]="openChapter()" [style.--tint]="openChapter() ? tintOf(openChapter()!.id) : null" [class.zooming]="zooming()" [style.width.px]="current.width" [style.height.px]="current.height"
+        <div class="map-canvas" [class.inside]="openChapter()" [style.--tint]="openChapter() ? tintOf(openChapter()!.id) : null" [class.zooming]="zooming()" [class.leaving]="leaving()" [style.width.px]="current.width" [style.height.px]="current.height"
           [style.transform-origin]="origin()">
           <svg class="map-links" [attr.width]="current.width" [attr.height]="current.height" aria-hidden="true">
             @for (link of current.links; track $index) {
@@ -156,6 +157,7 @@ export class CourseMapComponent {
   private readonly chapterParam = toSignal(this.route.queryParamMap.pipe(map((params) => params.get('chapter'))), { initialValue: null });
   protected readonly openChapter = computed(() => this.course().chapters.find((chapter) => chapter.id === this.chapterParam()) ?? null);
   protected readonly zooming = signal<string | null>(null);
+  protected readonly leaving = signal(false);
 
   protected readonly view = computed<MapView>(() => {
     const chapter = this.openChapter();
@@ -192,7 +194,16 @@ export class CourseMapComponent {
   }
 
   protected close(): void {
-    void this.router.navigate([], { relativeTo: this.route, queryParams: { chapter: null }, queryParamsHandling: 'merge', replaceUrl: true });
+    const leave = () => {
+      this.leaving.set(false);
+      void this.router.navigate([], { relativeTo: this.route, queryParams: { chapter: null }, queryParamsHandling: 'merge', replaceUrl: true });
+    };
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      leave();
+      return;
+    }
+    this.leaving.set(true);
+    setTimeout(leave, LEAVE_MS);
   }
 
   /** The colour of a chapter, by its place in the track. */

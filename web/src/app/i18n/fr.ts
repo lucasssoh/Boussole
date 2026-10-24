@@ -3,6 +3,7 @@ import { Translations } from './en';
 /** L'interface en français. */
 export const FR: Translations = {
   app: {
+    loading: 'Chargement',
     home: 'Parcours',
     unreachable: 'Boussole ne joint pas son serveur. Lance boussole open pour le démarrer.',
   },

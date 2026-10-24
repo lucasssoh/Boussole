@@ -7,6 +7,7 @@ import { ServerSettingsService } from '../core/server-settings.service';
 import { StatsService } from '../core/stats.service';
 import { RichTextComponent } from '../shared/rich-text.component';
 import { chapterColor } from '../shared/chapter-color';
+import { LoadingComponent } from '../shared/loading.component';
 import { subjectColor } from '../shared/subject-color';
 import { formatPoints } from '../shared/ranks';
 import { BlockListComponent } from './blocks/block-list.component';
@@ -29,7 +30,7 @@ import { SidePanelComponent } from './side-panel.component';
  */
 @Component({
   selector: 'app-session-page',
-  imports: [IconComponent, RichTextComponent, RouterLink, TranslocoPipe, BlockListComponent, SessionPathComponent, SidePanelComponent, TrackLanguagesComponent],
+  imports: [LoadingComponent, IconComponent, RichTextComponent, RouterLink, TranslocoPipe, BlockListComponent, SessionPathComponent, SidePanelComponent, TrackLanguagesComponent],
   providers: [SessionRun],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -195,6 +196,8 @@ import { SidePanelComponent } from './side-panel.component';
       }
     } @else if (learn.unreachable()) {
       <main class="session"><p class="frame warning">{{ 'app.unreachable' | transloco }}</p></main>
+    } @else {
+      <main class="session"><app-loading /></main>
     }
   `,
 })

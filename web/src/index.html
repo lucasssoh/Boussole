@@ -11,6 +11,14 @@
   <meta name="theme-color" content="#0b7a5f">
 </head>
 <body>
-  <app-root></app-root>
+  <app-root>
+    <div style="position: fixed; inset: 0; display: grid; place-items: center; background: #eef3f6; font-family: system-ui, sans-serif">
+      <div style="display: grid; justify-items: center; gap: 14px; color: #0b7a5f; font-weight: 900; font-size: 20px; animation: boot 0.3s ease-out 0.2s backwards">
+        <img src="favicon.svg" alt="" width="56" height="56">
+        Boussole
+      </div>
+    </div>
+    <style>@keyframes boot { from { opacity: 0; transform: scale(0.9); } } @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }</style>
+  </app-root>
 </body>
 </html>
