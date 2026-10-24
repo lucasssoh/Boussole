@@ -279,18 +279,24 @@ export class CourseMapComponent {
     const widest = Math.max(1, ...floorWeight);
     const width = Math.max(this.width(), widest * (this.compact() ? COMPACT_MIN_SLOT : MIN_SLOT));
     const blockWidth = Math.min(size.width, width / Math.max(1, ...layout.floors.map((slots) => slots.filter((slot) => 'node' in slot).length + 0.4)) - 16);
+    // each block as high as its whole title needs; each floor as high as its highest block
+    const described = new Map(ids.map((id) => [id, describe(id)]));
+    const heightOf = new Map(ids.map((id) => [id, this.blockHeight(described.get(id)!.title, blockWidth, size.height, described.get(id)!.done !== undefined)]));
+    const floorHeight = layout.floors.map((slots) => Math.max(size.height, ...slots.filter((slot) => 'node' in slot).map((slot) => heightOf.get((slot as { node: string }).node)!)));
+    const gap = size.step - size.height;
+    const floorTop = floorHeight.map((_, k) => TOP + floorHeight.slice(0, k).reduce((sum, h) => sum + h + gap, 0));
     const point = (floor: number, index: number) => {
       const before = layout.floors[floor].slice(0, index).reduce((sum, slot) => sum + weight(slot), 0);
       return {
         x: Math.round((width * (before + weight(layout.floors[floor][index]) / 2)) / floorWeight[floor]),
-        y: TOP + size.height / 2 + floor * size.step,
+        y: floorTop[floor] + floorHeight[floor] / 2,
       };
     };
     const nodes: MapNode[] = [];
     layout.floors.forEach((slots, floor) => slots.forEach((slot, index) => {
       if ('node' in slot) {
         const { x, y } = point(floor, index);
-        nodes.push({ id: slot.node, floor, x, y, width: blockWidth, height: size.height, ...describe(slot.node) });
+        nodes.push({ id: slot.node, floor, x, y, width: blockWidth, height: heightOf.get(slot.node)!, ...described.get(slot.node)! });
       }
     }));
     // each link its own pin: those leaving a block spread under it, those reaching one over it
@@ -308,9 +314,9 @@ export class CourseMapComponent {
       const out = leaving.get(route.link[0])!;
       const into = reaching.get(route.link[1])!;
       const points = route.slots.map((slot) => point(slot.floor, slot.index));
-      points[0] = { x: points[0].x + spread(out.length, out.indexOf(route)), y: points[0].y + size.height / 2 };
+      points[0] = { x: points[0].x + spread(out.length, out.indexOf(route)), y: points[0].y + heightOf.get(route.link[0])! / 2 };
       const last = points.length - 1;
-      points[last] = { x: points[last].x + spread(into.length, into.indexOf(route)), y: points[last].y - size.height / 2 };
+      points[last] = { x: points[last].x + spread(into.length, into.indexOf(route)), y: points[last].y - heightOf.get(route.link[1])! / 2 };
       let d = `M${points[0].x} ${points[0].y}`;
       for (let k = 1; k < points.length; k++) {
         const bend = (points[k].y - points[k - 1].y) * 0.55;
@@ -318,6 +324,37 @@ export class CourseMapComponent {
       }
       return { d, lit: finished(route.link[0]), tint: tint(route.link[0]), floor: layout.floor.get(route.link[1]) ?? 0 };
     });
-    return { nodes, links: mapLinks, width, height: TOP * 2 + size.height + (layout.floors.length - 1) * size.step };
+    const last = floorHeight.length - 1;
+    return { nodes, links: mapLinks, width, height: last < 0 ? TOP * 2 : floorTop[last] + floorHeight[last] + TOP + 6 };
   }
+
+  /** How high a block must be for its whole title: its lines measured in the font of the map, the rest of the block around them. */
+  private blockHeight(title: string, blockWidth: number, base: number, chapter: boolean): number {
+    const compact = this.compact();
+    const fontSize = compact ? 12.5 : 14.7;
+    const line = fontSize * 1.25;
+    const room = compact ? blockWidth - 22 : blockWidth - 29 - 32 - 11 - (chapter ? 35 : 0);
+    const context = (CourseMapComponent.measure ??= document.createElement('canvas').getContext('2d'));
+    const text = title.replace(/\$|\*\*|`/g, '');
+    let lines = 1;
+    if (context) {
+      context.font = `900 ${fontSize}px Nunito, system-ui, sans-serif`;
+      let current = '';
+      for (const word of text.split(/\s+/)) {
+        const tried = current ? current + ' ' + word : word;
+        if (current && context.measureText(tried).width > room) {
+          lines++;
+          current = word;
+        } else {
+          current = tried;
+        }
+      }
+    } else {
+      lines = Math.ceil((text.length * fontSize * 0.55) / room);
+    }
+    // the blocks were sized for two lines of title
+    return Math.round(base + Math.max(0, lines - 2) * line);
+  }
+
+  private static measure: CanvasRenderingContext2D | null | undefined;
 }

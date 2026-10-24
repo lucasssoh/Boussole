@@ -3444,10 +3444,6 @@ app-settings-drawer {
   font-size: 0.92rem;
   font-weight: 900;
   line-height: 1.25;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
 }
 
 .map-meta {
