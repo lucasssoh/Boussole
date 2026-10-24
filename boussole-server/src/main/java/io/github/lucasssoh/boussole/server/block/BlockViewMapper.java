@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 /**
  * Turns the blocks of a session into what the interface receives. Questions get the learner's
@@ -111,6 +112,7 @@ public final class BlockViewMapper {
     private BlockView.Mcq mcq(McqBlock mcq, boolean reused) {
         return new BlockView.Mcq(mcq.id(), mcq.multiple(), blocks(mcq.statement()),
                 mcq.choices().stream().map(McqChoice::text).toList(),
+                SeededShuffle.of(IntStream.range(0, mcq.choices().size()).boxed().toList(), mcq.id()),
                 QuestionTimeEstimator.minutes(mcq), hints(mcq.id(), mcq.hints()), progressOf(mcq.id()), reused);
     }
 

@@ -14,8 +14,8 @@ final class SeededShuffle {
     private SeededShuffle() {
     }
 
-    static List<String> of(List<String> items, String seed) {
-        List<String> shuffled = new ArrayList<>(items);
+    static <T> List<T> of(List<T> items, String seed) {
+        List<T> shuffled = new ArrayList<>(items);
         Collections.shuffle(shuffled, new Random(seed.hashCode()));
         if (shuffled.equals(items) && items.size() > 1) {
             Collections.rotate(shuffled, 1);

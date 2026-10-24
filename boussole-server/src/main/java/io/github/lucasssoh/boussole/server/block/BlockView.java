@@ -68,12 +68,17 @@ public sealed interface BlockView {
     record GraphEdgeView(String from, String to, boolean directed, String label, boolean emphasized) {
     }
 
-    /** {@code reused} when the session asks again a question of another session with {@code ::ref}. */
+    /**
+     * {@code reused} when the session asks again a question of another session with {@code ::ref};
+     * {@code order}, the indexes of {@code choices} in the order they are shown, shuffled, so that
+     * the place of the right choice never gives it away. Answers keep the indexes of the file.
+     */
     record Mcq(
             String id,
             boolean multiple,
             List<BlockView> statement,
             List<String> choices,
+            List<Integer> order,
             double minutes,
             HintsView hints,
             ProgressView progress,

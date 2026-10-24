@@ -4,7 +4,7 @@ import { sessionPlan } from './session-screens';
 const prose = (markdown: string): BlockView => ({ type: 'prose', markdown });
 const example: BlockView = { type: 'example', label: '', blocks: [] };
 const mcq = (id: string): BlockView => ({
-  type: 'mcq', id, multiple: false, statement: [], choices: ['a', 'b'], minutes: 1,
+  type: 'mcq', id, multiple: false, statement: [], choices: ['a', 'b'], order: [1, 0], minutes: 1,
   hints: { total: 0, revealed: [] }, progress: { attempts: 0, solved: false, lastVerdict: null, answeredHere: null }, reused: false,
 });
 const part = (kind: SessionPart['kind'], blocks: BlockView[]): SessionPart => ({ kind, id: null, title: null, blocks });

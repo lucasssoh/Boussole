@@ -258,6 +258,8 @@ export interface McqBlockView extends QuestionView {
   type: 'mcq';
   multiple: boolean;
   choices: string[];
+  /** The indexes of choices in the order they are shown; answers keep the indexes of choices. */
+  order: number[];
 }
 
 export interface ExerciseBlockView extends QuestionView {

@@ -112,6 +112,16 @@ class ServerApiTest {
     }
 
     @Test
+    void the_choices_of_an_mcq_are_shown_shuffled_the_same_way_each_time() throws Exception {
+        String session = get("/api/subjects/reseaux/sessions/s11").body();
+        int mcq = session.indexOf("\"id\":\"s11-a2\"");
+        String order = session.substring(session.indexOf("\"order\":", mcq), session.indexOf("]", session.indexOf("\"order\":", mcq)) + 1);
+
+        assertThat(order).doesNotContain("[0,1,2]").doesNotContain("[0,1]").doesNotContain("[0,1,2,3]");
+        assertThat(get("/api/subjects/reseaux/sessions/s11").body()).contains(order);
+    }
+
+    @Test
     void a_session_says_which_prerequisites_it_waits_for() throws Exception {
         assertThat(get("/api/subjects/reseaux").body())
                 .contains("\"waitingFor\":[{\"subject\":\"reseaux\",\"session\":\"s11\",\"title\":\"Rôle de la couche réseau\"}]");

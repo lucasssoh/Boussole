@@ -54,6 +54,7 @@ minor release may break things and says so.
 - **Reviews and mock exams:** besides lessons, a course has timed sessions: a short review at the end of each chapter, and mock exams as long as the real ones. Their number of questions fits the time allowed, knowing that choosing an answer is quicker than building one; `boussole validate` warns when it does not.
 
 ### Changed
+- **MCQs:** the choices are shown shuffled, the same way each time, like the options of a drop-down list: the place of the right choice no longer gives it away, whatever the order in the file.
 - **Playbooks, after a review of the research on learning** (`docs/research/pedagogie.md`): warmups ask about the previous session **and** about older ones, before they are forgotten; reviews mix notions, types of question and earlier chapters, with a cumulative review halfway and before each exam; a question per notion changes the setting, the closing asks which method applies; *answer + reason* questions; help fades along a chapter (half-solved examples, fewer nudges in practice and reviews); the plan lists what each notion needs and the usual mistakes, which become the wrong choices of MCQs; a free exercise ends with points to check; the quick quiz is offered first, and the order (example or try first) follows where the learner starts from.
 - **MCQs:** the `exercise-author` playbook now writes four choices, whose wrong ones are real mistakes that differ from the right one by a single detail, so that a question checks understanding rather than a quick read.
 

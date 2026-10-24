@@ -366,7 +366,8 @@ hold maths.
 
 A `mcq` is an exercise whose choices are a task list, at the end of its statement. A blockquote indented under a choice is
 the feedback shown when the learner picks it: **every wrong choice has one**, saying why it is
-wrong. `multiple=true` means several choices are right and the interface says so.
+wrong. `multiple=true` means several choices are right and the interface says so. The choices
+are shown shuffled, the same way each time: their order in the file does not matter.
 
 ```markdown
 ::::mcq{#s11-a2}

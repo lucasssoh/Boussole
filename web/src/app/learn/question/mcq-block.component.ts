@@ -29,9 +29,10 @@ import { QuestionState } from './question-state';
             <p class="note">{{ 'question.several' | transloco }}</p>
           }
           <ul class="choices">
-            @for (choice of question.choices; track $index) {
-              @let expected = corrected ? expectedChoice($index) : undefined;
-              @let isPicked = picked().has($index);
+            @for (index of question.order; track index) {
+              @let choice = question.choices[index];
+              @let expected = corrected ? expectedChoice(index) : undefined;
+              @let isPicked = picked().has(index);
               <li [class.correct]="expected?.correct" [class.wrong]="corrected && isPicked && !expected?.correct" [class.picked]="isPicked">
                 <label>
                   <input
@@ -39,7 +40,7 @@ import { QuestionState } from './question-state';
                     [name]="question.id"
                     [checked]="isPicked"
                     [disabled]="state().answered()"
-                    (change)="toggle($index)"
+                    (change)="toggle(index)"
                   />
                   <app-rich-text class="choice-text" [text]="choice" />
                 </label>

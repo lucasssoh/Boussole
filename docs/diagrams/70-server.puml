@@ -116,7 +116,7 @@ BlockViewMapper ..> BlockView : no answers
 BlockView --> InputView : exercise input
 BlockView --> HintsView : revealed only
 BlockView --> ProgressView
-BlockViewMapper ..> SeededShuffle : order, match, choices
+BlockViewMapper ..> SeededShuffle : MCQ, order, match, choice gaps
 BlockViewMapper ..> GraphPlacement : places the nodes
 
 note bottom of LocalRequestFilter
