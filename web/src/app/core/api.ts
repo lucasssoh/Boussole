@@ -252,6 +252,8 @@ interface QuestionView {
   hints: QuestionHints;
   progress: QuestionProgress;
   reused: boolean;
+  /** A guess of the warmup: it earns nothing and is not counted in first try. */
+  hook: boolean;
 }
 
 export interface McqBlockView extends QuestionView {
@@ -309,15 +311,36 @@ export interface AttemptResult {
   progress: QuestionProgress;
   /** The correction, shown right after the answer (at the end of an exam). */
   solution: RevealedSolution;
-  xpGained: number;
+  /** What the answer was worth, out of what it could earn, before the occasion and the level of the track. */
+  earned: number;
+  possible: number;
+  pointsGained: number;
 }
 
-/** Experience, level and streak of days. */
-export interface StudyStats {
-  xp: number;
+/** A rank: its tier, its division (5 to 1, 0 at the top), its level, and where its division starts and ends. */
+export interface Rank {
+  tier: string;
+  division: number;
   level: number;
-  levelXp: number;
+  intoLevel: number;
   levelSize: number;
+  divisionFrom: number;
+  nextAt: number;
+  /** The fields still missing to rise above, when the points alone would. */
+  fieldsMissing: number;
+}
+
+export interface FieldStanding {
+  domain: string;
+  points: number;
+  specialty: Rank;
+}
+
+/** Points, the culture rank, the specialty in each field and the streak of days. */
+export interface StudyStats {
+  points: number;
+  culture: Rank;
+  fields: FieldStanding[];
   streakDays: number;
   studiedToday: boolean;
 }

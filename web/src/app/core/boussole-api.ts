@@ -29,7 +29,7 @@ export class BoussoleApi {
     return this.get('/api/stats');
   }
 
-  finishSession(subject: string, session: string, spentSeconds: number): Promise<{ xpGained: number }> {
+  finishSession(subject: string, session: string, spentSeconds: number): Promise<{ bonus: number }> {
     return this.post(`/api/subjects/${enc(subject)}/sessions/${enc(session)}/finish`, { spentSeconds });
   }
 

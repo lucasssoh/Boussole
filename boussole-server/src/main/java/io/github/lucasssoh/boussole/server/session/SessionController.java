@@ -35,8 +35,8 @@ class SessionController {
         return new FinishedView(finishSession.finish(new SessionKey(subject, session), Duration.ofSeconds(request.spentSeconds())));
     }
 
-    /** The experience earned by finishing. */
-    record FinishedView(int xpGained) {
+    /** The bonus earned by finishing without a mistake, 0 otherwise. */
+    record FinishedView(double bonus) {
     }
 
     /** The time actually spent on the session, measured by the interface. */

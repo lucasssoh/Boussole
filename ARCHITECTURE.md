@@ -72,7 +72,7 @@ core/
 ├── learn/       studying: use cases, ports
 │   ├── check/      responses and how each kind of question checks them
 │   ├── progress/   attempts, hints revealed, sessions finished
-│   └── reward/     experience, levels and streak, computed from the history
+│   └── reward/     points, ranks and streak, computed from the history
 ├── plan/        scheduled events, the planner, commands with undo   (V2)
 └── reminder/    reminder rules and planning of reminders            (V2)
 ```
@@ -86,9 +86,16 @@ Each thing the application does is a **use case**, one class with one public met
 `RevealSolution`, `FinishSession`; later `PlanWeek`, `MoveEvent`… The list of use case classes
 is the list of features.
 
-Experience is never stored: `ReadStudyStats` computes it from the history of attempts and
-finished sessions with `XpRules` (a first answer earns more than one given again, a wrong one
-still earns something), with the level (`Level`) and the streak of days in a row.
+Only what is right earns points. `SubmitAttempt` weighs each answer (`QuestionScore`: 1 for a
+value, a single-choice MCQ, an order; 1 per sentence whose gaps are all right in a fill
+(`GapSentences`); shares that wrong choices take back in a multiple-choice MCQ or a match; 0 for a
+hook), multiplies it by the occasion (`PointRules`: the first answer whole, half in another
+session that asks it again, nothing more in the same session) and by the level of the track
+(`TrackLevel`), and keeps the points with the attempt. `FinishSession` adds a tenth, rounded up
+last, the first time a session ends without a mistake. `ReadStudyStats` adds them up from the
+history, and places them on two `Ladder`s (`Rank`): the culture, whose Sage and Grand Sage also
+ask for several fields (each at least a tenth of the points), and the specialty of each field
+(`FieldStanding`). Tiers are split into divisions V to I of 14 levels; the top one never ends.
 
 In a lesson a question is answered once (`AnswerOnce`): `SubmitAttempt` refuses a second answer
 in the same session, and `OpenSession` returns the verdict of each answer already given, which
@@ -134,7 +141,7 @@ such as `course-format` (writing a track by hand). `BundledTracks` installs them
 language, into the data folder at start, and `ServerSettings.builtIn` lists them after the learner's subjects, always:
 the home page shows the guide first under *How to Boussole* (and resumes it only while there is
 no other subject), and the others on two shelves: *How to Boussole* for IDs starting with
-`boussole-`, *Discover* for the others. They earn no experience and keep no
+`boussole-`, *Discover* for the others. They earn no points and keep no
 streak (`RewardedSubjects`, in the core). `GuideSubjectTest` keeps every track valid in both
 languages, with the same sessions.
 
@@ -282,8 +289,8 @@ web/src/app/
   browser's); course content keeps its own language.
 - **The look**: rounded, colourful; relief marks what can be pressed, and only that, the Nunito font bundled with the
   interface. Each subject has its colour (`subjectColor()`), set as `--subject` on the page.
-  The header shows the level, the experience and the streak (`StatsService`); each answer
-  shows the experience it earned.
+  The header shows the rank (`RankEmblemComponent`), the level, the points and the streak
+  (`StatsService`); each answer shows what it was worth and the points it earned.
 - **Bubbles**: entering a page or a screen, its elements pop in one after the other (the
   `bubble` keyframes, a rank `--i` per element). They animate `scale`, `translate` and
   `opacity`, never `transform`, so that centring and pressing are left alone; nothing moves when
@@ -315,7 +322,7 @@ GET  …/exercises/{id}/solution           after an attempt (at once for a free 
 GET  …/files/{path}                      a file of the subject folder: PDFs, videos (range requests), images
 GET  …/lang/{lang}/files/{path}          the same, in one version of the track (the language in the path keeps relative links)
 GET  /api/references/preview?url=        whether a web page a course cites may show beside the text
-GET  /api/stats                          experience, level, streak
+GET  /api/stats                          points, culture rank, specialty of each field, streak
 GET  /api/server                         lets boussole open recognise a running Boussole
 POST /api/server/stop                    boussole stop
 ```

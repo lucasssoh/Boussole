@@ -72,6 +72,7 @@ public sealed interface BlockView {
      * {@code reused} when the session asks again a question of another session with {@code ::ref};
      * {@code order}, the indexes of {@code choices} in the order they are shown, shuffled, so that
      * the place of the right choice never gives it away. Answers keep the indexes of the file.
+     * {@code hook}: a guess of the warmup, which earns nothing and is not counted in first try.
      */
     record Mcq(
             String id,
@@ -82,7 +83,8 @@ public sealed interface BlockView {
             double minutes,
             HintsView hints,
             ProgressView progress,
-            boolean reused)
+            boolean reused,
+            boolean hook)
             implements BlockView {
     }
 
@@ -94,7 +96,8 @@ public sealed interface BlockView {
             double minutes,
             HintsView hints,
             ProgressView progress,
-            boolean reused)
+            boolean reused,
+            boolean hook)
             implements BlockView {
     }
 

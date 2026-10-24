@@ -113,13 +113,13 @@ public final class BlockViewMapper {
         return new BlockView.Mcq(mcq.id(), mcq.multiple(), blocks(mcq.statement()),
                 mcq.choices().stream().map(McqChoice::text).toList(),
                 SeededShuffle.of(IntStream.range(0, mcq.choices().size()).boxed().toList(), mcq.id()),
-                QuestionTimeEstimator.minutes(mcq), hints(mcq.id(), mcq.hints()), progressOf(mcq.id()), reused);
+                QuestionTimeEstimator.minutes(mcq), hints(mcq.id(), mcq.hints()), progressOf(mcq.id()), reused, mcq.hook());
     }
 
     private BlockView.Exercise exercise(ExerciseBlock exercise, boolean reused) {
         return new BlockView.Exercise(exercise.id(), exercise.type().attributeValue(), blocks(exercise.statement()),
                 input(exercise), QuestionTimeEstimator.minutes(exercise), hints(exercise.id(), exercise.hints()),
-                progressOf(exercise.id()), reused);
+                progressOf(exercise.id()), reused, exercise.hook());
     }
 
     private HintsView hints(String id, List<ExerciseHint> hints) {

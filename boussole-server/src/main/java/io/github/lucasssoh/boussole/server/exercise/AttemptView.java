@@ -6,10 +6,13 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * How an attempt was judged: the verdict, each part of the response, the progress after it, and
- * the correction, which the learner sees right after answering.
+ * How an attempt was judged: the verdict, each part of the response, the progress after it, the
+ * correction, which the learner sees right after answering, what the answer was worth
+ * ({@code earned} of {@code possible}, before the occasion and the level of the track) and the
+ * points it earned.
  */
-record AttemptView(String verdict, List<ItemView> items, ProgressView progress, SolutionView solution, int xpGained) {
+record AttemptView(String verdict, List<ItemView> items, ProgressView progress, SolutionView solution, double earned, double possible,
+        double pointsGained) {
 
     static AttemptView of(AttemptOutcome outcome, SolutionView solution) {
         return new AttemptView(
@@ -19,7 +22,9 @@ record AttemptView(String verdict, List<ItemView> items, ProgressView progress, 
                         .toList(),
                 ProgressView.of(outcome.progress()),
                 solution,
-                outcome.xpGained());
+                outcome.score().earned(),
+                outcome.score().possible(),
+                outcome.pointsGained());
     }
 
     record ItemView(String key, boolean correct, String feedback) {

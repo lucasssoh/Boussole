@@ -94,6 +94,14 @@
   definition: >
     Le nombre de jours d'affilée où tu as étudié. Elle tient jusqu'à la fin du jour suivant.
 
+- id: palier
+  term: Palier
+  aliases: [paliers]
+  definition: >
+    Une marche de l'ascension : Curieux, Apprenti, Initié, Érudit, Savant, Maître, Sage, chacun en
+    divisions de V à I, puis Grand Sage, sans fin. Les points te font monter ; Sage et Grand Sage
+    demandent aussi plusieurs domaines.
+
 - id: lien
   term: Lien
   aliases: [liens]

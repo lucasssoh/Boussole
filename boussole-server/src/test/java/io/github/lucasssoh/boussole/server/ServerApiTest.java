@@ -88,8 +88,11 @@ class ServerApiTest {
     }
 
     @Test
-    void reports_experience_level_and_streak() throws Exception {
-        assertThat(get("/api/stats").body()).contains("\"level\":", "\"streakDays\":");
+    void reports_points_ranks_and_streak() throws Exception {
+        post("/api/subjects/reseaux/exercises/s11-a1/attempts?session=s11", "{\"kind\":\"value\",\"value\":\"48\"}");
+
+        assertThat(get("/api/stats").body()).contains("\"points\":", "\"culture\":{\"tier\":\"curious\",\"division\":5,\"level\":1",
+                "\"domain\":\"information-technology\"", "\"specialty\":{\"tier\":\"novice\"", "\"streakDays\":");
     }
 
     @Test
@@ -129,7 +132,7 @@ class ServerApiTest {
 
     @Test
     void a_finished_session_shows_in_the_course() throws Exception {
-        assertThat(post("/api/subjects/reseaux/sessions/s11/finish", "{\"spentSeconds\":3000}").body()).contains("\"xpGained\":20");
+        assertThat(post("/api/subjects/reseaux/sessions/s11/finish", "{\"spentSeconds\":3000}").body()).contains("\"bonus\":0.0");
         assertThat(get("/api/subjects/reseaux").body()).contains("\"id\":\"s11\"", "\"finished\":true");
     }
 

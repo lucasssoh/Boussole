@@ -7,6 +7,7 @@ import { ServerSettingsService } from '../core/server-settings.service';
 import { StatsService } from '../core/stats.service';
 import { RichTextComponent } from '../shared/rich-text.component';
 import { subjectColor } from '../shared/subject-color';
+import { formatPoints } from '../shared/ranks';
 import { BlockListComponent } from './blocks/block-list.component';
 import { clock } from './blocks/video-block.component';
 import { LanguageService } from '../core/language.service';
@@ -111,10 +112,16 @@ import { SidePanelComponent } from './side-panel.component';
             @case ('end') {
               <h1>{{ 'session.endTitle' | transloco }}</h1>
               <div class="bilan-stats">
-                @if (run.xpEarned() > 0) {
+                @if (run.pointsEarned() + run.bonus() > 0) {
                   <div class="bilan-stat xp">
-                    <strong>+{{ run.xpEarned() }} XP</strong>
-                    <span>{{ 'session.xpEarned' | transloco }}</span>
+                    <strong>+{{ points(run.pointsEarned() + run.bonus()) }}</strong>
+                    <span>{{ 'session.pointsEarned' | transloco }}</span>
+                  </div>
+                }
+                @if (run.bonus() > 0) {
+                  <div class="bilan-stat right">
+                    <strong>+{{ points(run.bonus()) }}</strong>
+                    <span>{{ 'session.flawless' | transloco }}</span>
                   </div>
                 }
                 <div class="bilan-stat right">
@@ -331,10 +338,14 @@ export class SessionPageComponent {
     }
   }
 
+  protected points(points: number): string {
+    return formatPoints(points, this.language.current());
+  }
+
   protected async finish(): Promise<void> {
     const seconds = this.run.spentSeconds();
     this.run.end();
-    this.run.earn(await this.learn.finishSession(seconds));
+    this.run.earnBonus(await this.learn.finishSession(seconds));
     this.stats.refresh();
     this.finishedIn.set(Math.max(1, Math.round(seconds / 60)));
   }

@@ -3,7 +3,7 @@ id: g3
 objectives:
   - Avancer dans une séance étape par étape, en suivant le Tracé.
   - Répondre du premier coup, avec les coups de pouce, et lire la correction expliquée.
-terms: [etape, trace, mode-guide, premier-coup, coup-de-pouce, derniere-verification, serie, revision-express]
+terms: [etape, trace, mode-guide, premier-coup, coup-de-pouce, derniere-verification, serie, palier, revision-express]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code
@@ -73,8 +73,10 @@ même si tu reviens sur la séance un autre jour. Pour t'aider à bien répondre
 - **Correction expliquée** : juste après, la bonne réponse passe au vert, la tienne au rouge si
   elle était fausse, et un encadré **Pourquoi** explique.
 
-**« Je ne vois pas mes progrès. »** Chaque réponse rapporte de l'**expérience**, même fausse :
-essayer paie toujours. Ta :term[série]{id=serie} avance chaque jour où tu étudies.
+**« Je ne vois pas mes progrès. »** Chaque bonne réponse rapporte des **points**, davantage dans un
+parcours exigeant. Une première réponse manquée le reste : pas de retour en arrière. Avec les
+points, tu gravis les :term[paliers]{id=palier}, de Curieux à Grand Sage. Ta :term[série]{id=serie}
+avance chaque jour où tu étudies.
 
 :::note
 Les :term[révisions express]{id=revision-express} et les examens blancs sont chronométrés. Dans un examen blanc, la
@@ -85,19 +87,22 @@ correction arrive à la fin, comme à un vrai examen.
 Qu'est-ce qui est vrai ? (plusieurs réponses)
 
 - [x] Un coup de pouce peut se demander avant de répondre
-- [x] Une mauvaise réponse rapporte aussi de l'expérience
+- [ ] Une mauvaise réponse rapporte aussi des points
+  > Seul ce qui est juste rapporte : une première réponse manquée le reste.
+- [x] Une bonne réponse rapporte plus dans un parcours exigeant
 - [ ] On peut répondre autant de fois qu'on veut à la même question
   > Dans une leçon, ta réponse compte du premier coup.
 - [ ] Dans un examen blanc, la correction s'affiche après chaque question
   > Dans un examen blanc, elle attend la fin, comme à un vrai examen.
 
 :::hint
-Deux affirmations sont vraies ; relis la note sur les examens blancs.
+Deux affirmations sont vraies ; relis le paragraphe sur les progrès.
 :::
 
 :::solution
-Vrai : le coup de pouce avant de répondre, et l'expérience même pour une réponse fausse. Faux :
-ta réponse compte du premier coup, et un examen blanc garde ses corrections pour la fin.
+Vrai : le coup de pouce avant de répondre, et plus de points dans un parcours exigeant. Faux : une
+réponse fausse ne rapporte rien, ta réponse compte du premier coup, et un examen blanc garde ses
+corrections pour la fin.
 :::
 ::::
 

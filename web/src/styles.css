@@ -347,15 +347,9 @@ a:focus-visible {
   gap: 0.75rem;
 }
 
-.level-badge {
-  display: inline-grid;
-  place-items: center;
-  width: 2.3rem;
-  height: 2.3rem;
-  border-radius: 12px;
-  background: var(--brand);
-  color: var(--surface);
-  font-weight: 900;
+.rank-emblem {
+  display: inline-flex;
+  flex: 0 0 auto;
 }
 
 .level-bar {
@@ -367,6 +361,12 @@ a:focus-visible {
 .level-line {
   font-size: 0.8rem;
   font-weight: 800;
+  color: var(--text);
+}
+
+.level-points {
+  font-size: 0.72rem;
+  font-weight: 700;
   color: var(--muted);
 }
 
@@ -2137,6 +2137,22 @@ select:disabled {
 
 .correction.wrong .correction-title {
   color: var(--wrong);
+}
+
+.correction-score {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.score-pill {
+  padding: 0.15rem 0.75rem;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 0.85rem;
 }
 
 .xp-pill {

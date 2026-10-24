@@ -26,10 +26,14 @@ export class SessionRun implements OnDestroy {
     return allowed === null ? null : Math.max(0, allowed - this.spent());
   });
   readonly timeIsUp = computed(() => this.remainingSeconds() === 0);
-  readonly answered = computed(() => this.firstVerdicts().size);
+  /** The questions that are hooks, guesses of the warmup: they count in no score. */
+  private readonly hooks = signal<ReadonlySet<string>>(new Set());
+  private readonly scoredVerdicts = computed(() => [...this.firstVerdicts()].filter(([question]) => !this.hooks().has(question)));
+  readonly answered = computed(() => this.scoredVerdicts().length);
   readonly verdicts = this.firstVerdicts.asReadonly();
-  /** The experience earned in this sitting. */
-  readonly xpEarned = signal(0);
+  /** The points earned in this sitting, and the bonus of a session without a mistake. */
+  readonly pointsEarned = signal(0);
+  readonly bonus = signal(0);
   /** The screens seen, by index: in this sitting, and in earlier ones on this browser. */
   readonly seen = signal<ReadonlySet<number>>(new Set());
   private seenKey: string | null = null;
@@ -37,7 +41,7 @@ export class SessionRun implements OnDestroy {
   readonly correctionsOpen = computed(() => this.kind() !== 'exam' || this.timeIsUp() || this.ended());
   /** An exam gives no hint. */
   readonly hintsAllowed = computed(() => this.kind() !== 'exam');
-  readonly rightFirstTime = computed(() => [...this.firstVerdicts().values()].filter((verdict) => verdict === 'correct').length);
+  readonly rightFirstTime = computed(() => this.scoredVerdicts().filter(([, verdict]) => verdict === 'correct').length);
 
   /**
    * A lesson starts at once; a review or an exam when the learner says so, with its countdown.
@@ -50,7 +54,9 @@ export class SessionRun implements OnDestroy {
     this.firstVerdicts.set(new Map(answered));
     this.questions.clear();
     this.seen.set(new Set(storedNumbers(this.seenKey)));
-    this.xpEarned.set(0);
+    this.pointsEarned.set(0);
+    this.bonus.set(0);
+    this.hooks.set(new Set());
     this.ended.set(false);
     this.allowedSeconds.set(kind === 'lesson' ? null : minutes * 60);
     this.started.set(kind === 'lesson');
@@ -87,20 +93,24 @@ export class SessionRun implements OnDestroy {
     let state = this.questions.get(id);
     if (!state) {
       state = create();
+      if (state.hook) {
+        this.hooks.set(new Set(this.hooks()).add(id));
+      }
       this.questions.set(id, state);
     }
     return state;
   }
 
-  record(question: string, verdict: Verdict, xp: number): void {
-    this.xpEarned.update((total) => total + xp);
+  record(question: string, verdict: Verdict, points: number): void {
+    this.pointsEarned.update((total) => total + points);
     if (!this.firstVerdicts().has(question)) {
       this.firstVerdicts.set(new Map(this.firstVerdicts()).set(question, verdict));
     }
   }
 
-  earn(xp: number): void {
-    this.xpEarned.update((total) => total + xp);
+  /** The bonus of the session, once finished. */
+  earnBonus(points: number): void {
+    this.bonus.set(points);
   }
 
   ngOnDestroy(): void {

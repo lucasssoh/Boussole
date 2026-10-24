@@ -1,13 +1,17 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { Rank } from './core/api';
+import { LanguageService } from './core/language.service';
+import { RankEmblemComponent } from './shared/rank-emblem.component';
+import { divisionProgress, formatPoints, roman, tierColors } from './shared/ranks';
 import { ServerSettingsService } from './core/server-settings.service';
 import { StatsService } from './core/stats.service';
 import { SettingsDrawerComponent } from './core/settings-drawer.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, TranslocoPipe, SettingsDrawerComponent],
+  imports: [RouterOutlet, RouterLink, TranslocoPipe, SettingsDrawerComponent, RankEmblemComponent],
   template: `
     <header class="top-bar">
       <a class="brand" routerLink="/">
@@ -15,11 +19,13 @@ import { SettingsDrawerComponent } from './core/settings-drawer.component';
         Boussole
       </a>
       @if (stats.stats(); as current) {
-        <div class="player-stats" [attr.aria-label]="'stats.label' | transloco: current">
-          <span class="level-badge">{{ current.level }}</span>
+        @let rank = current.culture;
+        <div class="player-stats" [attr.aria-label]="'stats.label' | transloco: { rank: rankName(rank.tier, rank.division), level: rank.level, points: points(current.points), streakDays: current.streakDays }">
+          <app-rank-emblem [tier]="rank.tier" [size]="28" />
           <span class="level-bar">
-            <span class="level-line">{{ 'stats.level' | transloco: current }} · {{ current.levelXp }} / {{ current.levelSize }} XP</span>
-            <span class="xp-track"><span class="xp-fill" [style.width.%]="(100 * current.levelXp) / current.levelSize"></span></span>
+            <span class="level-line">{{ rankName(rank.tier, rank.division) }} · {{ 'stats.level' | transloco: { level: rank.level } }}</span>
+            <span class="xp-track"><span class="xp-fill" [style.width.%]="100 * progress(rank, current.points)" [style.background]="color(rank.tier)"></span></span>
+            <span class="level-points">{{ 'stats.points' | transloco: { points: points(current.points), next: points(ceil(rank.nextAt)) } }}</span>
           </span>
           <span class="streak" [class.cold]="!current.studiedToday">
             <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 5 5 5 10a5 5 0 01-10 0c0-2 1-3.5 2-4.5 0 2 1 3 2 3-1-3 0-6 1-8.5z"></path></svg>
@@ -36,6 +42,29 @@ import { SettingsDrawerComponent } from './core/settings-drawer.component';
 })
 export class App {
   protected readonly stats = inject(StatsService);
+  private readonly transloco = inject(TranslocoService);
+  private readonly language = inject(LanguageService);
+
+  protected rankName(tier: string, division: number): string {
+    const name = this.transloco.translate('rank.' + tier, {}, this.language.current());
+    return division > 0 ? `${name} ${roman(division)}` : name;
+  }
+
+  protected points(points: number): string {
+    return formatPoints(points, this.language.current());
+  }
+
+  protected ceil(points: number): number {
+    return Math.ceil(points);
+  }
+
+  protected progress(rank: Rank, points: number): number {
+    return divisionProgress(rank, points);
+  }
+
+  protected color(tier: string): string {
+    return tierColors(tier)[0];
+  }
 
   constructor() {
     inject(ServerSettingsService).load();

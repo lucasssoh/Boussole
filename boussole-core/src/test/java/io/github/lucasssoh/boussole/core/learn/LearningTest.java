@@ -9,6 +9,7 @@ import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionProgress;
+import io.github.lucasssoh.boussole.core.learn.reward.QuestionScore;
 import io.github.lucasssoh.boussole.core.learn.reward.RewardedSubjects;
 import io.github.lucasssoh.boussole.format.model.SessionId;
 import java.time.Clock;
@@ -35,10 +36,36 @@ class LearningTest {
         AttemptOutcome second = new SubmitAttempt(content, progress, RewardedSubjects.all(), clock).submit(MAC_BITS, new ValueResponse("48"), Optional.empty(), Optional.empty());
 
         assertThat(first.result().verdict()).isEqualTo(Verdict.WRONG);
-        assertThat(first.xpGained()).isEqualTo(5);
-        assertThat(second.xpGained()).isEqualTo(5);
+        assertThat(first.pointsGained()).isZero();
+        assertThat(second.pointsGained()).isZero();
         assertThat(second.progress().attempts()).isEqualTo(2);
         assertThat(second.progress().solved()).isTrue();
+    }
+
+    @Test
+    void a_right_first_answer_earns_its_points_times_the_level_and_half_of_them_in_another_session() {
+        SubmitAttempt submit = new SubmitAttempt(content, progress, RewardedSubjects.all(), clock);
+
+        AttemptOutcome lesson = submit.submit(MAC_BITS, new ValueResponse("48"), Optional.of("s11"), Optional.empty());
+        AttemptOutcome review = submit.submit(MAC_BITS, new ValueResponse("48"), Optional.of("r19"), Optional.empty());
+        AttemptOutcome reviewAgain = submit.submit(MAC_BITS, new ValueResponse("48"), Optional.of("r19"), Optional.empty());
+
+        assertThat(lesson.score()).isEqualTo(new QuestionScore(1, 1));
+        assertThat(lesson.pointsGained()).isEqualTo(3);
+        assertThat(review.pointsGained()).isEqualTo(1.5);
+        assertThat(reviewAgain.pointsGained()).isZero();
+    }
+
+    @Test
+    void a_session_without_a_mistake_earns_a_tenth_more_once() {
+        SubmitAttempt submit = new SubmitAttempt(content, progress, RewardedSubjects.all(), clock);
+        submit.submit(new ExerciseKey("reseaux", "r19-q1"), new ChoicesResponse(Set.of(1)), Optional.of("r19"), Optional.empty());
+        submit.submit(MAC_BITS, new ValueResponse("48"), Optional.of("r19"), Optional.empty());
+        submit.submit(new ExerciseKey("reseaux", "s11-a2"), new ChoicesResponse(Set.of(1)), Optional.of("r19"), Optional.empty());
+        FinishSession finish = new FinishSession(content, progress, RewardedSubjects.all(), clock);
+
+        assertThat(finish.finish(new SessionKey("reseaux", "r19"), Duration.ofMinutes(5))).isEqualTo(1);
+        assertThat(finish.finish(new SessionKey("reseaux", "r19"), Duration.ofMinutes(5))).isZero();
     }
 
     @Test
@@ -46,9 +73,9 @@ class LearningTest {
         RewardedSubjects notReseaux = RewardedSubjects.allBut("reseaux");
 
         AttemptOutcome outcome = new SubmitAttempt(content, progress, notReseaux, clock).submit(MAC_BITS, new ValueResponse("48"), Optional.empty(), Optional.empty());
-        int finished = new FinishSession(content, progress, notReseaux, clock).finish(new SessionKey("reseaux", "s11"), Duration.ofMinutes(52));
+        double finished = new FinishSession(content, progress, notReseaux, clock).finish(new SessionKey("reseaux", "s11"), Duration.ofMinutes(52));
 
-        assertThat(outcome.xpGained()).isZero();
+        assertThat(outcome.pointsGained()).isZero();
         assertThat(outcome.progress().solved()).isTrue();
         assertThat(finished).isZero();
         assertThat(new OpenCourse(content, progress).open("reseaux", Optional.empty()).finishedSessions()).containsExactly("s11");

@@ -65,6 +65,8 @@ export class QuestionState {
     private readonly stats: StatsService | null = null,
     /** The version of the track the question is read in: its answer, hints and solution. */
     private readonly language: string | null = null,
+    /** A guess of the warmup, which earns nothing and counts in no score. */
+    readonly hook = false,
   ) {
     this.order = signal([...shuffledItems]);
     this.progress = signal(progress);
@@ -90,7 +92,7 @@ export class QuestionState {
       if (this.run?.kind() === 'lesson') {
         storeValue(this.keptKey(), JSON.stringify({ request, result } satisfies KeptAnswer));
       }
-      this.run?.record(this.id, result.verdict, result.xpGained);
+      this.run?.record(this.id, result.verdict, result.pointsGained);
       this.stats?.refresh();
     });
   }

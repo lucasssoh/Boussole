@@ -87,8 +87,8 @@ class LearningConfiguration {
     }
 
     @Bean
-    ReadStudyStats readStudyStats(ProgressRepository progress, RewardedSubjects rewarded, Clock clock) {
-        return new ReadStudyStats(progress, rewarded, clock);
+    ReadStudyStats readStudyStats(ContentRepository content, ProgressRepository progress, RewardedSubjects rewarded, Clock clock) {
+        return new ReadStudyStats(content, progress, rewarded, clock);
     }
 
     @Bean

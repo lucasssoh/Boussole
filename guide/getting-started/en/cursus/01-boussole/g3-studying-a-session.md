@@ -3,7 +3,7 @@ id: g3
 objectives:
   - Move through a session step by step, following the Trail.
   - Answer on the first try, with nudges, and read the explained answer.
-terms: [step, trail, guided-mode, first-try, nudge, final-check, streak, quick-review]
+terms: [step, trail, guided-mode, first-try, nudge, final-check, streak, tier, quick-review]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code
@@ -71,8 +71,10 @@ even if you come back to the session another day. To help you answer well:
 - **Explained answer**: right after, the right answer turns green, yours red if it was wrong,
   and a **Why** box explains.
 
-**"I can't see my progress."** Every answer earns **experience**, even a wrong one: trying always
-pays. Your :term[streak]{id=streak} grows each day you study.
+**"I can't see my progress."** Every right answer earns **points**, more in a demanding track. A
+first answer missed stays missed: no going back. With points you climb the
+:term[tiers]{id=tier}, from Curious to Grand Sage. Your :term[streak]{id=streak} grows each day
+you study.
 
 :::note
 :term[Quick reviews]{id=quick-review} and mock exams are timed. In a mock exam, the corrections come at the end, as in a
@@ -83,19 +85,22 @@ real exam.
 What is true? (several answers)
 
 - [x] You can ask for a nudge before answering
-- [x] A wrong answer earns experience too
+- [ ] A wrong answer earns points too
+  > Only what is right earns: a first answer missed stays missed.
+- [x] A right answer earns more in a demanding track
 - [ ] You can answer the same question as many times as you like
   > In a lesson, your answer counts on the first try.
 - [ ] In a mock exam, the correction shows after each question
   > In a mock exam, it waits for the end, as in a real exam.
 
 :::hint
-Two statements are true; read the note on mock exams again.
+Two statements are true; read the paragraph on progress again.
 :::
 
 :::solution
-True: the nudge before answering, and experience even for a wrong answer. False: your answer
-counts on the first try, and a mock exam keeps its corrections for the end.
+True: the nudge before answering, and more points in a demanding track. False: a wrong answer
+earns nothing, your answer counts on the first try, and a mock exam keeps its corrections for the
+end.
 :::
 ::::
 

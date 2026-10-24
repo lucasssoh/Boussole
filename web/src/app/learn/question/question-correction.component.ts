@@ -1,10 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, forwardRef, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, input } from '@angular/core';
+import { LanguageService } from '../../core/language.service';
+import { formatPoints } from '../../shared/ranks';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { BlockListComponent } from '../blocks/block-list.component';
 import { QuestionState } from './question-state';
 
 /**
- * The correction under a question, once it is answered: the verdict and the experience earned,
+ * The correction under a question, once it is answered: the verdict, what the answer was worth
+ * and the points it earned,
  * what was expected (projected by the question, [expected]) and why it is right (the solution of
  * the file). A free exercise shows it before the learner grades their answer.
  */
@@ -19,9 +22,20 @@ import { QuestionState } from './question-state';
         {{ (verdict() ? 'verdict.' + verdict() : 'question.solutionTitle') | transloco }}
       </span>
       @if (state().result(); as result) {
-        @if (result.xpGained > 0) {
-          <span class="xp-pill">+{{ result.xpGained }} XP</span>
+        <span class="correction-score">
+        @if (state().hook) {
+          <span class="score-pill">{{ 'question.hook' | transloco }}</span>
+        } @else {
+          @if (result.possible > 1) {
+            <span class="score-pill">{{ (result.earned === 1 ? 'question.sentence' : 'question.sentences') | transloco: { earned: result.earned, possible: result.possible } }}</span>
+          } @else if (result.earned > 0 && result.earned < result.possible) {
+            <span class="score-pill">{{ 'question.share' | transloco: { earned: points(result.earned) } }}</span>
+          }
+          @if (result.pointsGained > 0) {
+            <span class="xp-pill">{{ 'question.points' | transloco: { points: points(result.pointsGained) } }}</span>
+          }
         }
+        </span>
       }
     </div>
     <ng-content select="[expected]" />
@@ -37,6 +51,11 @@ import { QuestionState } from './question-state';
 })
 export class QuestionCorrectionComponent {
   readonly state = input.required<QuestionState>();
+  private readonly language = inject(LanguageService);
+
+  protected points(points: number): string {
+    return formatPoints(points, this.language.current());
+  }
 
   protected readonly verdict = computed(() => this.state().verdict());
 }

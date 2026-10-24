@@ -59,7 +59,7 @@ export class LearnFacade {
   }
 
   /** The finished mark of a session shows in the course at once. */
-  /** Returns the experience earned by finishing. */
+  /** Returns the bonus earned by finishing without a mistake, 0 otherwise. */
   async finishSession(spentSeconds: number): Promise<number> {
     const session = this.session();
     if (!session) {
@@ -67,7 +67,7 @@ export class LearnFacade {
     }
     const finished = await this.api.finishSession(session.subject, session.id, spentSeconds);
     await this.openCourse(session.subject);
-    return finished.xpGained;
+    return finished.bonus;
   }
 
   /** The term a :term directive names: by its ID, else by its text, ignoring case. */

@@ -11,7 +11,10 @@ import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
 import io.github.lucasssoh.boussole.format.model.block.McqBlock;
 import io.github.lucasssoh.boussole.core.learn.reward.RewardedSubjects;
-import io.github.lucasssoh.boussole.core.learn.reward.XpRules;
+import io.github.lucasssoh.boussole.core.learn.reward.PointRules;
+import io.github.lucasssoh.boussole.core.learn.reward.QuestionScore;
+import io.github.lucasssoh.boussole.format.model.TrackLevel;
+import io.github.lucasssoh.boussole.format.model.block.Block;
 import java.time.Clock;
 import java.util.Optional;
 
@@ -38,17 +41,28 @@ public final class SubmitAttempt {
      */
     public AttemptOutcome submit(ExerciseKey key, LearnerResponse response, Optional<String> session, Optional<String> language) {
         session.ifPresent(id -> refuseASecondAnswer(key, id));
-        CheckResult result = switch (lookup.question(key, language)) {
+        Block question = lookup.question(key, language);
+        CheckResult result = switch (question) {
             case McqBlock mcq -> checker.check(mcq, response);
             case ExerciseBlock exercise -> checker.check(exercise, response);
             default -> throw new ResponseMismatchException(key.exercise() + " is not a question");
         };
+        QuestionScore score = QuestionScore.of(question, response, result);
         ExerciseProgress before = progress.exercise(key);
+        boolean firstHere = session.map(id -> !progress.firstVerdicts(new SessionKey(key.subject(), id)).containsKey(key.exercise()))
+                .orElse(false);
+        double points = rewarded.rewards(key.subject())
+                ? PointRules.weight(before.attempts() == 0, firstHere) * score.earned() * coefficient(key.subject())
+                : 0;
         ExerciseProgress after = before.withAttempt(result.verdict());
         progress.saveExercise(key, after, clock.instant());
-        progress.recordAttempt(key, session, result.verdict(), clock.instant());
-        int xp = rewarded.rewards(key.subject()) ? XpRules.forAttempt(before.attempts() == 0, result.verdict()) : 0;
-        return new AttemptOutcome(result, after, xp);
+        progress.recordAttempt(key, session, result.verdict(), points, clock.instant());
+        return new AttemptOutcome(result, after, score, points);
+    }
+
+    /** What the level of the track multiplies its points by; 1 when it does not say. */
+    private double coefficient(String subject) {
+        return lookup.course(subject, Optional.empty()).subject().level().map(TrackLevel::coefficient).orElse(1.0);
     }
 
     private void refuseASecondAnswer(ExerciseKey key, String session) {

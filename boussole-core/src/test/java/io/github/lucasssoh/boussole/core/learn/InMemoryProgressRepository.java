@@ -46,16 +46,16 @@ final class InMemoryProgressRepository implements ProgressRepository {
     }
 
     @Override
-    public void saveSessionFinished(SessionKey key, Instant at, Duration spent) {
+    public void saveSessionFinished(SessionKey key, Instant at, Duration spent, double bonus) {
         finished.add(key);
         last.put(key.subject(), new LastActivity(at, Optional.of(key.session()), true));
-        finishedAt.add(new SessionFinishedRecord(key.subject(), at));
+        finishedAt.add(new SessionFinishedRecord(key.subject(), key.session(), at, bonus));
     }
 
     @Override
-    public void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, Instant at) {
+    public void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, double points, Instant at) {
         last.put(key.subject(), new LastActivity(at, session, false));
-        history.add(new AttemptRecord(key.subject(), key.exercise(), at, verdict));
+        history.add(new AttemptRecord(key.subject(), key.exercise(), session, at, verdict, points));
         session.ifPresent(id -> firstInSession.computeIfAbsent(new SessionKey(key.subject(), id), unused -> new HashMap<>())
                 .putIfAbsent(key.exercise(), verdict));
     }

@@ -20,10 +20,11 @@ public interface ProgressRepository {
 
     void saveExercise(ExerciseKey key, ExerciseProgress progress, Instant at);
 
-    /** Keeps an attempt in the history, with the session it was given in. */
-    void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, Instant at);
+    /** Keeps an attempt in the history, with the session it was given in and the points it earned. */
+    void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, double points, Instant at);
 
-    void saveSessionFinished(SessionKey key, Instant at, Duration spent);
+    /** Keeps a finished session, with the bonus it earned when done without a mistake. */
+    void saveSessionFinished(SessionKey key, Instant at, Duration spent, double bonus);
 
     /** The IDs of the sessions of a subject finished at least once. */
     Set<String> finishedSessions(String subject);

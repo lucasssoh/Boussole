@@ -82,6 +82,8 @@ package "learn.question" {
 package "shared" {
   class MarkdownRenderer <<markdown-it + KaTeX>>
   class "subjectColor()" as SubjectColor
+  class RankEmblemComponent <<the shield of a tier>>
+  class "ranks.ts" as Ranks <<tier colours, roman divisions, points>>
   class RichTextComponent
   class "drawMermaidDiagrams()" as Mermaid
   class IconComponent <<SVG icons, no emoji>> {
@@ -101,6 +103,7 @@ SessionPageComponent ..> SessionPlan : screens
 SessionPageComponent ..> ServerSettingsService : free navigation?
 SessionPageComponent --> SessionPathComponent
 QuestionState ..> StatsService : refresh after an answer
+RankEmblemComponent ..> Ranks : colours
 SessionPageComponent --> BlockListComponent : the screen shown
 SessionRun o-- QuestionState : kept for the sitting
 SessionPageComponent --> SidePanelComponent

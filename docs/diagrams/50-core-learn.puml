@@ -86,19 +86,42 @@ package "learn.reward" {
   class ReadStudyStats <<use case>> {
     +read() : StudyStats
   }
-  class XpRules <<helpers>> {
-    +{static} forAttempt(first, Verdict) : int
-    +SESSION_FINISHED = 20
+  class PointRules <<helpers>> {
+    +{static} weight(first, firstHere) : double
+    +{static} flawlessBonus(sessionPoints) : double
+    +AGAIN = 0.5
+    +FLAWLESS = 0.10
+  }
+  class QuestionScore <<record>> {
+    earned, possible : double
+    +{static} of(question, response, CheckResult) : QuestionScore
+    +{static} possible(question) : double
+  }
+  class GapSentences <<helpers>> {
+    ~{static} of(statement) : Map<Integer, Integer>
   }
   class StudyStats <<record>> {
-    xp : int
-    level : Level
+    points : double
+    culture : Rank
+    fields : List<FieldStanding>
     streakDays : int
     studiedToday : boolean
   }
-  class Level <<record>> {
-    number, xpInLevel, size : int
-    +{static} of(xp) : Level
+  class FieldStanding <<record>> {
+    domain : Domain
+    points : double
+    rank : Rank
+  }
+  enum Ladder {
+    CULTURE
+    SPECIALTY
+    +fieldsFor(tier) : int
+  }
+  class Rank <<record>> {
+    tier, division, level : int
+    intoLevel, levelSize, nextAt : double
+    fieldsMissing : int
+    +{static} of(Ladder, points, fields) : Rank
   }
   class AttemptRecord <<record>>
   class SessionFinishedRecord <<record>>
@@ -166,15 +189,20 @@ OpenCourse --> CourseOverviews
 CourseOverviews ..> LastActivity : resume
 CourseOverviews ..> SessionProgress : per session
 ReadStudyStats --> ProgressRepository : history
-ReadStudyStats ..> XpRules
+ReadStudyStats ..> Rank : culture, specialty
+Rank --> Ladder
+ReadStudyStats --> ContentRepository : fields
+QuestionScore ..> GapSentences : fill
 PreviewWebPage --> WebPages : pages
 PreviewWebPage ..> PagePreview
 ReadStudyStats --> RewardedSubjects : rewarded
 SubmitAttempt --> RewardedSubjects : rewarded
 FinishSession --> RewardedSubjects : rewarded
 ReadStudyStats ..> StudyStats
-StudyStats --> Level
-SubmitAttempt ..> XpRules : xp gained
+StudyStats *-- FieldStanding
+SubmitAttempt ..> QuestionScore : score
+SubmitAttempt ..> PointRules : points
+FinishSession ..> PointRules : flawless bonus
 CourseOverviews --> ProgressRepository
 OpenCourse --> CourseLookup
 CourseLookup ..> CourseVersions : one track, one language

@@ -80,24 +80,26 @@ public final class SqliteProgressRepository implements ProgressRepository {
     }
 
     @Override
-    public void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, Instant at) {
-        query("INSERT INTO attempt (subject, exercise, session, at, verdict) VALUES (?, ?, ?, ?, ?)", statement -> {
+    public void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, double points, Instant at) {
+        query("INSERT INTO attempt (subject, exercise, session, at, verdict, points) VALUES (?, ?, ?, ?, ?, ?)", statement -> {
             statement.setString(1, key.subject());
             statement.setString(2, key.exercise());
             statement.setString(3, session.orElse(null));
             statement.setString(4, at.toString());
             statement.setString(5, verdict.name());
+            statement.setDouble(6, points);
             return statement.executeUpdate();
         });
     }
 
     @Override
-    public void saveSessionFinished(SessionKey key, Instant at, Duration spent) {
-        query("INSERT INTO session_finished (subject, session, at, spent_seconds) VALUES (?, ?, ?, ?)", statement -> {
+    public void saveSessionFinished(SessionKey key, Instant at, Duration spent, double bonus) {
+        query("INSERT INTO session_finished (subject, session, at, spent_seconds, bonus) VALUES (?, ?, ?, ?, ?)", statement -> {
             statement.setString(1, key.subject());
             statement.setString(2, key.session());
             statement.setString(3, at.toString());
             statement.setLong(4, spent.toSeconds());
+            statement.setDouble(5, bonus);
             return statement.executeUpdate();
         });
     }
@@ -133,12 +135,13 @@ public final class SqliteProgressRepository implements ProgressRepository {
 
     @Override
     public List<AttemptRecord> attemptHistory() {
-        return query("SELECT subject, exercise, at, verdict FROM attempt ORDER BY at, id", statement -> {
+        return query("SELECT subject, exercise, session, at, verdict, points FROM attempt ORDER BY at, id", statement -> {
             List<AttemptRecord> found = new ArrayList<>();
             try (ResultSet rows = statement.executeQuery()) {
                 while (rows.next()) {
                     found.add(new AttemptRecord(rows.getString("subject"), rows.getString("exercise"),
-                            Instant.parse(rows.getString("at")), Verdict.valueOf(rows.getString("verdict"))));
+                            Optional.ofNullable(rows.getString("session")), Instant.parse(rows.getString("at")),
+                            Verdict.valueOf(rows.getString("verdict")), rows.getDouble("points")));
                 }
             }
             return found;
@@ -147,11 +150,12 @@ public final class SqliteProgressRepository implements ProgressRepository {
 
     @Override
     public List<SessionFinishedRecord> sessionsFinished() {
-        return query("SELECT subject, at FROM session_finished ORDER BY at, id", statement -> {
+        return query("SELECT subject, session, at, bonus FROM session_finished ORDER BY at, id", statement -> {
             List<SessionFinishedRecord> found = new ArrayList<>();
             try (ResultSet rows = statement.executeQuery()) {
                 while (rows.next()) {
-                    found.add(new SessionFinishedRecord(rows.getString("subject"), Instant.parse(rows.getString("at"))));
+                    found.add(new SessionFinishedRecord(rows.getString("subject"), rows.getString("session"),
+                            Instant.parse(rows.getString("at")), rows.getDouble("bonus")));
                 }
             }
             return found;

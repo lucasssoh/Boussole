@@ -47,27 +47,29 @@ class SqliteProgressRepositoryTest {
     void knows_the_last_thing_done_in_a_subject() {
         assertThat(repository().lastActivity("oc")).isEmpty();
 
-        repository().recordAttempt(KEY, Optional.of("s39"), Verdict.WRONG, NOW);
+        repository().recordAttempt(KEY, Optional.of("s39"), Verdict.WRONG, 0, NOW);
         assertThat(repository().lastActivity("oc")).contains(new LastActivity(NOW, Optional.of("s39"), false));
 
-        repository().saveSessionFinished(new SessionKey("oc", "s39"), NOW.plusSeconds(60), Duration.ofMinutes(40));
+        repository().saveSessionFinished(new SessionKey("oc", "s39"), NOW.plusSeconds(60), Duration.ofMinutes(40), 0);
         assertThat(repository().lastActivity("oc")).contains(new LastActivity(NOW.plusSeconds(60), Optional.of("s39"), true));
     }
 
     @Test
     void keeps_the_history_of_attempts_and_finished_sessions() {
-        repository().recordAttempt(KEY, Optional.empty(), Verdict.WRONG, NOW);
-        repository().recordAttempt(KEY, Optional.empty(), Verdict.CORRECT, NOW.plusSeconds(10));
-        repository().saveSessionFinished(new SessionKey("oc", "s34"), NOW.plusSeconds(60), Duration.ofMinutes(40));
+        repository().recordAttempt(KEY, Optional.empty(), Verdict.WRONG, 0, NOW);
+        repository().recordAttempt(KEY, Optional.of("s34"), Verdict.CORRECT, 1.5, NOW.plusSeconds(10));
+        repository().saveSessionFinished(new SessionKey("oc", "s34"), NOW.plusSeconds(60), Duration.ofMinutes(40), 1);
 
         assertThat(repository().attemptHistory()).extracting(AttemptRecord::verdict).containsExactly(Verdict.WRONG, Verdict.CORRECT);
-        assertThat(repository().sessionsFinished()).containsExactly(new SessionFinishedRecord("oc", NOW.plusSeconds(60)));
+        assertThat(repository().attemptHistory()).extracting(AttemptRecord::points).containsExactly(0.0, 1.5);
+        assertThat(repository().attemptHistory()).extracting(AttemptRecord::session).containsExactly(Optional.empty(), Optional.of("s34"));
+        assertThat(repository().sessionsFinished()).containsExactly(new SessionFinishedRecord("oc", "s34", NOW.plusSeconds(60), 1));
     }
 
     @Test
     void lists_the_sessions_finished() {
-        repository().saveSessionFinished(new SessionKey("oc", "s34"), NOW, Duration.ofMinutes(48));
-        repository().saveSessionFinished(new SessionKey("oc", "s34"), NOW.plusSeconds(86_400), Duration.ofMinutes(30));
+        repository().saveSessionFinished(new SessionKey("oc", "s34"), NOW, Duration.ofMinutes(48), 0);
+        repository().saveSessionFinished(new SessionKey("oc", "s34"), NOW.plusSeconds(86_400), Duration.ofMinutes(30), 0);
 
         assertThat(repository().finishedSessions("oc")).containsExactly("s34");
     }
