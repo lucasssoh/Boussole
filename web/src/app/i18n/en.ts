@@ -227,11 +227,12 @@ export const EN = {
   ranks: {
     title: 'Tiers',
     culture: 'Culture',
-    specialty: 'Specialty',
+    specialty: 'Specialties',
     levels: 'levels {{from}} to {{to}}',
     levelsFrom: 'level {{from}} and beyond',
     from: '{{points}} pts',
     fields: '{{count}} fields',
+    nextDivision: '{{points}} points to the next division',
   },
   promotion: {
     tier: 'New tier',

@@ -297,7 +297,8 @@ web/src/app/
   The header shows the rank (`RankEmblemComponent`), the level, the points and the streak
   (`StatsService`), and leads to the profile (`ProfilePageComponent`: the card, the route of
   divisions, the next one, the fields Sage asks for, each specialty) and to the tiers
-  (`RanksPageComponent`, both ladders); each answer shows what it was worth and the points it
+  (`RanksPageComponent`: the culture, overall, beside one branch per field, its specialty from
+  Novice to Luminary with where the learner stands); each answer shows what it was worth and the points it
   earned. A division higher than the one last seen on this browser (`rank.seen`) is shown once,
   full screen (`PromotionComponent`).
 - **Bubbles**: entering a page or a screen, its elements pop in one after the other (the

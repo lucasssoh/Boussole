@@ -229,11 +229,12 @@ export const FR: Translations = {
   ranks: {
     title: 'Paliers',
     culture: 'Culture',
-    specialty: 'Spécialité',
+    specialty: 'Spécialités',
     levels: 'niveaux {{from}} à {{to}}',
     levelsFrom: 'niveau {{from}} et au-delà',
     from: '{{points}} pts',
     fields: '{{count}} domaines',
+    nextDivision: 'encore {{points}} points avant la division suivante',
   },
   promotion: {
     tier: 'Nouveau palier',
