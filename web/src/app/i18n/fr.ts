@@ -229,6 +229,7 @@ export const FR: Translations = {
     noSpecialty: 'Pas encore de spécialité.',
     achievements: 'Succès',
     achievementsCount: '{{reached}} / {{total}}',
+    noAchievement: 'Pas encore de succès.',
   },
   ranks: {
     title: 'Paliers',

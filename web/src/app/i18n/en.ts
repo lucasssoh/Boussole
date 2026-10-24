@@ -227,6 +227,7 @@ export const EN = {
     noSpecialty: 'No specialty yet.',
     achievements: 'Achievements',
     achievementsCount: '{{reached}} / {{total}}',
+    noAchievement: 'No achievement yet.',
   },
   ranks: {
     title: 'Tiers',

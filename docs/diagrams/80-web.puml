@@ -91,6 +91,7 @@ package "shared" {
   class "subjectColor()" as SubjectColor
   class RankEmblemComponent <<the gem of a rank, its division in relief>>
   class "emblem.ts" as Emblem <<instruments, ornaments, aura, ambiance per tier>>
+  class SpecialtyEmblemComponent <<the medallion of a specialty, its ring up to the next tier>>
   class RankRouteComponent <<every division as its emblem, the learner's in the middle>>
   class PromotionComponent <<a new division, full screen, dimmed behind>>
   class "ranks.ts" as Ranks <<tier colours, roman divisions, points>>
@@ -121,6 +122,7 @@ ProfilePageComponent ..> StatsService : stats
 ProfilePageComponent ..> RankEmblemComponent
 ProfilePageComponent --> RankRouteComponent : the route of the culture
 RankRouteComponent ..> RankEmblemComponent
+ProfilePageComponent ..> SpecialtyEmblemComponent : each specialty
 RanksPageComponent ..> BoussoleApi : ranks
 ProfilePageComponent ..> RankNames
 RanksPageComponent ..> RankNames

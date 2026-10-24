@@ -4,7 +4,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { LadderStep } from '../core/api';
 import { BoussoleApi } from '../core/boussole-api';
 import { StatsService } from '../core/stats.service';
-import { emblemStep } from '../shared/emblem';
+import { ALTITUDE, NIGHT, emblemStep } from '../shared/emblem';
 import { RankEmblemComponent } from '../shared/rank-emblem.component';
 import { CRITICAL_THINKING, isStrong } from '../shared/ranks';
 import { RankNames } from './rank-names';
@@ -18,12 +18,6 @@ interface Tier {
 
 /** What the top culture tiers ask for, past their points. */
 const ASKS: Readonly<Record<string, string>> = { sage: 'ranks.asksSage', 'grand-sage': 'ranks.asksGrandSage' };
-
-/** The sky at the height of each tier: the haze near the ground, the blue, the deep blue of altitude, then space. */
-const ALTITUDE = ['#fbf3e4', '#d7ebf8', '#a9d1f2', '#6aa7e4', '#2f6cc0', '#16306e', '#0a1233', '#020409'];
-
-/** From this tier on, the sky is dark enough for light text. */
-const NIGHT = 4;
 
 /** Where the bands start, in percent of the sky's height, below the title. */
 const TOP = 8;

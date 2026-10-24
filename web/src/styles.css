@@ -2687,24 +2687,25 @@ app-settings-drawer {
 /* Profile and tiers */
 
 .profile {
-  display: grid;
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 3.5rem);
 }
 
-.profile-banner {
+.profile-hero {
   display: grid;
-  gap: 1.75rem;
-  padding: 2rem 2rem 1.75rem;
-  border-radius: var(--radius);
-  background: var(--ambiance, linear-gradient(135deg, color-mix(in srgb, var(--tier-deep) 38%, #0a1430), color-mix(in srgb, var(--tier-deep) 18%, #060c20)));
-  color: #f5f1ea;
+  gap: 1.5rem;
+  padding: 2.5rem 0 1.5rem;
+  background: var(--sky);
 }
 
 .profile-card {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1.75rem;
+  gap: 2rem;
+  width: 100%;
+  padding: 0 1.5rem;
 }
 
 .profile-emblem {
@@ -2723,7 +2724,7 @@ app-settings-drawer {
   width: 9rem;
   height: 1.1rem;
   border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(0 0 0 / 0.45), transparent);
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.35), transparent);
 }
 
 .profile-emblem .rank-emblem {
@@ -2732,14 +2733,15 @@ app-settings-drawer {
 }
 
 .profile-who {
-  flex: 1 1 14rem;
+  flex: 1 1 16rem;
   display: grid;
-  gap: 0.4rem;
+  justify-items: start;
+  gap: 0.45rem;
 }
 
 .profile-who h1 {
   margin: 0;
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(2rem, 5vw, 3.4rem);
   line-height: 1;
 }
 
@@ -2748,7 +2750,7 @@ app-settings-drawer {
   font-weight: 900;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--accent) 60%, #ffffff);
+  opacity: 0.7;
 }
 
 .profile-level {
@@ -2756,15 +2758,39 @@ app-settings-drawer {
   align-items: center;
   gap: 0.6rem;
   font-weight: 800;
-  color: color-mix(in srgb, var(--accent) 50%, #ffffff);
 }
 
 .level-chip {
   padding: 0.2rem 0.65rem;
   border-radius: 10px;
-  background: var(--accent, var(--tier));
+  background: color-mix(in srgb, var(--accent, var(--tier)) 55%, #ffffff);
   color: #10161a;
   font-weight: 900;
+}
+
+.profile-next {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 800;
+  opacity: 0.85;
+}
+
+.profile-next .xp-track {
+  width: 9rem;
+  background: color-mix(in srgb, currentColor 15%, transparent);
+}
+
+.profile-ranks {
+  margin-top: 0.35rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  color: inherit;
+  font-size: 0.9rem;
+  font-weight: 900;
+  text-decoration: none;
 }
 
 .profile-records {
@@ -2781,14 +2807,14 @@ app-settings-drawer {
   gap: 1rem;
   padding: 0.55rem 0.9rem;
   border-radius: 14px;
-  background: rgb(255 255 255 / 0.07);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 10%, transparent);
 }
 
 .profile-records dt {
   font-size: 0.82rem;
   font-weight: 800;
-  color: color-mix(in srgb, var(--accent) 55%, #ffffff);
+  opacity: 0.75;
 }
 
 .profile-records dd {
@@ -2814,7 +2840,7 @@ app-settings-drawer {
 }
 
 .route-track {
-  background: rgb(255 255 255 / 0.12);
+  background: color-mix(in srgb, currentColor 14%, transparent);
 }
 
 .route-emblem {
@@ -2835,28 +2861,6 @@ app-settings-drawer {
   font-weight: 900;
 }
 
-.profile-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  gap: 1.25rem;
-}
-
-.profile-panel {
-  display: grid;
-  align-content: start;
-  gap: 0.5rem;
-  padding: 1.4rem 1.6rem;
-  border: 2px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: 0 5px 0 var(--line);
-}
-
-.profile-panel .button {
-  justify-self: start;
-  margin-top: 0.4rem;
-}
-
 .panel-label {
   font-size: 0.78rem;
   font-weight: 900;
@@ -2875,65 +2879,122 @@ app-settings-drawer {
   font-weight: 700;
 }
 
-.field-marks {
+.profile-zone {
+  padding: 2.5rem 1.5rem 3rem;
+}
+
+.zone-head {
   display: flex;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
 }
 
-.field-mark {
-  flex: 1 1 0;
-  height: 10px;
-  border-radius: 999px;
-  background: var(--line);
+.zone-head h2 {
+  margin: 0;
+  font-size: 1.75rem;
 }
 
-.field-mark.filled {
-  background: var(--brand);
+.zone-head .count {
+  font-weight: 800;
+  opacity: 0.7;
 }
 
 .specialties {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
 .specialty {
   display: flex;
   align-items: center;
-  gap: 0.9rem;
-  padding: 1rem 1.2rem;
-  border: 2px solid var(--line);
-  border-radius: var(--radius);
+  gap: 0.8rem;
+  padding: 0.4rem 1.4rem 0.4rem 0.5rem;
+  border-radius: 999px;
   background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--line);
 }
 
 .specialty div {
   display: grid;
-  gap: 0.15rem;
 }
 
 .specialty-rank {
+  font-size: 0.9rem;
   font-weight: 900;
-  color: color-mix(in srgb, var(--tier) 70%, var(--text));
+  color: var(--muted);
 }
 
+.specialty-emblem {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
 
+.specialty-emblem svg {
+  overflow: visible;
+}
 
+.specialty-emblem .ring-track {
+  stroke: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.profile-zone.trophies {
+  flex: 1 0 auto;
+  background: #060c20;
+  color: #f5f1ea;
+}
+
+.medals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.medal {
+  width: 8rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.medal-disc {
+  display: grid;
+  place-items: center;
+  width: 5.25rem;
+  height: 5.25rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff3c4, #e6b422 55%, #8f6a00);
+  box-shadow: 0 0 24px rgb(242 201 76 / 0.45), inset 0 0 0 4px rgb(255 255 255 / 0.35);
+  color: #4a3500;
+  font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.medal strong {
+  font-size: 0.85rem;
+  color: #fff3c4;
+}
 
 @media (max-width: 640px) {
-  .profile-banner {
-    padding: 1.25rem;
-  }
-
   .profile-emblem {
     margin-inline: auto;
+  }
+
+  .profile-who {
+    justify-items: center;
+    text-align: center;
   }
 
   .profile-records {
     flex-basis: 100%;
   }
 
-
+  .medals {
+    justify-content: space-around;
+  }
 }
 
 .bilan-tally {
@@ -3116,67 +3177,6 @@ app-settings-drawer {
   .promotion-new {
     animation: none;
   }
-}
-
-.profile h2 .count {
-  font-size: 1rem;
-  color: var(--muted);
-}
-
-.achievements {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
-  gap: 0.9rem;
-}
-
-.achievement {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  padding: 0.9rem 1.1rem;
-  border: 2px dashed var(--line);
-  border-radius: var(--radius);
-  background: transparent;
-}
-
-.achievement.reached {
-  border-style: solid;
-  background: var(--surface);
-  box-shadow: 0 4px 0 var(--line);
-}
-
-.achievement div {
-  display: grid;
-  gap: 0.1rem;
-}
-
-/* A frame waiting for the icon of each achievement: its level, in roman numerals. */
-.achievement-frame {
-  flex: 0 0 auto;
-  display: grid;
-  place-items: center;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 14px;
-  border: 3px solid var(--line);
-  color: var(--muted);
-  font-weight: 900;
-}
-
-.achievement.reached .achievement-frame {
-  border-color: var(--brand);
-  background: var(--surface-2);
-  color: var(--brand);
-}
-
-.achievement-what {
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-
-.achievement-progress {
-  font-size: 0.85rem;
-  font-weight: 800;
 }
 
 

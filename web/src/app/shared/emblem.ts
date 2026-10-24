@@ -23,17 +23,11 @@ const STEP: Readonly<Record<string, number>> = {
   curious: 0, apprentice: 1, initiate: 2, scholar: 3, savant: 4, master: 5, sage: 6, 'grand-sage': 7,
 };
 
-/** From morning mist to the night sky: the hour of each step, behind a large emblem. */
-const AMBIANCE: readonly string[] = [
-  'linear-gradient(135deg, #f6f8f7, #e1e9e6)',
-  'linear-gradient(135deg, #fdf6ee, #f0d9c0)',
-  'linear-gradient(135deg, #f1f6fa, #d3e1eb)',
-  'linear-gradient(135deg, #fffaea, #f3dc95)',
-  'linear-gradient(135deg, #e9f1fc, #a9c7ee)',
-  'linear-gradient(135deg, #3b2468, #1d1038)',
-  stars('#fbd3e1') + 'linear-gradient(135deg, #4b1029, #1a0510)',
-  stars('#fff3c4') + 'radial-gradient(circle at 50% 50%, #1b2c33, #05090b 70%)',
-];
+/** The sky at the height of each step: the haze near the ground, the blue, the deep blue of altitude, then space. */
+export const ALTITUDE: readonly string[] = ['#fbf3e4', '#d7ebf8', '#a9d1f2', '#6aa7e4', '#2f6cc0', '#16306e', '#0a1233', '#020409'];
+
+/** The sky behind a large emblem: its altitude, plain, with stars from the night of Master. */
+const AMBIANCE: readonly string[] = ALTITUDE.map((color, step) => (step >= 5 ? stars(step === 5 ? '#c5d6ff' : '#fff3c4') + color : color));
 
 export interface EmblemLook {
   step: number;
@@ -182,7 +176,10 @@ function stars(tint: string): string {
     .join('');
 }
 
-/** The ink that reads on the ambiance of a step: dark by day, light from the dusk of Master. */
+/** From this step on, the sky is dark enough for light text. */
+export const NIGHT = 4;
+
+/** The ink that reads on the sky of a step: dark low in the sky, light from the deep blue of Savant. */
 export function emblemInk(tier: string): string {
-  return emblemStep(tier) >= 5 ? '#f1ece4' : '#3d4f49';
+  return emblemStep(tier) >= NIGHT ? '#f5f1ea' : '#13233a';
 }

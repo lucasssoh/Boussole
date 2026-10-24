@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { AchievementProgress, LadderStep } from '../core/api';
+import { AchievementProgress, FieldStanding, LadderStep } from '../core/api';
 import { BoussoleApi } from '../core/boussole-api';
 import { StatsService } from '../core/stats.service';
-import { emblemAmbiance, emblemLook, emblemStep } from '../shared/emblem';
+import { emblemAmbiance, emblemInk, emblemLook } from '../shared/emblem';
 import { RankEmblemComponent } from '../shared/rank-emblem.component';
-import { CRITICAL_THINKING, divisionProgress, isStrong, roman, tierColors } from '../shared/ranks';
+import { SpecialtyEmblemComponent } from '../shared/specialty-emblem.component';
+import { CRITICAL_THINKING, divisionProgress, isStrong, roman } from '../shared/ranks';
 import { RankNames } from './rank-names';
 import { RankRouteComponent } from './rank-route.component';
 
@@ -17,99 +18,102 @@ import { RankRouteComponent } from './rank-route.component';
  */
 @Component({
   selector: 'app-profile-page',
-  imports: [RankEmblemComponent, RankRouteComponent, RouterLink, TranslocoPipe],
+  imports: [RankEmblemComponent, RankRouteComponent, RouterLink, SpecialtyEmblemComponent, TranslocoPipe],
+  host: { class: 'profile' },
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <main class="page wide profile">
-      @if (stats.stats(); as current) {
-        @let rank = current.culture;
-        <section class="profile-banner" [style.--tier]="colors()[0]" [style.--tier-deep]="colors()[1]" [style.--ambiance]="ambiance()" [style.--accent]="accent()">
-          <div class="profile-card">
-            <div class="profile-emblem"><app-rank-emblem [tier]="rank.tier" [division]="rank.division" [size]="184" [lively]="true" /></div>
-            <div class="profile-who">
-              <span class="profile-ladder">{{ 'profile.culture' | transloco }}</span>
-              <h1>{{ names.rank(rank.tier, rank.division) }}</h1>
-              <span class="profile-level">
-                <span class="level-chip">{{ rank.level }}</span>
-                {{ 'profile.points' | transloco: { points: names.points(current.points) } }}
+    @if (stats.stats(); as current) {
+      @let rank = current.culture;
+      <section class="profile-hero" [style.--sky]="ambiance()" [style.--accent]="accent()" [style.color]="ink()">
+        <div class="profile-card wide">
+          <div class="profile-emblem"><app-rank-emblem [tier]="rank.tier" [division]="rank.division" [size]="184" [lively]="true" /></div>
+          <div class="profile-who">
+            <span class="profile-ladder">{{ 'profile.culture' | transloco }}</span>
+            <h1>{{ names.rank(rank.tier, rank.division) }}</h1>
+            <span class="profile-level">
+              <span class="level-chip">{{ rank.level }}</span>
+              {{ 'profile.points' | transloco: { points: names.points(current.points) } }}
+            </span>
+            @if (next(); as cap) {
+              <span class="profile-next" [title]="'profile.next' | transloco">
+                <span class="xp-track"><span class="xp-fill" [style.width.%]="100 * progress()" [style.background]="accent()"></span></span>
+                {{ 'profile.toGo' | transloco: { points: names.points(toGo(cap.from, current.points)) } }} · {{ names.rank(cap.tier, cap.division) }}
               </span>
-            </div>
-            <dl class="profile-records">
-              <div>
-                <dt>{{ 'profile.bestStreak' | transloco }}</dt>
-                <dd>{{ 'profile.days' | transloco: { days: current.records.bestStreak } }}</dd>
-              </div>
-              <div>
-                <dt>{{ 'profile.flawless' | transloco }}</dt>
-                <dd>{{ current.records.flawlessSessions }}</dd>
-              </div>
-              <div>
-                <dt>{{ 'profile.firstTry' | transloco }}</dt>
-                <dd>{{ firstTry() }}</dd>
-              </div>
-            </dl>
-          </div>
-          @if (cultureSteps().length > 0) {
-            <app-rank-route [steps]="cultureSteps()" [here]="hereIndex()" />
-          }
-        </section>
-
-        <div class="profile-cards">
-          @if (next(); as cap) {
-            <section class="profile-panel">
-              <span class="panel-label">{{ 'profile.next' | transloco }}</span>
-              <strong class="panel-value">{{ names.rank(cap.tier, cap.division) }}</strong>
-              <span class="panel-note">{{ 'profile.toGo' | transloco: { points: names.points(toGo(cap.from, current.points)) } }}</span>
-              <div class="xp-track"><span class="xp-fill" [style.width.%]="100 * progress()" [style.background]="colors()[0]"></span></div>
-              <a class="button" routerLink="/ranks">{{ 'profile.ranks' | transloco }}</a>
-            </section>
-          }
-          <section class="profile-panel">
-            <span class="panel-label">{{ (towardGrandSage() ? 'profile.forGrandSage' : 'profile.forSage') | transloco }}</span>
-            <strong class="panel-value">{{ 'profile.specialistsCount' | transloco: { count: strongSpecialties(), needed: 3 } }}</strong>
-            <div class="field-marks">
-              @for (mark of specialtyMarks(); track $index) {
-                <span class="field-mark" [class.filled]="mark"></span>
-              }
-            </div>
-            <span class="panel-note">{{ 'profile.atSpecialist' | transloco }}</span>
-            @if (towardGrandSage()) {
-              <span class="panel-note" [class.met]="criticalThinking()">{{ 'profile.criticalThinking' | transloco }}</span>
             }
-          </section>
+            <a class="profile-ranks" routerLink="/ranks">{{ 'profile.ranks' | transloco }}</a>
+          </div>
+          <dl class="profile-records">
+            <div>
+              <dt>{{ 'profile.bestStreak' | transloco }}</dt>
+              <dd>{{ 'profile.days' | transloco: { days: current.records.bestStreak } }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'profile.flawless' | transloco }}</dt>
+              <dd>{{ current.records.flawlessSessions }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'profile.firstTry' | transloco }}</dt>
+              <dd>{{ firstTry() }}</dd>
+            </div>
+          </dl>
         </div>
-
-        <h2>{{ 'profile.specialties' | transloco }}</h2>
-        @if (current.fields.length === 0) {
-          <p class="note">{{ 'profile.noSpecialty' | transloco }}</p>
+        @if (cultureSteps().length > 0) {
+          <app-rank-route [steps]="cultureSteps()" [here]="hereIndex()" />
         }
-        <div class="specialties">
-          @for (field of current.fields; track field.domain) {
-            <section class="specialty" [style.--tier]="fieldColor(field.specialty.tier)">
-              <div>
-                <strong>{{ names.field(field.domain) }}</strong>
-                <span class="specialty-rank">{{ names.rank(field.specialty.tier, field.specialty.division) }}</span>
-                <span class="panel-note">{{ 'profile.points' | transloco: { points: names.points(field.points) } }}</span>
-              </div>
-            </section>
-          }
-        </div>
+      </section>
 
-        <h2>{{ 'profile.achievements' | transloco }} <span class="count">{{ 'profile.achievementsCount' | transloco: { reached: levelsReached(), total: levelsTotal() } }}</span></h2>
-        <div class="achievements">
-          @for (achievement of achievements(); track achievement.id) {
-            <section class="achievement" [class.reached]="achievement.level > 0">
-              <span class="achievement-frame" aria-hidden="true">{{ achievement.level > 0 ? roman(achievement.level) : '' }}</span>
-              <div>
-                <strong>{{ 'achievement.' + achievement.id + '.name' | transloco }}</strong>
-                <span class="achievement-what">{{ 'achievement.' + achievement.id + '.description' | transloco }}</span>
-                <span class="achievement-progress">{{ progressText(achievement) }}</span>
-              </div>
-            </section>
+      <section class="profile-zone">
+        <div class="wide">
+          <div class="zone-head">
+            <h2>{{ 'profile.specialties' | transloco }}</h2>
+            <span class="need" role="img" [attr.aria-label]="'profile.specialistsCount' | transloco: { count: strongSpecialties(), needed: 3 }" [title]="'profile.atSpecialist' | transloco">
+              {{ (towardGrandSage() ? 'profile.forGrandSage' : 'profile.forSage') | transloco }}
+              @for (met of specialtyMarks(); track $index) {
+                <span class="pip" [class.met]="met"></span>
+              }
+              @if (towardGrandSage()) {
+                <span class="need-plus" aria-hidden="true">+</span>
+                <span class="pip critical" [class.met]="criticalThinking()" [title]="'profile.criticalThinking' | transloco"></span>
+              }
+            </span>
+          </div>
+          @if (current.fields.length === 0) {
+            <p class="note">{{ 'profile.noSpecialty' | transloco }}</p>
           }
+          <div class="specialties">
+            @for (field of current.fields; track field.domain) {
+              <section class="specialty" [title]="'profile.points' | transloco: { points: names.points(field.points) }">
+                <app-specialty-emblem [tier]="field.specialty.tier" [size]="56" [progress]="specialtyProgress(field)" />
+                <div>
+                  <strong>{{ names.field(field.domain) }}</strong>
+                  <span class="specialty-rank">{{ names.rank(field.specialty.tier, 0) }}</span>
+                </div>
+              </section>
+            }
+          </div>
         </div>
-      }
-    </main>
+      </section>
+
+      <section class="profile-zone trophies">
+        <div class="wide">
+          <div class="zone-head">
+            <h2>{{ 'profile.achievements' | transloco }}</h2>
+            <span class="count">{{ 'profile.achievementsCount' | transloco: { reached: levelsReached(), total: levelsTotal() } }}</span>
+          </div>
+          @if (reached().length === 0) {
+            <p class="note">{{ 'profile.noAchievement' | transloco }}</p>
+          }
+          <div class="medals">
+            @for (achievement of reached(); track achievement.id) {
+              <section class="medal" [title]="('achievement.' + achievement.id + '.description' | transloco) + ' · ' + progressText(achievement)">
+                <span class="medal-disc" aria-hidden="true">{{ roman(achievement.level) }}</span>
+                <strong>{{ 'achievement.' + achievement.id + '.name' | transloco }}</strong>
+              </section>
+            }
+          </div>
+        </div>
+      </section>
+    }
   `,
 })
 export class ProfilePageComponent {
@@ -117,14 +121,11 @@ export class ProfilePageComponent {
   protected readonly names = inject(RankNames);
   protected readonly roman = roman;
 
-  protected readonly colors = computed(() => tierColors(this.stats.stats()?.culture.tier ?? 'curious'));
   /** The colour that reads on the banner: the tier's, or the gold of the Grand Sage. */
   protected readonly accent = computed(() => emblemLook(this.stats.stats()?.culture.tier ?? 'curious').auraColor);
-  /** The night of the highest tiers behind the banner; the others keep its dusk. */
-  protected readonly ambiance = computed(() => {
-    const tier = this.stats.stats()?.culture.tier ?? 'curious';
-    return emblemStep(tier) >= 5 ? emblemAmbiance(tier) : null;
-  });
+  /** The sky at the height of the learner's tier, behind their card, and the ink that reads on it. */
+  protected readonly ambiance = computed(() => emblemAmbiance(this.stats.stats()?.culture.tier ?? 'curious'));
+  protected readonly ink = computed(() => emblemInk(this.stats.stats()?.culture.tier ?? 'curious'));
   protected readonly firstTry = computed(() => {
     const records = this.stats.stats()?.records;
     return records && records.firstTryAnswered > 0 ? `${Math.round((100 * records.firstTryRight) / records.firstTryAnswered)} %` : '—';
@@ -158,10 +159,12 @@ export class ProfilePageComponent {
   /** Every division of the culture, and where the learner's is among them. */
   protected readonly cultureSteps = signal<LadderStep[]>([]);
   protected readonly hereIndex = computed(() => Math.max(0, this.cultureSteps().findIndex((step) => this.isHere(step))));
+  /** Where each specialty tier starts, to fill the ring up to the next one. */
+  private readonly specialtyTiers = signal<LadderStep[]>([]);
   private readonly allAchievements = signal<AchievementProgress[]>([]);
-  /** Those reached first, the highest first; then the nearest to their next level. */
-  protected readonly achievements = computed(() =>
-    [...this.allAchievements()].sort((a, b) => b.level - a.level || this.toNext(b) - this.toNext(a)),
+  /** The achievements reached, the highest first. */
+  protected readonly reached = computed(() =>
+    this.allAchievements().filter((achievement) => achievement.level > 0).sort((a, b) => b.level - a.level || this.toNext(b) - this.toNext(a)),
   );
   protected readonly levelsReached = computed(() => this.allAchievements().reduce((sum, achievement) => sum + achievement.level, 0));
   protected readonly levelsTotal = computed(() => this.allAchievements().reduce((sum, achievement) => sum + achievement.thresholds.length, 0));
@@ -170,7 +173,10 @@ export class ProfilePageComponent {
     this.stats.refresh();
     const api = inject(BoussoleApi);
     api.achievements().then((achievements) => this.allAchievements.set(achievements), () => undefined);
-    api.ranks().then((ladders) => this.cultureSteps.set(ladders.culture), () => undefined);
+    api.ranks().then((ladders) => {
+      this.cultureSteps.set(ladders.culture);
+      this.specialtyTiers.set(ladders.specialty.filter((step, index, all) => all[index - 1]?.tier !== step.tier));
+    }, () => undefined);
   }
 
   /** The value counted, out of what the next level asks; the value alone once every level is reached. */
@@ -185,8 +191,15 @@ export class ProfilePageComponent {
     return next === undefined ? 1 : achievement.value / next;
   }
 
-  protected fieldColor(tier: string): string {
-    return tierColors(tier)[0];
+  /** How far a specialty is from the start of its tier to the next; full at the top. */
+  protected specialtyProgress(field: FieldStanding): number | null {
+    const tiers = this.specialtyTiers();
+    const index = tiers.findIndex((step) => step.tier === field.specialty.tier);
+    if (index < 0) {
+      return null;
+    }
+    const next = tiers[index + 1];
+    return next ? (field.points - tiers[index].from) / (next.from - tiers[index].from) : 1;
   }
 
   protected toGo(from: number, points: number): number {
