@@ -8,15 +8,16 @@ import { emblemAmbiance, emblemLook, emblemStep } from '../shared/emblem';
 import { RankEmblemComponent } from '../shared/rank-emblem.component';
 import { CRITICAL_THINKING, divisionProgress, isStrong, roman, tierColors } from '../shared/ranks';
 import { RankNames } from './rank-names';
+import { RankRouteComponent } from './rank-route.component';
 
 /**
  * The learner's page: their card (emblem, culture rank, level, points, records), the route of the
- * divisions around theirs, the next division, the specialties Sage asks for, each specialty, and the
+ * divisions with theirs in the middle, the next division, the specialties Sage asks for, each specialty, and the
  * achievements, kept for good.
  */
 @Component({
   selector: 'app-profile-page',
-  imports: [RankEmblemComponent, RouterLink, TranslocoPipe],
+  imports: [RankEmblemComponent, RankRouteComponent, RouterLink, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <main class="page wide profile">
@@ -24,7 +25,7 @@ import { RankNames } from './rank-names';
         @let rank = current.culture;
         <section class="profile-banner" [style.--tier]="colors()[0]" [style.--tier-deep]="colors()[1]" [style.--ambiance]="ambiance()" [style.--accent]="accent()">
           <div class="profile-card">
-            <div class="profile-emblem"><app-rank-emblem [tier]="rank.tier" [division]="rank.division" [size]="124" [lively]="true" /></div>
+            <div class="profile-emblem"><app-rank-emblem [tier]="rank.tier" [division]="rank.division" [size]="184" [lively]="true" /></div>
             <div class="profile-who">
               <span class="profile-ladder">{{ 'profile.culture' | transloco }}</span>
               <h1>{{ names.rank(rank.tier, rank.division) }}</h1>
@@ -48,13 +49,9 @@ import { RankNames } from './rank-names';
               </div>
             </dl>
           </div>
-          <ol class="route" [attr.aria-label]="'profile.route' | transloco">
-            @for (step of current.route; track step.firstLevel) {
-              <li [class]="'route-step ' + stepState(step)" [style.--step]="stepColor(step)" [title]="names.rank(step.tier, step.division)">
-                <span>{{ step.division > 0 ? roman(step.division) : '∞' }}</span>
-              </li>
-            }
-          </ol>
+          @if (cultureSteps().length > 0) {
+            <app-rank-route [steps]="cultureSteps()" [here]="hereIndex()" />
+          }
         </section>
 
         <div class="profile-cards">
@@ -89,7 +86,6 @@ import { RankNames } from './rank-names';
         <div class="specialties">
           @for (field of current.fields; track field.domain) {
             <section class="specialty" [style.--tier]="fieldColor(field.specialty.tier)">
-              <app-rank-emblem [tier]="field.specialty.tier" [division]="field.specialty.division" [size]="34" />
               <div>
                 <strong>{{ names.field(field.domain) }}</strong>
                 <span class="specialty-rank">{{ names.rank(field.specialty.tier, field.specialty.division) }}</span>
@@ -159,6 +155,9 @@ export class ProfilePageComponent {
     (this.stats.stats()?.fields ?? []).some((field) => field.domain === CRITICAL_THINKING && isStrong(field.specialty.tier)),
   );
   protected readonly specialtyMarks = computed(() => Array.from({ length: 3 }, (_, index) => index < this.strongSpecialties()));
+  /** Every division of the culture, and where the learner's is among them. */
+  protected readonly cultureSteps = signal<LadderStep[]>([]);
+  protected readonly hereIndex = computed(() => Math.max(0, this.cultureSteps().findIndex((step) => this.isHere(step))));
   private readonly allAchievements = signal<AchievementProgress[]>([]);
   /** Those reached first, the highest first; then the nearest to their next level. */
   protected readonly achievements = computed(() =>
@@ -169,7 +168,9 @@ export class ProfilePageComponent {
 
   constructor() {
     this.stats.refresh();
-    inject(BoussoleApi).achievements().then((achievements) => this.allAchievements.set(achievements), () => undefined);
+    const api = inject(BoussoleApi);
+    api.achievements().then((achievements) => this.allAchievements.set(achievements), () => undefined);
+    api.ranks().then((ladders) => this.cultureSteps.set(ladders.culture), () => undefined);
   }
 
   /** The value counted, out of what the next level asks; the value alone once every level is reached. */
@@ -182,18 +183,6 @@ export class ProfilePageComponent {
   private toNext(achievement: AchievementProgress): number {
     const next = achievement.thresholds[achievement.level];
     return next === undefined ? 1 : achievement.value / next;
-  }
-
-  protected stepState(step: LadderStep): string {
-    if (this.isHere(step)) {
-      return 'here';
-    }
-    const current = this.stats.stats();
-    return current && step.from <= current.culture.divisionFrom ? 'past' : 'next';
-  }
-
-  protected stepColor(step: LadderStep): string {
-    return tierColors(step.tier)[0];
   }
 
   protected fieldColor(tier: string): string {

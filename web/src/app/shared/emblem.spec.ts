@@ -2,10 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { emblemLook, emblemStep, numeralPath } from './emblem';
 
 describe('emblem', () => {
-  it('puts culture and specialty tiers on the same eight steps, the top of both alike', () => {
+  it('puts the tiers of the culture on eight steps', () => {
     expect(emblemStep('curious')).toBe(0);
-    expect(emblemStep('specialist')).toBe(emblemStep('savant'));
-    expect(emblemStep('luminary')).toBe(emblemStep('grand-sage'));
+    expect(emblemStep('grand-sage')).toBe(7);
     expect(emblemStep('unknown')).toBe(0);
   });
 

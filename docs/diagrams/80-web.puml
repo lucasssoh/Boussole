@@ -24,7 +24,7 @@ package "core" {
 
 package "progress" {
   class ProfilePageComponent <<page profile>>
-  class RanksPageComponent <<page ranks: culture beside a branch per field>>
+  class RanksPageComponent <<page ranks: each tier of the culture, its emblem and what it stands for>>
   class RankNames <<service: ranks, fields, points>>
   note right of ProfilePageComponent : the card, the route, the specialties,\nthe achievements in frames waiting for their icons
 }
@@ -91,6 +91,7 @@ package "shared" {
   class "subjectColor()" as SubjectColor
   class RankEmblemComponent <<the gem of a rank, its division in relief>>
   class "emblem.ts" as Emblem <<instruments, ornaments, aura, ambiance per tier>>
+  class RankRouteComponent <<every division as its emblem, the learner's in the middle>>
   class PromotionComponent <<a new division, full screen, dimmed behind>>
   class "ranks.ts" as Ranks <<tier colours, roman divisions, points>>
   class RichTextComponent
@@ -118,6 +119,8 @@ PromotionComponent ..> Emblem : ambiance
 StatsService ..> PromotionComponent : a division newly reached
 ProfilePageComponent ..> StatsService : stats
 ProfilePageComponent ..> RankEmblemComponent
+ProfilePageComponent --> RankRouteComponent : the route of the culture
+RankRouteComponent ..> RankEmblemComponent
 RanksPageComponent ..> BoussoleApi : ranks
 ProfilePageComponent ..> RankNames
 RanksPageComponent ..> RankNames

@@ -18,10 +18,9 @@ const PALETTE: readonly (readonly [string, string, string, string, string])[] = 
   ['#2a3a42', '#0f1c1f', '#55646b', '#1d2b33', '#0f1c1f'],
 ];
 
-/** Each tier, culture or specialty, on those eight steps: the top of the specialties looks like the top of all. */
+/** Each tier of the culture on those eight steps. The specialties have no emblems yet. */
 const STEP: Readonly<Record<string, number>> = {
   curious: 0, apprentice: 1, initiate: 2, scholar: 3, savant: 4, master: 5, sage: 6, 'grand-sage': 7,
-  novice: 0, practitioner: 1, proficient: 2, expert: 3, specialist: 4, authority: 5, luminary: 7,
 };
 
 /** From morning mist to the night sky: the hour of each step, behind a large emblem. */

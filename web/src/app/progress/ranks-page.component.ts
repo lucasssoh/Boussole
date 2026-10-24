@@ -1,37 +1,26 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { FieldStanding, LadderStep, Ladders } from '../core/api';
+import { LadderStep } from '../core/api';
 import { BoussoleApi } from '../core/boussole-api';
 import { StatsService } from '../core/stats.service';
+import { emblemAmbiance, emblemInk } from '../shared/emblem';
 import { RankEmblemComponent } from '../shared/rank-emblem.component';
-import { divisionProgress, roman, tierColors } from '../shared/ranks';
 import { RankNames } from './rank-names';
 
-/** One tier of a ladder: its divisions, from V to I, or the top one alone. */
-interface TierRow {
+/** One tier of the culture: where it starts, and what it asks past its points. */
+interface Tier {
   tier: string;
-  steps: LadderStep[];
   from: number;
-  firstLevel: number;
-  lastLevel: number | null;
-  asks: Asks | null;
+  asks: string | null;
 }
 
-/** What a top culture tier asks for, past its points: specialties at Specialist, critical thinking among them for the last. */
-interface Asks {
-  text: string;
-  specialties: readonly ('any' | 'critical')[];
-}
-
-const ASKS: Readonly<Record<string, Asks>> = {
-  sage: { text: 'ranks.asksSage', specialties: ['any', 'any', 'any'] },
-  'grand-sage': { text: 'ranks.asksGrandSage', specialties: ['any', 'any', 'any', 'critical'] },
-};
+/** What the top culture tiers ask for, past their points. */
+const ASKS: Readonly<Record<string, string>> = { sage: 'ranks.asksSage', 'grand-sage': 'ranks.asksGrandSage' };
 
 /**
- * The tiers: the culture, overall, beside the specialties, one branch per field the learner has
- * points in, each with its tiers from Novice to Luminary and where the learner stands on it.
+ * The tiers of the culture, from Curious to Grand Sage: each with its emblem, in its hour of the
+ * day, what it stands for, and where it starts; the learner's with their division.
  */
 @Component({
   selector: 'app-ranks-page',
@@ -41,120 +30,51 @@ const ASKS: Readonly<Record<string, Asks>> = {
     <main class="page wide ranks">
       <p class="crumbs"><a routerLink="/profile">{{ 'profile.title' | transloco }}</a></p>
       <h1>{{ 'ranks.title' | transloco }}</h1>
-      <div class="ranks-layout">
-        <section class="ranks-culture">
-          <h2>{{ 'ranks.culture' | transloco }}</h2>
-          <ol class="ladder">
-            @for (row of cultureRows(); track row.tier) {
-              <li class="ladder-tier" [class.here]="row.tier === stats.stats()?.culture?.tier" [class.ahead]="row.from > points()">
-                <div class="ladder-name">
-                  <strong>{{ names.rank(row.tier, 0) }}</strong>
-                  <span>{{ 'ranks.from' | transloco: { points: names.points(row.from) } }}</span>
-                </div>
-                <div class="ladder-divisions">
-                  @for (step of row.steps; track step.firstLevel) {
-                    <span class="division-emblem" [class.current]="isCurrent(step)" [class.ahead]="!isCurrent(step) && step.from > points()" [title]="names.rank(step.tier, step.division) + ' · ' + names.points(step.from)">
-                      <app-rank-emblem [tier]="step.tier" [division]="step.division" [size]="isCurrent(step) ? 40 : 28" />
-                    </span>
-                  }
-                </div>
-                @if (row.asks) {
-                  <span class="ladder-asks" role="img" [attr.aria-label]="row.asks.text | transloco" [title]="row.asks.text | transloco">
-                    @for (need of row.asks.specialties; track $index) {
-                      <span class="ask" [class.critical]="need === 'critical'"><app-rank-emblem tier="specialist" [size]="18" /></span>
-                    }
-                  </span>
-                }
-              </li>
-            }
-          </ol>
-        </section>
-
-        <section class="ranks-branches">
-          <h2>{{ 'ranks.specialty' | transloco }}</h2>
-          @for (field of fields(); track field.domain) {
-            <article class="branch" [style.--tier]="color(field.specialty.tier)">
-              <header class="branch-head">
-                <app-rank-emblem [tier]="field.specialty.tier" [division]="field.specialty.division" [size]="40" />
-                <div>
-                  <strong>{{ names.field(field.domain) }}</strong>
-                  <span class="branch-rank">{{ names.rank(field.specialty.tier, field.specialty.division) }} · {{ 'stats.level' | transloco: { level: field.specialty.level } }}</span>
-                </div>
-                <span class="branch-points">{{ 'ranks.from' | transloco: { points: names.points(field.points) } }}</span>
-              </header>
-              <ol class="branch-track">
-                @for (tier of specialtyTiers(); track tier.tier; let index = $index) {
-                  @let state = nodeState(field, index);
-                  <li [class]="'branch-node ' + state" [style.--node]="color(tier.tier)" [title]="names.rank(tier.tier, 0) + ' · ' + names.points(tier.from)">
-                    <app-rank-emblem [tier]="tier.tier" [division]="state === 'here' ? field.specialty.division : 0" [size]="state === 'here' ? 38 : 24" />
-                  </li>
-                }
-              </ol>
-              <div class="branch-next" [title]="'ranks.nextDivision' | transloco: { points: names.points(toGo(field)) }">
-                <span class="xp-track"><span class="xp-fill" [style.width.%]="100 * progress(field)" [style.background]="color(field.specialty.tier)"></span></span>
-                <span>{{ 'ranks.toGo' | transloco: { points: names.points(toGo(field)) } }}</span>
-              </div>
-            </article>
-          } @empty {
-            <p class="note">{{ 'profile.noSpecialty' | transloco }}</p>
-          }
-        </section>
-      </div>
+      <ol class="tiers">
+        @for (row of tiers(); track row.tier) {
+          @let here = row.tier === culture()?.tier;
+          <li class="tier-card" [class.here]="here" [style.background]="ambiance(row.tier)" [style.color]="ink(row.tier)">
+            <app-rank-emblem [tier]="row.tier" [division]="here ? (culture()?.division ?? 0) : 0" [size]="104" [lively]="here" />
+            <div class="tier-text">
+              <h2>{{ names.rank(row.tier, 0) }}</h2>
+              <p>{{ 'ranks.about.' + row.tier | transloco }}</p>
+              <span class="tier-from">{{ 'ranks.since' | transloco: { points: names.points(row.from) } }}</span>
+              @if (row.asks) {
+                <span class="tier-asks">{{ row.asks | transloco }}</span>
+              }
+            </div>
+          </li>
+        }
+      </ol>
     </main>
   `,
 })
 export class RanksPageComponent {
   protected readonly names = inject(RankNames);
-  protected readonly stats = inject(StatsService);
-  protected readonly roman = roman;
-  private readonly ladders = signal<Ladders | null>(null);
+  private readonly stats = inject(StatsService);
+  private readonly steps = signal<LadderStep[]>([]);
 
-  protected readonly points = computed(() => this.stats.stats()?.points ?? 0);
-  protected readonly fields = computed<FieldStanding[]>(() => this.stats.stats()?.fields ?? []);
-  protected readonly cultureRows = computed(() => rows(this.ladders()?.culture ?? [], true));
-  /** The specialty tiers, each with where it starts. */
-  protected readonly specialtyTiers = computed(() => rows(this.ladders()?.specialty ?? [], false));
+  protected readonly culture = computed(() => this.stats.stats()?.culture ?? null);
+  protected readonly tiers = computed<Tier[]>(() => {
+    const found: Tier[] = [];
+    for (const step of this.steps()) {
+      if (found.at(-1)?.tier !== step.tier) {
+        found.push({ tier: step.tier, from: step.from, asks: ASKS[step.tier] ?? null });
+      }
+    }
+    return found;
+  });
 
   constructor() {
-    inject(BoussoleApi).ranks().then((ladders) => this.ladders.set(ladders), () => undefined);
+    inject(BoussoleApi).ranks().then((ladders) => this.steps.set(ladders.culture), () => undefined);
     this.stats.refresh();
   }
 
-  protected isCurrent(step: LadderStep): boolean {
-    const rank = this.stats.stats()?.culture;
-    return !!rank && step.tier === rank.tier && step.division === Math.max(rank.division, 0);
+  protected ambiance(tier: string): string {
+    return emblemAmbiance(tier);
   }
 
-  protected nodeState(field: FieldStanding, index: number): string {
-    const here = this.specialtyTiers().findIndex((tier) => tier.tier === field.specialty.tier);
-    return index < here ? 'past' : index === here ? 'here' : 'next';
+  protected ink(tier: string): string {
+    return emblemInk(tier);
   }
-
-  protected color(tier: string): string {
-    return tierColors(tier)[0];
-  }
-
-  protected progress(field: FieldStanding): number {
-    return divisionProgress(field.specialty, field.points);
-  }
-
-  protected toGo(field: FieldStanding): number {
-    return Math.max(0, Math.ceil(field.specialty.nextAt - field.points));
-  }
-}
-
-/** The steps of a ladder grouped by tier, with the levels each spans. */
-function rows(steps: LadderStep[], culture: boolean): TierRow[] {
-  const found: TierRow[] = [];
-  for (const step of steps) {
-    const row = found.at(-1);
-    if (row && row.tier === step.tier) {
-      row.steps.push(step);
-    } else {
-      found.push({ tier: step.tier, steps: [step], from: step.from, firstLevel: step.firstLevel, lastLevel: null,
-        asks: culture ? (ASKS[step.tier] ?? null) : null });
-    }
-  }
-  found.forEach((row, index) => (row.lastLevel = found[index + 1] ? found[index + 1].firstLevel - 1 : null));
-  return found;
 }
