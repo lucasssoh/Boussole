@@ -133,9 +133,7 @@ export const FR: Translations = {
   },
   settings: {
     title: 'Réglages',
-    theme: 'Thème',
     language: 'Langue',
-    themes: { auto: 'Système', light: 'Clair', dark: 'Sombre' },
     languages: { en: 'English', fr: 'Français' },
   },
   achievement: {

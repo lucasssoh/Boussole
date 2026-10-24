@@ -11,8 +11,7 @@ package "core" {
   class BoussoleApi <<service>>
   class boussoleHeaderInterceptor <<interceptor>>
   class LanguageService <<service>>
-  class ThemeService <<service>>
-  class SettingsDrawerComponent <<gear: a panel pulled down, theme and language>>
+  class SettingsDrawerComponent <<gear: a panel pulled down, the language>>
   class StatsService <<service>> {
     stats : Signal
   }

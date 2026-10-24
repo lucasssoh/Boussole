@@ -6,25 +6,26 @@
 
 :root {
   color-scheme: light;
-  --bg: #f2f7fa;
-  --surface: #ffffff;
-  --surface-2: #e4eef2;
-  --text: #13233a;
-  --muted: #5a6f80;
-  --line: #d6e4ea;
+  color-scheme: light;
+  --bg: #eef3f6;
+  --surface: #fbfcfd;
+  --surface-2: #e6edf2;
+  --text: #1e2b3a;
+  --muted: #5d6e7e;
+  --line: #d8e2e9;
   --brand: #0b7a5f;
   --subject: #0b7a5f;
   --on-subject: #ffffff;
   --correct: #2b8a3e;
   --correct-strong: #40c057;
-  --correct-bg: #ebfbee;
+  --correct-bg: #eaf7ed;
   --wrong: #c92a2a;
   --wrong-strong: #fa5252;
-  --wrong-bg: #fff5f5;
+  --wrong-bg: #fcf0f0;
   --partly: #b35c00;
   --partly-strong: #fd7e14;
   --partly-bg: #fff4e6;
-  --hint-bg: #fff9db;
+  --hint-bg: #fdf6d8;
   --example-bg: #e7f5ff;
   --recall-bg: #f3f0ff;
   --beyond-bg: #fff0f6;
@@ -46,82 +47,6 @@
   --mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    color-scheme: dark;
-    --bg: #0a1430;
-    --surface: #111f45;
-    --surface-2: #182955;
-    --text: #e3eef5;
-    --muted: #90a7c4;
-    --line: #213360;
-    --brand: #63e6be;
-    --on-subject: #ffffff;
-    --correct: #8ce99a;
-    --correct-strong: #51cf66;
-    --correct-bg: rgb(81 207 102 / 0.14);
-    --wrong: #ffa8a8;
-    --wrong-strong: #ff6b6b;
-    --wrong-bg: rgb(255 107 107 / 0.14);
-    --partly: #ffc078;
-    --partly-strong: #ffa94d;
-    --partly-bg: rgb(255 169 77 / 0.14);
-    --hint-bg: rgb(255 212 59 / 0.12);
-    --example-bg: rgb(116 192 252 / 0.12);
-    --recall-bg: rgb(177 151 252 / 0.14);
-    --beyond-bg: rgb(247 131 172 / 0.12);
-    --beyond-line: #c2255c;
-    --beyond-ink: #faa2c1;
-    --how-to-bg: #0f2c3c;
-    --how-to-ink: #7fe0bd;
-    --how-to-line: #2f9e7c;
-    --how-to-strong: #3fbf96;
-    --how-to-deep: #0d5a45;
-    --discover-bg: #2a2418;
-    --discover-ink: #ffc876;
-    --discover-line: #b77a24;
-    --discover-strong: #5c3d0f;
-    --streak: #ffa94d;
-  }
-}
-
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --bg: #0a1430;
-  --surface: #111f45;
-  --surface-2: #182955;
-  --text: #e3eef5;
-  --muted: #90a7c4;
-  --line: #213360;
-  --brand: #63e6be;
-  --on-subject: #ffffff;
-  --correct: #8ce99a;
-  --correct-strong: #51cf66;
-  --correct-bg: rgb(81 207 102 / 0.14);
-  --wrong: #ffa8a8;
-  --wrong-strong: #ff6b6b;
-  --wrong-bg: rgb(255 107 107 / 0.14);
-  --partly: #ffc078;
-  --partly-strong: #ffa94d;
-  --partly-bg: rgb(255 169 77 / 0.14);
-  --hint-bg: rgb(255 212 59 / 0.12);
-  --example-bg: rgb(116 192 252 / 0.12);
-  --recall-bg: rgb(177 151 252 / 0.14);
-  --beyond-bg: rgb(247 131 172 / 0.12);
-  --beyond-line: #c2255c;
-  --beyond-ink: #faa2c1;
-  --how-to-bg: #0f2c3c;
-  --how-to-ink: #7fe0bd;
-  --how-to-line: #2f9e7c;
-  --how-to-strong: #3fbf96;
-  --how-to-deep: #0d5a45;
-  --discover-bg: #2a2418;
-  --discover-ink: #ffc876;
-  --discover-line: #b77a24;
-  --discover-strong: #5c3d0f;
-  --streak: #ffa94d;
-}
-
 * {
   box-sizing: border-box;
 }
@@ -137,22 +62,6 @@
   --subject-deep: color-mix(in srgb, var(--subject) 72%, black);
   /* The subject colour for text and icons: on a dark ground it is lightened to stay readable. */
   --subject-ink: var(--subject);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']),
-  :root:not([data-theme='light']) .subject-scope {
-    --subject-soft: color-mix(in srgb, var(--subject) 20%, var(--surface));
-    --subject-deep: color-mix(in srgb, var(--subject) 50%, black);
-    --subject-ink: color-mix(in srgb, var(--subject) 45%, white);
-  }
-}
-
-:root[data-theme='dark'],
-:root[data-theme='dark'] .subject-scope {
-  --subject-soft: color-mix(in srgb, var(--subject) 20%, var(--surface));
-  --subject-deep: color-mix(in srgb, var(--subject) 50%, black);
-  --subject-ink: color-mix(in srgb, var(--subject) 45%, white);
 }
 
 body {
@@ -1015,26 +924,6 @@ a.session-card:active {
   --zone: var(--surface-2);
   --sign: var(--muted);
 }
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) .zone.warmup { --zone: rgb(255 169 77 / 0.14); }
-  :root:not([data-theme='light']) .zone.notion-alt { --zone: rgb(116 192 252 / 0.14); }
-  :root:not([data-theme='light']) .zone.checkpoint { --zone: rgb(252 196 25 / 0.12); }
-  :root:not([data-theme='light']) .zone.practice { --zone: rgb(151 117 250 / 0.16); }
-  :root:not([data-theme='light']) .path-sign.warmup { --sign: #ffa94d; }
-  :root:not([data-theme='light']) .path-sign.notion-alt { --sign: #74c0fc; }
-  :root:not([data-theme='light']) .path-sign.checkpoint { --sign: #ffd43b; }
-  :root:not([data-theme='light']) .path-sign.practice { --sign: #b197fc; }
-}
-
-:root[data-theme='dark'] .zone.warmup { --zone: rgb(255 169 77 / 0.14); }
-:root[data-theme='dark'] .zone.notion-alt { --zone: rgb(116 192 252 / 0.14); }
-:root[data-theme='dark'] .zone.checkpoint { --zone: rgb(252 196 25 / 0.12); }
-:root[data-theme='dark'] .zone.practice { --zone: rgb(151 117 250 / 0.16); }
-:root[data-theme='dark'] .path-sign.warmup { --sign: #ffa94d; }
-:root[data-theme='dark'] .path-sign.notion-alt { --sign: #74c0fc; }
-:root[data-theme='dark'] .path-sign.checkpoint { --sign: #ffd43b; }
-:root[data-theme='dark'] .path-sign.practice { --sign: #b197fc; }
 
 .path-line {
   fill: none;

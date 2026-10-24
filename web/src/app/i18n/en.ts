@@ -131,9 +131,7 @@ export const EN = {
   },
   settings: {
     title: 'Settings',
-    theme: 'Theme',
     language: 'Language',
-    themes: { auto: 'System', light: 'Light', dark: 'Dark' },
     languages: { en: 'English', fr: 'Français' },
   },
   achievement: {

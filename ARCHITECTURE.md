@@ -248,7 +248,7 @@ rather than with the estimate alone.
 
 ```
 web/src/app/
-├── core/        BoussoleApi and the types of the API (api.ts), language, theme, settings panel
+├── core/        BoussoleApi and the types of the API (api.ts), language, settings panel
 ├── i18n/        the interface in English and French, compiled in
 ├── learn/       subjects, course outline, session player, side panel (video, PDF)
 │   ├── blocks/     BlockListComponent and one component per kind of block
@@ -308,7 +308,7 @@ web/src/app/
   the system asks for reduced motion.
 - **Icons** are SVG paths of `shared/icon.component.ts` (`<app-icon name="…">`, or `iconSvg()` in
   markup built outside templates). No emoji or pictographic character anywhere in the code.
-- **Light and dark** themes from CSS variables, following the system unless the learner chose.
+- **One theme**, *Brume*, from CSS variables: a soft light ground for reading, the night kept for the places of the game (the high tiers, the achievements, a new division).
 
 ---
 
