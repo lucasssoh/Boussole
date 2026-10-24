@@ -111,7 +111,7 @@ flowchart LR
 
 | Partie | Comment l'écrire | Obligatoire |
 |---|---|---|
-| Échauffement | un bloc `:::::warmup`, en premier : quelques questions sur la séance précédente et sur de plus anciennes | non, et jamais dans la première séance |
+| Échauffement | un bloc `:::::warmup`, en premier : quelques questions sur la séance précédente et sur de plus anciennes, parfois une question pour deviner ce qui vient | non, et jamais dans la première séance |
 | Introduction | du texte avant la première notion | non |
 | Notions | chacune commence par `## Titre {#id}` et court jusqu'au titre `##` suivant | au moins une, en pratique |
 | Point de contrôle | un bloc `:::::checkpoint` : un court quiz sur toute la séance | non, mais conseillé |
