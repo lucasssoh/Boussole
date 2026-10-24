@@ -2579,16 +2579,14 @@ app-settings-drawer {
 /* Profile and tiers */
 
 .profile {
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100vh - 3.5rem);
+  display: block;
+  padding-bottom: 3rem;
 }
 
 .profile-hero {
   display: grid;
   gap: 1.5rem;
-  padding: 2.5rem 0 1.5rem;
-  background: var(--sky);
+  padding: 2.5rem 0 0.5rem;
 }
 
 .profile-card {
@@ -2772,7 +2770,7 @@ app-settings-drawer {
 }
 
 .profile-zone {
-  padding: 2.5rem 1.5rem 3rem;
+  padding: 2rem 1.5rem 0;
 }
 
 .zone-head {
@@ -2832,12 +2830,6 @@ app-settings-drawer {
   stroke: color-mix(in srgb, currentColor 12%, transparent);
 }
 
-.profile-zone.trophies {
-  flex: 1 0 auto;
-  background: #060c20;
-  color: #f5f1ea;
-}
-
 .medals {
   display: flex;
   flex-wrap: wrap;
@@ -2867,7 +2859,6 @@ app-settings-drawer {
 
 .medal strong {
   font-size: 0.85rem;
-  color: #fff3c4;
 }
 
 @media (max-width: 640px) {
@@ -3072,38 +3063,23 @@ app-settings-drawer {
 }
 
 
-.sky {
+.tier-frame {
   position: relative;
   overflow: hidden;
   margin-top: 1.25rem;
   border-radius: 28px;
-  background: var(--sky);
-  color: #1d2b33;
-  box-shadow: 0 6px 0 rgb(0 0 0 / 0.08);
+  border: 2px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 6px 0 var(--line);
 }
 
-.sky-layer {
+.tier-trail {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
-}
-
-.sky .twinkle {
-  animation: sky-twinkle var(--twinkle) ease-in-out infinite;
-}
-
-@keyframes sky-twinkle {
-  50% {
-    opacity: 0.15;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sky .twinkle {
-    animation: none;
-  }
 }
 
 .tiers {
@@ -3130,10 +3106,6 @@ app-settings-drawer {
   justify-content: flex-end;
 }
 
-.tier-band.night {
-  color: #f5f1ea;
-}
-
 .tier-mark {
   position: relative;
   flex: 0 0 16rem;
@@ -3147,7 +3119,7 @@ app-settings-drawer {
   width: 12.5rem;
   height: 12.5rem;
   border-radius: 50%;
-  box-shadow: 0 0 0 4px #ffffff, 0 0 40px rgb(255 255 255 / 0.5);
+  box-shadow: 0 0 0 4px var(--brand), 0 0 32px color-mix(in srgb, var(--brand) 35%, transparent);
 }
 
 .tier-text {

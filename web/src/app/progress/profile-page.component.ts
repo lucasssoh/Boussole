@@ -4,7 +4,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { AchievementProgress, FieldStanding, LadderStep } from '../core/api';
 import { BoussoleApi } from '../core/boussole-api';
 import { StatsService } from '../core/stats.service';
-import { emblemAmbiance, emblemInk, emblemLook } from '../shared/emblem';
+import { emblemLook } from '../shared/emblem';
 import { RankEmblemComponent } from '../shared/rank-emblem.component';
 import { SpecialtyEmblemComponent } from '../shared/specialty-emblem.component';
 import { CRITICAL_THINKING, divisionProgress, isStrong, roman } from '../shared/ranks';
@@ -24,7 +24,7 @@ import { RankRouteComponent } from './rank-route.component';
   template: `
     @if (stats.stats(); as current) {
       @let rank = current.culture;
-      <section class="profile-hero" [style.--sky]="ambiance()" [style.--accent]="accent()" [style.color]="ink()">
+      <section class="profile-hero" [style.--accent]="accent()">
         <div class="profile-card wide">
           <div class="profile-emblem"><app-rank-emblem [tier]="rank.tier" [division]="rank.division" [size]="184" [lively]="true" /></div>
           <div class="profile-who">
@@ -94,7 +94,7 @@ import { RankRouteComponent } from './rank-route.component';
         </div>
       </section>
 
-      <section class="profile-zone trophies">
+      <section class="profile-zone">
         <div class="wide">
           <div class="zone-head">
             <h2>{{ 'profile.achievements' | transloco }}</h2>
@@ -123,9 +123,6 @@ export class ProfilePageComponent {
 
   /** The colour that reads on the banner: the tier's, or the gold of the Grand Sage. */
   protected readonly accent = computed(() => emblemLook(this.stats.stats()?.culture.tier ?? 'curious').auraColor);
-  /** The sky at the height of the learner's tier, behind their card, and the ink that reads on it. */
-  protected readonly ambiance = computed(() => emblemAmbiance(this.stats.stats()?.culture.tier ?? 'curious'));
-  protected readonly ink = computed(() => emblemInk(this.stats.stats()?.culture.tier ?? 'curious'));
   protected readonly firstTry = computed(() => {
     const records = this.stats.stats()?.records;
     return records && records.firstTryAnswered > 0 ? `${Math.round((100 * records.firstTryRight) / records.firstTryAnswered)} %` : '—';
