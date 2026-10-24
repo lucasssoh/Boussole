@@ -15,11 +15,19 @@ interface TierRow {
   from: number;
   firstLevel: number;
   lastLevel: number | null;
-  asks: string | null;
+  asks: Asks | null;
 }
 
-/** What the top culture tiers ask for, past their points. */
-const ASKS: Readonly<Record<string, string>> = { sage: 'ranks.asksSage', 'grand-sage': 'ranks.asksGrandSage' };
+/** What a top culture tier asks for, past its points: specialties at Specialist, critical thinking among them for the last. */
+interface Asks {
+  text: string;
+  specialties: readonly ('any' | 'critical')[];
+}
+
+const ASKS: Readonly<Record<string, Asks>> = {
+  sage: { text: 'ranks.asksSage', specialties: ['any', 'any', 'any'] },
+  'grand-sage': { text: 'ranks.asksGrandSage', specialties: ['any', 'any', 'any', 'critical'] },
+};
 
 /**
  * The tiers: the culture, overall, beside the specialties, one branch per field the learner has
@@ -39,19 +47,24 @@ const ASKS: Readonly<Record<string, string>> = { sage: 'ranks.asksSage', 'grand-
           <ol class="ladder">
             @for (row of cultureRows(); track row.tier) {
               <li class="ladder-tier" [class.here]="row.tier === stats.stats()?.culture?.tier" [class.ahead]="row.from > points()">
-                <app-rank-emblem [tier]="row.tier" [size]="34" />
                 <div class="ladder-name">
                   <strong>{{ names.rank(row.tier, 0) }}</strong>
                   <span>{{ 'ranks.from' | transloco: { points: names.points(row.from) } }}</span>
-                  @if (row.asks) {
-                    <span class="ladder-asks">{{ row.asks | transloco }}</span>
-                  }
                 </div>
                 <div class="ladder-divisions">
                   @for (step of row.steps; track step.firstLevel) {
-                    <span class="division-chip" [class.current]="isCurrent(step)" [title]="names.points(step.from)">{{ step.division > 0 ? roman(step.division) : '∞' }}</span>
+                    <span class="division-emblem" [class.current]="isCurrent(step)" [class.ahead]="!isCurrent(step) && step.from > points()" [title]="names.rank(step.tier, step.division) + ' · ' + names.points(step.from)">
+                      <app-rank-emblem [tier]="step.tier" [division]="step.division" [size]="isCurrent(step) ? 40 : 28" />
+                    </span>
                   }
                 </div>
+                @if (row.asks) {
+                  <span class="ladder-asks" role="img" [attr.aria-label]="row.asks.text | transloco" [title]="row.asks.text | transloco">
+                    @for (need of row.asks.specialties; track $index) {
+                      <span class="ask" [class.critical]="need === 'critical'"><app-rank-emblem tier="specialist" [size]="18" /></span>
+                    }
+                  </span>
+                }
               </li>
             }
           </ol>
@@ -67,19 +80,19 @@ const ASKS: Readonly<Record<string, string>> = { sage: 'ranks.asksSage', 'grand-
                   <strong>{{ names.field(field.domain) }}</strong>
                   <span class="branch-rank">{{ names.rank(field.specialty.tier, field.specialty.division) }} · {{ 'stats.level' | transloco: { level: field.specialty.level } }}</span>
                 </div>
-                <span class="branch-points">{{ 'profile.points' | transloco: { points: names.points(field.points) } }}</span>
+                <span class="branch-points">{{ 'ranks.from' | transloco: { points: names.points(field.points) } }}</span>
               </header>
               <ol class="branch-track">
                 @for (tier of specialtyTiers(); track tier.tier; let index = $index) {
-                  <li [class]="'branch-node ' + nodeState(field, index)" [style.--node]="color(tier.tier)" [title]="names.rank(tier.tier, 0) + ' · ' + names.points(tier.from)">
-                    <span class="branch-dot"></span>
-                    <span class="branch-label">{{ names.rank(tier.tier, 0) }}</span>
+                  @let state = nodeState(field, index);
+                  <li [class]="'branch-node ' + state" [style.--node]="color(tier.tier)" [title]="names.rank(tier.tier, 0) + ' · ' + names.points(tier.from)">
+                    <app-rank-emblem [tier]="tier.tier" [division]="state === 'here' ? field.specialty.division : 0" [size]="state === 'here' ? 38 : 24" />
                   </li>
                 }
               </ol>
-              <div class="branch-next">
+              <div class="branch-next" [title]="'ranks.nextDivision' | transloco: { points: names.points(toGo(field)) }">
                 <span class="xp-track"><span class="xp-fill" [style.width.%]="100 * progress(field)" [style.background]="color(field.specialty.tier)"></span></span>
-                <span>{{ 'ranks.nextDivision' | transloco: { points: names.points(toGo(field)) } }}</span>
+                <span>{{ 'ranks.toGo' | transloco: { points: names.points(toGo(field)) } }}</span>
               </div>
             </article>
           } @empty {

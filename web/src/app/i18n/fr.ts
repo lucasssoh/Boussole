@@ -240,6 +240,7 @@ export const FR: Translations = {
     asksSage: '3 spécialités au palier Spécialiste',
     asksGrandSage: 'Sage, et Esprit critique au palier Spécialiste en plus',
     nextDivision: 'encore {{points}} points avant la division suivante',
+    toGo: 'encore {{points}} pts',
   },
   promotion: {
     tier: 'Nouveau palier',

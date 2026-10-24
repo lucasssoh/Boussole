@@ -238,6 +238,7 @@ export const EN = {
     asksSage: '3 specialties at Specialist',
     asksGrandSage: 'Sage, and Critical thinking at Specialist besides',
     nextDivision: '{{points}} points to the next division',
+    toGo: '{{points}} pts to go',
   },
   promotion: {
     tier: 'New tier',
