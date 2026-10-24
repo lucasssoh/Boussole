@@ -9,7 +9,7 @@ import { RichTextComponent } from '../shared/rich-text.component';
 /**
  * The sessions of a course as a grid of cards, chapter by chapter: finished, to resume, written,
  * or not written yet. A written session is a link; one not written yet is shown flat. A session
- * waiting for its prerequisites says which: locked in guided mode, advised after them in free mode.
+ * waiting for its prerequisites says which on hover: locked in guided mode, advised after them in free mode.
  */
 @Component({
   selector: 'app-session-grid',
@@ -31,6 +31,7 @@ import { RichTextComponent } from '../shared/rich-text.component';
                   [class.finished]="entry.finished"
                   [class.resume]="entry.id === resume()"
                   [class.locked]="locked(entry)"
+                  [attr.title]="waiting(entry) ? (afterKey() | transloco: { titles: titles(entry) }) : null"
                   [routerLink]="['/subjects', course().id, 'sessions', entry.id]"
                 >
                   <span class="session-card-top">
@@ -50,10 +51,8 @@ import { RichTextComponent } from '../shared/rich-text.component';
                   </span>
                   <span class="session-card-title"><app-rich-text [text]="entry.title" /></span>
                   <span class="session-card-goal"><app-rich-text [text]="entry.goal" /></span>
-                  @if (!entry.finished && entry.waitingFor.length > 0) {
-                    <span class="session-card-after">
-                      {{ (settings.freeNavigation() ? 'course.advisedAfter' : 'course.after') | transloco: { titles: titles(entry) } }}
-                    </span>
+                  @if (waiting(entry)) {
+                    <span class="visually-hidden">{{ afterKey() | transloco: { titles: titles(entry) } }}</span>
                   }
                   @if (entry.questions > 0) {
                     <span class="session-progress" [attr.aria-label]="'course.progressLabel' | transloco: entry">
@@ -96,8 +95,17 @@ export class SessionGridComponent {
 
   protected readonly shown = computed(() => this.chapters() ?? this.course().chapters);
 
+  /** The sessions to finish first, said on hover and to screen readers rather than on the card. */
+  protected waiting(entry: SessionEntry): boolean {
+    return !entry.finished && entry.waitingFor.length > 0;
+  }
+
+  protected afterKey(): string {
+    return this.settings.freeNavigation() ? 'course.advisedAfter' : 'course.after';
+  }
+
   protected locked(entry: SessionEntry): boolean {
-    return !entry.finished && entry.waitingFor.length > 0 && !this.settings.freeNavigation();
+    return this.waiting(entry) && !this.settings.freeNavigation();
   }
 
   protected titles(entry: SessionEntry): string {

@@ -703,10 +703,13 @@ a.session-card:active {
   color: var(--muted);
 }
 
-.session-card-after {
-  color: var(--muted);
-  font-size: 0.82rem;
-  font-weight: 700;
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .session-card-top {
