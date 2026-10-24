@@ -3180,30 +3180,90 @@ app-settings-drawer {
 }
 
 
+.sky {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: var(--sky);
+  color: #1d2b33;
+}
+
+.sky-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.sky .twinkle {
+  animation: sky-twinkle var(--twinkle) ease-in-out infinite;
+}
+
+@keyframes sky-twinkle {
+  50% {
+    opacity: 0.15;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky .twinkle {
+    animation: none;
+  }
+}
+
+.sky-inner {
+  position: relative;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 5rem;
+}
+
+.sky .crumbs a {
+  color: #0b5c48;
+}
+
 .tiers {
   display: grid;
-  gap: 1.5rem;
-  margin: 1.5rem 0 0;
+  margin: 1rem 0 0;
   padding: 0;
   list-style: none;
 }
 
-.tier-card {
+.tier-band {
   display: flex;
   align-items: center;
-  gap: 2.5rem;
-  padding: 2rem 2.75rem 2rem 2.25rem;
-  border-radius: var(--radius);
-  box-shadow: 0 5px 0 rgb(0 0 0 / 0.12);
+  gap: 3.5rem;
+  min-height: 19rem;
 }
 
-.tier-card.here {
-  outline: 4px solid var(--brand);
-  outline-offset: 4px;
+.tier-band.right {
+  flex-direction: row-reverse;
+  text-align: right;
 }
 
-.tier-card .rank-emblem {
-  flex: 0 0 auto;
+.tier-band.right .tier-needs {
+  justify-content: flex-end;
+}
+
+.tier-band.night {
+  color: #f5f1ea;
+}
+
+.tier-mark {
+  position: relative;
+  flex: 0 0 16rem;
+  display: grid;
+  place-items: center;
+}
+
+.tier-band.here .tier-mark::before {
+  content: '';
+  position: absolute;
+  width: 12.5rem;
+  height: 12.5rem;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px #ffffff, 0 0 40px rgb(255 255 255 / 0.5);
 }
 
 .tier-text {
@@ -3219,7 +3279,7 @@ app-settings-drawer {
 
 .tier-text p {
   margin: 0;
-  max-width: 38rem;
+  max-width: 35rem;
   font-size: 1.05rem;
   line-height: 1.6;
   opacity: 0.92;
@@ -3269,11 +3329,21 @@ app-settings-drawer {
 }
 
 @media (max-width: 640px) {
-  .tier-card {
+  .tier-band,
+  .tier-band.right {
     flex-direction: column;
+    justify-content: center;
     gap: 1.25rem;
+    padding: 2.5rem 0;
     text-align: center;
-    padding: 1.75rem 1.25rem;
+  }
+
+  .tier-mark {
+    flex-basis: auto;
+  }
+
+  .tier-band.right .tier-needs {
+    justify-content: center;
   }
 
   .tier-needs {

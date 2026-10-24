@@ -24,7 +24,7 @@ package "core" {
 
 package "progress" {
   class ProfilePageComponent <<page profile>>
-  class RanksPageComponent <<page ranks: each tier of the culture, its emblem and what it stands for>>
+  class RanksPageComponent <<page ranks: the climb of the culture, from the haze to space, a band per tier>>
   class RankNames <<service: ranks, fields, points>>
   note right of ProfilePageComponent : the card, the route, the specialties,\nthe achievements in frames waiting for their icons
 }
