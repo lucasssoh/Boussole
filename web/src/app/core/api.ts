@@ -347,6 +347,14 @@ export interface FieldStanding {
   specialty: Rank;
 }
 
+/** An achievement: the value counted, the levels reached, and the value each level asks. */
+export interface AchievementProgress {
+  id: string;
+  value: number;
+  level: number;
+  thresholds: number[];
+}
+
 /** What the learner keeps for good. */
 export interface Records {
   bestStreak: number;

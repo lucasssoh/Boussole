@@ -26,6 +26,7 @@ package "progress" {
   class ProfilePageComponent <<page profile>>
   class RanksPageComponent <<page ranks>>
   class RankNames <<service: ranks, fields, points>>
+  note right of ProfilePageComponent : the card, the route, the specialties,\nthe achievements in frames waiting for their icons
 }
 
 package "learn" {

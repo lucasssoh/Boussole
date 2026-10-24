@@ -98,7 +98,9 @@ ask for several fields (each at least a tenth of the points), and the specialty 
 (`FieldStanding`). Tiers are split into divisions V to I of 14 levels; the top one never ends.
 `TrackScores` tells what a track gives: every occasion a written session gives to answer a
 question (its own whole, one asked again at half), what the first answer there earned and what it
-missed; the page of a track shows it, earned, missed and still to play.
+missed; the page of a track shows it, earned, missed and still to play. `ReadAchievements`
+counts the 19 `Achievement`s from the same history (each with levels I, II, III…, kept for
+good, earning no points); the profile lists them.
 
 In a lesson a question is answered once (`AnswerOnce`): `SubmitAttempt` refuses a second answer
 in the same session, and `OpenSession` returns the verdict of each answer already given, which
@@ -331,6 +333,7 @@ GET  …/lang/{lang}/files/{path}          the same, in one version of the track
 GET  /api/references/preview?url=        whether a web page a course cites may show beside the text
 GET  /api/stats                          points, culture rank, specialty of each field, streak, records, route
 GET  /api/ranks                          both ladders: every division, where it starts, its first level
+GET  /api/achievements                   each achievement: the value counted, the levels reached, the values they ask
 GET  /api/server                         lets boussole open recognise a running Boussole
 POST /api/server/stop                    boussole stop
 ```

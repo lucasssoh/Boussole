@@ -2,6 +2,7 @@ package io.github.lucasssoh.boussole.server.reward;
 
 import io.github.lucasssoh.boussole.core.learn.reward.ReadStudyStats;
 import io.github.lucasssoh.boussole.core.learn.reward.Ladder;
+import io.github.lucasssoh.boussole.core.learn.reward.ReadAchievements;
 import io.github.lucasssoh.boussole.core.learn.reward.Rank;
 import io.github.lucasssoh.boussole.core.learn.reward.Records;
 import io.github.lucasssoh.boussole.core.learn.reward.StudyStats;
@@ -14,9 +15,23 @@ import org.springframework.web.bind.annotation.RestController;
 class StatsController {
 
     private final ReadStudyStats readStudyStats;
+    private final ReadAchievements readAchievements;
 
-    StatsController(ReadStudyStats readStudyStats) {
+    StatsController(ReadStudyStats readStudyStats, ReadAchievements readAchievements) {
         this.readStudyStats = readStudyStats;
+        this.readAchievements = readAchievements;
+    }
+
+    /** Every achievement: the value counted, the levels reached, and the values each level asks. */
+    @GetMapping("/api/achievements")
+    List<AchievementView> achievements() {
+        return readAchievements.read().stream()
+                .map(progress -> new AchievementView(progress.achievement().id(), progress.value(), progress.level(),
+                        progress.achievement().thresholds()))
+                .toList();
+    }
+
+    record AchievementView(String id, int value, int level, List<Integer> thresholds) {
     }
 
     @GetMapping("/api/stats")

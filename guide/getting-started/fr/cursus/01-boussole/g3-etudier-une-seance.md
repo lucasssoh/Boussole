@@ -75,7 +75,7 @@ même si tu reviens sur la séance un autre jour. Pour t'aider à bien répondre
 
 **« Je ne vois pas mes progrès. »** Chaque bonne réponse rapporte des **points**, davantage dans un
 parcours exigeant. Une première réponse manquée le reste : pas de retour en arrière. Avec les
-points, tu gravis les :term[paliers]{id=palier}, de Curieux à Grand Sage. Ta :term[série]{id=serie}
+points, tu gravis les :term[paliers]{id=palier}, de Curieux à Grand Sage, et tu gagnes des succès, sur ton profil. Ta :term[série]{id=serie}
 avance chaque jour où tu étudies.
 
 :::note

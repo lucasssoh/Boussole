@@ -15,6 +15,7 @@ import io.github.lucasssoh.boussole.core.learn.RevealNextHint;
 import io.github.lucasssoh.boussole.core.learn.RevealSolution;
 import io.github.lucasssoh.boussole.core.learn.SubmitAttempt;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
+import io.github.lucasssoh.boussole.core.learn.reward.ReadAchievements;
 import io.github.lucasssoh.boussole.core.learn.reward.ReadStudyStats;
 import io.github.lucasssoh.boussole.core.learn.reward.RewardedSubjects;
 import java.time.Clock;
@@ -84,6 +85,11 @@ class LearningConfiguration {
     @Bean
     RevealSolution revealSolution(ContentRepository content, ProgressRepository progress) {
         return new RevealSolution(content, progress);
+    }
+
+    @Bean
+    ReadAchievements readAchievements(ContentRepository content, ProgressRepository progress, RewardedSubjects rewarded, Clock clock) {
+        return new ReadAchievements(content, progress, rewarded, clock);
     }
 
     @Bean

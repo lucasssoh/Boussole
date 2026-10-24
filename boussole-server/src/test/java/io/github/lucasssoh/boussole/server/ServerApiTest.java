@@ -94,6 +94,8 @@ class ServerApiTest {
         assertThat(get("/api/stats").body()).contains("\"points\":", "\"culture\":{\"tier\":\"curious\",\"division\":5,\"level\":1",
                 "\"domain\":\"information-technology\"", "\"specialty\":{\"tier\":\"novice\"", "\"streakDays\":",
                 "\"records\":{\"bestStreak\":", "\"route\":[{\"tier\":\"curious\",\"division\":5,\"from\":0.0,\"firstLevel\":1}");
+        assertThat(get("/api/achievements").body()).contains("{\"id\":\"drop-by-drop\",\"value\":", "\"thresholds\":[3,7,21,60,365]}",
+                "\"id\":\"from-stream-to-ocean\"");
         assertThat(get("/api/ranks").body()).contains("{\"tier\":\"grand-sage\",\"division\":0,\"from\":404845.0,\"firstLevel\":491}",
                 "{\"tier\":\"luminary\",\"division\":0,\"from\":80000.0,\"firstLevel\":421}");
     }

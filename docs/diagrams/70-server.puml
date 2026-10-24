@@ -46,7 +46,7 @@ package "exercise" {
   class SolutionView <<record>>
 }
 package "reward" {
-  class StatsController <<GET /api/stats, /api/ranks>>
+  class StatsController <<GET /api/stats, /api/ranks, /api/achievements>>
   class "StatsController.StatsView" as StatsView <<record: points, ranks, records, route>>
 }
 package "files" {

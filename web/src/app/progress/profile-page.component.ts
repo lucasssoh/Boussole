@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { LadderStep } from '../core/api';
+import { AchievementProgress, LadderStep } from '../core/api';
+import { BoussoleApi } from '../core/boussole-api';
 import { StatsService } from '../core/stats.service';
 import { RankEmblemComponent } from '../shared/rank-emblem.component';
 import { divisionProgress, roman, tierColors } from '../shared/ranks';
@@ -12,7 +13,8 @@ const FIELD_SHARE = 0.1;
 
 /**
  * The learner's page: their card (emblem, culture rank, level, points, records), the route of the
- * divisions around theirs, the next division, the fields Sage asks for, and each specialty.
+ * divisions around theirs, the next division, the fields Sage asks for, each specialty, and the
+ * achievements, kept for good.
  */
 @Component({
   selector: 'app-profile-page',
@@ -94,6 +96,20 @@ const FIELD_SHARE = 0.1;
             </section>
           }
         </div>
+
+        <h2>{{ 'profile.achievements' | transloco }} <span class="count">{{ 'profile.achievementsCount' | transloco: { reached: levelsReached(), total: levelsTotal() } }}</span></h2>
+        <div class="achievements">
+          @for (achievement of achievements(); track achievement.id) {
+            <section class="achievement" [class.reached]="achievement.level > 0">
+              <span class="achievement-frame" aria-hidden="true">{{ achievement.level > 0 ? roman(achievement.level) : '' }}</span>
+              <div>
+                <strong>{{ 'achievement.' + achievement.id + '.name' | transloco }}</strong>
+                <span class="achievement-what">{{ 'achievement.' + achievement.id + '.description' | transloco }}</span>
+                <span class="achievement-progress">{{ progressText(achievement) }}</span>
+              </div>
+            </section>
+          }
+        </div>
       }
     </main>
   `,
@@ -133,8 +149,29 @@ export class ProfilePageComponent {
     Array.from({ length: this.fieldsNeeded() }, (_, index) => index < this.wideFields()),
   );
 
+  private readonly allAchievements = signal<AchievementProgress[]>([]);
+  /** Those reached first, the highest first; then the nearest to their next level. */
+  protected readonly achievements = computed(() =>
+    [...this.allAchievements()].sort((a, b) => b.level - a.level || this.toNext(b) - this.toNext(a)),
+  );
+  protected readonly levelsReached = computed(() => this.allAchievements().reduce((sum, achievement) => sum + achievement.level, 0));
+  protected readonly levelsTotal = computed(() => this.allAchievements().reduce((sum, achievement) => sum + achievement.thresholds.length, 0));
+
   constructor() {
     this.stats.refresh();
+    inject(BoussoleApi).achievements().then((achievements) => this.allAchievements.set(achievements), () => undefined);
+  }
+
+  /** The value counted, out of what the next level asks; the value alone once every level is reached. */
+  protected progressText(achievement: AchievementProgress): string {
+    const unit = achievement.id === 'trial-by-fire' ? ' %' : '';
+    const next = achievement.thresholds[achievement.level];
+    return next === undefined ? `${achievement.value}${unit}` : `${achievement.value} / ${next}${unit}`;
+  }
+
+  private toNext(achievement: AchievementProgress): number {
+    const next = achievement.thresholds[achievement.level];
+    return next === undefined ? 1 : achievement.value / next;
   }
 
   protected stepState(step: LadderStep): string {

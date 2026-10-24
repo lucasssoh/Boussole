@@ -3130,3 +3130,64 @@ app-settings-drawer {
   }
 }
 
+.profile h2 .count {
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+.achievements {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: 0.9rem;
+}
+
+.achievement {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.9rem 1.1rem;
+  border: 2px dashed var(--line);
+  border-radius: var(--radius);
+  background: transparent;
+}
+
+.achievement.reached {
+  border-style: solid;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
+}
+
+.achievement div {
+  display: grid;
+  gap: 0.1rem;
+}
+
+/* A frame waiting for the icon of each achievement: its level, in roman numerals. */
+.achievement-frame {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 14px;
+  border: 3px solid var(--line);
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.achievement.reached .achievement-frame {
+  border-color: var(--brand);
+  background: var(--surface-2);
+  color: var(--brand);
+}
+
+.achievement-what {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.achievement-progress {
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+

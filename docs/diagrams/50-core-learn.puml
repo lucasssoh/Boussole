@@ -98,6 +98,24 @@ package "learn.reward" {
     +{static} of(question, response, CheckResult) : QuestionScore
     +{static} possible(question) : double
   }
+  class ReadAchievements <<use case>> {
+    +read() : List<AchievementProgress>
+  }
+  enum Achievement {
+    COMPASS_IN_HAND
+    DROP_BY_DROP
+    TWENTY_TIMES_ON_THE_LOOM
+    …
+    +thresholds() : List<Integer>
+    +levelOf(value) : int
+  }
+  class AchievementProgress <<record>> {
+    value, level : int
+  }
+  class Records <<record>> {
+    bestStreak, sessionsFinished, flawlessSessions : int
+    firstTryRight, firstTryAnswered : int
+  }
   class TrackScores <<helpers>> {
     +{static} of(Course, attempts) : TrackScore
     +{static} ofSession(Course, session, attempts) : TrackScore
@@ -202,6 +220,12 @@ ReadStudyStats ..> Rank : culture, specialty
 Rank --> Ladder
 ReadStudyStats --> ContentRepository : fields
 QuestionScore ..> GapSentences : fill
+ReadAchievements ..> AchievementProgress
+AchievementProgress --> Achievement
+ReadAchievements ..> ReadStudyStats : records
+ReadAchievements ..> TrackScores : finished tracks, mock exams
+ReadAchievements --> ProgressRepository : history
+StudyStats --> Records
 CourseOverviews ..> TrackScores : score
 TrackScores ..> QuestionScore : possible
 PreviewWebPage --> WebPages : pages

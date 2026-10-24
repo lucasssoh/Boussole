@@ -73,7 +73,7 @@ even if you come back to the session another day. To help you answer well:
 
 **"I can't see my progress."** Every right answer earns **points**, more in a demanding track. A
 first answer missed stays missed: no going back. With points you climb the
-:term[tiers]{id=tier}, from Curious to Grand Sage. Your :term[streak]{id=streak} grows each day
+:term[tiers]{id=tier}, from Curious to Grand Sage, and you collect achievements on your profile. Your :term[streak]{id=streak} grows each day
 you study.
 
 :::note

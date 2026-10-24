@@ -9,7 +9,10 @@ import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionProgress;
+import io.github.lucasssoh.boussole.core.learn.reward.Achievement;
+import io.github.lucasssoh.boussole.core.learn.reward.AchievementProgress;
 import io.github.lucasssoh.boussole.core.learn.reward.QuestionScore;
+import io.github.lucasssoh.boussole.core.learn.reward.ReadAchievements;
 import io.github.lucasssoh.boussole.core.learn.reward.TrackScore;
 import io.github.lucasssoh.boussole.core.learn.reward.RewardedSubjects;
 import io.github.lucasssoh.boussole.format.model.SessionId;
@@ -18,6 +21,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -67,6 +72,30 @@ class LearningTest {
 
         assertThat(score).isEqualTo(new TrackScore(3, 3, 21));
         assertThat(score.toPlay()).isEqualTo(15);
+    }
+
+    @Test
+    void finishing_every_session_of_a_track_brings_its_achievements() {
+        SubmitAttempt submit = new SubmitAttempt(content, progress, RewardedSubjects.all(), clock);
+        FinishSession finish = new FinishSession(content, progress, RewardedSubjects.all(), clock);
+        submit.submit(MAC_BITS, new ValueResponse("6"), Optional.of("s11"), Optional.empty());
+        finish.finish(new SessionKey("reseaux", "s11"), Duration.ofMinutes(50));
+        submit.submit(new ExerciseKey("reseaux", "r19-q1"), new ChoicesResponse(Set.of(1)), Optional.of("r19"), Optional.empty());
+        submit.submit(MAC_BITS, new ValueResponse("48"), Optional.of("r19"), Optional.empty());
+        submit.submit(new ExerciseKey("reseaux", "s11-a2"), new ChoicesResponse(Set.of(1)), Optional.of("r19"), Optional.empty());
+        finish.finish(new SessionKey("reseaux", "r19"), Duration.ofMinutes(5));
+
+        Map<Achievement, AchievementProgress> achievements = new ReadAchievements(content, progress, RewardedSubjects.all(), clock).read().stream()
+                .collect(Collectors.toMap(AchievementProgress::achievement, achievement -> achievement));
+
+        assertThat(achievements).hasSize(Achievement.values().length);
+        assertThat(achievements.get(Achievement.THE_FIRST_STEP).level()).isEqualTo(1);
+        assertThat(achievements.get(Achievement.ITHACA).value()).isEqualTo(1);
+        assertThat(achievements.get(Achievement.ON_THE_SHOULDERS_OF_GIANTS).level()).isEqualTo(1);
+        assertThat(achievements.get(Achievement.THE_MADELEINE).value()).isEqualTo(1);
+        assertThat(achievements.get(Achievement.TWENTY_TIMES_ON_THE_LOOM).value()).isEqualTo(1);
+        assertThat(achievements.get(Achievement.THE_HONEST_MAN)).isEqualTo(new AchievementProgress(Achievement.THE_HONEST_MAN, 1, 0));
+        assertThat(achievements.get(Achievement.DROP_BY_DROP).value()).isEqualTo(1);
     }
 
     @Test

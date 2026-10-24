@@ -7,6 +7,7 @@ minor release may break things and says so.
 ## Unreleased
 
 ### Added
+- **Achievements:** 19 achievements kept for good, each with levels (I, II, III…), shown on the profile: *Drop by drop* (days in a row), *Without a blot* (sessions without a mistake), *Twenty times on the loom* (missed at first, right when asked again), *The madeleine* (quick reviews without a mistake), *Ithaca* (tracks finished), *Trial by fire* (mock exams), *The well-rounded mind* (fields)… They earn no points; their icons are to come.
 - **New division:** reaching a new division, or a new tier, is shown once, full screen: the former emblem gives way to the new one, with the next step ahead.
 - **Score of a track:** its page shows how demanding it is and its field, and its points: earned, missed for good, still to play, out of all it gives. The end of a session counts first answers, questions asked again and those missed, with their points.
 - **Profile:** your card (emblem, culture rank, level, points, best streak, flawless sessions, first try), the route of the divisions around yours, the next one, the fields Sage asks for, and your specialty in each field. **Tiers:** both ladders, culture and specialty, division by division. The header leads there.
