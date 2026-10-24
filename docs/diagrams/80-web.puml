@@ -89,7 +89,8 @@ package "learn.question" {
 package "shared" {
   class MarkdownRenderer <<markdown-it + KaTeX>>
   class "subjectColor()" as SubjectColor
-  class RankEmblemComponent <<the shield of a tier>>
+  class RankEmblemComponent <<the gem of a rank, its division in relief>>
+  class "emblem.ts" as Emblem <<instruments, ornaments, aura, ambiance per tier>>
   class PromotionComponent <<a new division, full screen, dimmed behind>>
   class "ranks.ts" as Ranks <<tier colours, roman divisions, points>>
   class RichTextComponent
@@ -111,7 +112,9 @@ SessionPageComponent ..> SessionPlan : screens
 SessionPageComponent ..> ServerSettingsService : free navigation?
 SessionPageComponent --> SessionPathComponent
 QuestionState ..> StatsService : refresh after an answer
-RankEmblemComponent ..> Ranks : colours
+RankEmblemComponent ..> Emblem : look and geometry
+RankEmblemComponent ..> Ranks : roman divisions
+PromotionComponent ..> Emblem : ambiance
 StatsService ..> PromotionComponent : a division newly reached
 ProfilePageComponent ..> StatsService : stats
 ProfilePageComponent ..> RankEmblemComponent

@@ -4,6 +4,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { AchievementProgress, LadderStep } from '../core/api';
 import { BoussoleApi } from '../core/boussole-api';
 import { StatsService } from '../core/stats.service';
+import { emblemAmbiance } from '../shared/emblem';
 import { RankEmblemComponent } from '../shared/rank-emblem.component';
 import { CRITICAL_THINKING, divisionProgress, isStrong, roman, tierColors } from '../shared/ranks';
 import { RankNames } from './rank-names';
@@ -23,7 +24,7 @@ import { RankNames } from './rank-names';
         @let rank = current.culture;
         <section class="profile-banner" [style.--tier]="colors()[0]" [style.--tier-deep]="colors()[1]">
           <div class="profile-card">
-            <div class="profile-emblem"><app-rank-emblem [tier]="rank.tier" [size]="112" /></div>
+            <div class="profile-emblem" [style.--ambiance]="ambiance()"><app-rank-emblem [tier]="rank.tier" [division]="rank.division" [size]="100" [lively]="true" /></div>
             <div class="profile-who">
               <span class="profile-ladder">{{ 'profile.culture' | transloco }}</span>
               <h1>{{ names.rank(rank.tier, rank.division) }}</h1>
@@ -88,7 +89,7 @@ import { RankNames } from './rank-names';
         <div class="specialties">
           @for (field of current.fields; track field.domain) {
             <section class="specialty" [style.--tier]="fieldColor(field.specialty.tier)">
-              <app-rank-emblem [tier]="field.specialty.tier" [size]="34" />
+              <app-rank-emblem [tier]="field.specialty.tier" [division]="field.specialty.division" [size]="34" />
               <div>
                 <strong>{{ names.field(field.domain) }}</strong>
                 <span class="specialty-rank">{{ names.rank(field.specialty.tier, field.specialty.division) }}</span>
@@ -121,6 +122,7 @@ export class ProfilePageComponent {
   protected readonly roman = roman;
 
   protected readonly colors = computed(() => tierColors(this.stats.stats()?.culture.tier ?? 'curious'));
+  protected readonly ambiance = computed(() => emblemAmbiance(this.stats.stats()?.culture.tier ?? 'curious'));
   protected readonly firstTry = computed(() => {
     const records = this.stats.stats()?.records;
     return records && records.firstTryAnswered > 0 ? `${Math.round((100 * records.firstTryRight) / records.firstTryAnswered)} %` : '—';

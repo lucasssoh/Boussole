@@ -363,6 +363,78 @@ a:focus-visible {
   flex: 0 0 auto;
 }
 
+.rank-emblem svg {
+  overflow: visible;
+}
+
+.emblem-mote {
+  opacity: 0;
+}
+
+.lively .breathing {
+  animation: emblem-breath 5s ease-in-out infinite;
+}
+
+.lively .emblem-swirl {
+  transform-box: view-box;
+  transform-origin: 32px 36px;
+  animation: emblem-turn 24s linear infinite;
+}
+
+.lively .emblem-sheen {
+  animation: emblem-sheen var(--flow) cubic-bezier(0.42, 0, 0.2, 1) infinite;
+}
+
+.lively .emblem-mote {
+  animation: emblem-mote var(--duration) linear var(--delay) infinite;
+}
+
+@keyframes emblem-breath {
+  0%,
+  100% {
+    opacity: var(--aura-low);
+  }
+  50% {
+    opacity: var(--aura-high);
+  }
+}
+
+@keyframes emblem-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes emblem-sheen {
+  0% {
+    transform: translateX(-20px);
+  }
+  38%,
+  100% {
+    transform: translateX(110px);
+  }
+}
+
+@keyframes emblem-mote {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rank-emblem * {
+    animation: none !important;
+  }
+}
+
 .level-bar {
   display: grid;
   gap: 0.2rem;
@@ -2641,8 +2713,8 @@ app-settings-drawer {
   width: 9.5rem;
   height: 9.5rem;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--tier-deep) 45%, #10161a);
-  box-shadow: 0 0 0 8px color-mix(in srgb, var(--tier-deep) 60%, #10161a), 0 0 0 11px var(--tier);
+  background: var(--ambiance);
+  box-shadow: 0 0 0 4px var(--surface), 0 0 0 7px var(--tier);
 }
 
 .profile-who {
@@ -3058,8 +3130,14 @@ app-settings-drawer {
 .promotion-emblems {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1.25rem;
-  color: var(--muted);
+  width: 100%;
+  box-sizing: border-box;
+  padding: 2.25rem 1rem 1.75rem;
+  border-radius: 18px;
+  background: var(--ambiance);
+  color: var(--stage-ink);
 }
 
 .promotion-former {

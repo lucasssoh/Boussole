@@ -62,7 +62,7 @@ const ASKS: Readonly<Record<string, string>> = { sage: 'ranks.asksSage', 'grand-
           @for (field of fields(); track field.domain) {
             <article class="branch" [style.--tier]="color(field.specialty.tier)">
               <header class="branch-head">
-                <app-rank-emblem [tier]="field.specialty.tier" [size]="40" />
+                <app-rank-emblem [tier]="field.specialty.tier" [division]="field.specialty.division" [size]="40" />
                 <div>
                   <strong>{{ names.field(field.domain) }}</strong>
                   <span class="branch-rank">{{ names.rank(field.specialty.tier, field.specialty.division) }} · {{ 'stats.level' | transloco: { level: field.specialty.level } }}</span>
