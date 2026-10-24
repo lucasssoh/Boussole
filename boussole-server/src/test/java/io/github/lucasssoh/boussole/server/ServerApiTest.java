@@ -128,6 +128,12 @@ class ServerApiTest {
     }
 
     @Test
+    void a_track_says_how_demanding_it_is_its_field_and_its_score() throws Exception {
+        assertThat(get("/api/subjects/reseaux").body()).contains("\"level\":\"master\"", "\"domain\":\"information-technology\"",
+                "\"score\":{\"earned\":", "\"possible\":21.0}");
+    }
+
+    @Test
     void a_session_says_which_prerequisites_it_waits_for() throws Exception {
         assertThat(get("/api/subjects/reseaux").body())
                 .contains("\"waitingFor\":[{\"subject\":\"reseaux\",\"session\":\"s11\",\"title\":\"Rôle de la couche réseau\"}]");

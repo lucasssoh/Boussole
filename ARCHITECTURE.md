@@ -96,6 +96,9 @@ last, the first time a session ends without a mistake. `ReadStudyStats` adds the
 history, and places them on two `Ladder`s (`Rank`): the culture, whose Sage and Grand Sage also
 ask for several fields (each at least a tenth of the points), and the specialty of each field
 (`FieldStanding`). Tiers are split into divisions V to I of 14 levels; the top one never ends.
+`TrackScores` tells what a track gives: every occasion a written session gives to answer a
+question (its own whole, one asked again at half), what the first answer there earned and what it
+missed; the page of a track shows it, earned, missed and still to play.
 
 In a lesson a question is answered once (`AnswerOnce`): `SubmitAttempt` refuses a second answer
 in the same session, and `OpenSession` returns the verdict of each answer already given, which

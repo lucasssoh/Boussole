@@ -4,6 +4,9 @@ import { IconComponent } from '../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { RichTextComponent } from '../shared/rich-text.component';
 import { subjectColor } from '../shared/subject-color';
+import { formatPoints } from '../shared/ranks';
+import { LanguageService } from '../core/language.service';
+import { TrackScore } from '../core/api';
 import { SessionGridComponent } from './session-grid.component';
 import { LearnFacade } from './learn.facade';
 import { TrackLanguagesComponent } from './track-languages.component';
@@ -55,6 +58,27 @@ import { TrackLanguagesComponent } from './track-languages.component';
                 }
               </dl>
             }
+            @if (course.level || course.domain) {
+              <p class="track-tags">
+                @if (course.level) {
+                  <span class="track-tag level">{{ 'course.level.' + course.level | transloco }}</span>
+                }
+                @if (course.domain) {
+                  <span class="track-tag">{{ 'domain.' + course.domain | transloco }}</span>
+                }
+              </p>
+            }
+            @if (course.score.possible > 0) {
+              <section class="track-score">
+                <span class="panel-label">{{ 'course.score' | transloco }}</span>
+                <strong class="panel-value">{{ points(course.score.earned) }} <span>/ {{ points(course.score.possible) }}</span></strong>
+                <span class="score-bar">
+                  <span class="score-earned" [style.width.%]="(100 * course.score.earned) / course.score.possible"></span>
+                  <span class="score-missed" [style.width.%]="(100 * course.score.missed) / course.score.possible"></span>
+                </span>
+                <span class="panel-note">{{ 'course.scoreDetail' | transloco: { earned: points(course.score.earned), missed: points(course.score.missed), toPlay: points(toPlay(course.score)) } }}</span>
+              </section>
+            }
             @if (course.resume; as next) {
               <p>
                 <a class="button primary" [routerLink]="['/subjects', course.id, 'sessions', next.id]">
@@ -87,6 +111,15 @@ export class CoursePageComponent {
   readonly subject = input.required<string>();
   protected readonly learn = inject(LearnFacade);
   protected readonly color = computed(() => subjectColor(this.subject()));
+  private readonly language = inject(LanguageService);
+
+  protected points(points: number): string {
+    return formatPoints(points, this.language.current());
+  }
+
+  protected toPlay(score: TrackScore): number {
+    return Math.max(0, score.possible - score.earned - score.missed);
+  }
 
   protected followIn(subject: string, language: string): void {
     this.learn.chooseTrackLanguage(subject, language);

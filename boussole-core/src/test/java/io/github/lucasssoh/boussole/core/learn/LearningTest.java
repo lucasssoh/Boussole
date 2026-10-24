@@ -10,6 +10,7 @@ import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionProgress;
 import io.github.lucasssoh.boussole.core.learn.reward.QuestionScore;
+import io.github.lucasssoh.boussole.core.learn.reward.TrackScore;
 import io.github.lucasssoh.boussole.core.learn.reward.RewardedSubjects;
 import io.github.lucasssoh.boussole.format.model.SessionId;
 import java.time.Clock;
@@ -54,6 +55,18 @@ class LearningTest {
         assertThat(lesson.pointsGained()).isEqualTo(3);
         assertThat(review.pointsGained()).isEqualTo(1.5);
         assertThat(reviewAgain.pointsGained()).isZero();
+    }
+
+    @Test
+    void a_track_says_what_is_earned_missed_and_left_to_play() {
+        SubmitAttempt submit = new SubmitAttempt(content, progress, RewardedSubjects.all(), clock);
+        submit.submit(MAC_BITS, new ValueResponse("48"), Optional.of("s11"), Optional.empty());
+        submit.submit(new ExerciseKey("reseaux", "s11-a2"), new ChoicesResponse(Set.of(0)), Optional.of("s11"), Optional.empty());
+
+        TrackScore score = new OpenCourse(content, progress).open("reseaux", Optional.empty()).score();
+
+        assertThat(score).isEqualTo(new TrackScore(3, 3, 21));
+        assertThat(score.toPlay()).isEqualTo(15);
     }
 
     @Test

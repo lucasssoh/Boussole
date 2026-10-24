@@ -27,6 +27,7 @@ package "course" {
   class CourseSummaryView <<record>>
   class CourseView <<record>>
   class ResumeView <<record>>
+  class "CourseView.ScoreView" as ScoreView <<record: earned, missed, possible>>
   class "CourseView.PrerequisiteView" as PrerequisiteView <<record>>
 }
 package "session" {
@@ -102,6 +103,7 @@ StatsController ..> StatsView
 ReferenceController --> core : PreviewWebPage
 CourseController ..> ResumeView : session to resume
 CourseView *-- PrerequisiteView : a session waits for
+CourseView *-- ScoreView : score
 SessionController ..> SessionView
 CourseView ..> CreditViews
 SessionView ..> CreditViews : writtenBy

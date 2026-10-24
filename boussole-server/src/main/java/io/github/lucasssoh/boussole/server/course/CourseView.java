@@ -2,7 +2,9 @@ package io.github.lucasssoh.boussole.server.course;
 
 import io.github.lucasssoh.boussole.core.learn.CourseOverview;
 import io.github.lucasssoh.boussole.format.model.Course;
+import io.github.lucasssoh.boussole.format.model.Domain;
 import io.github.lucasssoh.boussole.format.model.LexiconTerm;
+import io.github.lucasssoh.boussole.format.model.TrackLevel;
 import io.github.lucasssoh.boussole.format.model.SessionId;
 import io.github.lucasssoh.boussole.format.model.SyllabusChapter;
 import io.github.lucasssoh.boussole.format.model.SyllabusSession;
@@ -15,7 +17,8 @@ import java.util.stream.Collectors;
 
 /**
  * A subject, in the language it is followed in ({@code lang}) among those it exists in: its
- * chapters and sessions, what is written and finished, its lexicon, who makes it and with what.
+ * chapters and sessions, what is written and finished, its lexicon, who makes it and with what,
+ * how demanding it is, its field, and the points earned, missed for good, out of all it gives.
  */
 record CourseView(
         String id,
@@ -29,7 +32,10 @@ record CourseView(
         ResumeView resume,
         List<CreditViews.CreditView> authors,
         List<CreditViews.CreditView> contributors,
-        List<CreditViews.WriterView> writtenWith) {
+        List<CreditViews.WriterView> writtenWith,
+        String level,
+        String domain,
+        ScoreView score) {
 
     static CourseView of(CourseOverview overview) {
         Course course = overview.course();
@@ -50,7 +56,10 @@ record CourseView(
                 ResumeView.of(overview).orElse(null),
                 CreditViews.credits(course.subject().authors()),
                 CreditViews.credits(course.subject().contributors()),
-                CreditViews.writers(course));
+                CreditViews.writers(course),
+                course.subject().level().map(TrackLevel::id).orElse(null),
+                course.subject().domain().map(Domain::id).orElse(null),
+                new ScoreView(overview.score().earned(), overview.score().missed(), overview.score().possible()));
     }
 
     record ChapterView(String id, String title, List<SessionEntryView> sessions) {
@@ -99,6 +108,9 @@ record CourseView(
             String title = id.subject().equals(subject) ? titles.getOrDefault(id.session(), id.toString()) : id.toString();
             return new PrerequisiteView(id.subject(), id.session(), title);
         }
+    }
+
+    record ScoreView(double earned, double missed, double possible) {
     }
 
     record TermView(String id, String term, List<String> aliases, String definition, List<String> see) {

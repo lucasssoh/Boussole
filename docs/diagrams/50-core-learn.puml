@@ -44,6 +44,7 @@ package "learn" {
     finishedSessions : Set<String>
     lastStudied : Optional<Instant>
     waitingFor : Map<String, List<SessionId>>
+    score : TrackScore
     resume : Optional<String>
   }
   class CourseOverviews
@@ -96,6 +97,14 @@ package "learn.reward" {
     earned, possible : double
     +{static} of(question, response, CheckResult) : QuestionScore
     +{static} possible(question) : double
+  }
+  class TrackScores <<helpers>> {
+    +{static} of(Course, attempts) : TrackScore
+    +{static} ofSession(Course, session, attempts) : TrackScore
+  }
+  class TrackScore <<record>> {
+    earned, missed, possible : double
+    +toPlay() : double
   }
   class GapSentences <<helpers>> {
     ~{static} of(statement) : Map<Integer, Integer>
@@ -193,6 +202,8 @@ ReadStudyStats ..> Rank : culture, specialty
 Rank --> Ladder
 ReadStudyStats --> ContentRepository : fields
 QuestionScore ..> GapSentences : fill
+CourseOverviews ..> TrackScores : score
+TrackScores ..> QuestionScore : possible
 PreviewWebPage --> WebPages : pages
 PreviewWebPage ..> PagePreview
 ReadStudyStats --> RewardedSubjects : rewarded

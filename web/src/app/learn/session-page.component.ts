@@ -135,6 +135,18 @@ import { SidePanelComponent } from './side-panel.component';
                   </div>
                 }
               </div>
+              @let tally = run.tally();
+              @if (tally.own.answered + tally.again.answered > 0) {
+                <dl class="bilan-tally">
+                  @if (tally.own.answered > 0) {
+                    <div><dt>{{ 'session.tallyOwn' | transloco }}</dt><dd>{{ tally.own.right }} / {{ tally.own.answered }}</dd><dd class="tally-points">+{{ points(tally.own.points) }}</dd></div>
+                  }
+                  @if (tally.again.answered > 0) {
+                    <div><dt>{{ 'session.tallyAgain' | transloco }}</dt><dd>{{ tally.again.right }} / {{ tally.again.answered }}</dd><dd class="tally-points">+{{ points(tally.again.points) }}</dd></div>
+                  }
+                  <div class="missed"><dt>{{ 'session.tallyMissed' | transloco }}</dt><dd>{{ tally.missed }}</dd><dd class="tally-points">0</dd></div>
+                </dl>
+              }
               @if (finishedIn() === null) {
                 <button type="button" class="primary" (click)="finish()">
                   {{ (current.kind === 'exam' ? 'session.endExam' : 'session.finish') | transloco }}

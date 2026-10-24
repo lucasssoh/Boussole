@@ -2953,3 +2953,93 @@ app-settings-drawer {
     text-align: left;
   }
 }
+
+.bilan-tally {
+  display: grid;
+  margin: 0;
+  padding: 0.25rem 1.25rem;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.bilan-tally div {
+  display: grid;
+  grid-template-columns: 1fr auto 4rem;
+  gap: 1rem;
+  padding: 0.7rem 0;
+  border-bottom: 2px solid var(--line);
+}
+
+.bilan-tally div:last-child {
+  border-bottom: 0;
+}
+
+.bilan-tally dt {
+  font-weight: 800;
+}
+
+.bilan-tally dd {
+  margin: 0;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.bilan-tally .tally-points {
+  text-align: right;
+  color: var(--correct);
+  font-weight: 900;
+}
+
+.bilan-tally .missed .tally-points {
+  color: var(--wrong);
+}
+
+.track-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.track-tag {
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.track-score {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 34rem;
+  margin: 1rem 0;
+  padding: 1.25rem 1.5rem;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 5px 0 var(--line);
+}
+
+.track-score .panel-value span {
+  font-size: 1.1rem;
+  color: var(--muted);
+}
+
+.score-bar {
+  display: flex;
+  gap: 2px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.score-earned {
+  background: var(--correct-strong);
+}
+
+.score-missed {
+  background: var(--wrong-strong);
+}

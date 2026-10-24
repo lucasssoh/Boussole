@@ -45,6 +45,17 @@ export interface Course {
   authors: Credit[];
   contributors: Credit[];
   writtenWith: Writer[];
+  /** How demanding it is (discovery … research) and its field, when the track says. */
+  level: string | null;
+  domain: string | null;
+  score: TrackScore;
+}
+
+/** The points of a track: earned, missed for good, out of all it gives. */
+export interface TrackScore {
+  earned: number;
+  missed: number;
+  possible: number;
 }
 
 export interface Chapter {

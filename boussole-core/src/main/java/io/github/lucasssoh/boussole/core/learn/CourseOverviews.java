@@ -7,6 +7,7 @@ import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionProgress;
 import io.github.lucasssoh.boussole.format.model.CourseSession;
 import io.github.lucasssoh.boussole.format.model.SessionId;
+import io.github.lucasssoh.boussole.core.learn.reward.TrackScores;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseRefBlock;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +32,7 @@ final class CourseOverviews {
         Optional<LastActivity> last = progress.lastActivity(subject);
         Map<String, List<SessionId>> waiting = waitingFor(course, finished);
         return new CourseOverview(course, languages, finished, sessionProgress(course, progress.exercises(subject)),
-                last.map(LastActivity::at), waiting, resume(course, finished, waiting, last));
+                last.map(LastActivity::at), waiting, TrackScores.of(course, progress.attemptHistory()), resume(course, finished, waiting, last));
     }
 
     /** The written sessions whose prerequisites are not all finished, with those not finished. */

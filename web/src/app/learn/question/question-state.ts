@@ -67,6 +67,8 @@ export class QuestionState {
     private readonly language: string | null = null,
     /** A guess of the warmup, which earns nothing and counts in no score. */
     readonly hook = false,
+    /** A question of another session asked again here ({@code ::ref}). */
+    readonly reused = false,
   ) {
     this.order = signal([...shuffledItems]);
     this.progress = signal(progress);
