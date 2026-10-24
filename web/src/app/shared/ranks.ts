@@ -23,6 +23,14 @@ export function tierColors(tier: string): readonly [string, string] {
   return TIER_COLORS[tier] ?? TIER_COLORS['curious'];
 }
 
+/** The tiers of the culture ladder, from the lowest. */
+export const CULTURE_TIERS: readonly string[] = ['curious', 'apprentice', 'initiate', 'scholar', 'savant', 'master', 'sage', 'grand-sage'];
+
+/** Where a culture rank stands, higher being better: the tier first, then the division, I above V. */
+export function rankOrder(rank: { tier: string; division: number }): number {
+  return CULTURE_TIERS.indexOf(rank.tier) * 10 + (rank.division === 0 ? 9 : 6 - rank.division);
+}
+
 const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V'];
 
 /** A division in roman numerals, V the lowest; the top tier has none. */

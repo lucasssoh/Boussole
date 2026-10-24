@@ -3043,3 +3043,90 @@ app-settings-drawer {
 .score-missed {
   background: var(--wrong-strong);
 }
+
+.promotion {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgb(8 12 14 / 0.82);
+  animation: promotion-in 0.3s ease-out;
+}
+
+.promotion-card {
+  width: min(32rem, 100%);
+  display: grid;
+  justify-items: center;
+  gap: 0.9rem;
+  padding: 2.25rem 2rem;
+  border-radius: 24px;
+  background: var(--surface);
+  color: var(--text);
+  text-align: center;
+  box-shadow: 0 8px 0 var(--tier-deep);
+}
+
+.promotion-label {
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--tier-deep) 80%, var(--text));
+}
+
+.promotion-emblems {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  color: var(--muted);
+}
+
+.promotion-former {
+  opacity: 0.45;
+}
+
+.promotion-new {
+  animation: promotion-rise 0.6s 0.2s ease-out both;
+}
+
+.promotion-card h2 {
+  margin: 0;
+  font-size: 2.4rem;
+}
+
+.promotion-card p {
+  margin: 0;
+}
+
+.promotion-leave {
+  font-size: 1.05rem;
+  color: var(--muted);
+}
+
+.promotion-next {
+  font-weight: 800;
+  color: color-mix(in srgb, var(--tier-deep) 80%, var(--text));
+}
+
+@keyframes promotion-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes promotion-rise {
+  from {
+    opacity: 0;
+    scale: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .promotion,
+  .promotion-new {
+    animation: none;
+  }
+}
+

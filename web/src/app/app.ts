@@ -1,9 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { Rank } from './core/api';
+import { LadderStep, Rank } from './core/api';
 import { LanguageService } from './core/language.service';
 import { RankEmblemComponent } from './shared/rank-emblem.component';
+import { PromotionComponent } from './shared/promotion.component';
 import { divisionProgress, formatPoints, roman, tierColors } from './shared/ranks';
 import { ServerSettingsService } from './core/server-settings.service';
 import { StatsService } from './core/stats.service';
@@ -11,7 +12,7 @@ import { SettingsDrawerComponent } from './core/settings-drawer.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, TranslocoPipe, SettingsDrawerComponent, RankEmblemComponent],
+  imports: [RouterOutlet, RouterLink, TranslocoPipe, SettingsDrawerComponent, RankEmblemComponent, PromotionComponent],
   template: `
     <header class="top-bar">
       <a class="brand" routerLink="/">
@@ -38,6 +39,9 @@ import { SettingsDrawerComponent } from './core/settings-drawer.component';
       </nav>
     </header>
     <router-outlet />
+    @if (stats.promotion(); as promotion) {
+      <app-promotion [from]="promotion.from" [to]="promotion.to" [next]="nextStep()" (closed)="stats.closePromotion()" />
+    }
   `,
 })
 export class App {
@@ -52,6 +56,16 @@ export class App {
 
   protected points(points: number): string {
     return formatPoints(points, this.language.current());
+  }
+
+  /** The division after the learner's, from the route the stats bring. */
+  protected nextStep(): LadderStep | null {
+    const current = this.stats.stats();
+    if (!current) {
+      return null;
+    }
+    const here = current.route.findIndex((step) => step.tier === current.culture.tier && step.division === Math.max(current.culture.division, 0));
+    return here >= 0 ? (current.route[here + 1] ?? null) : null;
   }
 
   protected ceil(points: number): number {

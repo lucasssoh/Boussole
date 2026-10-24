@@ -296,7 +296,8 @@ web/src/app/
   (`StatsService`), and leads to the profile (`ProfilePageComponent`: the card, the route of
   divisions, the next one, the fields Sage asks for, each specialty) and to the tiers
   (`RanksPageComponent`, both ladders); each answer shows what it was worth and the points it
-  earned.
+  earned. A division higher than the one last seen on this browser (`rank.seen`) is shown once,
+  full screen (`PromotionComponent`).
 - **Bubbles**: entering a page or a screen, its elements pop in one after the other (the
   `bubble` keyframes, a rank `--i` per element). They animate `scale`, `translate` and
   `opacity`, never `transform`, so that centring and pressing are left alone; nothing moves when

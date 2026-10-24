@@ -210,6 +210,21 @@ export const EN = {
     from: '{{points}} pts',
     fields: '{{count}} fields',
   },
+  promotion: {
+    tier: 'New tier',
+    division: 'New division',
+    next: 'Next: {{rank}} · {{points}} points',
+    continue: 'Continue',
+    leave: {
+      curious: 'You are no longer just curious.',
+      apprentice: 'You leave the apprentices behind.',
+      initiate: 'You leave the initiates behind.',
+      scholar: 'You leave the scholars behind.',
+      savant: 'You leave the savants behind.',
+      master: 'You leave the masters behind.',
+      sage: 'You leave the sages behind.',
+    },
+  },
   rank: {
     curious: 'Curious',
     apprentice: 'Apprentice',

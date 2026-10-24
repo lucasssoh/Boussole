@@ -212,6 +212,21 @@ export const FR: Translations = {
     from: '{{points}} pts',
     fields: '{{count}} domaines',
   },
+  promotion: {
+    tier: 'Nouveau palier',
+    division: 'Nouvelle division',
+    next: 'Prochain cap : {{rank}} · {{points}} points',
+    continue: 'Continuer',
+    leave: {
+      curious: 'Tu n’es plus seulement curieux.',
+      apprentice: 'Tu quittes les Apprentis.',
+      initiate: 'Tu quittes les Initiés.',
+      scholar: 'Tu quittes les Érudits.',
+      savant: 'Tu quittes les Savants.',
+      master: 'Tu quittes les Maîtres.',
+      sage: 'Tu quittes les Sages.',
+    },
+  },
   rank: {
     curious: 'Curieux',
     apprentice: 'Apprenti',
