@@ -3568,6 +3568,123 @@ app-settings-drawer {
   height: 0.78rem;
 }
 
+/* What Sage and Grand Sage ask, on hover or focus: a small card, a row per thing asked. */
+.tier-cell {
+  position: relative;
+}
+
+.tier-pop {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% - 0.4rem);
+  left: 50%;
+  width: 19rem;
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--line), 0 10px 28px rgb(15 28 31 / 0.14);
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  translate: -50% 6px;
+  transition: opacity 0.15s, translate 0.15s, visibility 0.15s;
+  pointer-events: none;
+}
+
+.tier-cell:last-child .tier-pop {
+  left: auto;
+  right: 0;
+  translate: 0 6px;
+}
+
+.tier-cell:hover .tier-pop,
+.tier-cell:focus-within .tier-pop {
+  opacity: 1;
+  visibility: visible;
+  translate: -50% 0;
+}
+
+.tier-cell:last-child:hover .tier-pop,
+.tier-cell:last-child:focus-within .tier-pop {
+  translate: 0 0;
+}
+
+.tier-pop-title {
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.tier-pop-row {
+  display: grid;
+  grid-template-columns: 1.1rem 1fr auto;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.tier-pop-sign {
+  display: grid;
+  place-items: center;
+}
+
+.tier-pop-coin {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff3c4, #e6b422 60%, #8f6a00);
+}
+
+.tier-pop-what {
+  display: grid;
+  line-height: 1.25;
+}
+
+.tier-pop-what strong {
+  font-size: 0.92rem;
+}
+
+.tier-pop-what small {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.tier-pop-state {
+  font-size: 0.82rem;
+  font-weight: 900;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.tier-pop-row.met .tier-pop-state {
+  color: var(--brand);
+}
+
+.tier-pop-gauge {
+  display: block;
+  width: 3.2rem;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.tier-pop-gauge span {
+  display: block;
+  height: 100%;
+  background: #e6b422;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tier-pop {
+    transition: none;
+  }
+}
+
 .tier-about {
   max-width: 40rem;
   margin: 1.5rem auto 0;

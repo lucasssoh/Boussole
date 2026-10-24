@@ -34,7 +34,7 @@ public record Rank(Ladder ladder, int tier, int division, int level, double into
         boolean critical = false;
         while (specialties != null && tier > 0 && !specialties.open(ladder, tier)) {
             if (tier == ladder.top()) {
-                missing = Math.max(0, Specialties.FOR_SAGE - specialties.besideCriticalThinking());
+                missing = Math.max(0, Specialties.FOR_GRAND_SAGE - specialties.besideCriticalThinking());
                 critical = !specialties.criticalThinking();
             } else {
                 missing = Specialties.FOR_SAGE - specialties.atLevel();

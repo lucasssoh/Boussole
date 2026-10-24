@@ -77,13 +77,13 @@ class RewardTest {
         }
 
         @Test
-        void grand_sage_asks_for_critical_thinking_besides_three_specialties() {
-            Rank withinThree = Rank.of(Ladder.CULTURE, 500_000, new Specialties(3, 2, true));
-            Rank without = Rank.of(Ladder.CULTURE, 500_000, new Specialties(4, 4, false));
-            Rank both = Rank.of(Ladder.CULTURE, 500_000, new Specialties(4, 3, true));
+        void grand_sage_asks_for_critical_thinking_besides_five_specialties() {
+            Rank withinFive = Rank.of(Ladder.CULTURE, 500_000, new Specialties(5, 4, true));
+            Rank without = Rank.of(Ladder.CULTURE, 500_000, new Specialties(6, 6, false));
+            Rank both = Rank.of(Ladder.CULTURE, 500_000, new Specialties(6, 5, true));
 
-            assertThat(withinThree.tierId()).isEqualTo("sage");
-            assertThat(withinThree.specialtiesMissing()).isEqualTo(1);
+            assertThat(withinFive.tierId()).isEqualTo("sage");
+            assertThat(withinFive.specialtiesMissing()).isEqualTo(1);
             assertThat(without.tierId()).isEqualTo("sage");
             assertThat(without.criticalThinkingMissing()).isTrue();
             assertThat(both.tierId()).isEqualTo("grand-sage");
@@ -91,7 +91,7 @@ class RewardTest {
 
         @Test
         void grand_sage_has_no_division_and_no_end() {
-            Rank rank = Rank.of(Ladder.CULTURE, 2_000_000, new Specialties(4, 3, true));
+            Rank rank = Rank.of(Ladder.CULTURE, 2_000_000, new Specialties(6, 5, true));
 
             assertThat(rank.tierId()).isEqualTo("grand-sage");
             assertThat(rank.division()).isZero();

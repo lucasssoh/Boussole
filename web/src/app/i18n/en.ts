@@ -236,7 +236,16 @@ export const EN = {
     since: 'From {{points}} points',
     points: '{{points}} pts',
     asksSage: 'and three specialties at Specialist',
-    asksGrandSage: 'and Critical thinking at Specialist, besides the three specialties of Sage',
+    asksGrandSage: 'and five specialties at Specialist besides Critical thinking, and Critical thinking at Specialist',
+    need: {
+      points: '{{points}} points',
+      specialties: '{{count}} specialties',
+      specialtiesDetail: 'at Specialist',
+      besides: '{{count}} specialties',
+      besidesDetail: 'at Specialist, besides Critical thinking',
+      critical: 'Critical thinking',
+      criticalDetail: 'at Specialist',
+    },
     about: {
       curious: 'A magnetised needle laid on water already seeks the north. Everything starts with a question.',
       apprentice: 'The dry compass holds the needle on a pivot. Studying becomes a habit, session after session.',

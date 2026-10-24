@@ -31,6 +31,9 @@ export const SPECIALTY_TIERS: readonly string[] = ['novice', 'practitioner', 'pr
 
 /** The specialty tier that counts for Sage and Grand Sage, and the field Grand Sage asks for besides. */
 export const STRONG_SPECIALTY = 'specialist';
+/** How many specialties at Specialist Sage asks for, and Grand Sage besides critical thinking. */
+export const FOR_SAGE = 3;
+export const FOR_GRAND_SAGE = 5;
 export const CRITICAL_THINKING = 'critical-thinking';
 
 /** Whether a specialty is at Specialist or above. */

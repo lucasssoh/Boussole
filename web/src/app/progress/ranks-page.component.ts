@@ -7,7 +7,7 @@ import { StatsService } from '../core/stats.service';
 import { IconComponent } from '../shared/icon.component';
 import { LoadingComponent } from '../shared/loading.component';
 import { RankEmblemComponent } from '../shared/rank-emblem.component';
-import { CRITICAL_THINKING, isStrong } from '../shared/ranks';
+import { CRITICAL_THINKING, FOR_GRAND_SAGE, FOR_SAGE, isStrong } from '../shared/ranks';
 import { RankNames } from './rank-names';
 
 /** One tier of the culture: where it starts, and what it asks past its points. */
@@ -15,6 +15,13 @@ interface Tier {
   tier: string;
   from: number;
   asks: string | null;
+}
+
+/** One thing a tier asks, how much, and how much the learner has. */
+interface Need {
+  kind: 'points' | 'specialties' | 'besides' | 'critical';
+  needed: number;
+  have: number;
 }
 
 /** What the top culture tiers ask for, past their points. */
@@ -26,8 +33,9 @@ const HERE_SIZE = 128;
 
 /**
  * The tiers of the culture at a glance: one row of emblems linked by a line, the learner's twice as
- * large; under each, its points and, for Sage and Grand Sage, a mark for each specialty they ask.
- * The tier chosen, the learner's at first, says what it stands for below. On a phone, a tier a row.
+ * large; under each, its points and, for Sage and Grand Sage, a mark for each specialty they ask,
+ * and on hover or focus, a card of what they ask, each with where the learner stands. The tier
+ * chosen, the learner's at first, says what it stands for below. On a phone, a tier a row.
  */
 @Component({
   selector: 'app-ranks-page',
@@ -44,7 +52,7 @@ const HERE_SIZE = 128;
         @for (row of tiers(); track row.tier; let index = $index) {
           @let here = row.tier === culture()?.tier;
           <li class="tier-cell" [class.here]="here" [class.passed]="index < hereIndex()" [class.ahead]="index > hereIndex()">
-            <button type="button" [attr.aria-pressed]="row.tier === chosen()" (click)="choice.set(row.tier)">
+            <button type="button" [attr.aria-pressed]="row.tier === chosen()" [attr.aria-describedby]="row.asks ? 'needs-' + row.tier : null" (click)="choice.set(row.tier)">
               <span class="tier-mark">
                 <span [style.margin-top.px]="here ? 0 : smallLift">
                   <app-rank-emblem [tier]="row.tier" [division]="here ? (culture()?.division ?? 0) : 0" [size]="here ? hereSize : size" [lively]="here" />
@@ -54,17 +62,48 @@ const HERE_SIZE = 128;
               <span class="tier-needs">
                 <span class="tier-points">{{ 'ranks.points' | transloco: { points: names.points(row.from) } }}</span>
                 @if (row.asks) {
-                  <span class="tier-marks" role="img" [attr.aria-label]="row.asks | transloco" [title]="row.asks | transloco">
-                    @for (met of specialtyMarks(); track $index) {
-                      <span class="pip" [class.met]="met"></span>
-                    }
-                    @if (row.tier === 'grand-sage') {
-                      <span class="pip critical" [class.met]="criticalThinking()"></span>
+                  <span class="tier-marks" aria-hidden="true">
+                    @for (need of needs(row); track need.kind) {
+                      @for (met of marks(need); track $index) {
+                        <span class="pip" [class.critical]="need.kind === 'critical'" [class.met]="met"></span>
+                      }
                     }
                   </span>
                 }
               </span>
             </button>
+            @if (row.asks) {
+              <span class="tier-pop" role="tooltip" [id]="'needs-' + row.tier">
+                <span class="tier-pop-title">{{ (row.tier === 'sage' ? 'profile.forSage' : 'profile.forGrandSage') | transloco }}</span>
+                @for (need of needs(row); track need.kind) {
+                  @let met = need.have >= need.needed;
+                  <span class="tier-pop-row" [class.met]="met">
+                    <span class="tier-pop-sign" aria-hidden="true">
+                      @if (need.kind === 'points') {
+                        <span class="tier-pop-coin"></span>
+                      } @else {
+                        <span class="pip" [class.critical]="need.kind === 'critical'" [class.met]="met"></span>
+                      }
+                    </span>
+                    <span class="tier-pop-what">
+                      <strong>{{ 'ranks.need.' + need.kind | transloco: { count: need.needed, points: names.points(need.needed) } }}</strong>
+                      @if (need.kind !== 'points') {
+                        <small>{{ ('ranks.need.' + need.kind + 'Detail') | transloco }}</small>
+                      }
+                    </span>
+                    <span class="tier-pop-state">
+                      @if (met) {
+                        <app-icon name="check" />
+                      } @else if (need.kind === 'points') {
+                        <span class="tier-pop-gauge"><span [style.width.%]="(100 * need.have) / need.needed"></span></span>
+                      } @else {
+                        {{ need.have }} / {{ need.needed }}
+                      }
+                    </span>
+                  </span>
+                }
+              </span>
+            }
           </li>
         }
       </ol>
@@ -103,19 +142,34 @@ export class RanksPageComponent {
   /** The tier the learner chose to read about; theirs until they choose. */
   protected readonly choice = signal<string | null>(null);
   protected readonly chosen = computed(() => this.choice() ?? this.culture()?.tier ?? this.tiers()[0]?.tier ?? null);
-  private readonly fields = computed(() => this.stats.stats()?.fields ?? []);
-  /** The three specialties Sage asks for, those the learner has at Specialist or above first. */
-  protected readonly specialtyMarks = computed(() => {
-    const strong = this.fields().filter((field) => isStrong(field.specialty.tier) && field.domain !== CRITICAL_THINKING).length;
-    return [0, 1, 2].map((index) => index < strong);
-  });
-  protected readonly criticalThinking = computed(() =>
-    this.fields().some((field) => field.domain === CRITICAL_THINKING && isStrong(field.specialty.tier)),
-  );
+  private readonly strong = computed(() => (this.stats.stats()?.fields ?? []).filter((field) => isStrong(field.specialty.tier)));
+  private readonly criticalThinking = computed(() => this.strong().some((field) => field.domain === CRITICAL_THINKING));
 
   constructor() {
     inject(BoussoleApi).ranks().then((ladders) => this.steps.set(ladders.culture), () => undefined);
     this.stats.refresh();
+  }
+
+  /** What a tier asks: its points, and for Sage and Grand Sage their specialties at Specialist. */
+  protected needs(row: Tier): Need[] {
+    const points: Need = { kind: 'points', needed: row.from, have: this.stats.stats()?.points ?? 0 };
+    const critical = this.criticalThinking();
+    if (row.tier === 'sage') {
+      return [points, { kind: 'specialties', needed: FOR_SAGE, have: this.strong().length }];
+    }
+    if (row.tier === 'grand-sage') {
+      return [
+        points,
+        { kind: 'besides', needed: FOR_GRAND_SAGE, have: this.strong().length - (critical ? 1 : 0) },
+        { kind: 'critical', needed: 1, have: critical ? 1 : 0 },
+      ];
+    }
+    return [points];
+  }
+
+  /** A mark per specialty asked, those the learner has first. */
+  protected marks(need: Need): boolean[] {
+    return need.kind === 'points' ? [] : Array.from({ length: need.needed }, (_, index) => index < need.have);
   }
 
   protected asks(tier: string): string | null {

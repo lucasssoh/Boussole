@@ -238,7 +238,16 @@ export const FR: Translations = {
     since: 'Dès {{points}} points',
     points: '{{points}} pts',
     asksSage: 'et trois spécialités au palier Spécialiste',
-    asksGrandSage: 'et Esprit critique au palier Spécialiste, en plus des trois spécialités de Sage',
+    asksGrandSage: 'et cinq spécialités au palier Spécialiste hors Esprit critique, et l’Esprit critique au palier Spécialiste',
+    need: {
+      points: '{{points}} points',
+      specialties: '{{count}} spécialités',
+      specialtiesDetail: 'au palier Spécialiste',
+      besides: '{{count}} spécialités',
+      besidesDetail: 'au palier Spécialiste, hors Esprit critique',
+      critical: 'Esprit critique',
+      criticalDetail: 'au palier Spécialiste',
+    },
     about: {
       curious: 'Une aiguille aimantée posée sur l’eau cherche déjà le nord. Tout commence par une question.',
       apprentice: 'La boussole sèche tient l’aiguille sur un pivot. L’étude devient une habitude, séance après séance.',

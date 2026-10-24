@@ -8,7 +8,7 @@ import { emblemLook } from '../shared/emblem';
 import { LoadingComponent } from '../shared/loading.component';
 import { RankEmblemComponent } from '../shared/rank-emblem.component';
 import { RankPillComponent } from '../shared/rank-pill.component';
-import { CRITICAL_THINKING, divisionProgress, isStrong, roman } from '../shared/ranks';
+import { CRITICAL_THINKING, FOR_GRAND_SAGE, FOR_SAGE, divisionProgress, isStrong, roman } from '../shared/ranks';
 import { RankNames } from './rank-names';
 import { RankRouteComponent } from './rank-route.component';
 
@@ -67,7 +67,7 @@ import { RankRouteComponent } from './rank-route.component';
         <div class="wide">
           <div class="zone-head">
             <h2>{{ 'profile.specialties' | transloco }}</h2>
-            <span class="need" role="img" [attr.aria-label]="'profile.specialistsCount' | transloco: { count: strongSpecialties(), needed: 3 }" [title]="'profile.atSpecialist' | transloco">
+            <span class="need" role="img" [attr.aria-label]="'profile.specialistsCount' | transloco: { count: strongSpecialties(), needed: specialtyMarks().length }" [title]="'profile.atSpecialist' | transloco">
               {{ (towardGrandSage() ? 'profile.forGrandSage' : 'profile.forSage') | transloco }}
               @for (met of specialtyMarks(); track $index) {
                 <span class="pip" [class.met]="met"></span>
@@ -149,7 +149,9 @@ export class ProfilePageComponent {
   protected readonly criticalThinking = computed(() =>
     (this.stats.stats()?.fields ?? []).some((field) => field.domain === CRITICAL_THINKING && isStrong(field.specialty.tier)),
   );
-  protected readonly specialtyMarks = computed(() => Array.from({ length: 3 }, (_, index) => index < this.strongSpecialties()));
+  protected readonly specialtyMarks = computed(() =>
+    Array.from({ length: this.towardGrandSage() ? FOR_GRAND_SAGE : FOR_SAGE }, (_, index) => index < this.strongSpecialties()),
+  );
   /** Every division of the culture, and where the learner's is among them. */
   protected readonly cultureSteps = signal<LadderStep[]>([]);
   protected readonly hereIndex = computed(() => Math.max(0, this.cultureSteps().findIndex((step) => this.isHere(step))));
