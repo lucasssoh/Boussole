@@ -56,12 +56,12 @@ class RewardTest {
 
         @Test
         void a_tier_starts_at_its_division_v_and_its_first_level() {
-            Rank rank = Rank.of(Ladder.CULTURE, 1227);
+            Rank rank = Rank.of(Ladder.CULTURE, 1200);
 
             assertThat(rank.tierId()).isEqualTo("apprentice");
             assertThat(rank.division()).isEqualTo(5);
             assertThat(rank.level()).isEqualTo(71);
-            assertThat(rank.nextAt()).isEqualTo(1227 + (4948 - 1227) / 5.0);
+            assertThat(rank.nextAt()).isEqualTo(1200 + (4900 - 1200) / 5.0);
         }
 
         @Test
@@ -102,7 +102,7 @@ class RewardTest {
         void the_steps_go_from_division_v_of_the_first_tier_to_the_top() {
             assertThat(Ladder.CULTURE.steps()).hasSize(7 * 5 + 1);
             assertThat(Ladder.CULTURE.steps().getFirst()).isEqualTo(new Ladder.Step(0, 5, 0));
-            assertThat(Ladder.CULTURE.steps().getLast()).isEqualTo(new Ladder.Step(7, 0, 404845));
+            assertThat(Ladder.CULTURE.steps().getLast()).isEqualTo(new Ladder.Step(7, 0, 400000));
         }
 
         @Test

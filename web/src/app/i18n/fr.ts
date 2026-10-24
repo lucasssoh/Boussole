@@ -231,7 +231,7 @@ export const FR: Translations = {
   },
   ranks: {
     title: 'Paliers',
-    since: 'dès {{points}} points',
+    since: 'Dès {{points}} points',
     points: '{{points}} pts',
     asksSage: 'et trois spécialités au palier Spécialiste',
     asksGrandSage: 'et Esprit critique au palier Spécialiste, en plus des trois spécialités de Sage',

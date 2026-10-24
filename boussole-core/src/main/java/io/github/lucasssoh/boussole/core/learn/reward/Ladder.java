@@ -17,7 +17,7 @@ import java.util.List;
  */
 public enum Ladder {
     CULTURE(List.of("curious", "apprentice", "initiate", "scholar", "savant", "master", "sage", "grand-sage"),
-            new double[] {0, 1227, 4948, 16232, 50448, 118627, 228329, 404845}),
+            new double[] {0, 1200, 4900, 16000, 50000, 120000, 230000, 400000}),
     SPECIALTY(List.of("novice", "practitioner", "proficient", "expert", "specialist", "authority", "luminary"),
             new double[] {0, 1200, 4800, 16000, 32000, 50000, 80000});
 
