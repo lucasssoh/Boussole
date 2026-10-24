@@ -33,6 +33,7 @@ enum CalloutKind {
   NOTE
   TIP
   WARNING
+  BEYOND
 }
 class VideoBlock <<record>> {
   label : String

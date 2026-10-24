@@ -96,9 +96,17 @@ session should be split, and propose how.
   formula, a graph, a table, code), ask at least one question that goes from one to the other.
 - **No hidden prerequisites**: anything the documents take for granted gets a `:::recall` or a
   short explanation.
-- **Cite what you rely on**: a page of the documents is a `:pdf[…]{src=… page=…}`, a web page a
-  `:link[…]{url=…}` in the sentence, or a `::link[…]{url=…}` block for a reference worth
-  reading in full. The learner opens it beside the text.
+- **Source every claim.** Boussole is worth only as much as what it says can be checked:
+  - **every notion points to the page it relies on**, `:pdf[…]{src=… page=…}` in the sentence
+    (or a `::pdf` block), at least once, and again wherever a definition, a theorem, a figure
+    or a method is taken from the documents (`boussole validate` warns, P014);
+  - a web source the track recorded is a `:link[…]{url=…}`, or a `::link[…]{url=…}` block for
+    a reference worth reading in full; the learner opens it beside the text;
+  - **what does not come from the documents** (an intuition of your own, an analogy, a fact
+    from general knowledge, a complement found elsewhere) goes in a `:::beyond` that says where
+    it comes from: « de culture générale », or its `:link`. Never mix it into the text drawn from
+    the documents: the learner must always know what the teacher said and what was added;
+  - the `:::solution` of an exercise points to the page that gives its method.
 - **Draw when a picture helps**: a network, a path, a flow, a tree or a state machine is a
   `:::graph` (`docs/FORMAT.md` §5.5): nodes and edges as lines of text, `!` on what matters,
   checked by `boussole validate`. A flowchart or a sequence is a `mermaid` block. Keep each to a

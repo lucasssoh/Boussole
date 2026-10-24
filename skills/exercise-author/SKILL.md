@@ -113,7 +113,9 @@ The learner answers **once**; right after, the interface shows the right answer 
 wrong one in red, and the `:::solution` beside the question. So the solution **explains why
 the right answer is right**: the reasoning or the worked steps, not just the result, so that a
 learner who got it wrong understands what to change. Keep it short for a quick MCQ (two or
-three sentences), step by step for a calculation. End with the result in bold.
+three sentences), step by step for a calculation. End with the result in bold. Point to the page
+of the documents (or the web source) that gives the method, `:pdf[…]{src=… page=…}`, so that the
+learner can check it there.
 
 The solution of a `free` exercise, where the learner grades themself, ends with **three to six
 points to check** (« Ta réponse doit… »): what a right answer contains. Comparing against a list

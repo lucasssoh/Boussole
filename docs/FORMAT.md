@@ -293,7 +293,7 @@ each answer and the correction right after it.
 |---|---|---|
 | `example` | container | A worked example, solution included and visible. One per notion. |
 | `recall` | container | A reminder of a term or prerequisite, just before it is needed. |
-| `note`, `tip`, `warning` | container | Callouts. |
+| `note`, `tip`, `warning`, `beyond` | container | Callouts. `beyond` holds what does **not** come from the documents of the track, and says where it comes from: a web source (`:link`) or general knowledge. |
 | `term` | inline | Hover definition from the lexicon. `{id=…}` is optional when the text equals a term or alias, ignoring case (`:term[Dépôt]` finds the term `dépôt`). |
 | `video` | leaf | A video beside the text: `youtube=<11-character video id>` for YouTube, or `src=<file>` for a video file of the sources folder (a lecture recording), never both. `start`, `end` as seconds, `m:ss` or `h:mm:ss`. The label is the caption. A file plays in the browser when it is MP4 (H.264), WebM or Ogg (`F038` otherwise). |
 | `pdf` | leaf or inline | Opens a file of `sources/` beside the text. `src=<file>` required; `page=N` optional. |
@@ -347,7 +347,7 @@ Where each directive may appear:
 | `exercise`, `mcq` | a notion, an introduction, a section |
 | `example` | a notion, an introduction, a section |
 | `recall` | the same, and `hint`, `solution` |
-| `note`, `tip`, `warning` | the same as `recall`, and `example`, `recall` |
+| `note`, `tip`, `warning`, `beyond` | the same as `recall`, and `example`, `recall` |
 | `video`, `pdf`, `link`, `graph` | anywhere except `answer` |
 | `ref` | a notion, an introduction, a section, the body of a review or exam |
 | `answer` | `exercise` |
@@ -508,6 +508,7 @@ chapter.
 | `P011` | warning | A `graph` of more than 12 nodes. |
 | `P012` | warning | A session without `written_by`: the learner cannot see who wrote it. |
 | `P013` | warning | `subject.yaml` without `level` or `domain`. |
+| `P014` | warning | In a track with documents, a notion that cites no source: no `:pdf` page and no `:link`. |
 
 `P001`, `P002`, `P006` and `P007` apply to lessons only; `P004` does not apply to exams, which
 show no hints.

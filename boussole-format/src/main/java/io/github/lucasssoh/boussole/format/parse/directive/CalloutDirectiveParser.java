@@ -8,7 +8,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
-/** {@code :::note}, {@code :::tip} and {@code :::warning}, one instance per kind. */
+/** {@code :::note}, {@code :::tip}, {@code :::warning} and {@code :::beyond}, one instance per kind. */
 final class CalloutDirectiveParser implements DirectiveParser {
 
     private final CalloutKind kind;

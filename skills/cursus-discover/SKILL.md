@@ -88,9 +88,13 @@ validate again.
 
 Follow `cursus-plan` with these sources as the documents. Then, in every session:
 
-- **Cite what you rely on**: `:link[…]{url=…}` for the page itself, in the sentence that uses it;
-  `::link[…]{url=…}` for a page worth reading in full; `:pdf[…]{src=… page=…}` for a downloaded
-  document. The learner opens them beside the text.
+- **Source every claim**, here above all: the learner has no course of their own to check
+  against. Every notion points to the source it relies on, `:link[…]{url=…}` in the sentence
+  that uses it (`::link[…]{url=…}` for a page worth reading in full), `:pdf[…]{src=… page=…}`
+  for a downloaded document, at least once and wherever a definition, a result or a method is
+  taken from it (`boussole validate` warns, P014). What comes from none of the recorded sources
+  (an intuition, an analogy, general knowledge) goes in a `:::beyond` that says so. Never write
+  a notion from memory alone.
 - List the source notes and documents of the session in its `sources` front matter.
 - Say who wrote each session in its `written_by` (your exact model ID, your tool, today's date).
 - When two sources disagree, follow the leading one and say so in a `:::note`.

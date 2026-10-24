@@ -25,6 +25,7 @@ written_by:
 | `:::example[titre]` | un :term[exemple résolu]{id=worked-example} : un cas traité pas à pas, solution visible | un par notion |
 | `:::recall` | un rappel d'un terme ou d'un prérequis, juste avant d'en avoir besoin | à volonté |
 | `:::note`, `:::tip`, `:::warning` | une remarque, une astuce, une erreur à éviter | à volonté |
+| `:::beyond` | ce qui ne vient pas des documents, et d'où ça vient | à volonté |
 | `:term[texte]{id=…}` | un mot dont la définition, tirée du :term[lexique]{id=lexicon}, s'affiche au survol | à volonté |
 
 Pour `:term`, `{id=…}` est facultatif quand le texte est exactement le terme ou l'un de ses
@@ -97,6 +98,26 @@ Que fait l'apprenant juste après l'exemple d'une notion ?
 :::solution
 **Une question.** Un seul exemple par notion ; le cas suivant, l'apprenant le résout lui-même, et
 la solution de la question lui montre la méthode.
+:::
+::::
+
+::::mcq{#f5-a6}
+Ton parcours est construit sur les transparents de ton prof. Tu veux ajouter une analogie à toi,
+que les transparents ne donnent pas. Où va-t-elle ?
+
+- [x] Dans un `:::beyond`, qui dit qu'elle ne vient pas des transparents
+- [ ] Dans l'explication, avec le reste
+  > L'apprenant la prendrait pour ce que le prof a dit : ce qui vient d'ailleurs est mis à part.
+- [ ] Nulle part : un parcours ne peut que répéter ses documents
+  > Une analogie peut aider ; elle est simplement montrée pour ce qu'elle est.
+
+:::hint
+L'apprenant doit toujours savoir ce que le prof a dit et ce qui a été ajouté.
+:::
+
+:::solution
+Chaque notion renvoie à la page sur laquelle elle s'appuie (`:pdf`) ; ce qui vient d'ailleurs, une
+analogie, un fait de culture générale, une source web, va dans un `:::beyond` qui dit d'où ça vient.
 :::
 ::::
 

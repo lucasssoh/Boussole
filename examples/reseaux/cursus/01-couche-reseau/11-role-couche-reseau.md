@@ -84,12 +84,19 @@ pas les regrouper dans une table.
 :term[Datagramme et circuit virtuel]{id=circuit-virtuel} : avec ou sans état dans les routeurs.
 :::
 
+Le cours oppose les deux modèles :pdf[p. 15]{src=Reseaux_Cours_Intro_2026.pdf page=15}.
+
 ```
 DATAGRAMME (IP)                        CIRCUIT VIRTUEL (ATM, MPLS)
 chaque paquet est indépendant          on établit un chemin d'abord
 adresse complète dans chaque paquet    puis un identifiant court
 état dans les routeurs : AUCUN         état : une entrée par circuit
 ```
+
+:::beyond
+De culture générale : MPLS, le circuit virtuel des opérateurs, garde l'adressage IP
+et ajoute des étiquettes courtes pour aller plus vite, voir :link[RFC 3031]{url=https://www.rfc-editor.org/rfc/rfc3031}.
+:::
 
 ::::example[Une panne de routeur]
 Un routeur tombe au milieu d'un transfert. En **datagramme**, les paquets suivants prennent un

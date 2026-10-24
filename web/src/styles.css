@@ -27,6 +27,9 @@
   --hint-bg: #fff9db;
   --example-bg: #e7f5ff;
   --recall-bg: #f3f0ff;
+  --beyond-bg: #fff0f6;
+  --beyond-line: #f783ac;
+  --beyond-ink: #a61e4d;
   --how-to-bg: #dff5ec;
   --how-to-ink: #075341;
   --how-to-line: #96dcc5;
@@ -66,6 +69,12 @@
     --hint-bg: rgb(255 212 59 / 0.12);
     --example-bg: rgb(116 192 252 / 0.12);
     --recall-bg: rgb(177 151 252 / 0.14);
+  --beyond-bg: rgb(247 131 172 / 0.12);
+  --beyond-line: #c2255c;
+  --beyond-ink: #faa2c1;
+    --beyond-bg: rgb(247 131 172 / 0.12);
+    --beyond-line: #c2255c;
+    --beyond-ink: #faa2c1;
     --how-to-bg: #12322b;
     --how-to-ink: #7fe0bd;
     --how-to-line: #2f9e7c;
@@ -3334,5 +3343,16 @@ app-settings-drawer {
 
 .panel-note.met {
   color: var(--correct);
+}
+
+/* What does not come from the documents of the track: set apart, so it is never taken for them. */
+.frame.beyond {
+  border-style: dashed;
+  border-color: var(--beyond-line);
+  background: var(--beyond-bg);
+}
+
+.frame.beyond .frame-title {
+  color: var(--beyond-ink);
 }
 

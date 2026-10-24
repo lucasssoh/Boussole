@@ -93,6 +93,7 @@ export const EN = {
     note: 'Note',
     tip: 'Tip',
     warning: 'Watch out',
+    beyond: 'Beyond the course',
     watch: 'Watch',
     visit: 'Visit',
     open: 'Open',

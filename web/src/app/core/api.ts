@@ -181,7 +181,7 @@ export interface RecallBlockView {
 
 export interface CalloutBlockView {
   type: 'callout';
-  kind: 'note' | 'tip' | 'warning';
+  kind: 'note' | 'tip' | 'warning' | 'beyond';
   blocks: BlockView[];
 }
 

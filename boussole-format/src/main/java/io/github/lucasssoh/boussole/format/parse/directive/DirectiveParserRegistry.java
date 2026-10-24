@@ -24,6 +24,7 @@ public final class DirectiveParserRegistry {
                 new CalloutDirectiveParser(CalloutKind.NOTE),
                 new CalloutDirectiveParser(CalloutKind.TIP),
                 new CalloutDirectiveParser(CalloutKind.WARNING),
+                new CalloutDirectiveParser(CalloutKind.BEYOND),
                 new VideoDirectiveParser(),
                 new PdfDirectiveParser(),
                 new LinkDirectiveParser(),

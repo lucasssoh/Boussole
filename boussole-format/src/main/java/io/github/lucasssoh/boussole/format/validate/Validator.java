@@ -14,6 +14,7 @@ import io.github.lucasssoh.boussole.format.validate.rule.PartOrderRule;
 import io.github.lucasssoh.boussole.format.validate.rule.McqChoicesRule;
 import io.github.lucasssoh.boussole.format.validate.rule.McqFeedbackRule;
 import io.github.lucasssoh.boussole.format.validate.rule.QuickCheckRule;
+import io.github.lucasssoh.boussole.format.validate.rule.CitationRule;
 import io.github.lucasssoh.boussole.format.validate.rule.HookPlaceRule;
 import io.github.lucasssoh.boussole.format.validate.rule.ReferenceOrderRule;
 import io.github.lucasssoh.boussole.format.validate.rule.ReferenceRule;
@@ -62,6 +63,7 @@ public final class Validator {
                 new HintPresenceRule(),
                 new AuthorshipRule(),
                 new TrackProfileRule(),
+                new CitationRule(),
                 new McqFeedbackRule(),
                 new DeclaredTermsRule(),
                 new ClosingRule(),

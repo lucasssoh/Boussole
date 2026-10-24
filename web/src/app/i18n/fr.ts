@@ -95,6 +95,7 @@ export const FR: Translations = {
     note: 'Remarque',
     tip: 'Astuce',
     warning: 'Attention',
+    beyond: 'Hors du cours',
     watch: 'Regarder',
     visit: 'Consulter',
     open: 'Ouvrir',

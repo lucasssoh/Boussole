@@ -25,6 +25,7 @@ written_by:
 | `:::example[title]` | a :term[worked example]{id=worked-example}: a case solved step by step, solution visible | one per notion |
 | `:::recall` | a reminder of a term or a prerequisite, just before it is needed | as many as needed |
 | `:::note`, `:::tip`, `:::warning` | a remark, a tip, a mistake to avoid | as many as needed |
+| `:::beyond` | what does not come from the documents, and where it comes from | as many as needed |
 | `:term[text]{id=…}` | a word whose definition, taken from the :term[lexicon]{id=lexicon}, shows on hover | as many as needed |
 
 For `:term`, `{id=…}` is optional when the text is exactly the term or one of its aliases. Each
@@ -97,6 +98,26 @@ What does the learner do right after the example of a notion?
 :::solution
 **A question.** One example per notion; the next case, the learner solves it, and the solution
 of the question shows the method.
+:::
+::::
+
+::::mcq{#f5-a6}
+Your track is built from your teacher's slides. You want to add an analogy of your own that the
+slides do not give. Where does it go?
+
+- [x] In a `:::beyond`, which says it does not come from the slides
+- [ ] In the explanation, with the rest
+  > The learner would take it for what the teacher said: what comes from elsewhere is set apart.
+- [ ] Nowhere: a track may only repeat its documents
+  > An analogy can help; it is simply shown for what it is.
+
+:::hint
+The learner must always know what the teacher said and what was added.
+:::
+
+:::solution
+Every notion points to the page it relies on (`:pdf`); what comes from elsewhere, an analogy, a
+fact of general knowledge, a web source, goes in a `:::beyond` that says where it comes from.
 :::
 ::::
 
