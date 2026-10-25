@@ -63,7 +63,7 @@ const LEAVE_MS = 240;
 /**
  * The map of a track: its chapters as blocks linked by what comes before what, a chapter waiting
  * for those one of its sessions needs; a chapter opens with a zoom on it into its sessions, linked
- * the same way. The blocks pop in floor after floor, each link drawn just before the block it
+ * the same way; a track of one chapter opens on it. The blocks pop in floor after floor, each link drawn just before the block it
  * reaches. Finished blocks are checked, the next one stands out, those not open yet are locked.
  */
 @Component({
@@ -74,7 +74,9 @@ const LEAVE_MS = 240;
   template: `
     @if (openChapter(); as chapter) {
       <div class="map-head" [style.--tint]="tintOf(chapter.id)">
-        <button type="button" class="back" [attr.aria-label]="'map.chapters' | transloco" [title]="'map.chapters' | transloco" (click)="close()"><app-icon name="arrow-left" /></button>
+        @if (!single()) {
+          <button type="button" class="back" [attr.aria-label]="'map.chapters' | transloco" [title]="'map.chapters' | transloco" (click)="close()"><app-icon name="arrow-left" /></button>
+        }
         <h3><span class="map-dot" aria-hidden="true"></span><app-rich-text [text]="chapter.title" /></h3>
       </div>
     }
@@ -155,7 +157,12 @@ export class CourseMapComponent {
 
   /** The chapter open, kept in the address so that coming back from a session finds it open. */
   private readonly chapterParam = toSignal(this.route.queryParamMap.pipe(map((params) => params.get('chapter'))), { initialValue: null });
-  protected readonly openChapter = computed(() => this.course().chapters.find((chapter) => chapter.id === this.chapterParam()) ?? null);
+  /** A track of one chapter has nothing to choose between: that chapter is open, for good. */
+  protected readonly single = computed(() => this.course().chapters.length === 1);
+  protected readonly openChapter = computed(() => {
+    const chapters = this.course().chapters;
+    return this.single() ? chapters[0] : (chapters.find((chapter) => chapter.id === this.chapterParam()) ?? null);
+  });
   protected readonly zooming = signal<string | null>(null);
   protected readonly leaving = signal(false);
 
