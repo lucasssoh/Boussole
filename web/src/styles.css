@@ -1296,6 +1296,7 @@ a.session-card:active {
  * auto margins share the space), from the top when it is taller, never cut.
  */
 .session {
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 3.5rem);
@@ -2214,11 +2215,26 @@ a.session-card:active {
   background: #ffffff;
 }
 
-.prose table {
-  display: block;
+/*
+ * A table may be wider than the text: its frame spans the whole session area (main.session is the
+ * container) and centres it there, formulas whole. Only a screen too narrow for it scrolls it.
+ */
+.table-frame {
+  display: flex;
+  /* safe: a table wider than the screen starts at its left edge, where scrolling can reach it. */
+  justify-content: safe center;
+  margin: 1rem calc((100% - 100cqi) / 2);
   overflow-x: auto;
+}
+
+.prose table {
+  width: max-content;
+  max-width: 100%;
   border-collapse: collapse;
-  margin: 1rem 0;
+}
+
+.prose table .katex {
+  white-space: nowrap;
 }
 
 .prose th,
@@ -2287,7 +2303,6 @@ a.session-card:active {
 .term-tip {
   display: grid;
   gap: 0.2rem;
-  position: absolute;
   visibility: hidden;
   opacity: 0;
   scale: 0.6;
@@ -2313,8 +2328,7 @@ a.session-card:active {
   transition-delay: 0.06s;
 }
 
-.term:hover > .term-tip,
-.term:focus > .term-tip {
+.term-tip.shown {
   visibility: visible;
   opacity: 1;
   scale: 1;
@@ -2326,25 +2340,27 @@ a.session-card:active {
     visibility 0s;
 }
 
-.term:hover > .term-tip > *,
-.term:focus > .term-tip > * {
+.term-tip.shown > * {
   opacity: 1;
   translate: 0 0;
   transition: opacity 0.2s ease-out 0.12s, translate 0.3s var(--spring) 0.12s;
 }
 
-.term:hover > .term-tip > .tip-definition,
-.term:focus > .term-tip > .tip-definition {
+.term-tip.shown > .tip-definition {
   transition-delay: 0.2s;
 }
 
+.term-tip.above {
+  transform-origin: bottom left;
+  translate: 0 6px;
+}
+
+/* In the body of the page, placed by ProseBlockComponent: above everything, frames and tables included. */
 .term-tip {
-  left: 0;
-  top: 100%;
-  z-index: 40;
+  position: fixed;
+  z-index: 1000;
   width: max-content;
-  max-width: 22rem;
-  margin-top: 0.3rem;
+  max-width: min(22rem, calc(100vw - 1rem));
   padding: 0.6rem 0.85rem;
   border: 2px solid var(--subject);
   border-radius: 14px;

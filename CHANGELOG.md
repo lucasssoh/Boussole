@@ -16,6 +16,8 @@ minor release may break things and says so.
 
 ### Changed
 - **Your tier, at the top right,** shows your points and the next mark (`180 / 240`) rather than the bounds of the division (`0 → 240`).
+- **Tables** take the width they need, beyond the column of text when the screen has room, centred, and never cut a formula in two; only a screen too narrow for them scrolls them.
+- **Definitions of the lexicon** show above everything, tables and frames included, and stay inside the window.
 - **Drop-down lists** in exercises (pairing, and choices in a sentence to fill) open in the colours and the font of Boussole, rather than in those of the browser or of the system (a black list on a dark desktop).
 
 ## 0.0.2
