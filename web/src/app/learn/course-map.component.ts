@@ -104,8 +104,7 @@ const LEAVE_MS = 240;
               } @else {
                 <a [class]="'map-node session ' + node.state + ' ' + node.kind" [style.--i]="node.floor" [style.--tint]="node.tint"
                   [style.left.px]="node.x - node.width / 2" [style.top.px]="node.y - node.height / 2" [style.width.px]="node.width" [style.height.px]="node.height"
-                  [routerLink]="['/subjects', course().id, 'sessions', node.id]"
-                  [attr.title]="node.waitingFor ? (afterKey() | transloco: { titles: node.waitingFor }) : null">
+                  [routerLink]="['/subjects', course().id, 'sessions', node.id]">
                   <span class="map-mark" aria-hidden="true">
                     @switch (node.state) {
                       @case ('done') { <app-icon name="check" /> }
@@ -125,7 +124,6 @@ const LEAVE_MS = 240;
             } @else {
               <button type="button" [class]="'map-node chapter ' + node.state" [style.--i]="node.floor" [style.--tint]="node.tint"
                 [style.left.px]="node.x - node.width / 2" [style.top.px]="node.y - node.height / 2" [style.width.px]="node.width" [style.height.px]="node.height"
-                [attr.title]="node.waitingFor ? (afterKey() | transloco: { titles: node.waitingFor }) : null"
                 (click)="open(node.id)">
                 <span class="map-mark" aria-hidden="true">
                   @switch (node.state) {
