@@ -3871,9 +3871,23 @@ app-settings-drawer {
   color: color-mix(in srgb, var(--tint) 70%, var(--text));
 }
 
-.map-canvas.inside {
+/* Behind the map, graph paper: millimetres and every fifth line darker, fading towards the edges. */
+.map-canvas::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   border-radius: 24px;
-  background: color-mix(in srgb, var(--tint) 6%, transparent);
+  pointer-events: none;
+  --fine: color-mix(in srgb, var(--tint, var(--muted)) 9%, transparent);
+  --bold: color-mix(in srgb, var(--tint, var(--muted)) 17%, transparent);
+  background-image:
+    linear-gradient(var(--bold) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bold) 1px, transparent 1px),
+    linear-gradient(var(--fine) 1px, transparent 1px),
+    linear-gradient(90deg, var(--fine) 1px, transparent 1px);
+  background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+  background-position: center;
+  mask-image: radial-gradient(ellipse at center, #000 40%, transparent 78%);
 }
 
 .chapter-pill {
@@ -3946,25 +3960,22 @@ app-settings-drawer {
   color: var(--muted);
 }
 
-.map-node.chapter {
-  grid-template-rows: auto 1fr auto;
+.map-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
 }
 
-.map-node.chapter .map-mark {
-  grid-row: 1 / span 3;
+.map-progress .map-bar {
+  flex: 1 1 auto;
 }
 
 .map-count {
-  position: absolute;
-  top: 0.45rem;
-  right: 0.75rem;
   font-size: 0.72rem;
   font-weight: 900;
   color: var(--muted);
-}
-
-.map-node.chapter .map-title {
-  padding-right: 2.2rem;
+  white-space: nowrap;
 }
 
 .map-bar {
@@ -4058,6 +4069,7 @@ span.map-node.unwritten {
 }
 
 .course-map.compact .map-count {
+  position: absolute;
   top: 0.55rem;
   right: 0.55rem;
 }

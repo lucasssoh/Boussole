@@ -21,6 +21,15 @@ describe('graph layout', () => {
     expect(layout.floors[1]).toHaveLength(2);
   });
 
+  it('gives a floor too full the nodes that can wait to the floor below', () => {
+    const fan = ['e', 'f', 'g', 'h'];
+    const layout = layOut(['a', ...fan, 'z'], [...fan.map((node) => ['a', node] as const), ...fan.map((node) => [node, 'z'] as const)], 2);
+
+    expect(fan.map((node) => layout.floor.get(node))).toEqual([1, 1, 2, 2]);
+    expect(layout.floor.get('z')).toBe(3);
+    expect(Math.max(...layout.floors.map((slots) => slots.filter((slot) => 'node' in slot).length))).toBe(2);
+  });
+
   it('orders each floor so that no link crosses another when it can', () => {
     const layout = layOut(['a', 'b', 'c', 'd'], [['a', 'd'], ['b', 'c']]);
 

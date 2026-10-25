@@ -1,6 +1,7 @@
 /**
  * Lays out a small graph of what comes before what (chapters, or the sessions of a chapter) in
- * floors from the top: each node one floor below the lowest of those it waits for, the order on
+ * floors from the top: each node one floor below the lowest of those it waits for, a floor too
+ * full giving nodes that can wait to the floor below, the order on
  * each floor the one with the fewest crossings, and every link that skips floors routed through a
  * gap of each floor it crosses. Pure functions, for the map of a track.
  */
@@ -72,7 +73,7 @@ function permutations<T>(items: T[]): T[][] {
 /** Every order tried while there are few; beyond, floor after floor by the mean place of what is linked above. */
 const EXHAUSTIVE = 40_000;
 
-export function layOut(nodes: readonly string[], links: readonly Link[]): Layout {
+export function layOut(nodes: readonly string[], links: readonly Link[], perFloor = Infinity): Layout {
   const before = new Map<string, string[]>(nodes.map((node) => [node, []]));
   links.forEach(([from, to]) => before.get(to)?.push(from));
   const floor = new Map<string, number>();
@@ -87,6 +88,7 @@ export function layOut(nodes: readonly string[], links: readonly Link[]): Layout
     return value;
   };
   nodes.forEach((node) => floorOf(node, new Set()));
+  spreadDown(nodes, links, floor, perFloor);
   const count = Math.max(0, ...floor.values()) + 1;
   const floors: Slot[][] = Array.from({ length: nodes.length === 0 ? 0 : count }, () => []);
   const slotOf = new Map<string, Slot>();
@@ -151,6 +153,36 @@ export function layOut(nodes: readonly string[], links: readonly Link[]): Layout
     routes: chains.map((chain) => ({ link: chain.link, slots: chain.slots.map((slot) => at.get(slot)!) })),
     crossings: total(best),
   };
+}
+
+/**
+ * At most {@code perFloor} nodes a floor: from the top, a floor too full gives a node to the next
+ * floor, the one with the most room below it (the floor of its nearest successor), the last in
+ * order among equals; with no room anywhere, its successors go down with it.
+ */
+function spreadDown(nodes: readonly string[], links: readonly Link[], floor: Map<string, number>, perFloor: number): void {
+  if (!Number.isFinite(perFloor)) {
+    return;
+  }
+  const after = new Map<string, string[]>(nodes.map((node) => [node, []]));
+  links.forEach(([from, to]) => after.get(from)?.push(to));
+  const lower = (node: string, to: number, seen: Set<string>) => {
+    if (seen.has(node) || floor.get(node)! >= to) {
+      return;
+    }
+    seen.add(node);
+    floor.set(node, to);
+    after.get(node)!.forEach((next) => lower(next, to + 1, seen));
+  };
+  for (let k = 0; k <= Math.max(0, ...floor.values()); k++) {
+    let here = nodes.filter((node) => floor.get(node) === k);
+    const room = (node: string) => Math.min(Infinity, ...after.get(node)!.map((next) => floor.get(next)!)) - k - 1;
+    while (here.length > perFloor) {
+      const chosen = here.reduce((best, node) => (room(node) >= room(best) ? node : best));
+      lower(chosen, k + 1, new Set());
+      here = here.filter((node) => node !== chosen);
+    }
+  }
 }
 
 function factorial(n: number): number {

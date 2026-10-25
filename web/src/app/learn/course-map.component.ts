@@ -52,11 +52,16 @@ const COMPACT_CHAPTER = { width: 150, height: 104, step: 146 };
 const COMPACT_SESSION = { width: 140, height: 100, step: 140 };
 const COMPACT_BELOW = 640;
 const TOP = 16;
-/** Below this room per block, the map scrolls sideways rather than squeezing it. */
-const MIN_SLOT = 170;
-const COMPACT_MIN_SLOT = 124;
-/** A link passing through a floor takes this part of the room of a block. */
-const THROUGH = 0.35;
+/** A block is never narrower; past that, the map scrolls sideways. */
+const MIN_BLOCK = 170;
+const COMPACT_MIN_BLOCK = 110;
+/** The room between two blocks of a floor, and the room of a link passing through a floor. */
+const GUTTER = 24;
+const THROUGH_ROOM = 16;
+const COMPACT_THROUGH_ROOM = 10;
+/** The room a block wants on its floor: past what the width holds, blocks go to the floor below. */
+const ROOM = 215;
+const COMPACT_ROOM = 150;
 const ZOOM_MS = 380;
 const LEAVE_MS = 240;
 
@@ -131,8 +136,10 @@ const LEAVE_MS = 240;
                   }
                 </span>
                 <span class="map-title"><app-rich-text [text]="node.title" /></span>
-                <span class="map-count">{{ node.done }} / {{ node.total }}</span>
-                <span class="map-bar"><span [style.width.%]="(100 * (node.done ?? 0)) / (node.total || 1)"></span></span>
+                <span class="map-progress">
+                  <span class="map-bar"><span [style.width.%]="(100 * (node.done ?? 0)) / (node.total || 1)"></span></span>
+                  <span class="map-count">{{ node.done }} / {{ node.total }}</span>
+                </span>
                 @if (node.waitingFor) {
                   <span class="visually-hidden">{{ afterKey() | transloco: { titles: node.waitingFor } }}</span>
                 }
@@ -279,16 +286,19 @@ export class CourseMapComponent {
   private place(ids: string[], links: Link[], size: { width: number; height: number; step: number },
     describe: (id: string) => Omit<MapNode, 'id' | 'floor' | 'x' | 'y' | 'width' | 'height'>, finished: (id: string) => boolean,
     tint: (id: string) => string): MapView {
-    const layout = layOut(ids, links);
-    // a block takes a full share of its floor, a link passing through a third of one
-    const weight = (slot: (typeof layout.floors)[number][number]) => ('node' in slot ? 1 : THROUGH);
+    const layout = layOut(ids, links, Math.max(2, Math.floor(this.width() / (this.compact() ? COMPACT_ROOM : ROOM))));
+    // the blocks as wide as the fullest floor lets them, a link passing through a floor a narrow lane
+    const compact = this.compact();
+    const lane = compact ? COMPACT_THROUGH_ROOM : THROUGH_ROOM;
+    const counts = layout.floors.map((slots) => ({ blocks: slots.filter((slot) => 'node' in slot).length, through: slots.filter((slot) => !('node' in slot)).length }));
+    const fits = Math.min(...counts.filter((count) => count.blocks > 0).map((count) => (this.width() - count.through * lane) / count.blocks - GUTTER));
+    const blockWidth = Math.round(Math.max(compact ? COMPACT_MIN_BLOCK : MIN_BLOCK, Math.min(size.width, fits)));
+    const width = Math.max(this.width(), ...counts.map((count) => count.blocks * (blockWidth + GUTTER) + count.through * lane));
+    const weight = (slot: (typeof layout.floors)[number][number]) => ('node' in slot ? 1 : lane / (blockWidth + GUTTER));
     const floorWeight = layout.floors.map((slots) => slots.reduce((sum, slot) => sum + weight(slot), 0));
-    const widest = Math.max(1, ...floorWeight);
-    const width = Math.max(this.width(), widest * (this.compact() ? COMPACT_MIN_SLOT : MIN_SLOT));
-    const blockWidth = Math.min(size.width, width / Math.max(1, ...layout.floors.map((slots) => slots.filter((slot) => 'node' in slot).length + 0.4)) - 16);
     // each block as high as its whole title needs; each floor as high as its highest block
     const described = new Map(ids.map((id) => [id, describe(id)]));
-    const heightOf = new Map(ids.map((id) => [id, this.blockHeight(described.get(id)!.title, blockWidth, size.height, described.get(id)!.done !== undefined)]));
+    const heightOf = new Map(ids.map((id) => [id, this.blockHeight(described.get(id)!.title, blockWidth, size.height)]));
     const floorHeight = layout.floors.map((slots) => Math.max(size.height, ...slots.filter((slot) => 'node' in slot).map((slot) => heightOf.get((slot as { node: string }).node)!)));
     const gap = size.step - size.height;
     const floorTop = floorHeight.map((_, k) => TOP + floorHeight.slice(0, k).reduce((sum, h) => sum + h + gap, 0));
@@ -336,11 +346,11 @@ export class CourseMapComponent {
   }
 
   /** How high a block must be for its whole title: its lines measured in the font of the map, the rest of the block around them. */
-  private blockHeight(title: string, blockWidth: number, base: number, chapter: boolean): number {
+  private blockHeight(title: string, blockWidth: number, base: number): number {
     const compact = this.compact();
     const fontSize = compact ? 12.5 : 14.7;
     const line = fontSize * 1.25;
-    const room = compact ? blockWidth - 22 : blockWidth - 29 - 32 - 11 - (chapter ? 35 : 0);
+    const room = compact ? blockWidth - 22 : blockWidth - 29 - 32 - 11;
     const context = (CourseMapComponent.measure ??= document.createElement('canvas').getContext('2d'));
     const text = title.replace(/\$|\*\*|`/g, '');
     let lines = 1;
