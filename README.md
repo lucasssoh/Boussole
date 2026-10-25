@@ -69,12 +69,21 @@ On macOS, the archive is not signed yet: after extracting it, run
 
 ## License
 
-Apache License 2.0 with the Commons Clause: use it, change it, share it, contribute, in a
-school, an association, a public body or a company, for free. What you may not do is sell
-Boussole, or a service whose value comes mostly from it (a paid hosted version, for instance).
-Keep the [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) files when you share it.
+Boussole has two licences, one for its software and one for its contents.
 
-Boussole is therefore *source-available*, not *open source* in the OSI sense.
+- **The software**: Apache License 2.0 with the Commons Clause ([`LICENSE`](LICENSE)). Use it,
+  change it, share it, contribute, in a school, an association, a public body or a company, for
+  free. What you may not do is sell Boussole, or a service whose value comes mostly from it (a
+  paid hosted version, for instance). Boussole is therefore *source-available*, not *open
+  source* in the OSI sense.
+- **The contents**: the built-in tracks ([`guide/`](guide)), the playbooks ([`skills/`](skills)),
+  the [course format](docs/FORMAT.md) and the [research notes](docs/research) are under
+  [CC BY-NC-SA 4.0](LICENSE-CONTENT): copy, adapt and share them, crediting Boussole, not for
+  commercial purposes, and under the same licence.
+
+Keep the [`LICENSE`](LICENSE), [`LICENSE-CONTENT`](LICENSE-CONTENT) and [`NOTICE`](NOTICE) files
+when you share Boussole. The tracks you write are yours, under the licence you choose; when they
+are built from the documents of others, those documents keep their authors' rights.
 
 ## Building
 

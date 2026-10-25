@@ -4,6 +4,10 @@ How commits, versions, the changelog and releases work in Boussole. These rules 
 everyone, people and AI agents alike. How the code is organised is in
 [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
+What you contribute is shared under the licence of the part you change: the software under
+[`LICENSE`](LICENSE), the built-in tracks, the playbooks, the course format and the research
+notes under CC BY-NC-SA 4.0 ([`LICENSE-CONTENT`](LICENSE-CONTENT)).
+
 ## Commits
 
 ```

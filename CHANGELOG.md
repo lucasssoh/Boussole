@@ -15,6 +15,7 @@ minor release may break things and says so.
 - **I have finished this session** no longer comes back on a session you have already finished: its last step says you have.
 
 ### Changed
+- **Licence of the contents:** the built-in tracks, the playbooks, the course format and the research notes are shared under CC BY-NC-SA 4.0; the software keeps its licence.
 - **Your tier, at the top right,** shows your points and the next mark (`180 / 240`) rather than the bounds of the division (`0 → 240`).
 - **Tables** take the width they need, beyond the column of text when the screen has room, centred, and never cut a formula in two; only a screen too narrow for them scrolls them.
 - **Definitions of the lexicon** show above everything, tables and frames included, and stay inside the window.
