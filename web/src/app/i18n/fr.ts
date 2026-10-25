@@ -62,6 +62,7 @@ export const FR: Translations = {
     finish: "J'ai fini la séance",
     endExam: "Terminer l'examen et voir les corrections",
     finished: 'Séance terminée en {{minutes}} min.',
+    finishedBefore: 'Tu as déjà terminé cette séance.',
     next: 'Séance suivante',
     previous: 'Séance précédente',
     course: 'Parcours',

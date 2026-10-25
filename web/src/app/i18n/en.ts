@@ -60,6 +60,7 @@ export const EN = {
     finish: 'I have finished this session',
     endExam: 'End the exam and see the corrections',
     finished: 'Session finished in {{minutes}} min.',
+    finishedBefore: 'You have already finished this session.',
     next: 'Next session',
     previous: 'Previous session',
     course: 'Track',

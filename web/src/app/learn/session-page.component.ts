@@ -157,7 +157,9 @@ import { sessionDocuments } from './session-documents';
                   <div class="missed"><dt>{{ 'session.tallyMissed' | transloco }}</dt><dd>{{ tally.missed }}</dd><dd class="tally-points">0</dd></div>
                 </dl>
               }
-              @if (finishedIn() === null) {
+              @if (finishedIn() === null && finishedBefore() && current.kind !== 'exam') {
+                <p class="verdict correct">{{ 'session.finishedBefore' | transloco }}</p>
+              } @else if (finishedIn() === null) {
                 <button type="button" class="primary" (click)="finish()">
                   {{ (current.kind === 'exam' ? 'session.endExam' : 'session.finish') | transloco }}
                 </button>
@@ -275,6 +277,9 @@ export class SessionPageComponent {
       .map((wait) => ({ subject: course.id, session: wait.next!, title: wait.title }));
     return [...chapters, ...entry.waitingFor];
   });
+  /** A session finished in an earlier sitting is not finished again; an exam can be sat again. */
+  protected readonly finishedBefore = computed(() =>
+    this.learn.course()?.chapters.flatMap((chapter) => chapter.sessions).find((entry) => entry.id === this.session())?.finished ?? false);
   /** In guided mode, a session waits for its prerequisites; in free mode, they are advice. */
   protected readonly locked = computed(() => this.waitingFor().length > 0 && !this.settings.freeNavigation());
   /**
@@ -398,10 +403,11 @@ export class SessionPageComponent {
   protected async finish(): Promise<void> {
     const seconds = this.run.spentSeconds();
     this.run.end();
+    // Set first: the course, refreshed while the session is finished, would already call it finished before.
+    this.finishedIn.set(Math.max(1, Math.round(seconds / 60)));
     this.run.earnBonus(await this.learn.finishSession(seconds));
     this.stats.refresh();
     this.stats.studying.set(false);
-    this.finishedIn.set(Math.max(1, Math.round(seconds / 60)));
   }
 
   private exerciseType(screen: SessionScreen): string | undefined {

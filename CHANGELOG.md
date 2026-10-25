@@ -12,6 +12,7 @@ minor release may break things and says so.
 
 ### Fixed
 - **A session that stayed blank,** its steps never showing and the needle turning for good: it opens again.
+- **I have finished this session** no longer comes back on a session you have already finished: its last step says you have.
 
 ### Changed
 - **Your tier, at the top right,** shows your points and the next mark (`180 / 240`) rather than the bounds of the division (`0 → 240`).
