@@ -250,11 +250,13 @@ export class SessionPathComponent {
   });
 
   constructor() {
+    // inject() cannot run in the callback, out of the injection context: the DestroyRef is taken here.
+    const destroyed = inject(DestroyRef);
     afterNextRender(() => {
       const viewport = this.viewport().nativeElement;
       const observer = new ResizeObserver(() => this.viewportHeight.set(viewport.clientHeight));
       observer.observe(viewport);
-      inject(DestroyRef).onDestroy(() => observer.disconnect());
+      destroyed.onDestroy(() => observer.disconnect());
     }, { injector: this.injector });
     // Each change of screen brings the path back, even to the same place: the learner may have
     // scrolled it away by hand in between.

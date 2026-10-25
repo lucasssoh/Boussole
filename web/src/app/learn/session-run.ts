@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy, computed, signal } from '@angular/core';
+import { Injectable, OnDestroy, computed, signal, untracked } from '@angular/core';
 import { SessionKind, Verdict } from '../core/api';
 import { storeValue, storedText } from '../core/local-preferences';
 import { QuestionState } from './question/question-state';
@@ -114,13 +114,17 @@ export class SessionRun implements OnDestroy {
   question(id: string, create: () => QuestionState): QuestionState {
     let state = this.questions.get(id);
     if (!state) {
-      state = create();
-      if (state.hook) {
-        this.hooks.set(new Set(this.hooks()).add(id));
-      }
-      if (state.reused) {
-        this.again.set(new Set(this.again()).add(id));
-      }
+      const created = create();
+      state = created;
+      // Called from a computed, which may not write signals: the marks are written outside it.
+      untracked(() => {
+        if (created.hook) {
+          this.hooks.set(new Set(this.hooks()).add(id));
+        }
+        if (created.reused) {
+          this.again.set(new Set(this.again()).add(id));
+        }
+      });
       this.questions.set(id, state);
     }
     return state;
