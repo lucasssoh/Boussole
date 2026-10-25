@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, ElementRef, computed, effect, forwardRef, inject, input, signal } from '@angular/core';
+import { ApplicationRef, ChangeDetectionStrategy, Component, ElementRef, computed, effect, forwardRef, inject, input, signal } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { ChoiceMenuComponent } from '../../shared/choice-menu.component';
 import { RichTextComponent } from '../../shared/rich-text.component';
 import { AttemptRequest, ExerciseBlockView } from '../../core/api';
 import { BoussoleApi } from '../../core/boussole-api';
@@ -28,7 +29,7 @@ type SelfGrade = 'got_it' | 'partly' | 'not_yet';
  */
 @Component({
   selector: 'app-exercise-block',
-  imports: [IconComponent, RichTextComponent, FormsModule, CdkDropList, CdkDrag, TranslocoPipe, QuestionFooterComponent, QuestionCorrectionComponent, QuestionHeaderComponent, forwardRef(() => BlockListComponent)],
+  imports: [IconComponent, RichTextComponent, ChoiceMenuComponent, FormsModule, CdkDropList, CdkDrag, TranslocoPipe, QuestionFooterComponent, QuestionCorrectionComponent, QuestionHeaderComponent, forwardRef(() => BlockListComponent)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let question = exercise();
@@ -87,12 +88,7 @@ type SelfGrade = 'got_it' | 'partly' | 'not_yet';
                     <tr [class.correct]="mark?.correct === true" [class.wrong]="mark?.correct === false">
                       <th scope="row"><app-rich-text [text]="left" /></th>
                       <td>
-                        <select [attr.aria-label]="left" [ngModel]="pairs()[left] ?? ''" (ngModelChange)="pair(left, $event)" [disabled]="locked">
-                          <option value="">{{ 'question.choose' | transloco }}</option>
-                          @for (right of input.rights; track right) {
-                            <option [value]="right">{{ right }}</option>
-                          }
-                        </select>
+                        <app-choice-menu [options]="input.rights" [value]="pairs()[left] ?? ''" [label]="left" [placeholder]="'question.choose' | transloco" [disabled]="locked" (picked)="pair(left, $event)" />
                       </td>
                     </tr>
                   }
@@ -164,6 +160,7 @@ export class ExerciseBlockComponent {
   private readonly run = inject(SessionRun, { optional: true });
   private readonly stats = inject(StatsService);
   private readonly host: HTMLElement = inject(ElementRef).nativeElement;
+  private readonly app = inject(ApplicationRef);
 
   protected readonly grades: SelfGrade[] = ['got_it', 'partly', 'not_yet'];
   protected readonly graded = signal<SelfGrade | null>(null);
@@ -181,7 +178,7 @@ export class ExerciseBlockComponent {
   protected readonly pairs = computed(() => this.state().pairs());
   protected readonly fill = computed(() => {
     const input = this.exercise().input;
-    return input.kind === 'fill' ? new FillGaps(input.gaps, this.state().gaps, () => this.check()) : null;
+    return input.kind === 'fill' ? new FillGaps(input.gaps, this.state().gaps, () => this.check(), this.app) : null;
   });
   protected readonly checkable = computed(() => !['free', 'unreadable'].includes(this.exercise().input.kind));
   protected readonly ready = computed(() => {
@@ -201,6 +198,10 @@ export class ExerciseBlockComponent {
   });
 
   constructor() {
+    effect((onCleanup) => {
+      const fill = this.fill();
+      onCleanup(() => fill?.destroy());
+    });
     effect(() => {
       const state = this.state();
       const corrected = state.correctionShown();

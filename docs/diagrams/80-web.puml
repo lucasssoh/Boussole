@@ -102,6 +102,7 @@ package "shared" {
   class PromotionComponent <<after a session: the emblem over a veil, put together again>>
   class "ranks.ts" as Ranks <<tier colours, roman divisions, points>>
   class RichTextComponent
+  class ChoiceMenuComponent <<a drop-down list drawn by the interface, not by the browser>>
   class "drawMermaidDiagrams()" as Mermaid
   class IconComponent <<SVG icons, no emoji>> {
     +iconSvg(name) : string
@@ -113,6 +114,8 @@ CoursePageComponent --> TrackLanguagesComponent : follow in
 SessionPageComponent --> TrackLanguagesComponent : switch, same place
 QuestionFooterComponent ..> IconComponent : hint, arrows
 FillGaps ..> IconComponent : iconSvg()
+FillGaps ..> ChoiceMenuComponent : a choice gap
+ExerciseBlockComponent --> ChoiceMenuComponent : pairs
 CoursePageComponent --> LearnFacade
 CoursePageComponent --> CourseMapComponent : the map
 CourseMapComponent ..> GraphLayout

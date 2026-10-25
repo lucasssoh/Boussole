@@ -9,6 +9,9 @@ minor release may break things and says so.
 ### Added
 - **The documents of a session, in one place:** the **Documents** button, above the step, lists every page of your documents, site and video the session cites, and marks those of the step you are on. A click opens it on the right; there, the arrow goes back to the list, the title switches to another document, and **Close** (or Escape) closes the panel.
 
+### Changed
+- **Drop-down lists** in exercises (pairing, and choices in a sentence to fill) open in the colours and the font of Boussole, rather than in those of the browser or of the system (a black list on a dark desktop).
+
 ## 0.0.2
 
 ### Added
