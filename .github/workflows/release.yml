@@ -55,4 +55,4 @@ jobs:
           version="${GITHUB_REF_NAME#v}"
           awk -v v="$version" '$0 ~ "^## " v "( |$)" {found=1; next} found && /^## / {exit} found' CHANGELOG.md > notes.md
           title="$(grep -m1 "^## $version" CHANGELOG.md | sed 's/^## /v/')"
-          gh release create "$GITHUB_REF_NAME" packages/* --title "$title" --notes-file notes.md
+          gh release create "$GITHUB_REF_NAME" packages/* --title "$title" --notes-file notes.md --draft
