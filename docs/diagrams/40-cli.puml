@@ -38,6 +38,7 @@ package "cli" {
   }
   class ManifestVersion <<IVersionProvider>>
   class Launcher <<record>> {
+    app : Optional<Path> <<packaged program>>
     jar : Optional<Path>
     +{static} current() : Launcher
     +validateCommand() : String
@@ -128,7 +129,7 @@ OpenCommand --> BoussoleConfigFile : adds the subject
 OpenCommand --> ServerProbe : running?
 OpenCommand --> BackgroundServer : else starts
 OpenCommand --> BrowserOpener
-BackgroundServer --> Launcher : copy of the jar, serve
+BackgroundServer --> Launcher : the packaged program, or a copy of the jar, serve
 ServeCommand --> ServerPidFile : writes
 StopCommand --> ServerPidFile : unanswered server
 StopCommand --> ServerProbe
