@@ -288,11 +288,11 @@ a:focus-visible {
   color: inherit;
   text-decoration: none;
   border-radius: 10px;
-  transition: translate 0.15s;
+  transition: filter 0.25s ease;
 }
 
 .player-stats:hover {
-  translate: 0 -1px;
+  filter: brightness(1.04) saturate(1.08);
 }
 
 /*
