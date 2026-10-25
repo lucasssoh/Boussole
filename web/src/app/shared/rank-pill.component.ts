@@ -15,7 +15,8 @@ const TURNED = 1300;
  * A rank as a pill: its emblem, its level, and the bounds of its division, the body filling like a
  * gauge in a frame of its tier. When the points rise, it moves on its own: the level bounces; a
  * new division fills the body, a light crosses the frame, and the gauge starts again with the new
- * numeral, or a new emblem put together piece by piece. Nothing else on the screen moves.
+ * numeral, or a new emblem put together piece by piece. Nothing else on the screen moves, but
+ * for the points just earned, which rise from beside the pill and fade, where it shows gains.
  */
 @Component({
   selector: 'app-rank-pill',
@@ -32,6 +33,9 @@ const TURNED = 1300;
   template: `
     @let rank = shown();
     <span class="rank-pill-aura" aria-hidden="true"></span>
+    @for (gain of gains(); track gain.id) {
+      <span class="rank-pill-gain" role="status" [attr.aria-label]="'stats.gained' | transloco: { points: gain.text }" (animationend)="drop(gain.id)">+{{ gain.text }}</span>
+    }
     @for (stud of frame().studs; track $index) {
       <span class="rank-pill-stud" [class.top]="stud.top" [style.left]="stud.left" aria-hidden="true"></span>
     }
@@ -55,7 +59,7 @@ const TURNED = 1300;
               {{ 'stats.level' | transloco: { level: rank.level } }}
             }
           </span>
-          <span class="rank-pill-bounds">{{ 'stats.bounds' | transloco: { from: amount(rank.divisionFrom), to: amount(rank.nextAt) } }}</span>
+          <span class="rank-pill-bounds">{{ 'stats.bounds' | transloco: { points: earned(shownPoints()), to: amount(rank.nextAt) } }}</span>
         </span>
       }
       <ng-content />
@@ -70,10 +74,15 @@ export class RankPillComponent {
   /** The field of a specialty, named before the level. */
   readonly field = input<string | null>(null);
   readonly emblemSize = input(30);
+  /** Whether the points earned show as a "+N" rising beside the pill: in the header only. */
+  readonly showGains = input(false);
 
   private readonly language = inject(LanguageService);
   protected readonly shown = signal<Rank | null>(null);
-  private readonly shownPoints = signal(0);
+  protected readonly shownPoints = signal(0);
+  protected readonly gains = signal<{ id: number; text: string }[]>([]);
+  private lastPoints: number | null = null;
+  private nextGain = 0;
   protected readonly crossed = signal(false);
   protected readonly instant = signal(false);
   protected readonly bumped = signal(false);
@@ -93,13 +102,34 @@ export class RankPillComponent {
     effect(() => {
       const rank = this.rank();
       const points = this.points();
-      untracked(() => this.arrive(rank, points));
+      untracked(() => {
+        this.gain(points);
+        this.arrive(rank, points);
+      });
     });
     inject(DestroyRef).onDestroy(() => this.timers.forEach(clearTimeout));
   }
 
   protected amount(value: number): string {
     return formatPoints(Math.ceil(value), this.language.current());
+  }
+
+  /** The points so far, whole: a decimal would only blur the gauge's reading. */
+  protected earned(value: number): string {
+    return formatPoints(Math.floor(value), this.language.current());
+  }
+
+  protected drop(id: number): void {
+    this.gains.update((gains) => gains.filter((gain) => gain.id !== id));
+  }
+
+  private gain(points: number): void {
+    const earned = this.lastPoints === null ? 0 : points - this.lastPoints;
+    this.lastPoints = points;
+    if (this.showGains() && earned > 0) {
+      const text = formatPoints(earned, this.language.current());
+      this.gains.update((gains) => [...gains, { id: this.nextGain++, text }]);
+    }
   }
 
   private arrive(rank: Rank, points: number): void {

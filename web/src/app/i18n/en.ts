@@ -293,7 +293,8 @@ export const EN = {
   stats: {
     level: 'Level {{level}}',
     fieldLevel: '{{field}} · level {{level}}',
-    bounds: '{{from}} → {{to}}',
+    bounds: '{{points}} / {{to}}',
+    gained: '{{points}} points earned',
     streak: 'days in a row',
     label: '{{rank}}, level {{level}}, {{points}} points, {{streakDays}} days in a row',
   },

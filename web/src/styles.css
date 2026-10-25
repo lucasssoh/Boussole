@@ -446,6 +446,59 @@ a:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
+/* The points just earned: a "+N" that rises from beside the pill and fades, like a puff. */
+.rank-pill-gain {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: calc(100% + 0.5rem);
+  color: var(--correct);
+  font-size: 1.05rem;
+  font-weight: 900;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: pill-gain 1.6s ease-out forwards;
+}
+
+@keyframes pill-gain {
+  0% {
+    opacity: 0;
+    transform: translateY(-20%) scale(0.6);
+    filter: blur(2px);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.15);
+    filter: blur(0);
+  }
+  35% {
+    transform: translateY(-60%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-150%) scale(1.1);
+    filter: blur(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rank-pill-gain {
+    animation-name: pill-gain-still;
+  }
+
+  @keyframes pill-gain-still {
+    0%,
+    70% {
+      opacity: 1;
+      transform: translateY(-50%);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-50%);
+    }
+  }
+}
+
 .rank-pill .streak {
   margin-left: auto;
 }
@@ -795,6 +848,13 @@ a:focus-visible {
 @media (max-width: 720px) {
   .player-stats .rank-pill-text {
     display: none;
+  }
+
+  /* No room on its left: the points rise from under the pill. */
+  .player-stats .rank-pill-gain {
+    top: 100%;
+    right: 50%;
+    translate: 50% 0.4rem;
   }
 
   .top-bar {

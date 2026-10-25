@@ -82,7 +82,8 @@ même si tu reviens sur la séance un autre jour. Pour t'aider à bien répondre
   elle était fausse, et un encadré **Pourquoi** explique.
 
 **« Je ne vois pas mes progrès. »** Chaque bonne réponse rapporte des **points**, davantage dans un
-parcours exigeant. Une première réponse manquée le reste : pas de retour en arrière. Avec les
+parcours exigeant : ils s'envolent à côté de ton palier, en haut à droite, qui montre tes points et
+le prochain cap (`180 / 240`). Une première réponse manquée le reste : pas de retour en arrière. Avec les
 points, tu gravis les :term[paliers]{id=palier}, de Curieux à Grand Sage, et tu gagnes des succès, sur ton profil. Ta :term[série]{id=serie}
 avance chaque jour où tu étudies.
 

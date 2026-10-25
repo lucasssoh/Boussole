@@ -26,7 +26,7 @@ import { SettingsDrawerComponent } from './core/settings-drawer.component';
       @if (stats.stats(); as current) {
         @let rank = current.culture;
         <a class="player-stats" routerLink="/profile" [attr.aria-label]="'stats.label' | transloco: { rank: rankName(rank.tier, rank.division), level: rank.level, points: points(current.points), streakDays: current.streakDays }">
-          <app-rank-pill [rank]="rank" [points]="current.points">
+          <app-rank-pill [rank]="rank" [points]="current.points" [showGains]="true">
             <span class="streak" [class.cold]="!current.studiedToday">
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 5 5 5 10a5 5 0 01-10 0c0-2 1-3.5 2-4.5 0 2 1 3 2 3-1-3 0-6 1-8.5z"></path></svg>
               {{ current.streakDays }}

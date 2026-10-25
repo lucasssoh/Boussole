@@ -96,7 +96,7 @@ package "shared" {
   class RankEmblemComponent <<the gem of a rank, its division in relief>>
   class "emblem.ts" as Emblem <<instruments, ornaments, aura per tier; pieces that come apart>>
   class SpecialtyEmblemComponent <<the medallion of a specialty>>
-  class RankPillComponent <<emblem, level, bounds of the division; the body fills as a gauge>>
+  class RankPillComponent <<emblem, level, points / next mark; the body fills as a gauge; +N rises on a gain>>
   class "pill-frame.ts" as PillFrame <<a frame per tier, culture and specialty>>
   class RankRouteComponent <<every division as its emblem, the learner's in the middle>>
   class PromotionComponent <<after a session: the emblem over a veil, put together again>>

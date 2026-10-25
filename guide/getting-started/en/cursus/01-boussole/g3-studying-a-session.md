@@ -79,7 +79,8 @@ even if you come back to the session another day. To help you answer well:
 - **Explained answer**: right after, the right answer turns green, yours red if it was wrong,
   and a **Why** box explains.
 
-**"I can't see my progress."** Every right answer earns **points**, more in a demanding track. A
+**"I can't see my progress."** Every right answer earns **points**, more in a demanding track:
+they rise beside your tier, top right, which shows your points and the next mark (`180 / 240`). A
 first answer missed stays missed: no going back. With points you climb the
 :term[tiers]{id=tier}, from Curious to Grand Sage, and you collect achievements on your profile. Your :term[streak]{id=streak} grows each day
 you study.
