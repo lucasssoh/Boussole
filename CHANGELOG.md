@@ -6,6 +6,9 @@ minor release may break things and says so.
 
 ## Unreleased
 
+### Fixed
+- **The version of Boussole** shown by the interface is the version you run, rather than « dev ».
+
 ## 0.0.1 (October 25 2026)
 
 The starting point: what Boussole does in its first release.
