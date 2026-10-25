@@ -20,6 +20,14 @@ case "$(uname -s)" in
   MINGW* | MSYS* | CYGWIN*) system=windows ;;
   *) echo "package: unknown system $(uname -s)" >&2; exit 1 ;;
 esac
+
+# macOS requires a positive first component in CFBundleVersion.
+# Keep the actual Boussole version while using a compatible bundle version.
+package_version="$version"
+if [[ "$system" == macos && "${version%%.*}" == 0 ]]; then
+  package_version="1.${version#*.}"
+fi
+
 arch="$(uname -m)"
 case "$arch" in
   x86_64 | amd64) arch=x64 ;;
@@ -29,17 +37,40 @@ esac
 tools="${JAVA_HOME:+$JAVA_HOME/bin/}"
 
 [ -f "$jar" ] || { echo "package: $jar is missing, run 'mvn package' first" >&2; exit 1; }
+
 rm -rf "$out"
 mkdir -p "$out/input"
 cp "$jar" "$out/input/"
 
-"${tools}jlink" --add-modules "$modules" --strip-debug --no-header-files --no-man-pages --compress zip-6 --output "$out/runtime"
-"${tools}jpackage" --type app-image --name boussole --app-version "$version" --vendor "Lucas Ramilison" \
-  --input "$out/input" --main-jar boussole.jar --runtime-image "$out/runtime" \
-  --java-options "--enable-native-access=ALL-UNNAMED" --dest "$out/image"
+"${tools}jlink" \
+  --add-modules "$modules" \
+  --strip-debug \
+  --no-header-files \
+  --no-man-pages \
+  --compress zip-6 \
+  --output "$out/runtime"
+
+"${tools}jpackage" \
+  --type app-image \
+  --name boussole \
+  --app-version "$package_version" \
+  --vendor "Lucas Ramilison" \
+  --input "$out/input" \
+  --main-jar boussole.jar \
+  --runtime-image "$out/runtime" \
+  --java-options "--enable-native-access=ALL-UNNAMED" \
+  --dest "$out/image"
+
+# Preserve the actual Boussole version in the user-visible macOS app metadata.
+if [[ "$system" == macos && "$package_version" != "$version" ]]; then
+  /usr/libexec/PlistBuddy \
+    -c "Set :CFBundleShortVersionString $version" \
+    "$out/image/boussole.app/Contents/Info.plist"
+fi
 
 name="boussole-$version-$system-$arch"
 cd "$out/image"
+
 if [ "$system" = windows ]; then
   powershell -NoProfile -Command "Compress-Archive -Path boussole -DestinationPath '$(cygpath -w "$out")\\$name.zip'"
   echo "$out/$name.zip"
