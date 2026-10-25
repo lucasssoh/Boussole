@@ -168,7 +168,9 @@ picocli. One class per command.
 | `boussole import-legacy …` (planned) | Imports the former Markdown sessions and Boussole settings. |
 
 `spring-boot-maven-plugin` packages the commands, the server and the interface as one
-executable `boussole.jar`.
+executable `boussole.jar`. `bin/package` makes of it a program of its own for each system
+(`jlink` for a smaller Java, `jpackage` for the program), which the release workflow publishes;
+a packaged Boussole starts its server by running its own program again (`Launcher`).
 
 ### `web/`
 
@@ -372,7 +374,7 @@ The skills shipped in `skills/`:
 | `learner.yaml` | the learner | copied from `$XDG_CONFIG_HOME/boussole/learner.yaml` when missing and that file exists, never overwritten |
 
 `AGENTS.md` gives the exact command that runs the validator of this installation
-(`java -jar …/boussole.jar validate .`), so agents run the right version even when another
+(the packaged program, or `java -jar …/boussole.jar validate .`), so agents run the right version even when another
 program is called `boussole`.
 
 A learner's path: run `boussole init` on the folder of documents, ask an agent to build the

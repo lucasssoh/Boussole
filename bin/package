@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Packages Boussole as a program of its own, with its own Java inside, for the system this runs
+# on: target/package/boussole-<version>-<system>.tar.gz (a .zip on Windows). Run after
+# `mvn package`; needs a JDK whose files were not changed by the system (jlink copies them), such
+# as Temurin: JAVA_HOME, or the one on the PATH. The release workflow runs it on each system.
+set -euo pipefail
+
+root="$(cd "$(dirname "$0")/.." && pwd)"
+jar="$root/boussole-cli/target/boussole.jar"
+out="$root/target/package"
+version="$(sed -n 's:.*<version>\([0-9][0-9.]*\)</version>.*:\1:p' "$root/pom.xml" | head -1)"
+
+# What Boussole and its libraries use of Java (jdeps on the jar), and what it reaches at run time:
+# HTTPS, zip files, the formats of each language.
+modules=java.base,java.compiler,java.desktop,java.instrument,java.logging,java.management,java.naming,java.net.http,java.prefs,java.scripting,java.security.jgss,java.sql,jdk.charsets,jdk.crypto.ec,jdk.jfr,jdk.localedata,jdk.unsupported,jdk.zipfs
+
+case "$(uname -s)" in
+  Linux*) system=linux ;;
+  Darwin*) system=macos ;;
+  MINGW* | MSYS* | CYGWIN*) system=windows ;;
+  *) echo "package: unknown system $(uname -s)" >&2; exit 1 ;;
+esac
+arch="$(uname -m)"
+case "$arch" in
+  x86_64 | amd64) arch=x64 ;;
+  arm64 | aarch64) arch=arm64 ;;
+esac
+
+tools="${JAVA_HOME:+$JAVA_HOME/bin/}"
+
+[ -f "$jar" ] || { echo "package: $jar is missing, run 'mvn package' first" >&2; exit 1; }
+rm -rf "$out"
+mkdir -p "$out/input"
+cp "$jar" "$out/input/"
+
+"${tools}jlink" --add-modules "$modules" --strip-debug --no-header-files --no-man-pages --compress zip-6 --output "$out/runtime"
+"${tools}jpackage" --type app-image --name boussole --app-version "$version" --vendor "Lucas Ramilison" \
+  --input "$out/input" --main-jar boussole.jar --runtime-image "$out/runtime" \
+  --java-options "--enable-native-access=ALL-UNNAMED" --dest "$out/image"
+
+name="boussole-$version-$system-$arch"
+cd "$out/image"
+if [ "$system" = windows ]; then
+  powershell -NoProfile -Command "Compress-Archive -Path boussole -DestinationPath '$(cygpath -w "$out")\\$name.zip'"
+  echo "$out/$name.zip"
+else
+  app=boussole
+  [ "$system" = macos ] && app=boussole.app
+  tar -czf "$out/$name.tar.gz" "$app"
+  echo "$out/$name.tar.gz"
+fi

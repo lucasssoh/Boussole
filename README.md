@@ -37,6 +37,28 @@ Boussole itself never calls an AI and needs no account. A short guide, itself a 
 ([`guide/getting-started`](guide/getting-started)), walks through all of this: it is where a new Boussole opens, and it stays
 apart on the home page to come back to.
 
+## Installing
+
+Download the archive for your system from the [releases](https://github.com/lucasssoh/Boussole/releases):
+Boussole comes with its own Java, nothing else to install.
+
+| System | Archive | The `boussole` command |
+|---|---|---|
+| Linux | `boussole-<version>-linux-x64.tar.gz` | `boussole/bin/boussole` |
+| macOS | `boussole-<version>-macos-arm64.tar.gz` | `boussole.app/Contents/MacOS/boussole` |
+| Windows | `boussole-<version>-windows-x64.zip` | `boussole\boussole.exe` |
+
+On Linux, for instance:
+
+```
+tar -xzf boussole-*-linux-x64.tar.gz -C ~/.local/share
+ln -s ~/.local/share/boussole/bin/boussole ~/.local/bin/boussole
+boussole open
+```
+
+On macOS, the archive is not signed yet: after extracting it, run
+`xattr -dr com.apple.quarantine boussole.app` once.
+
 ## Documentation
 
 - [Course format](docs/FORMAT.md) — the contract between authors, agents and the application.
@@ -56,7 +78,7 @@ Boussole is therefore *source-available*, not *open source* in the OSI sense.
 
 ## Building
 
-Requires Java 25 and Maven 3.9 (Node is downloaded by the build).
+From the sources, Boussole requires Java 25 and Maven 3.9 (Node is downloaded by the build).
 
 ```
 mvn verify

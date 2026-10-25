@@ -119,9 +119,14 @@ Versions follow `MAJOR.MINOR.PATCH`.
    git push origin main v1.1.0
    ```
 
-5. The tag starts the Release workflow: it runs `mvn verify`, builds `boussole.jar`, and
-   publishes the GitHub release from the changelog section. Check that it's green in the
-   Actions tab.
+5. The tag starts the Release workflow (`.github/workflows/release.yml`): it runs `mvn verify`,
+   packages Boussole with its own Java on Linux, macOS and Windows (`bin/package`), and
+   publishes the GitHub release with its section of the changelog and the three archives.
+   Check that it's green in the Actions tab.
+
+   `bin/package` also works by hand, after `mvn package`, for the system it runs on. It needs a
+   JDK whose files the system did not change, such as Temurin, in `JAVA_HOME`: the JDK of some
+   Linux distributions (Fedora) cannot be linked into a smaller Java.
 
 ## Before committing
 
