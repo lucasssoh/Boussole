@@ -6,6 +6,8 @@ minor release may break things and says so.
 
 ## Unreleased
 
+## 0.0.2
+
 ### Added
 - **Boussole ready to run:** each release comes as an archive for Linux, macOS and Windows, with its own Java inside: extract it and run `boussole`, nothing else to install.
 
