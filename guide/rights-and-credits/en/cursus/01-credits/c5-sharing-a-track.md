@@ -5,6 +5,7 @@ objectives:
   - Sort what you can usually share from what needs the author's consent.
   - Credit the work of others, and say honestly what an AI wrote.
 terms: [track, licence, contributor, written-by]
+prerequisites: [boussole-credits.credits.c2]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code

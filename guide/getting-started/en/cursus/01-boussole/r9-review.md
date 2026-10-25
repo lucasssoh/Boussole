@@ -2,6 +2,7 @@
 id: r9
 objectives:
   - Recall the essentials of Boussole without help.
+prerequisites: [boussole-guide.boussole.g1, boussole-guide.boussole.g2, boussole-guide.boussole.g3, boussole-guide.boussole.g4]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code

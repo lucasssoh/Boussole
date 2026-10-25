@@ -5,6 +5,7 @@ objectives:
   - Ouvrir un document, une vidéo ou une page web à côté du texte.
   - Dessiner un schéma avec `graph` ou `mermaid`, et écrire des maths.
 terms: [worked-example, directive, lexicon, notion]
+prerequisites: [boussole-format.format.f4]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code

@@ -5,6 +5,7 @@ objectives:
   - Name the authors and contributors of a track.
   - Record where each source comes from, and its licence.
 terms: [written-by, contributor, document-tracking, source-note, validator, agent]
+prerequisites: [boussole-credits.credits.c1]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code

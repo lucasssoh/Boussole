@@ -2,6 +2,7 @@
 id: r1
 objectives:
   - Retrouver sans aide l'essentiel du format des parcours.
+prerequisites: [boussole-format.format.f1, boussole-format.format.f2, boussole-format.format.f3, boussole-format.format.f4, boussole-format.format.f5, boussole-format.format.f6, boussole-format.format.f7, boussole-format.format.f8, boussole-format.format.f9, boussole-format.format.f10]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code

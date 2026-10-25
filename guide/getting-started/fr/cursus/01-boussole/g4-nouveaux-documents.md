@@ -4,6 +4,7 @@ objectives:
   - Dire comment Boussole repère un document nouveau ou modifié.
   - Savoir quoi demander à ton agent quand un document arrive.
 terms: [registre, validateur, agent]
+prerequisites: [boussole-guide.boussole.g2]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code

@@ -5,6 +5,7 @@ objectives:
   - Trier ce que tu peux en général partager et ce qui demande l'accord de l'auteur.
   - Créditer le travail des autres, et dire honnêtement ce qu'une IA a écrit.
 terms: [track, licence, contributor, written-by]
+prerequisites: [boussole-credits.credits.c2]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code

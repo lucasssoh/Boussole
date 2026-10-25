@@ -4,6 +4,7 @@ objectives:
   - Write the lexicon of a track and point to it with `:term`.
   - Keep track of the documents of a track.
 terms: [lexicon, document-tracking, identifier, validator]
+prerequisites: [boussole-format.format.f4]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code

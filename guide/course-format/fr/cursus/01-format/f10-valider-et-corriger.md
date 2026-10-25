@@ -4,6 +4,7 @@ objectives:
   - Lire un diagnostic du validateur, du fichier jusqu'au message.
   - Corriger les erreurs les plus fréquentes, en boucle, jusqu'à « no problem ».
 terms: [validator, diagnostic, identifier]
+prerequisites: [boussole-format.format.f3]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code

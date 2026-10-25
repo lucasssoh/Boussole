@@ -4,6 +4,7 @@ objectives:
   - Write a fill-in-the-blanks exercise, with typed gaps, numbers and lists.
   - Write an ordering, a matching or a free-answer exercise.
 terms: [nudge, notion]
+prerequisites: [boussole-format.format.f4]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code

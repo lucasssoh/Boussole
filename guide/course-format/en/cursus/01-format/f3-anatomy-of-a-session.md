@@ -4,6 +4,7 @@ objectives:
   - Write the front matter of a session.
   - Put the body of a session in the right order, from the warmup to the practice.
 terms: [front-matter, session, notion, identifier, lexicon, worked-example]
+prerequisites: [boussole-format.format.f2]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code

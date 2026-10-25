@@ -4,6 +4,7 @@ objectives:
   - Écrire un texte à trous, avec des trous à taper, des nombres et des listes.
   - Écrire un exercice à remettre dans l'ordre, à associer ou à réponse libre.
 terms: [nudge, notion]
+prerequisites: [boussole-format.format.f4]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code

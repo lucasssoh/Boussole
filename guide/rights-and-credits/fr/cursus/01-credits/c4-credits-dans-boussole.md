@@ -5,6 +5,7 @@ objectives:
   - Nommer les auteurs et les contributeurs d'un parcours.
   - Noter d'où vient chaque source, et sa licence.
 terms: [written-by, contributor, document-tracking, source-note, validator, agent]
+prerequisites: [boussole-credits.credits.c1]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code

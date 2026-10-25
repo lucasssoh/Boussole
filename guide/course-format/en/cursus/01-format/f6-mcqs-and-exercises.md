@@ -4,6 +4,7 @@ objectives:
   - Write an MCQ with its feedback, nudges and solution.
   - Write an exercise with a numeric or a text answer.
 terms: [nudge, identifier, notion]
+prerequisites: [boussole-format.format.f4]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code

@@ -4,6 +4,7 @@ objectives:
   - Écrire le lexique d'un parcours et y renvoyer avec `:term`.
   - Tenir le suivi des documents d'un parcours.
 terms: [lexicon, document-tracking, identifier, validator]
+prerequisites: [boussole-format.format.f4]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code

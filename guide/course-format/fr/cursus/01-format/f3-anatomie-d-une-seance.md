@@ -4,6 +4,7 @@ objectives:
   - Écrire l'en-tête d'une séance.
   - Ranger le corps d'une séance dans le bon ordre, de l'échauffement à l'entraînement.
 terms: [front-matter, session, notion, identifier, lexicon, worked-example]
+prerequisites: [boussole-format.format.f2]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code
