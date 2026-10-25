@@ -9,6 +9,109 @@ on your machine.
 > Status: the course format, the agent skills and the session player work. Planning and
 > reminders come next. See the [roadmap](ARCHITECTURE.md#11-roadmap).
 
+![A lesson in Boussole, on a laptop and a phone](docs/screenshots/hero.png)
+
+## The spirit of Boussole
+
+Boussole is for those who love to learn: students, teachers, researchers, the curious, and anyone
+who has ever closed a course knowing they had not really understood it.
+
+Knowledge is widely accessible. But reaching a piece of information and learning something are
+not the same thing. Between the two lies work: organising ideas, understanding what links them,
+getting things wrong, starting again, and ending up able to reason without the course in front
+of you.
+
+That work is what Boussole sets out to support. From the documents of a course, or from the
+knowledge someone wants to pass on, it builds a track to study step by step, at one's own pace.
+Tracks can be written by hand or created with the help of AI agents. Boussole replaces neither
+lectures, nor tutorials, nor teachers. It offers another way to learn and to pass knowledge on.
+
+### Learning, and making knowledge accessible
+
+Boussole draws on research on learning to offer another way of working with knowledge: not only
+reading and rereading, but also trying to remember, testing one's understanding against
+questions, understanding one's mistakes and meeting ideas again over time.
+
+These choices rest in particular on work on retrieval practice, spaced practice and prior
+knowledge. They are no guarantee of effectiveness. They are leads we can put into practice,
+examine and improve.
+
+But learning is only part of the subject. **Popularisation matters just as much.** Much
+knowledge is available without being truly accessible to those who would like to discover it.
+The vocabulary, the prerequisites and the codes of a discipline can be enough to discourage
+someone before they have grasped its first ideas.
+
+Making knowledge accessible does not mean erasing its complexity. It means building ways in,
+giving the keys needed to start understanding, then letting everyone go further. Introductory
+ideas in particular should not stay reserved for those who already have the right resources,
+the right people around them or the means to follow specialised teaching.
+
+That too is what Boussole hopes to make possible: giving knowledge more ways in, without
+claiming to replace the depth of a course, the guidance of a teacher or the work it takes to
+master a discipline.
+
+Operations research was my first testing ground. I built a track from the course slides and
+found this way of working more motivating than a revision plan prepared by hand. This personal
+experience does not prove the method will suit everyone, but it made me want to carry the
+project on.
+
+### A format, methods and agents
+
+The Boussole format makes it possible to create tracks without depending on artificial
+intelligence. You can write your course yourself, organise the ideas, write the questions and
+their corrections, then share the result. AI is one way to make this work easier, not a
+condition for passing on knowledge.
+
+Boussole also offers a way of producing tracks built on AI agents and on *skills* that guide
+their work. Rather than asking a model to produce a whole course from a general instruction,
+this system relies on specialised instructions and method sheets to frame how tracks are
+created.
+
+These methods are not hidden in an unreachable service: they are part of the project. They can
+be read, changed and reused. The *skills* can evolve, the agents can be evaluated, the methods
+can be discussed. An improvement to this system can then serve the courses produced afterwards,
+not just one particular track.
+
+Much remains to explore, both in the teaching quality of the contents and in their cost of
+production. To give an order of magnitude, writing a 59-session track took the equivalent of
+about 14 million input tokens with Claude Opus 5.5 ([measurements](docs/research/couts.md)). Can
+comparable quality be reached with smaller or open models, at a lower cost? Which tasks should
+be given to agents, and which would be better handled otherwise? These are open questions.
+
+### In the spirit of sharing
+
+Boussole is free, and it should stay free. What you learn with it is yours: your skills, your
+work, what you will make of them, your job included. But the tool, its format and the courses
+written for it are meant to circulate freely, not to be sold. No one should have to pay to reach
+what others gave for learning.
+
+This freedom also covers the means of producing and passing on knowledge. The code, the format,
+the courses, the method sheets and the *skills* are meant to be examined, taken up and improved.
+Everyone can build on the work of others without starting from scratch, and bring in turn what
+they have learnt.
+
+This does not mean that the work of teaching, research or development has no value. It is about
+making sure that shared knowledge and tools can keep circulating, independently of those who
+first created them.
+
+### How to take part
+
+There is no single way to take part in the project.
+
+You can use a track and point out what is missing, what is confusing or what could be explained
+better. You can create your own course, translate an existing track or suggest another way of
+presenting an idea.
+
+You can also work on the method sheets and the *skills*, contribute to the code, try other AI
+models, or look for ways to improve the quality of tracks at a lower cost. All these
+contributions answer different needs, but can benefit the same project.
+
+Boussole is still being built. You can simply use it, follow how it evolves, or help improve it
+when you have something to bring. The methods, the technical choices and the courses are not set
+in stone: they are there to be used, discussed and, when needed, questioned.
+
+![The map of a track, on a laptop and a phone](docs/screenshots/map.png)
+
 ## How it works
 
 1. Put your documents in a folder: lecture notes, slides and past exams, but also a software
