@@ -91,6 +91,8 @@ Versions follow `MAJOR.MINOR.PATCH`.
 - Leave out what users don't notice: refactors, internal docs, build tweaks.
 - Release headings: `## 2.0.0 « Name »` for a major release, `## 1.1.0 (October 1 2026)` for a
   minor one, `## 1.0.3` alone for a patch. A patch's section is just its list of fixes.
+- The first release, `0.0.1`, is the starting point: its section says what Boussole does, by
+  theme, rather than what changed. Every release after it lists its changes.
 
 ## Releasing
 

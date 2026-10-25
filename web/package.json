@@ -1,6 +1,6 @@
 {
   "name": "boussole",
-  "version": "0.1.0-SNAPSHOT",
+  "version": "0.0.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
