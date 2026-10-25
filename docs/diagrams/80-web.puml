@@ -54,7 +54,8 @@ package "learn" {
   class "graph-layout.ts" as GraphLayout <<floors no wider than the map, order without crossings, links routed>>
   class "chapterColor()" as ChapterColor <<the colour of a chapter, by its place>>
   class TrackLanguagesComponent <<the languages of a track, chips>>
-  class SidePanelComponent <<video, PDF or web page>>
+  class SidePanelComponent <<video, PDF or web page, or the documents of the session>>
+  class "sessionDocuments()" as SessionDocuments <<what the session cites, by document and page>>
 }
 
 package "learn.blocks" {
@@ -142,7 +143,9 @@ ProfilePageComponent ..> RankNames
 RanksPageComponent ..> RankNames
 SessionPageComponent --> BlockListComponent : the screen shown
 SessionRun o-- QuestionState : kept for the sitting
-SessionPageComponent --> SidePanelComponent
+SessionPageComponent --> SidePanelComponent : documents, screen
+SessionPageComponent ..> SessionDocuments
+SessionDocuments ..> SessionPlan
 LearnFacade --> BoussoleApi
 BlockListComponent --> ProseBlockComponent
 BlockListComponent --> VideoBlockComponent

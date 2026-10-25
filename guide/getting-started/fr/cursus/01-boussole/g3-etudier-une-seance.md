@@ -36,6 +36,14 @@ par partie (échauffement, notions, point de contrôle, entraînement) et un ron
 
 Un clic sur un rond ouvert y mène.
 
+**« Le transparent dont parle le texte, il est où ? »** Le bouton **Documents**, au-dessus de
+l'étape, liste tout ce que la séance cite : les pages de tes documents, les sites, les vidéos.
+Un clic ouvre la page à droite, à côté du texte. Là :
+
+- la flèche ← revient à la liste ;
+- le titre déroule la liste, pour passer à un autre document ;
+- **Fermer**, ou Échap, ferme le panneau.
+
 :::note
 :term[Mode guidé]{id=mode-guide} : dans une leçon, Suivant attend ta réponse à la question
 affichée. La correction fait partie de la leçon. Une séance qui en demande d'autres avant

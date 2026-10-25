@@ -307,10 +307,17 @@ export const EN = {
     partly: 'partly got it',
     not_yet: 'not yet',
   },
+  documents: {
+    button: 'Documents · {{count}}',
+    title: 'Documents of the session',
+    intro: 'Everything this session cites, in one place. Pick a page: it opens here.',
+    back: 'Back to the list of documents',
+    switch: 'Another document of the session',
+    thisStep: 'this step',
+  },
   panel: {
     close: 'Close',
     newTab: 'Open in a new tab',
-    opening: 'Opening the site…',
     openSite: 'Open the site',
     backToSite: 'Back to the site’s window',
     webApart: 'This site refuses to show here: it is open in a window of its own, on the right.',

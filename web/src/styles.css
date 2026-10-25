@@ -1150,14 +1150,27 @@ a.session-card:active {
 
 /* Player: path | screen | side panel */
 
+/*
+ * The panel is a drawer: its column grows from nothing while the text narrows, and the panel,
+ * as wide as when open, comes in from the right edge. Clipped, it never makes the page scroll.
+ */
 .player {
+  --panel-width: max(22rem, 38vw);
   display: grid;
-  grid-template-columns: 19rem minmax(0, 1fr);
+  grid-template-columns: 19rem minmax(0, 1fr) 0px;
   min-height: calc(100vh - 3.5rem);
+  overflow-x: clip;
+  transition: grid-template-columns 0.28s cubic-bezier(0.2, 0.8, 0.3, 1);
 }
 
 .player.with-panel {
-  grid-template-columns: 19rem minmax(0, 1fr) minmax(22rem, 38vw);
+  grid-template-columns: 19rem minmax(0, 1fr) var(--panel-width);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .player {
+    transition: none;
+  }
 }
 
 /*
@@ -1692,11 +1705,80 @@ a.session-card:active {
 .side-panel {
   position: sticky;
   top: 3.5rem;
+  width: var(--panel-width);
   height: calc(100vh - 3.5rem);
   display: flex;
   flex-direction: column;
   border-left: 2px solid var(--line);
   background: var(--surface);
+}
+
+/* What the panel shows, under its bar; a sign turns over it while the page loads. */
+.panel-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  color: var(--subject-ink);
+  animation: list-unroll 0.16s ease-out;
+}
+
+.panel-loading .loading {
+  min-height: 0;
+}
+
+/*
+ * Closing, the column narrows back and carries the panel out by the right edge; Angular keeps the
+ * panel until it has gone (animate.leave). On a narrow screen the panel comes up from below and
+ * goes down again; the list unrolls.
+ */
+.side-panel.leaving {
+  animation: panel-out 0.28s cubic-bezier(0.4, 0, 0.8, 0.4) forwards;
+}
+
+@keyframes panel-out {
+  to {
+    opacity: 0.6;
+  }
+}
+
+@keyframes panel-in-below {
+  from {
+    opacity: 0;
+    transform: translateY(2.5rem);
+  }
+}
+
+@keyframes panel-out-below {
+  to {
+    opacity: 0;
+    transform: translateY(2.5rem);
+  }
+}
+
+@keyframes list-unroll {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .side-panel,
+  .documents-dropdown,
+  .documents-list,
+  .panel-loading {
+    animation: none !important;
+  }
 }
 
 .panel-bar {
@@ -1773,6 +1855,167 @@ a.session-card:active {
   background: #000000;
 }
 
+/* The documents of the session: the list in the panel, or unrolled over what is shown. */
+
+.documents-toggle {
+  min-height: 0;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  box-shadow: none;
+  color: var(--subject-ink);
+  font-size: 0.85rem;
+}
+
+.documents-toggle.active {
+  border-color: var(--subject-ink);
+  background: var(--subject-soft);
+}
+
+.panel-bar-icon,
+.document-title .icon-host {
+  color: var(--subject-ink);
+}
+
+.panel-back {
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 0.3rem 0.5rem;
+  color: var(--subject-ink);
+}
+
+.panel-switch {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  justify-content: flex-start;
+  padding: 0.3rem 0.5rem;
+  border-radius: 10px;
+  text-align: left;
+}
+
+.panel-switch:hover,
+.panel-switch[aria-expanded='true'] {
+  background: var(--subject-soft);
+}
+
+.panel-switch .icon-host {
+  flex: 0 0 auto;
+  color: var(--subject-ink);
+}
+
+.documents-list {
+  flex: 1;
+  overflow: auto;
+  padding: 0.75rem 0.75rem 1.5rem;
+  animation: list-unroll 0.16s ease-out;
+}
+
+.documents-intro {
+  margin: 0 0.5rem 0.5rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.documents-dropdown {
+  position: absolute;
+  top: 3.25rem;
+  left: 0.75rem;
+  right: 0.75rem;
+  z-index: 5;
+  max-height: calc(100% - 4.5rem);
+  overflow: auto;
+  padding: 0.25rem 0.5rem;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 14px 34px rgb(0 0 0 / 0.22);
+  transform-origin: top;
+  animation: list-unroll 0.16s ease-out;
+}
+
+.document-entry {
+  padding: 0.5rem 0;
+}
+
+.document-entry + .document-entry {
+  border-top: 2px solid var(--line);
+}
+
+.document-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.25rem 0.5rem 0.35rem;
+  font-size: 0.95rem;
+}
+
+.document-name {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.document-kind {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.document-places {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.document-place {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  padding: 0.4rem 0.6rem;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
+  font-weight: 600;
+  text-align: left;
+}
+
+.document-place:hover {
+  background: var(--surface-2);
+}
+
+.document-place.shown {
+  background: var(--subject-soft);
+}
+
+.place-where {
+  flex: 0 0 auto;
+  min-width: 3rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.document-place.shown .place-where {
+  color: var(--subject-ink);
+}
+
+.place-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.place-here {
+  flex: 0 0 auto;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  background: var(--subject);
+  color: var(--on-subject);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
 /* Narrow screens: the path opens as a drawer, the panel from the bottom */
 
 .outline-backdrop {
@@ -1823,7 +2066,13 @@ a.session-card:active {
     z-index: 30;
     border-left: 0;
     border-top: 2px solid var(--line);
+    width: auto;
     box-shadow: 0 -8px 24px rgb(0 0 0 / 0.2);
+    animation: panel-in-below 0.24s cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+
+  .side-panel.leaving {
+    animation: panel-out-below 0.2s ease-in forwards;
   }
 
   .session {

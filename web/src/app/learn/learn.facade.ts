@@ -1,11 +1,15 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal, untracked } from '@angular/core';
 import { BoussoleApi } from '../core/boussole-api';
 import { Course, CourseSummary, LexiconTerm, Session } from '../core/api';
 import { LanguageService } from '../core/language.service';
 import { storeValue, storedText } from '../core/local-preferences';
 
-/** What opens beside the text: a YouTube video, a video file of the sources, a document or a web page. */
+/**
+ * What opens beside the text: a YouTube video, a video file of the sources, a document or a web
+ * page, or the list of everything the session cites.
+ */
 export type SidePanel =
+  | { kind: 'documents' }
   | { kind: 'web'; label: string; url: string }
   | { kind: 'video'; label: string; youtubeId: string; start: number | null; end: number | null }
   | { kind: 'localVideo'; label: string; path: string; start: number | null; end: number | null }
@@ -21,9 +25,20 @@ export class LearnFacade {
   readonly course = signal<Course | null>(null);
   readonly session = signal<Session | null>(null);
   readonly panel = signal<SidePanel | null>(null);
+  /** The last document, page or video shown beside the text in this session, marked in the list. */
+  readonly lastShown = signal<SidePanel | null>(null);
   readonly unreachable = signal(false);
 
   readonly lexicon = computed(() => this.course()?.lexicon ?? []);
+
+  constructor() {
+    effect(() => {
+      const panel = this.panel();
+      if (panel && panel.kind !== 'documents') {
+        untracked(() => this.lastShown.set(panel));
+      }
+    });
+  }
 
   async loadSubjects(): Promise<void> {
     this.subjects.set(await this.reach(this.api.subjects(this.interfaceLanguage.current())));
@@ -36,6 +51,7 @@ export class LearnFacade {
   async openSession(subject: string, session: string): Promise<void> {
     this.session.set(null);
     this.panel.set(null);
+    this.lastShown.set(null);
     const lang = this.trackLanguage(subject);
     const [course, opened] = await Promise.all([
       this.reach(this.api.course(subject, lang)),

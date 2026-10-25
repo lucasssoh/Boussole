@@ -32,6 +32,22 @@ export class MarkdownRenderer {
   renderInline(source: string): string {
     return this.markdown.renderInline(source, {});
   }
+
+  /** The :pdf and :link of a piece of Markdown, in reading order, as the renderer reads them (not those in code). */
+  references(source: string): InlineReference[] {
+    return this.markdown.parse(source, {})
+      .flatMap((token) => token.children ?? [])
+      .filter((token) => token.type === 'boussole_directive')
+      .map((token) => token.meta as unknown as DirectiveMeta)
+      .filter((meta): meta is InlineReference => meta.name === 'pdf' || meta.name === 'link');
+  }
+}
+
+/** A document or a web page cited inside a sentence. */
+export interface InlineReference {
+  name: 'pdf' | 'link';
+  text: string;
+  attributes: Record<string, string>;
 }
 
 function createMarkdown(): MarkdownIt {

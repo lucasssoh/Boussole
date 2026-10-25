@@ -36,6 +36,14 @@ per part (warm-up, notions, checkpoint, practice) and a dot per step.
 
 Clicking an open dot goes there.
 
+**"Where is the slide the text talks about?"** The **Documents** button, above the step, lists
+everything the session cites: the pages of your documents, the sites, the videos. A click opens
+the page on the right, beside the text. There:
+
+- the arrow ← goes back to the list;
+- the title unrolls the list, to switch to another document;
+- **Close**, or Escape, closes the panel.
+
 :::note
 :term[Guided mode]{id=guided-mode}: in a lesson, Next waits for your answer to the question
 shown. The correction is part of the lesson. A session that needs others first shows a lock

@@ -309,10 +309,17 @@ export const FR: Translations = {
     partly: 'en partie réussi',
     not_yet: 'pas encore réussi',
   },
+  documents: {
+    button: 'Documents · {{count}}',
+    title: 'Documents de la séance',
+    intro: 'Tout ce que cette séance cite, au même endroit. Choisis une page : elle s’ouvre ici.',
+    back: 'Revenir à la liste des documents',
+    switch: 'Un autre document de la séance',
+    thisStep: 'cette étape',
+  },
   panel: {
     close: 'Fermer',
     newTab: 'Ouvrir dans un onglet',
-    opening: 'Ouverture du site…',
     openSite: 'Ouvrir le site',
     backToSite: 'Revenir à la fenêtre du site',
     webApart: 'Ce site refuse de s’afficher ici : il est ouvert dans une fenêtre à part, à droite.',

@@ -21,6 +21,8 @@ import { BlockView, Prerequisite, Verdict } from '../core/api';
 import { SessionScreen, sessionPlan } from './session-screens';
 import { SessionRun } from './session-run';
 import { SidePanelComponent } from './side-panel.component';
+import { MarkdownRenderer } from '../shared/markdown-renderer';
+import { sessionDocuments } from './session-documents';
 
 /**
  * The session player: one screen at a time (the goal, then each explanation, example and
@@ -63,6 +65,12 @@ import { SidePanelComponent } from './side-panel.component';
           }
           @if (opened(); as current) {
             <app-track-languages [languages]="current.languages" [current]="current.lang" [compact]="true" (choose)="switchLanguage($event)" />
+          }
+          @if (documents().length > 0) {
+            <button type="button" class="documents-toggle" [class.active]="learn.panel()?.kind === 'documents'"
+                    [attr.aria-pressed]="learn.panel()?.kind === 'documents'" (click)="toggleDocuments()">
+              <app-icon name="document" /> {{ 'documents.button' | transloco: { count: documents().length } }}
+            </button>
           }
           <span class="screen-count">{{ index() + 1 }} / {{ plan().screens.length }}</span>
           <progress [max]="plan().screens.length - 1" [value]="index()"></progress>
@@ -192,7 +200,7 @@ import { SidePanelComponent } from './side-panel.component';
       </main>
 
       @if (learn.panel()) {
-        <app-side-panel />
+        <app-side-panel animate.leave="leaving" [documents]="documents()" [screen]="index()" />
       }
     } @else if (learn.unreachable()) {
       <main class="session"><p class="frame warning">{{ 'app.unreachable' | transloco }}</p></main>
@@ -214,6 +222,7 @@ export class SessionPageComponent {
   private readonly router = inject(Router);
   private readonly settings = inject(ServerSettingsService);
   protected readonly stats = inject(StatsService);
+  private readonly markdown = inject(MarkdownRenderer);
 
   protected readonly finishedIn = signal<number | null>(null);
   protected readonly outlineOpen = signal(false);
@@ -227,6 +236,11 @@ export class SessionPageComponent {
     return Number.isInteger(wanted) ? Math.min(Math.max(wanted, 0), this.gate()) : 0;
   });
   protected readonly screen = computed<SessionScreen>(() => this.plan().screens[this.index()]);
+  /** Everything the session cites, in the list the Documents button opens beside the text. */
+  protected readonly documents = computed(() => sessionDocuments(this.plan(), this.opened()?.sources ?? [], {
+    references: (markdown) => this.markdown.references(markdown),
+    sourcePath: (file) => this.learn.sourcePath(file),
+  }));
   protected readonly where = computed(() => {
     const screen = this.screen();
     const part = this.plan().parts[screen.part]?.part;
@@ -349,6 +363,11 @@ export class SessionPageComponent {
       target = screens[Math.min(Math.max(offset, 0), screens.length - 1)];
     }
     this.goTo(Math.min(target, this.gate()));
+  }
+
+  /** The button opens the list, even over a document shown; on the list, it closes the panel. */
+  protected toggleDocuments(): void {
+    this.learn.panel.set(this.learn.panel()?.kind === 'documents' ? null : { kind: 'documents' });
   }
 
   protected goTo(index: number): void {
