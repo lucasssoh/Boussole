@@ -1923,6 +1923,30 @@ a.session-card:active {
   border: 0;
 }
 
+.side-panel app-markdown-document {
+  flex: 1;
+  min-height: 0;
+}
+
+.markdown-document {
+  height: 100%;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.markdown-document-error {
+  padding: 1rem;
+  color: var(--wrong);
+}
+
+.markdown-document .table-frame {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin: 1rem 0;
+  justify-content: flex-start;
+}
+
 .side-panel iframe.video,
 .side-panel iframe.web {
   flex: 1;
@@ -2228,8 +2252,9 @@ a.session-card:active {
 }
 
 .prose table {
+  flex: none;
   width: max-content;
-  max-width: 100%;
+  max-width: none;
   border-collapse: collapse;
 }
 
@@ -2795,6 +2820,7 @@ input:disabled {
 
 .correction {
   display: grid;
+  min-width: 0;
   gap: 0.5rem;
   margin-top: 0.5rem;
   padding: 1rem 1.25rem;
@@ -2802,6 +2828,27 @@ input:disabled {
   border-radius: 20px;
   background: var(--surface);
   animation: bubble 0.45s var(--spring) backwards;
+}
+
+.correction > *,
+.correction-why,
+.correction app-block-list,
+.correction app-prose-block {
+  min-width: 0;
+}
+
+.correction app-block-list,
+.correction app-prose-block {
+  display: block;
+  max-width: 100%;
+}
+
+.correction .table-frame {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin: 1rem 0;
+  justify-content: flex-start;
 }
 
 .correction.correct {
@@ -4609,4 +4656,3 @@ span.map-node.unwritten {
 .frame.beyond .frame-title {
   color: var(--beyond-ink);
 }
-

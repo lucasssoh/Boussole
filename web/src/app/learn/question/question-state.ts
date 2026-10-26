@@ -24,6 +24,7 @@ export class QuestionState {
   readonly hints: WritableSignal<BlockView[][]>;
   readonly hintTotal: number;
   readonly solution = signal<RevealedSolution | null>(null);
+  readonly correctionFocus = signal(false);
   readonly busy = signal(false);
 
   /** The response as the learner is writing it, kept with the question rather than its component. */
@@ -91,6 +92,9 @@ export class QuestionState {
       this.result.set(result);
       this.solution.set(result.solution);
       this.progress.set(result.progress);
+      if (this.correctionShown()) {
+        this.correctionFocus.set(true);
+      }
       if (this.run?.kind() === 'lesson') {
         storeValue(this.keptKey(), JSON.stringify({ request, result } satisfies KeptAnswer));
       }
@@ -109,6 +113,10 @@ export class QuestionState {
   /** A free exercise is compared with its solution before the learner grades it. */
   async showSolution(): Promise<void> {
     await this.call(async () => this.solution.set(await this.api.solution(this.subject, this.id, this.language)));
+  }
+
+  clearCorrectionFocus(): void {
+    this.correctionFocus.set(false);
   }
 
   /**

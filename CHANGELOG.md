@@ -4,7 +4,13 @@ Versions follow `MAJOR.MINOR.PATCH`, and each release is a git tag (`v1.0.0`). M
 also get a code name, minor ones their date; patch releases have neither. Until `1.0.0`, a
 minor release may break things and says so.
 
-## Unreleased
+## 0.2.0 (October 26 2026)
+
+### Added
+- **Documents:** Markdown files open rendered beside the lesson instead of downloading.
+
+### Fixed
+- **Tables:** wide tables in lessons scroll when needed; in solutions, they stay inside their card and scroll there. After your answer, an off-screen solution is brought into view.
 
 ## 0.1.1
 

@@ -71,6 +71,10 @@ export class BoussoleApi {
     return `/api/subjects/${enc(subject)}${version}/files/${path.split('/').map(enc).join('/')}`;
   }
 
+  fileText(url: string): Promise<string> {
+    return firstValueFrom(this.http.get(url, { responseType: 'text' }));
+  }
+
   private get<T>(url: string): Promise<T> {
     return firstValueFrom(this.http.get<T>(url));
   }

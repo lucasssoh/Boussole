@@ -13,6 +13,7 @@ export type SidePanel =
   | { kind: 'web'; label: string; url: string }
   | { kind: 'video'; label: string; youtubeId: string; start: number | null; end: number | null }
   | { kind: 'localVideo'; label: string; path: string; start: number | null; end: number | null }
+  | { kind: 'markdown'; label: string; path: string }
   | { kind: 'pdf'; label: string; path: string; page: number | null };
 
 /** The state of studying: the subjects, the course and the session open, and the side panel. */

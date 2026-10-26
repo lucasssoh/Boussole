@@ -49,4 +49,13 @@ describe('MarkdownRenderer', () => {
   it('keeps a Mermaid diagram for Mermaid to draw', () => {
     expect(renderer.render('```mermaid\ngraph TD; A-->B\n```', context)).toContain('<pre class="mermaid">');
   });
+
+  it('renders Markdown tables', () => {
+    const html = renderer.render('| Ville | Coût |\n| --- | ---: |\n| Paris | $42$ |', context);
+
+    expect(html).toContain('<table>');
+    expect(html).toContain('<th>Ville</th>');
+    expect(html).toContain('<td>Paris</td>');
+    expect(html).toContain('class="katex"');
+  });
 });

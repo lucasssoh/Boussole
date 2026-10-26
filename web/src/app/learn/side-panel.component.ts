@@ -10,6 +10,7 @@ import { clock } from './blocks/video-block.component';
 import { LearnFacade, SidePanel } from './learn.facade';
 import { DocumentPlace, SessionDocument, panelKey } from './session-documents';
 import { WebReferences } from './web-references';
+import { MarkdownDocumentComponent } from './markdown-document.component';
 
 /**
  * The video (YouTube or a file of the sources), the document or the web page opened beside the
@@ -20,7 +21,7 @@ import { WebReferences } from './web-references';
  */
 @Component({
   selector: 'app-side-panel',
-  imports: [IconComponent, LoadingComponent, NgTemplateOutlet, RichTextComponent, TranslocoPipe],
+  imports: [IconComponent, LoadingComponent, MarkdownDocumentComponent, NgTemplateOutlet, RichTextComponent, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'side-panel', '(document:keydown.escape)': 'onEscape()' },
   template: `
@@ -86,6 +87,8 @@ import { WebReferences } from './web-references';
           } @else if (panel.kind === 'localVideo') {
             <video class="video" [src]="localVideoUrl()" controls autoplay playsinline [title]="panel.label"
                    (loadeddata)="loaded()" (error)="loaded()"></video>
+          } @else if (panel.kind === 'markdown') {
+            <app-markdown-document [path]="panel.path" />
           } @else if (frameUrl(); as url) {
             <iframe
               [class]="panel.kind"
@@ -177,6 +180,8 @@ export class SidePanelComponent {
     switch (panel?.kind) {
       case undefined:
       case 'documents':
+        return null;
+      case 'markdown':
         return null;
       case 'pdf':
       case 'localVideo':
@@ -273,7 +278,7 @@ export class SidePanelComponent {
   }
 
   protected icon(document: SessionDocument): IconName {
-    return document.kind === 'web' ? 'globe' : document.kind === 'pdf' ? 'document' : 'play';
+    return document.kind === 'web' ? 'globe' : document.kind === 'pdf' || document.kind === 'markdown' ? 'document' : 'play';
   }
 
   /** The kind of file, the site of a web page, or YouTube. */
@@ -313,6 +318,7 @@ export class SidePanelComponent {
     }
     switch (panel.kind) {
       case 'documents':
+      case 'markdown':
         return null;
       case 'pdf':
         return this.learn.fileUrl(panel.path) + (panel.page ? `#page=${panel.page}` : '');
@@ -337,7 +343,7 @@ export class SidePanelComponent {
 
   protected readonly frameUrl = computed<SafeResourceUrl | null>(() => {
     const panel = this.shown();
-    if (!panel || panel.kind === 'documents' || panel.kind === 'localVideo' || panel.kind === 'web') {
+    if (!panel || panel.kind === 'documents' || panel.kind === 'markdown' || panel.kind === 'localVideo' || panel.kind === 'web') {
       return null;
     }
     const url = panel.kind === 'pdf'

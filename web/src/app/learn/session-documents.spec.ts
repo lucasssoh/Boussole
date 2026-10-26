@@ -45,4 +45,11 @@ describe('sessionDocuments', () => {
     expect(panelKey({ kind: 'pdf', label: 'un', path: 'sources/cours.pdf', page: 2 }))
       .toBe(panelKey({ kind: 'pdf', label: 'autre', path: 'sources/cours.pdf', page: 2 }));
   });
+
+  it('opens Markdown sources as rendered documents', () => {
+    const documents = sessionDocuments(sessionPlan([]), [{ path: 'sources/notes.md', page: null }], reading);
+
+    expect(documents[0].kind).toBe('markdown');
+    expect(documents[0].places[0].panel).toEqual({ kind: 'markdown', label: '', path: 'sources/notes.md' });
+  });
 });

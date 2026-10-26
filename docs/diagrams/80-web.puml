@@ -54,7 +54,8 @@ package "learn" {
   class "graph-layout.ts" as GraphLayout <<floors no wider than the map, order without crossings, links routed>>
   class "chapterColor()" as ChapterColor <<the colour of a chapter, by its place>>
   class TrackLanguagesComponent <<the languages of a track, chips>>
-  class SidePanelComponent <<video, PDF or web page, or the documents of the session>>
+  class SidePanelComponent <<video, PDF, Markdown or web page, or the documents of the session>>
+  class MarkdownDocumentComponent <<a cited Markdown document, rendered beside the lesson>>
   class "sessionDocuments()" as SessionDocuments <<what the session cites, by document and page>>
 }
 
@@ -156,6 +157,8 @@ BlockListComponent --> PdfBlockComponent
 BlockListComponent --> GraphBlockComponent
 BlockListComponent --> LinkBlockComponent
 SidePanelComponent ..> WebReferences : preview, window
+SidePanelComponent --> MarkdownDocumentComponent : cited Markdown file
+MarkdownDocumentComponent --> ProseBlockComponent : renders source
 LinkBlockComponent ..> WebReferences : looks ahead, opens
 ProseBlockComponent ..> WebReferences : :link
 WebReferences ..> BoussoleApi : previewPage()

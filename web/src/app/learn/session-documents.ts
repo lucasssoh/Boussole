@@ -18,7 +18,7 @@ export interface DocumentPlace {
 /** A document of the sources, a web page or a video the session cites, with each place of it cited. */
 export interface SessionDocument {
   key: string;
-  kind: 'pdf' | 'web' | 'video' | 'localVideo';
+  kind: 'pdf' | 'markdown' | 'web' | 'video' | 'localVideo';
   /** The file name, or the label of the first citation for a web page or a YouTube video. */
   title: string;
   places: DocumentPlace[];
@@ -43,7 +43,8 @@ export function sessionDocuments(
   reading: DocumentReading,
 ): SessionDocument[] {
   const documents = new Map<string, SessionDocument>();
-  const cite = (panel: Opened, screen: number | null): void => {
+  const cite = (source: Opened, screen: number | null): void => {
+    const panel = markdownPanel(source);
     const key = documentKey(panel);
     let document = documents.get(key);
     if (!document) {
@@ -92,6 +93,8 @@ export function panelKey(panel: SidePanel): string {
       return 'documents';
     case 'pdf':
       return `pdf:${panel.path}#${panel.page ?? ''}`;
+    case 'markdown':
+      return `markdown:${panel.path}`;
     case 'web':
       return `web:${panel.url}`;
     case 'video':
@@ -105,6 +108,7 @@ export function panelKey(panel: SidePanel): string {
 export function documentKey(panel: Opened): string {
   switch (panel.kind) {
     case 'pdf':
+    case 'markdown':
     case 'localVideo':
       return `file:${panel.path}`;
     case 'web':
@@ -117,6 +121,7 @@ export function documentKey(panel: Opened): string {
 function documentTitle(panel: Opened): string {
   switch (panel.kind) {
     case 'pdf':
+    case 'markdown':
     case 'localVideo':
       return panel.path.substring(panel.path.lastIndexOf('/') + 1);
     case 'web':
@@ -124,6 +129,12 @@ function documentTitle(panel: Opened): string {
     case 'video':
       return panel.label;
   }
+}
+
+function markdownPanel(panel: Opened): Opened {
+  return panel.kind === 'pdf' && /\.md$/i.test(panel.path)
+    ? { kind: 'markdown', label: panel.label, path: panel.path }
+    : panel;
 }
 
 function walk(blocks: BlockView[], reading: DocumentReading, cite: (panel: Opened) => void): void {

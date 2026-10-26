@@ -29,6 +29,7 @@ import { FillGaps } from '../question/fill-gaps';
 export class ProseBlockComponent {
   readonly markdown = input.required<string>();
   readonly fill = input<FillGaps | null>(null);
+  readonly base = input<string | null>(null);
 
   private readonly host: HTMLElement = inject(ElementRef).nativeElement;
   private readonly renderer = inject(MarkdownRenderer);
@@ -43,7 +44,7 @@ export class ProseBlockComponent {
     inject(DestroyRef).onDestroy(() => this.removeTips());
     effect(() => {
       this.removeTips();
-      this.host.innerHTML = this.renderer.render(this.markdown(), { base: this.learn.sessionBase(), gaps: this.fill() !== null });
+      this.host.innerHTML = this.renderer.render(this.markdown(), { base: this.base() ?? this.learn.sessionBase(), gaps: this.fill() !== null });
       this.widenTables();
       this.defineTerms();
       this.lookAtWebLinks();

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, computed, effect, forwardRef, inject, input } from '@angular/core';
 import { LanguageService } from '../../core/language.service';
 import { formatPoints } from '../../shared/ranks';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -52,6 +52,26 @@ import { QuestionState } from './question-state';
 export class QuestionCorrectionComponent {
   readonly state = input.required<QuestionState>();
   private readonly language = inject(LanguageService);
+  private readonly host: HTMLElement = inject(ElementRef).nativeElement;
+
+  constructor() {
+    effect(() => {
+      const state = this.state();
+      if (!state.correctionFocus()) {
+        return;
+      }
+      requestAnimationFrame(() => {
+        const bounds = this.host.getBoundingClientRect();
+        if (bounds.top < 0 || bounds.bottom > window.innerHeight) {
+          this.host.scrollIntoView({
+            behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+            block: bounds.height > window.innerHeight ? 'start' : 'nearest',
+          });
+        }
+        state.clearCorrectionFocus();
+      });
+    });
+  }
 
   protected points(points: number): string {
     return formatPoints(points, this.language.current());

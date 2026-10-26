@@ -316,6 +316,7 @@ export const EN = {
     back: 'Back to the list of documents',
     switch: 'Another document of the session',
     thisStep: 'this step',
+    loadFailed: 'This document could not be opened.',
   },
   panel: {
     close: 'Close',

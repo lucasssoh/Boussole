@@ -318,6 +318,7 @@ export const FR: Translations = {
     back: 'Revenir à la liste des documents',
     switch: 'Un autre document de la séance',
     thisStep: 'cette étape',
+    loadFailed: 'Ce document n’a pas pu être ouvert.',
   },
   panel: {
     close: 'Fermer',
