@@ -6,8 +6,12 @@ minor release may break things and says so.
 
 ## Unreleased
 
-## 0.1.0 (October 25 2026)
+## 0.1.1
 
+### Fixed
+- **macOS release:** application archives can now be built for versions before 1.0.0.
+
+## 0.1.0 (October 26 2026)
 ### Added
 - **The documents of a session, in one place:** the **Documents** button, above the step, lists every page of your documents, site and video the session cites, and marks those of the step you are on. A click opens it on the right; there, the arrow goes back to the list, the title switches to another document, and **Close** (or Escape) closes the panel.
 - **The points you earn, as you earn them:** after a right answer, a « +3 » rises beside your tier, at the top right, and fades.
