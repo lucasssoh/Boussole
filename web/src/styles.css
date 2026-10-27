@@ -2675,6 +2675,10 @@ a.session-card:active {
   font-weight: 900;
 }
 
+.gap .expected {
+  white-space: normal;
+}
+
 .order-list {
   display: grid;
   gap: 0.5rem;

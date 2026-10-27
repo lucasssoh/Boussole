@@ -4,6 +4,11 @@ Versions follow `MAJOR.MINOR.PATCH`, and each release is a git tag (`v1.0.0`). M
 also get a code name, minor ones their date; patch releases have neither. Until `1.0.0`, a
 minor release may break things and says so.
 
+## Unreleased
+
+### Fixed
+- **Fill-in exercises:** long correct answers now wrap instead of running past the edge of the page.
+
 ## 0.2.0 (October 26 2026)
 
 ### Added
