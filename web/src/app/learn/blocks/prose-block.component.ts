@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, effect, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, effect, inject, input, untracked } from '@angular/core';
 import { MarkdownRenderer } from '../../shared/markdown-renderer';
 import { drawMermaidDiagrams } from '../../shared/mermaid-diagrams';
 import { LearnFacade } from '../learn.facade';
@@ -48,7 +48,7 @@ export class ProseBlockComponent {
       this.widenTables();
       this.defineTerms();
       this.lookAtWebLinks();
-      this.fill()?.mountIn(this.host);
+      untracked(() => this.fill()?.mountIn(this.host));
       void drawMermaidDiagrams(this.host);
     });
   }
