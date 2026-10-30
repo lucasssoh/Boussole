@@ -7,6 +7,8 @@ import io.github.lucasssoh.boussole.core.learn.check.CheckedItem;
 import io.github.lucasssoh.boussole.core.learn.check.ChoicesResponse;
 import io.github.lucasssoh.boussole.core.learn.check.GapsResponse;
 import io.github.lucasssoh.boussole.core.learn.check.MatchResponse;
+import io.github.lucasssoh.boussole.core.learn.check.SelfGrade;
+import io.github.lucasssoh.boussole.core.learn.check.SelfGradeResponse;
 import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import io.github.lucasssoh.boussole.format.diagnostic.SourcePosition;
 import io.github.lucasssoh.boussole.format.model.answer.FillAnswer;
@@ -73,6 +75,16 @@ class QuestionScoreTest {
         ExerciseBlock exercise = fill("Devine : [[1]].", 1, true);
 
         assertThat(QuestionScore.of(exercise, new GapsResponse(Map.of()), gaps(true))).isEqualTo(QuestionScore.NOTHING);
+        assertThat(QuestionScore.possible(exercise)).isZero();
+    }
+
+    @Test
+    void a_free_exercise_earns_no_points_even_when_the_learner_grades_it_as_successful() {
+        ExerciseBlock exercise = new ExerciseBlock("free", ExerciseType.FREE, List.of(),
+                Optional.empty(), List.of(), Optional.empty(), OptionalInt.empty(), false, HERE);
+
+        assertThat(QuestionScore.of(exercise, new SelfGradeResponse(SelfGrade.GOT_IT),
+                new CheckResult(Verdict.CORRECT, List.of()))).isEqualTo(QuestionScore.NOTHING);
         assertThat(QuestionScore.possible(exercise)).isZero();
     }
 

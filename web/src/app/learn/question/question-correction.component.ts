@@ -15,11 +15,11 @@ import { QuestionState } from './question-state';
   selector: 'app-question-correction',
   imports: [TranslocoPipe, forwardRef(() => BlockListComponent)],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'correction', role: 'status', '[class]': "'correction ' + (verdict() ?? 'neutral')" },
+  host: { class: 'correction', role: 'status', '[class]': "'correction ' + (state().isFree ? 'neutral' : verdict() ?? 'neutral')" },
   template: `
     <div class="correction-head">
       <span class="correction-title">
-        {{ (verdict() ? 'verdict.' + verdict() : 'question.solutionTitle') | transloco }}
+        {{ (state().isFree ? 'question.proposedCorrection' : verdict() ? 'verdict.' + verdict() : 'question.solutionTitle') | transloco }}
       </span>
       @if (state().result(); as result) {
         <span class="correction-score">
@@ -31,7 +31,7 @@ import { QuestionState } from './question-state';
           } @else if (result.earned > 0 && result.earned < result.possible) {
             <span class="score-pill">{{ 'question.share' | transloco: { earned: points(result.earned) } }}</span>
           }
-          @if (result.pointsGained > 0) {
+          @if (!state().isFree && result.pointsGained > 0) {
             <span class="xp-pill">{{ 'question.points' | transloco: { points: points(result.pointsGained) } }}</span>
           }
         }

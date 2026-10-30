@@ -87,10 +87,10 @@ Each thing the application does is a **use case**, one class with one public met
 is the list of features.
 
 Only what is right earns points. `SubmitAttempt` weighs each answer (`QuestionScore`: 1 for a
-value, a single-choice MCQ, an order; 1 per sentence whose gaps are all right in a fill
+value, a single-choice MCQ or an order; 1 per sentence whose gaps are all right in a fill
 (`GapSentences`); shares that wrong choices take back in a multiple-choice MCQ or a match; 0 for a
-hook), multiplies it by the occasion (`PointRules`: the first answer whole, half in another
-session that asks it again, nothing more in the same session) and by the level of the track
+free exercise or a hook), multiplies it by the occasion (`PointRules`: the first answer whole,
+half in another session that asks it again, nothing more in the same session) and by the level of the track
 (`TrackLevel`), and keeps the points with the attempt. `FinishSession` adds a tenth, rounded up
 last, the first time a session ends without a mistake. `ReadStudyStats` adds them up from the
 history, and places them on two `Ladder`s (`Rank`): the culture, and the specialty of each field

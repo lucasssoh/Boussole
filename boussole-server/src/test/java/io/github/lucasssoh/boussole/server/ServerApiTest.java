@@ -132,7 +132,7 @@ class ServerApiTest {
     @Test
     void a_track_says_how_demanding_it_is_its_field_and_its_score() throws Exception {
         assertThat(get("/api/subjects/reseaux").body()).contains("\"level\":\"master\"", "\"domain\":\"information-technology\"",
-                "\"score\":{\"earned\":", "\"possible\":21.0}");
+                "\"score\":{\"earned\":", "\"possible\":18.0}");
     }
 
     @Test

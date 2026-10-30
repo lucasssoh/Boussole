@@ -9,6 +9,7 @@ import io.github.lucasssoh.boussole.format.model.answer.FillAnswer;
 import io.github.lucasssoh.boussole.format.model.answer.MatchAnswer;
 import io.github.lucasssoh.boussole.format.model.block.Block;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
+import io.github.lucasssoh.boussole.format.model.block.ExerciseType;
 import io.github.lucasssoh.boussole.format.model.block.McqBlock;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
  * {@code earned} out of what it was {@code possible} to earn.
  *
  * <ul>
- *   <li>A value, a single-choice MCQ, an order, a free exercise graded right: 1, all or nothing.</li>
+ *   <li>A value, a single-choice MCQ or an order: 1, all or nothing. A free exercise earns nothing.</li>
  *   <li>A fill: 1 per sentence whose gaps are all right ({@link GapSentences}).</li>
  *   <li>A multiple-choice MCQ, a match: 1 split between its elements; each right one earns its
  *       share, each wrong one takes it away, one left out counts nothing; never below 0.</li>
@@ -34,6 +35,7 @@ public record QuestionScore(double earned, double possible) {
         return switch (question) {
             case McqBlock mcq when mcq.hook() -> NOTHING;
             case ExerciseBlock exercise when exercise.hook() -> NOTHING;
+            case ExerciseBlock exercise when exercise.type() == ExerciseType.FREE -> NOTHING;
             case McqBlock mcq when mcq.multiple() -> multipleChoice(mcq, (ChoicesResponse) response);
             case ExerciseBlock exercise when exercise.answer().orElse(null) instanceof FillAnswer fill -> fill(exercise, fill, result);
             case ExerciseBlock exercise when exercise.answer().orElse(null) instanceof MatchAnswer match ->
@@ -47,6 +49,7 @@ public record QuestionScore(double earned, double possible) {
         return switch (question) {
             case McqBlock mcq when mcq.hook() -> 0;
             case ExerciseBlock exercise when exercise.hook() -> 0;
+            case ExerciseBlock exercise when exercise.type() == ExerciseType.FREE -> 0;
             case ExerciseBlock exercise when exercise.answer().orElse(null) instanceof FillAnswer fill ->
                     sentences(exercise, fill).values().stream().distinct().count();
             case McqBlock _, ExerciseBlock _ -> 1;

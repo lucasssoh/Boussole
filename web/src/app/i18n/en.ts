@@ -121,6 +121,7 @@ export const EN = {
     hintCount: 'Nudge {{number}} of {{total}}',
     why: 'Why',
     solutionTitle: 'Solution',
+    proposedCorrection: 'Suggested correction',
     saved: 'Answer saved: corrected at the end of the exam',
     expected: 'Expected',
     several: 'Several answers are right.',

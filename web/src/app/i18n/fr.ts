@@ -123,6 +123,7 @@ export const FR: Translations = {
     hintCount: 'Coup de pouce {{number}} sur {{total}}',
     why: 'Pourquoi',
     solutionTitle: 'Solution',
+    proposedCorrection: 'Correction proposée',
     saved: "Réponse enregistrée : corrigée à la fin de l'examen",
     expected: 'Attendu',
     several: 'Plusieurs réponses sont justes.',

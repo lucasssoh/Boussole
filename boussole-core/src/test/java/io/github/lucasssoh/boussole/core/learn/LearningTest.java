@@ -70,8 +70,8 @@ class LearningTest {
 
         TrackScore score = new OpenCourse(content, progress).open("reseaux", Optional.empty()).score();
 
-        assertThat(score).isEqualTo(new TrackScore(3, 3, 21));
-        assertThat(score.toPlay()).isEqualTo(15);
+        assertThat(score).isEqualTo(new TrackScore(3, 3, 18));
+        assertThat(score.toPlay()).isEqualTo(12);
     }
 
     @Test

@@ -7,6 +7,7 @@ minor release may break things and says so.
 ## Unreleased
 
 ### Fixed
+- **Free exercises:** self-grading no longer awards points, and the answer is labelled as a proposed correction.
 - **Fill-in exercises:** typing a number no longer closes the field after each digit.
 
 ## 0.2.1
