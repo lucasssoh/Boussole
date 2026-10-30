@@ -21,6 +21,7 @@ package "content" {
 
 package "progress" {
   class SqliteProgressRepository <<exercise_progress, attempt, session_finished>>
+  class SqliteDeviceRepository <<device>>
   class SqliteDatabase {
     +{static} open(Path) : SqliteDatabase
     ~connect() : Connection
@@ -38,11 +39,25 @@ package "config" {
     subjects : List<Path>
     freeNavigation : boolean
     tracksDir : Optional<Path>
+    network : boolean
+    networkPort : int
   }
   class BoussolePaths <<record>> {
     config, data, state : Path
     +configFile() / learnerProfile()
     +database() / serverLog()
+  }
+}
+
+package "network" {
+  class NetworkAddresses <<helpers>> {
+    +{static} current() : private IPv4
+    +{static} localName() : host.local
+  }
+  class LocalCertificate <<record>> {
+    keystore, password, fingerprint
+    +{static} ensure(folder, hosts)
+    +shortFingerprint()
   }
 }
 
@@ -58,6 +73,7 @@ package "web" {
 
 interface ContentRepository <<boussole-core port>>
 interface ProgressRepository <<boussole-core port>>
+interface DeviceRepository <<boussole-core port>>
 interface VideoCatalog <<boussole-format>>
 interface WebPages <<boussole-core port>>
 class CourseLoader <<boussole-format>>
@@ -69,6 +85,9 @@ SubjectFolderCache ..> CourseFilesFingerprint : changed?
 SubjectFolderCache ..> CourseLoader : reads again
 ProgressRepository <|.. SqliteProgressRepository
 SqliteProgressRepository --> SqliteDatabase : database
+DeviceRepository <|.. SqliteDeviceRepository
+SqliteDeviceRepository --> SqliteDatabase : database
+LocalCertificate ..> NetworkAddresses : names them all
 VideoCatalog <|.. YoutubeOEmbedCatalog
 BoussoleConfigFile ..> BoussoleConfig : reads
 BoussoleConfigFile ..> BoussolePaths : forCurrentUser()

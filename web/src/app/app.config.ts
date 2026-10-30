@@ -4,13 +4,14 @@ import { provideRouter, withComponentInputBinding, withViewTransitions } from '@
 import { provideTransloco } from '@jsverse/transloco';
 import { routes } from './app.routes';
 import { boussoleHeaderInterceptor } from './core/boussole-header.interceptor';
+import { deviceGuardInterceptor } from './core/device-guard.interceptor';
 import { BundledTranslationLoader } from './i18n/transloco-loader';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding(), withViewTransitions({ skipInitialTransition: true })),
-    provideHttpClient(withInterceptors([boussoleHeaderInterceptor])),
+    provideHttpClient(withInterceptors([boussoleHeaderInterceptor, deviceGuardInterceptor])),
     provideTransloco({
       config: {
         availableLangs: ['en', 'fr'],

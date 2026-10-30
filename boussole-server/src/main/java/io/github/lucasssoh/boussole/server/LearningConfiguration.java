@@ -6,6 +6,20 @@ import io.github.lucasssoh.boussole.core.reference.PreviewWebPage;
 import io.github.lucasssoh.boussole.core.reference.WebPages;
 import io.github.lucasssoh.boussole.adapters.progress.SqliteDatabase;
 import io.github.lucasssoh.boussole.adapters.progress.SqliteProgressRepository;
+import io.github.lucasssoh.boussole.adapters.progress.SqliteDeviceRepository;
+import io.github.lucasssoh.boussole.core.device.AnswerPairingRequest;
+import io.github.lucasssoh.boussole.core.device.ClaimPairing;
+import io.github.lucasssoh.boussole.core.device.CollectPairing;
+import io.github.lucasssoh.boussole.core.device.DeviceRepository;
+import io.github.lucasssoh.boussole.core.device.EditDevice;
+import io.github.lucasssoh.boussole.core.device.IdentifyDevice;
+import io.github.lucasssoh.boussole.core.device.ListDevices;
+import io.github.lucasssoh.boussole.core.device.ListPairingRequests;
+import io.github.lucasssoh.boussole.core.device.OfferPairing;
+import io.github.lucasssoh.boussole.core.device.PairingDesk;
+import io.github.lucasssoh.boussole.core.device.PreviewPairing;
+import io.github.lucasssoh.boussole.core.device.RemoveDevice;
+import io.github.lucasssoh.boussole.core.device.RequestPairing;
 import io.github.lucasssoh.boussole.core.learn.ContentRepository;
 import io.github.lucasssoh.boussole.core.learn.FinishSession;
 import io.github.lucasssoh.boussole.core.learn.ListCourses;
@@ -32,8 +46,78 @@ class LearningConfiguration {
     }
 
     @Bean
-    ProgressRepository progressRepository(ServerSettings settings) {
-        return new SqliteProgressRepository(SqliteDatabase.open(settings.database()));
+    SqliteDatabase database(ServerSettings settings) {
+        return SqliteDatabase.open(settings.database());
+    }
+
+    @Bean
+    ProgressRepository progressRepository(SqliteDatabase database) {
+        return new SqliteProgressRepository(database);
+    }
+
+    @Bean
+    DeviceRepository deviceRepository(SqliteDatabase database) {
+        return new SqliteDeviceRepository(database);
+    }
+
+    @Bean
+    PairingDesk pairingDesk(DeviceRepository devices, Clock clock) {
+        return new PairingDesk(devices, clock);
+    }
+
+    @Bean
+    OfferPairing offerPairing(PairingDesk desk) {
+        return new OfferPairing(desk);
+    }
+
+    @Bean
+    PreviewPairing previewPairing(PairingDesk desk) {
+        return new PreviewPairing(desk);
+    }
+
+    @Bean
+    ClaimPairing claimPairing(PairingDesk desk) {
+        return new ClaimPairing(desk);
+    }
+
+    @Bean
+    RequestPairing requestPairing(PairingDesk desk) {
+        return new RequestPairing(desk);
+    }
+
+    @Bean
+    ListPairingRequests listPairingRequests(PairingDesk desk) {
+        return new ListPairingRequests(desk);
+    }
+
+    @Bean
+    AnswerPairingRequest answerPairingRequest(PairingDesk desk) {
+        return new AnswerPairingRequest(desk);
+    }
+
+    @Bean
+    CollectPairing collectPairing(PairingDesk desk) {
+        return new CollectPairing(desk);
+    }
+
+    @Bean
+    IdentifyDevice identifyDevice(DeviceRepository devices, Clock clock) {
+        return new IdentifyDevice(devices, clock);
+    }
+
+    @Bean
+    ListDevices listDevices(DeviceRepository devices) {
+        return new ListDevices(devices);
+    }
+
+    @Bean
+    RemoveDevice removeDevice(DeviceRepository devices) {
+        return new RemoveDevice(devices);
+    }
+
+    @Bean
+    EditDevice editDevice(DeviceRepository devices) {
+        return new EditDevice(devices);
     }
 
     /** The tracks built into Boussole are there to be read again: they earn no experience. */

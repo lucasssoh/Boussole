@@ -1,0 +1,123 @@
+@startuml 55-core-devices
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam nodesep 40
+skinparam ranksep 50
+hide empty members
+hide circle
+title boussole-core — other devices (package device): pairing, keys, access
+
+package "device" {
+  interface DeviceRepository <<port>> {
+    +add(Device, keyHash)
+    +byKeyHash(keyHash) : Optional<Device>
+    +byId(id) : Optional<Device>
+    +all() : List<Device>
+    +update(Device)
+    +remove(id) : boolean
+  }
+  class PairingDesk <<in memory>> {
+    LIFETIME = 2 min
+    WRONG_CODES = 5
+    PENDING_REQUESTS = 5
+  }
+  class OfferPairing <<use case>> {
+    +offer(DeviceAccess) : PairingOffer
+  }
+  class PreviewPairing <<use case>> {
+    +preview(code) : DeviceAccess
+  }
+  class ClaimPairing <<use case>> {
+    +claim(code, name, address) : PairedDevice
+  }
+  class RequestPairing <<use case>> {
+    +request(name, address) : PairingRequest
+  }
+  class ListPairingRequests <<use case>> {
+    +list() : List<PairingRequest>
+  }
+  class AnswerPairingRequest <<use case>> {
+    +answer(code, Optional<DeviceAccess>) : PairingRequest
+  }
+  class CollectPairing <<use case>> {
+    +collect(requestId) : PairingStatus
+  }
+  class IdentifyDevice <<use case>> {
+    +identify(key, address) : Optional<Device>
+  }
+  class ListDevices <<use case>> {
+    +list() : List<Device>
+  }
+  class EditDevice <<use case>> {
+    +edit(id, name, access) : Device
+  }
+  class RemoveDevice <<use case>> {
+    +remove(id)
+  }
+  class Device <<record>> {
+    id, name, address
+    access : DeviceAccess
+    pairedAt, lastSeen : Instant
+  }
+  enum DeviceAccess {
+    FULL
+    READ_ONLY
+  }
+  class PairingOffer <<record>> {
+    code, access, expiresAt
+  }
+  class PairingRequest <<record>> {
+    id, code, name, address, expiresAt
+  }
+  class PairingStatus <<record>> {
+    state : PENDING | ACCEPTED | DENIED | EXPIRED
+    paired : Optional<PairedDevice>
+  }
+  class PairedDevice <<record>> {
+    device : Device
+    key : String
+  }
+  class DeviceKeys <<helpers>> {
+    +{static} newKey() : 256 bits
+    +{static} newCode() : 6 digits
+    +{static} hash(key) : SHA-256
+  }
+  class PairingRefusedException
+}
+
+OfferPairing --> PairingDesk
+PreviewPairing --> PairingDesk
+ClaimPairing --> PairingDesk
+RequestPairing --> PairingDesk
+ListPairingRequests --> PairingDesk
+AnswerPairingRequest --> PairingDesk
+CollectPairing --> PairingDesk
+PairingDesk --> DeviceRepository : the devices it pairs
+IdentifyDevice --> DeviceRepository
+ListDevices --> DeviceRepository
+EditDevice --> DeviceRepository
+RemoveDevice --> DeviceRepository
+PairingDesk ..> DeviceKeys
+IdentifyDevice ..> DeviceKeys : hash of the key given
+PairingDesk ..> PairingOffer
+PairingDesk ..> PairingRequest
+PairingDesk ..> PairingStatus
+PairingStatus --> PairedDevice
+PairedDevice --> Device
+Device --> DeviceAccess
+PairingDesk ..> PairingRefusedException
+
+note bottom of PairingDesk
+  Offers and requests live in memory only:
+  a restart forgets them. A code serves once;
+  an offer goes after five wrong codes.
+  A request accepted but never collected
+  takes its device away when it expires.
+end note
+
+note bottom of DeviceRepository
+  Only the hash of each key is kept:
+  the key is handed once to the device,
+  in a cookie its page cannot read.
+end note
+@enduml

@@ -143,10 +143,26 @@ receives are `…View` records; `BlockViewMapper` builds the blocks of a session
 every answer, hint not yet revealed and solution. Their TypeScript twins are in
 `web/src/app/core/api.ts`.
 
-The server listens on 127.0.0.1 only. `LocalRequestFilter` refuses a `Host` other than
-localhost (another site pointed at 127.0.0.1) and a change without the `X-Boussole` header (a
-form posted from another site). It also serves the interface, any other path answering with its
-`index.html`.
+The server listens on 127.0.0.1. `AccessFilter` refuses a `Host` other than localhost (another
+site pointed at 127.0.0.1) and a change without the `X-Boussole` header (a form posted from
+another site). It also serves the interface, any other path answering with its `index.html`.
+
+**Other devices.** With `network: true`, a second listener (`NetworkConnector`) answers over
+HTTPS on `network_port`, on every address of the computer, with a certificate made on it by the
+Java runtime's `keytool` (`LocalCertificate`, kept in the data folder, made again when the
+computer gets an address it does not name). There, `AccessFilter` checks the `Host` against the
+computer's addresses and `.local` name, gives the interface's files to anyone but nothing of the
+API without the key of a paired device, refuses any change from a read-only one, and never lets
+the network reach `/api/devices` or stop the server. Pairing (`core.device`, `PairingDesk`) works
+without accounts: the owner shows a six-digit code (and its QR code) with `boussole devices pair`,
+or a device without a keyboard shows one and the owner accepts it with `boussole devices accept`.
+Codes last two minutes and serve once; five wrong codes withdraw an offer; a few requests wait at
+a time. The device's key (256 bits) is handed once, in an `HttpOnly`, `Secure`, `SameSite=Strict`
+cookie the page cannot read; the database keeps only its SHA-256. A device is named the way the
+network knows its address (reverse DNS, which home routers answer with each device's name),
+else by what its browser says: never by a name it gives itself. The certificate's fingerprint is
+shown by `boussole devices`, to compare with what the device's browser shows; a page cannot prove
+its own certificate.
 
 The tracks built into Boussole are ordinary subjects, written in the course format under
 `guide/<track>/<language>/` and copied into the jar: `getting-started`, the guide a new
@@ -349,6 +365,13 @@ GET  /api/references/preview?url=        whether a web page a course cites may s
 GET  /api/stats                          points, culture rank, specialty of each field, streak, records, route
 GET  /api/ranks                          both ladders: every division, where it starts, its first level
 GET  /api/achievements                   each achievement: the value counted, the levels reached, the values they ask
+POST /api/pairing/preview, /claim       a device gives the owner's code; claim sets its key in a cookie (network port only)
+POST /api/pairing/requests               a device without a keyboard asks, and shows the code it gets
+GET  /api/pairing/requests/{id}          pending, accepted (its key in a cookie, once), denied or expired
+GET  /api/devices                        the network, the requests waiting, the paired devices (this computer only)
+POST /api/devices/pairing                a code for one device { access: full | read-only }, and the addresses with it
+POST /api/devices/requests/{code}/accept { access }; …/deny
+PATCH, DELETE /api/devices/{id}          rename, change access; remove
 GET  /api/server                         lets boussole open recognise a running Boussole
 POST /api/server/stop                    boussole stop
 ```
@@ -402,6 +425,8 @@ language: fr                   # interface: en | fr
 port: 7420
 free_navigation: false         # true: a lesson lets you go on without answering
 tracks_dir: ~/Boussole          # where boussole new creates a track (default ~/Boussole)
+network: false                 # true: other devices of the local network may pair (boussole devices)
+network_port: 7421             # where they reach it, over HTTPS
 subjects:
   - ~/courses/mim-m1/RESEAUX
   - ~/courses/mim-m1/OC
@@ -413,7 +438,8 @@ reminders:
 | What | Where |
 |---|---|
 | Configuration | `$XDG_CONFIG_HOME/boussole/config.yaml` |
-| Progress, plan, history | `$XDG_DATA_HOME/boussole/state.db` |
+| Progress, plan, history, paired devices | `$XDG_DATA_HOME/boussole/state.db` |
+| Network certificate | `$XDG_DATA_HOME/boussole/network/` (`network.p12` and its password, readable by its owner only) |
 | Courses | the subject folders listed in the configuration, never inside Boussole |
 | Built-in tracks | `$XDG_DATA_HOME/boussole/guide/<track>/<language>/`, rewritten at each start |
 

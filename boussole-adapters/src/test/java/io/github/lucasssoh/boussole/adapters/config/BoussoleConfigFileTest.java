@@ -1,6 +1,7 @@
 package io.github.lucasssoh.boussole.adapters.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,6 +33,26 @@ class BoussoleConfigFileTest {
         assertThat(read.port()).isEqualTo(7500);
         assertThat(read.freeNavigation()).isTrue();
         assertThat(read.subjects()).containsExactly(home.resolve("courses/OC"), Path.of("/srv/RESEAUX"));
+    }
+
+    @Test
+    void a_key_written_twice_is_said_with_its_line() throws Exception {
+        Files.createDirectories(home.resolve(".config/boussole"));
+        Files.writeString(config().path(), "subjects:\n  - ~/courses/OC\nnetwork: true\nnetwork: true\n");
+
+        assertThatThrownBy(() -> config().read())
+                .isInstanceOf(InvalidConfigException.class)
+                .hasMessage(config().path() + ", line 4: found duplicate key network");
+    }
+
+    @Test
+    void other_devices_reach_boussole_only_when_the_network_is_on() throws Exception {
+        assertThat(config().read().network()).isFalse();
+        Files.createDirectories(home.resolve(".config/boussole"));
+        Files.writeString(config().path(), "network: true\nnetwork_port: 7600\n");
+
+        assertThat(config().read().network()).isTrue();
+        assertThat(config().read().networkPort()).isEqualTo(7600);
     }
 
     @Test

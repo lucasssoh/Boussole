@@ -5,7 +5,7 @@ skinparam nodesep 40
 skinparam ranksep 50
 hide empty members
 hide circle
-title boussole-cli — the boussole command (packages cli, cli.init, cli.serve)
+title boussole-cli — the boussole command (packages cli, cli.init, cli.serve, cli.devices)
 
 package "cli" {
   class BoussoleCommand <<@Command boussole>> {
@@ -79,6 +79,34 @@ package "cli.serve" {
   }
 }
 
+package "cli.devices" {
+  class DevicesCommand <<@Command devices>> {
+    network, requests, devices
+  }
+  class PairCommand <<@Command pair>> {
+    --read-only
+  }
+  class AcceptCommand <<@Command accept>> {
+    CODE --read-only
+  }
+  class DenyCommand <<@Command deny>> {
+    CODE
+  }
+  class RemoveDeviceCommand <<@Command remove>> {
+    DEVICE
+  }
+  class RenameDeviceCommand <<@Command rename>> {
+    DEVICE NAME
+  }
+  class AccessCommand <<@Command access>> {
+    DEVICE full|read-only
+  }
+  class LocalServer <<the API on 127.0.0.1>>
+  class QrText <<half blocks, black on white>>
+  class Devices <<helpers>>
+  class DeviceCommandException
+}
+
 package "cli.init" {
   class InitCommand <<@Command init>> {
     folder : Path
@@ -108,6 +136,8 @@ class YoutubeOEmbedCatalog <<boussole-adapters>>
 class BoussoleConfigFile <<boussole-adapters>>
 class BoussolePaths <<boussole-adapters>>
 class BoussoleServer <<boussole-server>>
+class LocalCertificate <<boussole-adapters>>
+class NetworkAddresses <<boussole-adapters>>
 
 BoussoleCommand --> OpenCommand : subcommand
 BoussoleCommand --> ServeCommand : subcommand
@@ -120,6 +150,18 @@ NewCommand ..> BoussoleConfigFile : tracks_dir, adds the track
 BoussoleCommand --> ValidateCommand : subcommand
 BoussoleCommand --> SourcesCommand : subcommand
 BoussoleCommand --> IndexCommand : subcommand
+BoussoleCommand --> DevicesCommand : subcommand
+DevicesCommand --> PairCommand
+DevicesCommand --> AcceptCommand
+DevicesCommand --> DenyCommand
+DevicesCommand --> RemoveDeviceCommand
+DevicesCommand --> RenameDeviceCommand
+DevicesCommand --> AccessCommand
+DevicesCommand --> LocalServer : /api/devices
+PairCommand --> QrText : the address with its code
+PairCommand ..> Devices
+ServeCommand ..> NetworkAddresses : network: true
+ServeCommand ..> LocalCertificate : makes or keeps it
 BoussoleCommand --> ManifestVersion
 ValidateCommand --> SubjectInspector : inspects
 ValidateCommand ..> YoutubeOEmbedCatalog : --check-videos

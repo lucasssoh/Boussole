@@ -435,3 +435,27 @@ export interface ServerInfo {
   /** From config.yaml: a lesson lets the learner go on without answering its questions. */
   freeNavigation: boolean;
 }
+
+/** What a device may do once paired: everything, or read without answering. */
+export type DeviceAccess = 'full' | 'read-only';
+
+/** This device as the computer sees it: by the name the network knows it by, never one it gives itself. */
+export interface PairingDevice {
+  name: string;
+  address: string;
+  access: DeviceAccess;
+}
+
+/** A request to be paired: {@link code} shows on this device, the owner accepts it on the computer. */
+export interface PairingRequestMade {
+  id: string;
+  code: string;
+  name: string;
+  address: string;
+  expiresAt: string;
+}
+
+export interface PairingStatus {
+  state: 'pending' | 'accepted' | 'denied' | 'expired';
+  device: PairingDevice | null;
+}

@@ -13,9 +13,10 @@ readable; the overview says where each area sits.
 | [Parsing: answers](21-parsing-answers.svg) | how each exercise type reads its answer |
 | [Loading](30-loading.svg) | reading a subject folder: YAML files, sessions, diagnostics |
 | [Validation](31-validation.svg) | the rules that check a whole course |
-| [CLI](40-cli.svg) | `boussole open`, `serve`, `stop`, `validate` and `init` |
+| [CLI](40-cli.svg) | `boussole open`, `serve`, `stop`, `validate`, `init` and `devices` |
 | [Core: studying](50-core-learn.svg) | the use cases, the ports, and how responses are checked |
-| [Adapters](60-adapters.svg) | subject folders, SQLite, `config.yaml`, YouTube |
+| [Core: devices](55-core-devices.svg) | pairing other devices: codes, requests, keys, access |
+| [Adapters](60-adapters.svg) | subject folders, SQLite, `config.yaml`, YouTube, the network certificate |
 | [Server](70-server.svg) | the HTTP API and the views it sends, answers left out |
 | [Interface](80-web.svg) | the Angular pages, blocks and questions |
 

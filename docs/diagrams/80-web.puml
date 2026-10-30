@@ -47,6 +47,7 @@ package "learn" {
     +goTo(index)
   }
   class "sessionPlan()" as SessionPlan <<start, explanation, example, question…, end>>
+  class PairPageComponent <<page /pair: a code typed, or one shown to accept>>
   class SessionPathComponent <<the session as a path of nodes, stars on a plate under answered ones>>
   class StarsComponent <<3 stars in relief: gold, blue (met before), outlined (own estimate); arrive one by one>>
   class "starTone(), starSummary()" as StarRules <<gold counts, blue and outlined do not, hooks have none>>
@@ -129,6 +130,7 @@ SessionPageComponent *-- SessionRun : provides
 SessionPageComponent ..> SessionPlan : screens
 SessionPageComponent ..> ServerSettingsService : free navigation?
 SessionPageComponent --> SessionPathComponent
+PairPageComponent --> BoussoleApi : /api/pairing
 SessionPageComponent --> StarsComponent : wrap-up
 SessionPageComponent ..> StarRules : total, each part
 SessionPathComponent --> StarsComponent

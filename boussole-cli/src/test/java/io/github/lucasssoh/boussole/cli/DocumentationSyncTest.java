@@ -3,6 +3,8 @@ package io.github.lucasssoh.boussole.cli;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
+import io.github.lucasssoh.boussole.core.device.DeviceRepository;
+import io.github.lucasssoh.boussole.core.device.PairingDesk;
 import io.github.lucasssoh.boussole.core.learn.ContentRepository;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
@@ -100,6 +102,24 @@ class DocumentationSyncTest {
     }
 
     @Test
+    void every_device_use_case_is_in_the_devices_diagram() {
+        String diagram = read(DIAGRAMS.resolve("55-core-devices.puml"));
+        Path device = ROOT.resolve("boussole-core/src/main/java/io/github/lucasssoh/boussole/core/device");
+
+        List<String> useCases = classesIn(device, "io.github.lucasssoh.boussole.core.device")
+                .filter(type -> Modifier.isPublic(type.getModifiers()) && Arrays.stream(type.getConstructors())
+                        .flatMap(constructor -> Arrays.stream(constructor.getParameterTypes()))
+                        .anyMatch(parameter -> parameter == PairingDesk.class || parameter == DeviceRepository.class))
+                .filter(type -> type != PairingDesk.class)
+                .map(Class::getSimpleName)
+                .toList();
+
+        assertThat(useCases).isNotEmpty();
+        assertThat(useCases.stream().filter(name -> !declares(diagram, name)))
+                .as("use cases missing from docs/diagrams/55-core-devices.puml").isEmpty();
+    }
+
+    @Test
     void every_command_is_in_the_cli_diagram() {
         String diagram = read(DIAGRAMS.resolve("40-cli.puml"));
         Path cli = ROOT.resolve("boussole-cli/src/main/java/io/github/lucasssoh/boussole/cli");
@@ -107,7 +127,8 @@ class DocumentationSyncTest {
         List<String> commands = Stream.of(
                         classesIn(cli, "io.github.lucasssoh.boussole.cli"),
                         classesIn(cli.resolve("init"), "io.github.lucasssoh.boussole.cli.init"),
-                        classesIn(cli.resolve("serve"), "io.github.lucasssoh.boussole.cli.serve"))
+                        classesIn(cli.resolve("serve"), "io.github.lucasssoh.boussole.cli.serve"),
+                        classesIn(cli.resolve("devices"), "io.github.lucasssoh.boussole.cli.devices"))
                 .flatMap(stream -> stream)
                 .filter(type -> type.isAnnotationPresent(Command.class))
                 .map(Class::getSimpleName)

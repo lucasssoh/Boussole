@@ -9,5 +9,6 @@ export const routes: Routes = [
   },
   { path: 'profile', loadComponent: () => import('./progress/profile-page.component').then((m) => m.ProfilePageComponent) },
   { path: 'ranks', loadComponent: () => import('./progress/ranks-page.component').then((m) => m.RanksPageComponent) },
+  { path: 'pair', loadComponent: () => import('./pair/pair-page.component').then((m) => m.PairPageComponent) },
   { path: '**', redirectTo: '' },
 ];

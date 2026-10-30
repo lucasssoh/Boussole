@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.snakeyaml.engine.v2.api.Load;
 import org.snakeyaml.engine.v2.api.LoadSettings;
+import org.snakeyaml.engine.v2.exceptions.MarkedYamlEngineException;
 import org.snakeyaml.engine.v2.exceptions.YamlEngineException;
 
 /**
@@ -51,7 +52,9 @@ public final class BoussoleConfigFile {
                         ? folders.stream().map(String::valueOf).map(this::expand).toList()
                         : List.of(),
                 Boolean.TRUE.equals(map.get("free_navigation")),
-                Optional.ofNullable(map.get("tracks_dir")).map(String::valueOf).map(this::expand));
+                Optional.ofNullable(map.get("tracks_dir")).map(String::valueOf).map(this::expand),
+                Boolean.TRUE.equals(map.get("network")),
+                map.get("network_port") instanceof Integer port ? port : BoussoleConfig.DEFAULT_NETWORK_PORT);
     }
 
     /** Adds the folder to the subjects, unless it is there already. Says whether it was added. */
@@ -104,11 +107,14 @@ public final class BoussoleConfigFile {
         return folder.startsWith(home) && !folder.equals(home) ? "~/" + home.relativize(folder) : folder.toString();
     }
 
-    private static Object load(String text) {
+    private Object load(String text) {
         try {
             return new Load(LoadSettings.builder().build()).loadFromString(text);
+        } catch (MarkedYamlEngineException e) {
+            String line = e.getProblemMark().map(mark -> ", line " + (mark.getLine() + 1)).orElse("");
+            throw new InvalidConfigException(file + line + ": " + e.getProblem(), e);
         } catch (YamlEngineException e) {
-            throw new IllegalStateException("config.yaml is not valid YAML: " + e.getMessage(), e);
+            throw new InvalidConfigException(file + ": " + e.getMessage().lines().findFirst().orElse("not valid YAML"), e);
         }
     }
 

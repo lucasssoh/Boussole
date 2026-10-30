@@ -83,12 +83,20 @@ package "guide" {
 package "reference" {
   class ReferenceController <<GET /api/references/preview>>
 }
+package "device" {
+  class DeviceController <<…/api/devices: this computer only>>
+  class PairingController <<…/api/pairing: the network port only>>
+  class DeviceCookie <<HttpOnly, Secure, SameSite=Strict>>
+  class DeviceNames <<reverse DNS, else the browser>>
+  class DeviceViews <<views>>
+}
 package "api" {
   class ServerController <<GET /api/server, POST stop>>
   class ApiExceptionHandler <<@RestControllerAdvice>>
 }
 package "web" {
-  class LocalRequestFilter <<filter>>
+  class AccessFilter <<filter>>
+  class NetworkConnector <<HTTPS on network_port>>
   class InterfaceConfiguration <<serves web/>>
 }
 
@@ -96,6 +104,15 @@ package "boussole-core" as core {
 }
 
 BoussoleServer ..> ServerSettings
+ServerSettings *-- "0..1" NetworkSettings : network
+class NetworkSettings <<record: port, keystore, hosts, fingerprint>>
+NetworkConnector ..> NetworkSettings
+AccessFilter ..> NetworkSettings : the network port, its hosts
+AccessFilter ..> DeviceCookie : reads the key
+PairingController ..> DeviceCookie : hands the key
+PairingController ..> DeviceNames
+DeviceController ..> DeviceViews
+PairingController ..> DeviceViews
 ServerSettings *-- "*" BuiltInTrack : builtIn
 BundledTracks ..> BuiltInTrack : installs
 BoussoleServer ..> RunningServer
@@ -131,8 +148,12 @@ BlockView --> ProgressView
 BlockViewMapper ..> SeededShuffle : MCQ, order, match, choice gaps
 BlockViewMapper ..> GraphPlacement : places the nodes
 
-note bottom of LocalRequestFilter
-  Host must be localhost; a change (POST)
-  needs the X-Boussole header.
+note bottom of AccessFilter
+  Host must be one of the server's names;
+  a change (POST) needs the X-Boussole header.
+  On the network port: the API only with the
+  key of a paired device (pairing aside), no
+  change from a read-only one, never
+  /api/devices nor stopping the server.
 end note
 @enduml

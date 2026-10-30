@@ -13,8 +13,8 @@ import java.util.stream.Stream;
  * What the server is started with: its port (0 for any free one), the subject folders (asked
  * for on each request, so that a folder added to the configuration shows without a restart), the
  * tracks built into Boussole as installed, the progress database, the interface language when
- * the configuration sets one, and whether a lesson lets the learner go on without answering its
- * questions.
+ * the configuration sets one, whether a lesson lets the learner go on without answering its
+ * questions, and how other devices reach it, when they may.
  */
 public record ServerSettings(
         int port,
@@ -22,7 +22,8 @@ public record ServerSettings(
         List<BuiltInTrack> builtIn,
         Path database,
         Optional<String> language,
-        boolean freeNavigation) {
+        boolean freeNavigation,
+        Optional<NetworkSettings> network) {
 
     public ServerSettings {
         builtIn = List.copyOf(builtIn);

@@ -35,6 +35,11 @@
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
         </dependency>
+        <dependency>
+            <!-- The QR code `boussole devices pair` draws in the terminal. -->
+            <groupId>io.nayuki</groupId>
+            <artifactId>qrcodegen</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>

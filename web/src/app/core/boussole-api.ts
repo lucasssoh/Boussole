@@ -1,7 +1,23 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { AchievementProgress, AttemptRequest, AttemptResult, Course, CourseSummary, Ladders, PagePreview, RevealedHint, RevealedSolution, ServerInfo, Session, StudyStats } from './api';
+import {
+  AchievementProgress,
+  AttemptRequest,
+  AttemptResult,
+  Course,
+  CourseSummary,
+  Ladders,
+  PagePreview,
+  PairingDevice,
+  PairingRequestMade,
+  PairingStatus,
+  RevealedHint,
+  RevealedSolution,
+  ServerInfo,
+  Session,
+  StudyStats,
+} from './api';
 
 /** The calls to the local server. Answers only come with an attempt or a solution asked for. */
 @Injectable({ providedIn: 'root' })
@@ -10,6 +26,24 @@ export class BoussoleApi {
 
   server(): Promise<ServerInfo> {
     return this.get('/api/server');
+  }
+
+  /** The access a pairing code gives, before pairing; a wrong code counts against it. */
+  previewPairing(code: string): Promise<PairingDevice> {
+    return this.post('/api/pairing/preview', { code });
+  }
+
+  /** Pairs this device; its key comes back in a cookie the page never sees. */
+  claimPairing(code: string): Promise<PairingDevice> {
+    return this.post('/api/pairing/claim', { code });
+  }
+
+  requestPairing(): Promise<PairingRequestMade> {
+    return this.post('/api/pairing/requests', {});
+  }
+
+  pairingStatus(id: string): Promise<PairingStatus> {
+    return this.get(`/api/pairing/requests/${enc(id)}`);
   }
 
   /** {@code lang}: the language to show each track in, when it exists in it. */

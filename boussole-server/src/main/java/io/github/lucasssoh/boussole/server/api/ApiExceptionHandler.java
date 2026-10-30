@@ -3,6 +3,7 @@ package io.github.lucasssoh.boussole.server.api;
 import io.github.lucasssoh.boussole.core.learn.ContentNotFoundException;
 import io.github.lucasssoh.boussole.core.learn.LearningRuleException;
 import io.github.lucasssoh.boussole.core.learn.check.ResponseMismatchException;
+import io.github.lucasssoh.boussole.core.device.PairingRefusedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,6 +20,11 @@ class ApiExceptionHandler {
 
     @ExceptionHandler(LearningRuleException.class)
     ResponseEntity<ApiError> refused(LearningRuleException e) {
+        return error(HttpStatus.CONFLICT, e);
+    }
+
+    @ExceptionHandler(PairingRefusedException.class)
+    ResponseEntity<ApiError> pairingRefused(PairingRefusedException e) {
         return error(HttpStatus.CONFLICT, e);
     }
 

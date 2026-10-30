@@ -126,6 +126,11 @@ in stone: they are there to be used, discussed and, when needed, questioned.
 No documents? `boussole new "Python" --goal "automate my work"` creates an empty track; your
 agent asks what you want to learn, finds open sources, cites each one, and proposes a plan.
 
+On another device of the same network (a phone, a tablet, a TV): add `network: true` to
+`config.yaml`, restart Boussole, then `boussole devices pair` shows a QR code and a code to type.
+Without a keyboard, the device shows a code; accept it with `boussole devices accept <code>`.
+`boussole devices` lists them; `boussole devices remove <name>` takes one away.
+
 ```mermaid
 flowchart LR
   D["Your documents"] --> A["Your AI agent"]

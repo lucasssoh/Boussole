@@ -11,7 +11,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 @SpringBootApplication
 public class BoussoleServer {
 
-    /** Starts the server, listening on this machine only, and returns once it accepts requests. */
+    /**
+     * Starts the server, listening on this machine only, and on the network too when the settings
+     * say so ({@code NetworkConnector}); returns once it accepts requests.
+     */
     public static RunningServer start(ServerSettings settings) {
         ConfigurableApplicationContext context = new SpringApplicationBuilder(BoussoleServer.class)
                 .bannerMode(Banner.Mode.OFF)
@@ -23,6 +26,6 @@ public class BoussoleServer {
                         "logging.level.root", "warn"))
                 .initializers(starting -> starting.getBeanFactory().registerSingleton("serverSettings", settings))
                 .run();
-        return new RunningServer(context, ((WebServerApplicationContext) context).getWebServer().getPort());
+        return new RunningServer(context, ((WebServerApplicationContext) context).getWebServer().getPort(), settings.network());
     }
 }
