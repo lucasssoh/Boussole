@@ -89,6 +89,9 @@ export interface SessionEntry {
   questions: number;
   answered: number;
   right: number;
+  /** The stars of the first answers to its own questions that earn points, out of 3 for each of them. */
+  stars: number;
+  possibleStars: number;
   /** Its prerequisites not finished yet: guided mode opens it once they are, free mode advises them. */
   waitingFor: Prerequisite[];
 }
@@ -267,6 +270,8 @@ export interface QuestionProgress {
   lastVerdict: Verdict | null;
   /** In a lesson, the verdict of the answer already given in it: that answer is final. */
   answeredHere: Verdict | null;
+  /** The stars of that answer, out of 3. */
+  answeredStars: number | null;
 }
 
 interface QuestionView {
@@ -339,6 +344,8 @@ export interface AttemptResult {
   earned: number;
   possible: number;
   pointsGained: number;
+  /** How well the answer did, out of 3: the share of what it could earn. */
+  stars: number;
 }
 
 /** A rank: its tier, its division (5 to 1, 0 at the top), its level, and where its division starts and ends. */

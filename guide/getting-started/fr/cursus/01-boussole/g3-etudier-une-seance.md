@@ -34,6 +34,11 @@ par partie (échauffement, notions, point de contrôle, entraînement) et un ron
 | rouge | réponse fausse |
 | cadenas | réponds d'abord à la question en cours |
 
+Sous une question répondue, des **étoiles** disent quelle part était juste : 3 pour le tout, 2
+pour au moins la moitié, 1 pour un peu, aucune pour rien. Des étoiles bleues marquent une question
+déjà vue dans une séance d'avant : elles ne comptent pas dans le total. Un exercice libre montre ta
+propre estimation, en contour.
+
 Un clic sur un rond ouvert y mène.
 
 **« Le transparent dont parle le texte, il est où ? »** Le bouton **Documents**, au-dessus de
@@ -79,7 +84,8 @@ même si tu reviens sur la séance un autre jour. Pour t'aider à bien répondre
 - :term[Dernière vérification]{id=derniere-verification} : quand plusieurs réponses sont justes, Boussole te demande de
   confirmer avant d'envoyer ;
 - **Correction expliquée** : juste après, la bonne réponse passe au vert, la tienne au rouge si
-  elle était fausse, et un encadré **Pourquoi** explique.
+  elle était fausse, tes étoiles arrivent à côté du verdict, et un encadré **Pourquoi** explique.
+  À la fin de la séance, le bilan additionne les étoiles de chaque partie.
 
 **« Je ne vois pas mes progrès. »** Chaque bonne réponse rapporte des **points**, davantage dans un
 parcours exigeant : ils s'envolent à côté de ton palier, en haut à droite, qui montre tes points et

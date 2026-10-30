@@ -20,8 +20,8 @@ public interface ProgressRepository {
 
     void saveExercise(ExerciseKey key, ExerciseProgress progress, Instant at);
 
-    /** Keeps an attempt in the history, with the session it was given in and the points it earned. */
-    void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, double points, Instant at);
+    /** Keeps an attempt in the history, with the session it was given in, the points and the stars it earned. */
+    void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, double points, int stars, Instant at);
 
     /** Keeps a finished session, with the bonus it earned when done without a mistake. */
     void saveSessionFinished(SessionKey key, Instant at, Duration spent, double bonus);
@@ -29,8 +29,13 @@ public interface ProgressRepository {
     /** The IDs of the sessions of a subject finished at least once. */
     Set<String> finishedSessions(String subject);
 
-    /** The verdict of the first attempt on each exercise answered in a session, by exercise ID. */
-    Map<String, Verdict> firstVerdicts(SessionKey session);
+    /** The first attempt on each exercise answered in a session, by exercise ID. */
+    default Map<String, FirstAnswer> firstAnswers(SessionKey session) {
+        return firstAnswers(session.subject()).getOrDefault(session.session(), Map.of());
+    }
+
+    /** The first attempt on each exercise answered in each session of a subject, by session ID then exercise ID. */
+    Map<String, Map<String, FirstAnswer>> firstAnswers(String subject);
 
     /** Every attempt, in every subject, oldest first. */
     List<AttemptRecord> attemptHistory();

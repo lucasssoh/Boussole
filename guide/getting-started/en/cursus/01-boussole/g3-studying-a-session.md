@@ -34,6 +34,10 @@ per part (warm-up, notions, checkpoint, practice) and a dot per step.
 | red | wrong answer |
 | padlock | answer the current question first |
 
+Under an answered question, **stars** say how much of it was right: 3 for all of it, 2 for at
+least half, 1 for a little, none for nothing. Blue stars mark a question met in an earlier session:
+they do not add to the total. A free exercise shows your own estimate, outlined.
+
 Clicking an open dot goes there.
 
 **"Where is the slide the text talks about?"** The **Documents** button, above the step, lists
@@ -77,7 +81,8 @@ even if you come back to the session another day. To help you answer well:
 - :term[Nudges]{id=nudge}: before answering, some help, then more, without the answer;
 - :term[Final check]{id=final-check}: when several answers are right, Boussole asks you to confirm before sending;
 - **Explained answer**: right after, the right answer turns green, yours red if it was wrong,
-  and a **Why** box explains.
+  your stars arrive beside the verdict, and a **Why** box explains. At the end of the session,
+  the wrap-up adds up the stars of each part.
 
 **"I can't see my progress."** Every right answer earns **points**, more in a demanding track:
 they rise beside your tier, top right, which shows your points and the next mark (`180 / 240`). A

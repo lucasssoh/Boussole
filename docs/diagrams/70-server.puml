@@ -43,6 +43,7 @@ package "exercise" {
   class AttemptView <<record>> {
     verdict, items, progress
     solution : SolutionView
+    earned, possible, pointsGained, stars
   }
   class HintView <<record>>
   class SolutionView <<record>>
@@ -61,7 +62,10 @@ package "block" {
   interface BlockView <<sealed, JSON type>>
   interface InputView <<sealed, JSON kind>>
   class HintsView <<record>>
-  class ProgressView <<record>>
+  class ProgressView <<record>> {
+    attempts, solved, lastVerdict
+    answeredHere, answeredStars
+  }
   class SeededShuffle <<helpers>>
   class GraphPlacement <<helpers>> {
     +{static} place(GraphBlock) : Map<String, Point>

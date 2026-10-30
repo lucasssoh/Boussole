@@ -3,6 +3,7 @@ package io.github.lucasssoh.boussole.adapters.progress;
 import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
+import io.github.lucasssoh.boussole.core.learn.progress.FirstAnswer;
 import io.github.lucasssoh.boussole.core.learn.progress.LastActivity;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
@@ -80,14 +81,15 @@ public final class SqliteProgressRepository implements ProgressRepository {
     }
 
     @Override
-    public void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, double points, Instant at) {
-        query("INSERT INTO attempt (subject, exercise, session, at, verdict, points) VALUES (?, ?, ?, ?, ?, ?)", statement -> {
+    public void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, double points, int stars, Instant at) {
+        query("INSERT INTO attempt (subject, exercise, session, at, verdict, points, stars) VALUES (?, ?, ?, ?, ?, ?, ?)", statement -> {
             statement.setString(1, key.subject());
             statement.setString(2, key.exercise());
             statement.setString(3, session.orElse(null));
             statement.setString(4, at.toString());
             statement.setString(5, verdict.name());
             statement.setDouble(6, points);
+            statement.setInt(7, stars);
             return statement.executeUpdate();
         });
     }
@@ -119,18 +121,38 @@ public final class SqliteProgressRepository implements ProgressRepository {
     }
 
     @Override
-    public Map<String, Verdict> firstVerdicts(SessionKey session) {
-        return query("SELECT exercise, verdict FROM attempt WHERE subject = ? AND session = ? ORDER BY at, id", statement -> {
+    public Map<String, FirstAnswer> firstAnswers(SessionKey session) {
+        return query("SELECT exercise, verdict, stars FROM attempt WHERE subject = ? AND session = ? ORDER BY at, id", statement -> {
             statement.setString(1, session.subject());
             statement.setString(2, session.session());
-            Map<String, Verdict> found = new HashMap<>();
+            Map<String, FirstAnswer> found = new HashMap<>();
             try (ResultSet rows = statement.executeQuery()) {
                 while (rows.next()) {
-                    found.putIfAbsent(rows.getString("exercise"), Verdict.valueOf(rows.getString("verdict")));
+                    found.putIfAbsent(rows.getString("exercise"), firstAnswer(rows));
                 }
             }
             return found;
         });
+    }
+
+    @Override
+    public Map<String, Map<String, FirstAnswer>> firstAnswers(String subject) {
+        return query("SELECT session, exercise, verdict, stars FROM attempt WHERE subject = ? AND session IS NOT NULL ORDER BY at, id",
+                statement -> {
+                    statement.setString(1, subject);
+                    Map<String, Map<String, FirstAnswer>> found = new HashMap<>();
+                    try (ResultSet rows = statement.executeQuery()) {
+                        while (rows.next()) {
+                            found.computeIfAbsent(rows.getString("session"), unused -> new HashMap<>())
+                                    .putIfAbsent(rows.getString("exercise"), firstAnswer(rows));
+                        }
+                    }
+                    return found;
+                });
+    }
+
+    private static FirstAnswer firstAnswer(ResultSet rows) throws SQLException {
+        return new FirstAnswer(Verdict.valueOf(rows.getString("verdict")), rows.getInt("stars"));
     }
 
     @Override

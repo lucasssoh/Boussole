@@ -17,9 +17,11 @@ import { authorshipLine } from './credits';
 import { LearnFacade } from './learn.facade';
 import { TrackLanguagesComponent } from './track-languages.component';
 import { SessionPathComponent } from './session-path.component';
-import { BlockView, Prerequisite, Verdict } from '../core/api';
+import { BlockView, Prerequisite, SessionPart } from '../core/api';
 import { SessionScreen, sessionPlan } from './session-screens';
-import { SessionRun } from './session-run';
+import { FirstAnswer, SessionRun } from './session-run';
+import { StarsComponent } from './stars.component';
+import { MAX_STARS, StarTone, averageStars, blockStarTone, starSummary } from './stars';
 import { SidePanelComponent } from './side-panel.component';
 import { MarkdownRenderer } from '../shared/markdown-renderer';
 import { sessionDocuments } from './session-documents';
@@ -32,7 +34,7 @@ import { sessionDocuments } from './session-documents';
  */
 @Component({
   selector: 'app-session-page',
-  imports: [LoadingComponent, IconComponent, RichTextComponent, RouterLink, TranslocoPipe, BlockListComponent, SessionPathComponent, SidePanelComponent, TrackLanguagesComponent],
+  imports: [LoadingComponent, IconComponent, RichTextComponent, RouterLink, TranslocoPipe, BlockListComponent, SessionPathComponent, SidePanelComponent, StarsComponent, TrackLanguagesComponent],
   providers: [SessionRun],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -121,6 +123,26 @@ import { sessionDocuments } from './session-documents';
             }
             @case ('end') {
               <h1>{{ 'session.endTitle' | transloco }}</h1>
+              @let starred = starsBilan();
+              @if (starred.answered > 0) {
+                <section class="bilan-stars" [attr.aria-label]="'session.starsTitle' | transloco">
+                  <ul class="bilan-stars-parts">
+                    @for (part of starred.parts; track $index) {
+                      <li>
+                        <span class="bilan-stars-part"><app-rich-text [text]="part.title" /></span>
+                        <app-stars [count]="part.count" [tone]="part.tone" [play]="true" [delay]="0.3 + $index * 0.25" />
+                      </li>
+                    }
+                  </ul>
+                  @if (starred.possible > 0) {
+                    <div class="bilan-stars-total">
+                      <app-stars [count]="starred.average" [play]="true" [delay]="0.3 + starred.parts.length * 0.25" decorative />
+                      <strong>{{ shownStars() }} / {{ starred.possible }}</strong>
+                      <span>{{ 'session.starsTotal' | transloco }}</span>
+                    </div>
+                  }
+                </section>
+              }
               <div class="bilan-stats">
                 @if (run.pointsEarned() + run.bonus() > 0) {
                   <div class="bilan-stat xp">
@@ -277,6 +299,35 @@ export class SessionPageComponent {
       .map((wait) => ({ subject: course.id, session: wait.next!, title: wait.title }));
     return [...chapters, ...entry.waitingFor];
   });
+  /**
+   * The stars of the wrap-up: those of each part (gold when it has questions of its own, else the
+   * blue of those asked again), and the total of the session's own questions, out of 3 for each.
+   */
+  protected readonly starsBilan = computed(() => {
+    const plan = this.plan();
+    const stars = this.run.stars();
+    const questionsOf = (screens: number[]) => screens.flatMap((index) => {
+      const block = this.questionOf(plan.screens[index]);
+      return block?.type === 'mcq' || block?.type === 'exercise' ? [{ id: block.id, tone: blockStarTone(block) }] : [];
+    });
+    const total = starSummary(plan.parts.flatMap((part) => questionsOf(part.screens)), stars);
+    const parts = plan.parts.flatMap((part) => {
+      const summary = starSummary(questionsOf(part.screens), stars);
+      const tone: StarTone | null = summary.gold.length > 0 ? 'gold' : summary.blue.length > 0 ? 'blue' : null;
+      return tone ? [{ title: this.partTitle(part.part), tone, count: averageStars(tone === 'gold' ? summary.gold : summary.blue) }] : [];
+    });
+    return {
+      stars: total.stars,
+      possible: total.possible,
+      answered: total.gold.length + total.blue.length,
+      average: total.possible > 0 ? Math.round((MAX_STARS * total.stars) / total.possible) : 0,
+      parts,
+    };
+  });
+  /** The total of stars as it counts up on the wrap-up. */
+  protected readonly shownStars = signal(0);
+  private countFrame = 0;
+
   /** A session finished in an earlier sitting is not finished again; an exam can be sat again. */
   protected readonly finishedBefore = computed(() =>
     this.learn.course()?.chapters.flatMap((chapter) => chapter.sessions).find((entry) => entry.id === this.session())?.finished ?? false);
@@ -305,7 +356,15 @@ export class SessionPageComponent {
   protected readonly remaining = computed(() => clock(this.run.remainingSeconds() ?? 0));
 
   constructor() {
-    inject(DestroyRef).onDestroy(() => this.stats.studying.set(false));
+    inject(DestroyRef).onDestroy(() => {
+      this.stats.studying.set(false);
+      cancelAnimationFrame(this.countFrame);
+    });
+    effect(() => {
+      const shown = this.screen()?.kind === 'end';
+      const target = this.starsBilan().stars;
+      untracked(() => this.countStars(shown ? target : 0));
+    });
     effect(() => {
       const subject = this.subject();
       const session = this.session();
@@ -410,18 +469,40 @@ export class SessionPageComponent {
     this.stats.studying.set(false);
   }
 
+  /** The total of stars counts up to its value, unless motion is reduced. */
+  private countStars(target: number): void {
+    cancelAnimationFrame(this.countFrame);
+    if (target === 0 || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      this.shownStars.set(target);
+      return;
+    }
+    const start = performance.now();
+    const step = (now: number) => {
+      const progress = Math.min(1, (now - start) / 900);
+      this.shownStars.set(Math.round(target * (1 - (1 - progress) ** 3)));
+      if (progress < 1) {
+        this.countFrame = requestAnimationFrame(step);
+      }
+    };
+    this.countFrame = requestAnimationFrame(step);
+  }
+
+  private partTitle(part: SessionPart): string {
+    return part.kind === 'notion' ? (part.title ?? '') : this.transloco.translate(`part.${part.kind}`);
+  }
+
   private exerciseType(screen: SessionScreen): string | undefined {
     const block = this.questionOf(screen);
     return block?.type === 'exercise' ? block.exerciseType : undefined;
   }
 
-  /** The questions of the lesson answered in an earlier sitting, with the verdict of that answer. */
-  private answeredHere(): Map<string, Verdict> {
-    const answered = new Map<string, Verdict>();
+  /** The questions of the lesson answered in an earlier sitting, with the verdict and stars of that answer. */
+  private answeredHere(): Map<string, FirstAnswer> {
+    const answered = new Map<string, FirstAnswer>();
     for (const screen of this.plan().screens) {
       const block = this.questionOf(screen);
       if ((block?.type === 'mcq' || block?.type === 'exercise') && block.progress.answeredHere) {
-        answered.set(block.id, block.progress.answeredHere);
+        answered.set(block.id, { verdict: block.progress.answeredHere, stars: block.progress.answeredStars ?? null });
       }
     }
     return answered;

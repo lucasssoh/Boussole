@@ -6,6 +6,9 @@ minor release may break things and says so.
 
 ## Unreleased
 
+### Added
+- **Stars:** each answer now shows up to 3 stars for how much of it was right: in the correction, under its step on the Trail, in the wrap-up and on each session card. A question met before (a warmup, a quick review) shows blue stars that do not count in the total; a free exercise shows your own estimate, outlined.
+
 ### Fixed
 - **Free exercises:** self-grading no longer awards points, and the answer is labelled as a proposed correction.
 - **Fill-in exercises:** typing a number no longer closes the field after each digit.

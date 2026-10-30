@@ -5,9 +5,12 @@ import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 import io.github.lucasssoh.boussole.format.model.ChapterLinks;
 import io.github.lucasssoh.boussole.format.model.Course;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
+import io.github.lucasssoh.boussole.core.learn.progress.FirstAnswer;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionProgress;
 import io.github.lucasssoh.boussole.format.model.CourseSession;
 import io.github.lucasssoh.boussole.format.model.SessionId;
+import io.github.lucasssoh.boussole.core.learn.reward.QuestionScore;
+import io.github.lucasssoh.boussole.core.learn.reward.Stars;
 import io.github.lucasssoh.boussole.core.learn.reward.TrackScores;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseRefBlock;
 import java.util.HashMap;
@@ -34,7 +37,7 @@ final class CourseOverviews {
         Map<String, List<SessionId>> waiting = waitingFor(course, finished);
         ChapterLinks links = ChapterLinks.of(course);
         Map<String, List<String>> chapterWaiting = chapterWaitingFor(course, links, finished);
-        return new CourseOverview(course, languages, finished, sessionProgress(course, progress.exercises(subject)),
+        return new CourseOverview(course, languages, finished, sessionProgress(course, progress.exercises(subject), progress.firstAnswers(subject)),
                 last.map(LastActivity::at), waiting, links.direct(), chapterWaiting, TrackScores.of(course, progress.attemptHistory()),
                 resume(course, finished, waiting, chapterWaiting, last));
     }
@@ -88,7 +91,8 @@ final class CourseOverviews {
                 : Optional.of(new SessionId(id.substring(0, chapter), id.substring(chapter + 1, session), id.substring(session + 1)));
     }
 
-    private static Map<String, SessionProgress> sessionProgress(Course course, Map<String, ExerciseProgress> exercises) {
+    private static Map<String, SessionProgress> sessionProgress(Course course, Map<String, ExerciseProgress> exercises,
+            Map<String, Map<String, FirstAnswer>> firstAnswers) {
         Map<String, SessionProgress> found = new HashMap<>();
         for (CourseSession session : course.sessions()) {
             List<String> questions = session.session().blocks()
@@ -99,8 +103,16 @@ final class CourseOverviews {
                     .map(id -> exercises.getOrDefault(id, ExerciseProgress.NONE))
                     .filter(progress -> progress.attempts() > 0)
                     .toList();
+            // Stars count the session's own questions that earn points: not those asked again, hooks or free exercises.
+            List<String> starred = session.session().blocks()
+                    .filter(block -> QuestionScore.possible(block) > 0)
+                    .flatMap(block -> CourseQuestions.id(block).stream())
+                    .distinct()
+                    .toList();
+            Map<String, FirstAnswer> first = firstAnswers.getOrDefault(session.entry().id(), Map.of());
+            int stars = starred.stream().filter(first::containsKey).mapToInt(id -> first.get(id).stars()).sum();
             found.put(session.entry().id(), new SessionProgress(questions.size(), done.size(),
-                    (int) done.stream().filter(ExerciseProgress::solved).count()));
+                    (int) done.stream().filter(ExerciseProgress::solved).count(), stars, Stars.MAX * starred.size()));
         }
         return found;
     }

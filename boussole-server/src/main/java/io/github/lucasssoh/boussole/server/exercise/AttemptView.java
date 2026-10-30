@@ -9,10 +9,10 @@ import java.util.Locale;
  * How an attempt was judged: the verdict, each part of the response, the progress after it, the
  * correction, which the learner sees right after answering, what the answer was worth
  * ({@code earned} of {@code possible}, before the occasion and the level of the track) and the
- * points it earned.
+ * points and the stars, out of 3, it earned.
  */
 record AttemptView(String verdict, List<ItemView> items, ProgressView progress, SolutionView solution, double earned, double possible,
-        double pointsGained) {
+        double pointsGained, int stars) {
 
     static AttemptView of(AttemptOutcome outcome, SolutionView solution) {
         return new AttemptView(
@@ -24,7 +24,8 @@ record AttemptView(String verdict, List<ItemView> items, ProgressView progress, 
                 solution,
                 outcome.score().earned(),
                 outcome.score().possible(),
-                outcome.pointsGained());
+                outcome.pointsGained(),
+                outcome.stars());
     }
 
     record ItemView(String key, boolean correct, String feedback) {

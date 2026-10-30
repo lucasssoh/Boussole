@@ -17,11 +17,13 @@ import {
 import { RouterLink } from '@angular/router';
 import { IconComponent } from '../shared/icon.component';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { Session, Verdict } from '../core/api';
+import { BlockView, Session, Verdict } from '../core/api';
 import { RichTextComponent } from '../shared/rich-text.component';
 import { LearnFacade } from './learn.facade';
 import { ScreenKind, SessionPlan, SessionScreen } from './session-screens';
 import { SessionRun } from './session-run';
+import { StarsComponent } from './stars.component';
+import { StarTone, blockStarTone } from './stars';
 
 type NodeState = 'current' | 'done' | 'open' | 'locked' | Verdict;
 type ZoneKind = 'warmup' | 'notion' | 'notion-alt' | 'checkpoint' | 'practice' | 'text';
@@ -36,6 +38,12 @@ interface PathNode {
   y: number;
   /** Where its label goes: towards the centre of the path, so that it stays inside the zone. */
   side: 'left' | 'right';
+  /** The stars of the answer to its question, once answered and moved on from. */
+  stars: { count: number; tone: StarTone } | null;
+  /** The node of the question just answered: its stars arrive. */
+  arriving: boolean;
+  /** What a screen reader says of it: its label, and its stars. */
+  spoken: string;
 }
 
 interface PathZone {
@@ -62,6 +70,8 @@ const SIGN_LINE = 22;
 const SIGN_CHARACTERS = 26;
 /** How far the zone reaches below the centre of its last node: the node, its relief, a margin. */
 const ZONE_BOTTOM = 52;
+/** More room below a zone that ends on a question: the plate of its stars hangs under the node. */
+const STARS_ROOM = 22;
 const ZONE_GAP = 18;
 const ZONE_INSET = 10;
 /** The centre of the first node: below the top of the column, its halo and relief included. */
@@ -70,11 +80,11 @@ const FIRST_NODE = 52;
 /**
  * The session as a path beside it: a node per screen, winding down through a zone per part (warm-up,
  * each notion, checkpoint, practice), each opened by a sign on the line. Seen screens turn green, questions take the colour of their verdict, screens the
- * learner cannot reach yet are locked. A click on an open node goes there.
+ * learner cannot reach yet are locked. An answered question shows its stars on a plate under its node. A click on an open node goes there.
  */
 @Component({
   selector: 'app-session-path',
-  imports: [IconComponent, RouterLink, TranslocoPipe, RichTextComponent],
+  imports: [IconComponent, RouterLink, TranslocoPipe, RichTextComponent, StarsComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'session-path' },
   template: `
@@ -123,7 +133,7 @@ const FIRST_NODE = 52;
           [style.--i]="node.index"
           [disabled]="node.state === 'locked'"
           [attr.aria-current]="node.state === 'current' ? 'step' : null"
-          [attr.aria-label]="node.label"
+          [attr.aria-label]="node.spoken"
           (click)="go.emit(node.index)"
         >
           <span class="path-dot">
@@ -158,6 +168,11 @@ const FIRST_NODE = 52;
               }
             }
           </span>
+          @if (node.stars; as stars) {
+            <span class="path-stars" [class.arriving]="node.arriving">
+              <app-stars [count]="stars.count" [tone]="stars.tone" [play]="node.arriving" [delay]="node.arriving ? 0.3 : 0" decorative />
+            </span>
+          }
           <span class="path-label">{{ node.label }}</span>
         </button>
       }
@@ -197,7 +212,12 @@ export class SessionPathComponent {
     let notions = 0;
     const place = (screen: SessionScreen, index: number, x: number) => {
       const side = x > CENTRE ? 'left' : 'right';
-      nodes.push({ index, kind: screen.kind, label: this.label(screen), state: this.state(screen, index), x, y, side });
+      const state = this.state(screen, index);
+      const label = this.label(screen);
+      const stars = state === 'correct' || state === 'partly' || state === 'wrong' ? this.starsOf(screen) : null;
+      const spoken = stars ? `${label}, ${this.transloco.translate(`stars.${stars.tone}`, { count: stars.count })}` : label;
+      const arriving = stars !== null && screen.question?.id === this.run.lastAnswered();
+      nodes.push({ index, kind: screen.kind, label, state, x, y, side, stars, arriving, spoken });
       stops.push({ x, y });
       y += NODE_STEP;
     };
@@ -221,9 +241,11 @@ export class SessionPathComponent {
       }
       place(screen, index, CENTRE + SWING[swing++ % SWING.length]);
       if (part.screens[part.screens.length - 1] === index) {
+        // Kept before the answer too, so that the path does not move when the stars arrive.
+        const room = this.mayShowStars(screen) ? STARS_ROOM : 0;
         const zone = zones[zones.length - 1];
-        zone.height = y - NODE_STEP + ZONE_BOTTOM - zone.top;
-        y += ZONE_GAP;
+        zone.height = y - NODE_STEP + ZONE_BOTTOM + room - zone.top;
+        y += ZONE_GAP + room;
       }
     });
     return { nodes, zones, height: y, line: curveThrough(stops) };
@@ -284,6 +306,19 @@ export class SessionPathComponent {
     return this.run.seen().has(index) ? 'done' : 'open';
   }
 
+  private mayShowStars(screen: SessionScreen): boolean {
+    const block = questionBlock(screen);
+    return block !== undefined && blockStarTone(block) !== null;
+  }
+
+  /** The stars of the first answer to the question of a screen, when the server gave them. */
+  private starsOf(screen: SessionScreen): { count: number; tone: StarTone } | null {
+    const block = questionBlock(screen);
+    const tone = block ? blockStarTone(block) : null;
+    const count = screen.question ? this.run.stars().get(screen.question.id) : undefined;
+    return tone && count !== undefined ? { count, tone } : null;
+  }
+
   private partTitle(plan: SessionPlan, part: number): string {
     const found = plan.parts[part].part;
     return found.kind === 'notion' ? (found.title ?? '') : this.transloco.translate(`part.${found.kind}`);
@@ -295,9 +330,14 @@ export class SessionPathComponent {
   }
 }
 
+/** The block of the question of a screen. */
+function questionBlock(screen: SessionScreen): BlockView | undefined {
+  return screen.blocks.find((block) => (block.type === 'mcq' || block.type === 'exercise') && block.id === screen.question?.id);
+}
+
 /** The verdict of a question answered in an earlier sitting, as the server keeps it. */
 function earlierVerdict(screen: SessionScreen): Verdict | undefined {
-  const question = screen.blocks.find((block) => (block.type === 'mcq' || block.type === 'exercise') && block.id === screen.question?.id);
+  const question = questionBlock(screen);
   return question?.type === 'mcq' || question?.type === 'exercise' ? (question.progress.lastVerdict ?? undefined) : undefined;
 }
 

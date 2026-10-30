@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.github.lucasssoh.boussole.core.learn.check.ChoicesResponse;
 import io.github.lucasssoh.boussole.core.learn.check.Verdict;
+import io.github.lucasssoh.boussole.core.learn.progress.FirstAnswer;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.reward.RewardedSubjects;
 import io.github.lucasssoh.boussole.format.SubjectInspector;
@@ -57,7 +58,7 @@ class TrackLanguagesTest {
         OpenedSession french = new OpenSession(content, progress).open("boussole-guide", "g1", Optional.of("fr"));
 
         assertThat(french.course().subject().lang()).isEqualTo("fr");
-        assertThat(french.answered()).containsEntry("g1-a1", Verdict.CORRECT);
+        assertThat(french.answered()).containsEntry("g1-a1", new FirstAnswer(Verdict.CORRECT, 3));
         assertThatThrownBy(() -> new SubmitAttempt(content, progress, RewardedSubjects.all(), clock)
                 .submit(new ExerciseKey("boussole-guide", "g1-a1"), new ChoicesResponse(Set.of(1)), Optional.of("g1"), Optional.of("fr")))
                 .isInstanceOf(LearningRuleException.class);

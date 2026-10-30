@@ -18,7 +18,7 @@ import java.util.List;
  */
 public final class SqliteDatabase {
 
-    private static final List<String> MIGRATIONS = List.of("V1__progress.sql", "V2__attempt_session.sql", "V3__points.sql");
+    private static final List<String> MIGRATIONS = List.of("V1__progress.sql", "V2__attempt_session.sql", "V3__points.sql", "V4__attempt_stars.sql");
 
     private final String url;
 

@@ -88,7 +88,7 @@ record CourseView(
             return new ChapterView(chapter.id(), chapter.title(), after, waitingFor, chapter.sessions().stream()
                     .map(entry -> SessionEntryView.of(entry, written.contains(entry.id()), overview.finishedSessions().contains(entry.id()),
                             before.getOrDefault(entry.id(), List.of()),
-                            overview.sessionProgress().getOrDefault(entry.id(), new SessionProgress(0, 0, 0)),
+                            overview.sessionProgress().getOrDefault(entry.id(), SessionProgress.NONE),
                             overview.waitingFor().getOrDefault(entry.id(), List.of()).stream()
                                     .map(id -> PrerequisiteView.of(id, subject, titles))
                                     .toList()))
@@ -99,7 +99,8 @@ record CourseView(
     /**
      * {@code after}: the sessions of its chapter it needs, finished or not (what a map of the chapter
      * draws); {@code questions}, {@code answered}, {@code right}: how far the learner is in the
-     * session; {@code waitingFor}: its prerequisites not finished yet.
+     * session; {@code stars} of {@code possibleStars}: those of its first answers to its own questions;
+     * {@code waitingFor}: its prerequisites not finished yet.
      */
     record SessionEntryView(
             String id,
@@ -113,13 +114,15 @@ record CourseView(
             int questions,
             int answered,
             int right,
+            int stars,
+            int possibleStars,
             List<PrerequisiteView> waitingFor) {
 
         static SessionEntryView of(SyllabusSession entry, boolean written, boolean finished, List<String> after,
                 SessionProgress progress, List<PrerequisiteView> waitingFor) {
             return new SessionEntryView(entry.id(), entry.title(), entry.kind().name().toLowerCase(Locale.ROOT),
                     entry.duration(), entry.goal(), written, finished, after, progress.questions(), progress.answered(), progress.right(),
-                    waitingFor);
+                    progress.stars(), progress.possibleStars(), waitingFor);
         }
     }
 

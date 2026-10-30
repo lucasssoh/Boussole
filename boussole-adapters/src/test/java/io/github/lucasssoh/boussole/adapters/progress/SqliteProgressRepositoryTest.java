@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
+import io.github.lucasssoh.boussole.core.learn.progress.FirstAnswer;
 import io.github.lucasssoh.boussole.core.learn.progress.LastActivity;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import io.github.lucasssoh.boussole.core.learn.reward.AttemptRecord;
@@ -12,6 +13,7 @@ import io.github.lucasssoh.boussole.core.learn.reward.SessionFinishedRecord;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -47,7 +49,7 @@ class SqliteProgressRepositoryTest {
     void knows_the_last_thing_done_in_a_subject() {
         assertThat(repository().lastActivity("oc")).isEmpty();
 
-        repository().recordAttempt(KEY, Optional.of("s39"), Verdict.WRONG, 0, NOW);
+        repository().recordAttempt(KEY, Optional.of("s39"), Verdict.WRONG, 0, 0, NOW);
         assertThat(repository().lastActivity("oc")).contains(new LastActivity(NOW, Optional.of("s39"), false));
 
         repository().saveSessionFinished(new SessionKey("oc", "s39"), NOW.plusSeconds(60), Duration.ofMinutes(40), 0);
@@ -56,14 +58,26 @@ class SqliteProgressRepositoryTest {
 
     @Test
     void keeps_the_history_of_attempts_and_finished_sessions() {
-        repository().recordAttempt(KEY, Optional.empty(), Verdict.WRONG, 0, NOW);
-        repository().recordAttempt(KEY, Optional.of("s34"), Verdict.CORRECT, 1.5, NOW.plusSeconds(10));
+        repository().recordAttempt(KEY, Optional.empty(), Verdict.WRONG, 0, 0, NOW);
+        repository().recordAttempt(KEY, Optional.of("s34"), Verdict.CORRECT, 1.5, 3, NOW.plusSeconds(10));
         repository().saveSessionFinished(new SessionKey("oc", "s34"), NOW.plusSeconds(60), Duration.ofMinutes(40), 1);
 
         assertThat(repository().attemptHistory()).extracting(AttemptRecord::verdict).containsExactly(Verdict.WRONG, Verdict.CORRECT);
         assertThat(repository().attemptHistory()).extracting(AttemptRecord::points).containsExactly(0.0, 1.5);
         assertThat(repository().attemptHistory()).extracting(AttemptRecord::session).containsExactly(Optional.empty(), Optional.of("s34"));
         assertThat(repository().sessionsFinished()).containsExactly(new SessionFinishedRecord("oc", "s34", NOW.plusSeconds(60), 1));
+    }
+
+    @Test
+    void keeps_the_first_answer_in_each_session_with_its_stars() {
+        repository().recordAttempt(KEY, Optional.of("s34"), Verdict.PARTLY, 0.5, 2, NOW);
+        repository().recordAttempt(KEY, Optional.of("s34"), Verdict.CORRECT, 0, 3, NOW.plusSeconds(10));
+        repository().recordAttempt(KEY, Optional.of("r40"), Verdict.CORRECT, 0.5, 3, NOW.plusSeconds(20));
+        repository().recordAttempt(KEY, Optional.empty(), Verdict.WRONG, 0, 0, NOW.plusSeconds(30));
+
+        assertThat(repository().firstAnswers(new SessionKey("oc", "s34"))).containsExactly(Map.entry("s34-a1", new FirstAnswer(Verdict.PARTLY, 2)));
+        assertThat(repository().firstAnswers("oc")).containsOnlyKeys("s34", "r40");
+        assertThat(repository().firstAnswers("reseaux")).isEmpty();
     }
 
     @Test

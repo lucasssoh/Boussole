@@ -1,6 +1,7 @@
 package io.github.lucasssoh.boussole.core.learn;
 
 import io.github.lucasssoh.boussole.core.learn.check.Verdict;
+import io.github.lucasssoh.boussole.core.learn.progress.FirstAnswer;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import io.github.lucasssoh.boussole.core.learn.reward.PointRules;
@@ -53,8 +54,8 @@ public final class FinishSession {
                 })
                 .distinct()
                 .toList();
-        Map<String, Verdict> first = progress.firstVerdicts(key);
-        return !questions.isEmpty() && questions.stream().allMatch(id -> first.get(id) == Verdict.CORRECT);
+        Map<String, FirstAnswer> first = progress.firstAnswers(key);
+        return !questions.isEmpty() && questions.stream().allMatch(id -> first.containsKey(id) && first.get(id).verdict() == Verdict.CORRECT);
     }
 
     private double pointsIn(SessionKey key) {

@@ -5,12 +5,15 @@ import { QuestionState } from './question/question-state';
 
 /**
  * One sitting on a session, for the session page only: the time actually spent (while the page
- * is visible), the countdown of a timed session, the first verdict on each question, and the
+ * is visible), the countdown of a timed session, the first answer to each question, and the
  * state of each question, so that it is found as left when the learner comes back to its page.
  */
 @Injectable()
 export class SessionRun implements OnDestroy {
-  private readonly firstVerdicts = signal<ReadonlyMap<string, Verdict>>(new Map());
+  private readonly firstAnswers = signal<ReadonlyMap<string, FirstAnswer>>(new Map());
+  private readonly firstVerdicts = computed(
+    () => new Map([...this.firstAnswers()].map(([question, answer]) => [question, answer.verdict])) as ReadonlyMap<string, Verdict>,
+  );
   private readonly spent = signal(0);
   private readonly timer = setInterval(() => this.tick(), 1000);
   private readonly questions = new Map<string, QuestionState>();
@@ -33,7 +36,13 @@ export class SessionRun implements OnDestroy {
   private readonly earnedBy = signal<ReadonlyMap<string, number>>(new Map());
   private readonly scoredVerdicts = computed(() => [...this.firstVerdicts()].filter(([question]) => !this.hooks().has(question)));
   readonly answered = computed(() => this.scoredVerdicts().length);
-  readonly verdicts = this.firstVerdicts.asReadonly();
+  readonly verdicts = this.firstVerdicts;
+  /** The stars of the first answer to each question, when known. */
+  readonly stars = computed(
+    () => new Map([...this.firstAnswers()].flatMap(([question, answer]) => (answer.stars === null ? [] : [[question, answer.stars] as const]))) as ReadonlyMap<string, number>,
+  );
+  /** The question answered last in this sitting: its stars arrive on the Trail. */
+  readonly lastAnswered = signal<string | null>(null);
   /** The points earned in this sitting, and the bonus of a session without a mistake. */
   readonly pointsEarned = signal(0);
   readonly bonus = signal(0);
@@ -67,11 +76,12 @@ export class SessionRun implements OnDestroy {
    * A lesson starts at once; a review or an exam when the learner says so, with its countdown.
    * {@code answered}: the questions of a lesson answered in an earlier sitting, whose verdict stays.
    */
-  begin(kind: SessionKind, minutes: number, subject: string, session: string, answered: ReadonlyMap<string, Verdict> = new Map()): void {
+  begin(kind: SessionKind, minutes: number, subject: string, session: string, answered: ReadonlyMap<string, FirstAnswer> = new Map()): void {
     this.seenKey = `seen.${subject}.${session}`;
     this.kind.set(kind);
     this.spent.set(0);
-    this.firstVerdicts.set(new Map(answered));
+    this.firstAnswers.set(new Map(answered));
+    this.lastAnswered.set(null);
     this.questions.clear();
     this.seen.set(new Set(storedNumbers(this.seenKey)));
     this.pointsEarned.set(0);
@@ -88,9 +98,9 @@ export class SessionRun implements OnDestroy {
    * The session was opened again in another language: its questions start afresh from what the
    * server knows, while the time spent and the verdicts of this sitting stay.
    */
-  reloadQuestions(answered: ReadonlyMap<string, Verdict>): void {
+  reloadQuestions(answered: ReadonlyMap<string, FirstAnswer>): void {
     this.questions.clear();
-    this.firstVerdicts.set(new Map([...answered, ...this.firstVerdicts()]));
+    this.firstAnswers.set(new Map([...answered, ...this.firstAnswers()]));
   }
 
   see(screen: number): void {
@@ -130,11 +140,12 @@ export class SessionRun implements OnDestroy {
     return state;
   }
 
-  record(question: string, verdict: Verdict, points: number): void {
+  record(question: string, verdict: Verdict, points: number, stars: number): void {
     this.pointsEarned.update((total) => total + points);
     this.earnedBy.set(new Map(this.earnedBy()).set(question, (this.earnedBy().get(question) ?? 0) + points));
-    if (!this.firstVerdicts().has(question)) {
-      this.firstVerdicts.set(new Map(this.firstVerdicts()).set(question, verdict));
+    if (!this.firstAnswers().has(question)) {
+      this.firstAnswers.set(new Map(this.firstAnswers()).set(question, { verdict, stars }));
+      this.lastAnswered.set(question);
     }
   }
 
@@ -152,6 +163,12 @@ export class SessionRun implements OnDestroy {
       this.spent.update((seconds) => seconds + 1);
     }
   }
+}
+
+/** The first answer to a question in a session: its verdict, and its stars when the server gave them. */
+export interface FirstAnswer {
+  verdict: Verdict;
+  stars: number | null;
 }
 
 function storedNumbers(key: string): number[] {

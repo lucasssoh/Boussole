@@ -103,6 +103,14 @@ missed; the page of a track shows it, earned, missed and still to play. `ReadAch
 counts the 19 `Achievement`s from the same history (each with levels I, II, III…, kept for
 good, earning no points); the profile lists them.
 
+Stars say how well an answer did, apart from points. `Stars` turns the share of its
+`QuestionScore` an answer earned into 0 to 3 (all of it 3, at least half 2, anything 1, nothing 0;
+a question that earns nothing takes the share of its verdict), and `SubmitAttempt` keeps them with
+the attempt. The first answer in each session (`FirstAnswer`) gives the stars the interface shows
+again; `SessionProgress` adds those of a session's own questions that earn points, out of 3 each.
+The interface shows them gold, blue for a question asked again (a warmup, a review: they add
+nothing to the total), outlined for a free exercise the learner grades, none for a hook.
+
 In a lesson a question is answered once (`AnswerOnce`): `SubmitAttempt` refuses a second answer
 in the same session, and `OpenSession` returns the verdict of each answer already given, which
 the interface shows again (with the answer itself when the browser kept it). A review or a mock
@@ -263,7 +271,7 @@ web/src/app/
   answered in last, unless finished, else the next one whose `prerequisites` are finished), the sessions of its chapter, then every
   subject with its progress. A subject's page shows all its sessions as a grid, chapter by
   chapter (`SessionGridComponent`), each card with how many of its questions are answered and
-  right (`SessionProgress`, computed by the server from the progress kept). A session whose
+  right, and its stars (`SessionProgress`, computed by the server from the progress kept). A session whose
   `prerequisites` are not finished (`CourseOverview.waitingFor`) is locked in guided mode (it stays
   on its first screen, which links to them) and only advised after them in free mode.
 - **The session player** shows **one screen at a time**, never the whole session
@@ -274,17 +282,20 @@ web/src/app/
   a zone per part (warm-up, each notion, checkpoint, practice, each its own tint), opened by a
   sign on the line; the component computes every position, and zones and line are one SVG; the
   path scrolls back to the current screen at each change of screen, and may be scrolled by hand,
-  its scroll bar on the left; green once seen, the colour of its verdict for a question, locked
+  its scroll bar on the left; green once seen, the colour of its verdict for a question with its
+  stars on a plate under it (`StarsComponent`), locked
   while a question before it waits for an answer; and the video or the document opened (the
   browser's own PDF viewer, at the page). The screen is in the address and, for the next
   visit, in this browser; `SessionRun` keeps the answers of the sitting. A lesson ends with
   *I have finished this session*; a review or a mock exam starts with its countdown and ends
-  with the number of questions right at the first attempt. `SessionRun` measures the time
+  with the number of questions right at the first attempt; the wrap-up gives the stars of each
+  part and the total of the session, counting up. `SessionRun` measures the time
   spent while the page is visible.
 - **A question** owns a `QuestionState`: hints revealed one at a time before answering, then
   **one answer**, which closes the question for the sitting. The server answers it with the
-  verdict and the correction together: the right answer turns green, a wrong one red with its
-  feedback, and `QuestionCorrectionComponent` shows *why* (the solution) beside the question,
+  verdict, its stars and the correction together: the right answer turns green, a wrong one red
+  with its feedback, the stars arrive one by one beside the verdict, and
+  `QuestionCorrectionComponent` shows *why* (the solution) beside the question,
   or below it on a narrow screen. In an exam, the correction waits for the end, and there is no
   hint. A free exercise shows its solution first, then the learner grades their answer. A fill
   exercise places its fields where the statement has `[[N]]` (`FillGaps`).
@@ -326,10 +337,10 @@ local network (`HttpWebPages`). Under `/api/subjects/{subject}`:
 
 ```
 GET  /api/subjects?lang=                 tracks (once each, in lang when they have it), progress, the session to resume
-GET  …?lang=                             chapters (the chapters each waits for), sessions (written, finished, the sessions of their chapter they need), lexicon, the languages of the track
-GET  …/sessions/{session}                parts and blocks; questions without answers
+GET  …?lang=                             chapters (the chapters each waits for), sessions (written, finished, the sessions of their chapter they need, stars), lexicon, the languages of the track
+GET  …/sessions/{session}                parts and blocks; questions without answers, with the verdict and stars of one already answered in a lesson
 POST …/sessions/{session}/finish         { spentSeconds }
-POST …/exercises/{id}/attempts?session=  verdict, each part judged and the correction, recorded
+POST …/exercises/{id}/attempts?session=  verdict, each part judged, the stars and the correction, recorded
 POST …/exercises/{id}/hints              the next hint, recorded
 GET  …/exercises/{id}/solution           after an attempt (at once for a free exercise)
 GET  …/files/{path}                      a file of the subject folder: PDFs, videos (range requests), images

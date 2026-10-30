@@ -41,6 +41,18 @@
   --discover-line: #f2b45a;
   --discover-strong: #e09a35;
   --streak: #e8590c;
+  --star-gold-top: #ffe680;
+  --star-gold-bottom: #f8a800;
+  --star-gold-edge: #c26f00;
+  --star-gold-line: #d08c00;
+  --star-blue-top: #b5e0ff;
+  --star-blue-bottom: #339af0;
+  --star-blue-edge: #1864ab;
+  --star-blue-line: #1971c2;
+  --star-empty-top: #f1f4f7;
+  --star-empty-bottom: #d3dbe2;
+  --star-empty-edge: #b3bfc9;
+  --star-empty-line: #bfcad3;
   --radius: 18px;
   --content-width: 48rem;
   --font: 'Nunito Variable', Nunito, system-ui, sans-serif;
@@ -1237,6 +1249,28 @@ a.session-card:active {
   font-weight: 800;
 }
 
+.session-progress:has(.session-stars) {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.session-progress:has(.session-stars) .session-progress-track {
+  grid-column: 1 / -1;
+}
+
+.session-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.session-stars .stars {
+  font-size: 1rem;
+}
+
 .session-card-goal {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -1747,6 +1781,206 @@ a.session-card:active {
   margin-left: 0.75rem;
 }
 
+/* Stars: how well an answer did, in relief like the buttons. Gold counts, blue was met before,
+   outlined is the learner's own estimate. Colours sit on the stars' host: CSS reaches the paths. */
+
+.stars {
+  --star-on-top: var(--star-gold-top);
+  --star-on-bottom: var(--star-gold-bottom);
+  --star-on-edge: var(--star-gold-edge);
+  --star-on-line: var(--star-gold-line);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1em;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.stars.blue {
+  --star-on-top: var(--star-blue-top);
+  --star-on-bottom: var(--star-blue-bottom);
+  --star-on-edge: var(--star-blue-edge);
+  --star-on-line: var(--star-blue-line);
+}
+
+.star {
+  width: 1em;
+  height: 1em;
+  overflow: visible;
+  transform-origin: 50% 60%;
+}
+
+.star-stop-on-top { stop-color: var(--star-on-top); }
+.star-stop-on-bottom { stop-color: var(--star-on-bottom); }
+.star-stop-off-top { stop-color: var(--star-empty-top); }
+.star-stop-off-bottom { stop-color: var(--star-empty-bottom); }
+
+.star-edge {
+  fill: var(--star-on-edge);
+  stroke: var(--star-on-edge);
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+
+.star-face {
+  stroke: var(--star-on-line);
+  stroke-width: 0.9;
+  stroke-linejoin: round;
+}
+
+.star.off .star-edge {
+  fill: var(--star-empty-edge);
+  stroke: var(--star-empty-edge);
+}
+
+.star.off .star-face {
+  stroke: var(--star-empty-line);
+}
+
+.star-glint {
+  fill: none;
+  stroke: #ffffff;
+  stroke-opacity: 0.85;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.star.off .star-glint {
+  stroke-opacity: 0.6;
+}
+
+.star-rays {
+  fill: none;
+  stroke: var(--star-gold-line);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: 12px 12px;
+}
+
+.star-trace {
+  fill: var(--surface);
+  stroke: var(--star-gold-line);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.star-trace-edge {
+  fill: none;
+  stroke-opacity: 0.35;
+}
+
+.star.off .star-trace {
+  stroke: var(--star-empty-line);
+}
+
+.stars.play .star.on {
+  animation: star-pop 0.42s var(--spring) both;
+  animation-delay: calc(var(--delay, 0s) + 0.15s + var(--i) * 0.14s);
+}
+
+.stars.play .star.off {
+  animation: star-settle 0.26s ease-out both;
+  animation-delay: calc(var(--delay, 0s) + 0.15s + var(--i) * 0.14s);
+}
+
+.stars.play .star.on .star-glint {
+  animation: star-glint 0.5s ease-out both;
+  animation-delay: calc(var(--delay, 0s) + 0.45s + var(--i) * 0.14s);
+}
+
+.stars.full.play .star-rays {
+  animation: star-burst 0.55s ease-out both;
+  animation-delay: calc(var(--delay, 0s) + 0.78s);
+}
+
+.stars.blue.play .star.on {
+  animation-name: star-rise;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-out;
+  animation-delay: calc(var(--delay, 0s) + 0.15s + var(--i) * 0.16s);
+}
+
+.stars.outline.play .star {
+  animation: none;
+}
+
+.stars.outline.play .star-trace {
+  stroke-dasharray: 1;
+  animation: star-draw 0.6s ease-in-out both;
+  animation-delay: calc(var(--delay, 0s) + 0.15s + var(--i) * 0.2s);
+}
+
+@keyframes star-pop {
+  0% { opacity: 0; transform: scale(0) rotate(-30deg); }
+  60% { opacity: 1; transform: scale(1.3) rotate(8deg); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes star-settle {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes star-rise {
+  from { opacity: 0; transform: translateY(8px) scale(0.85); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes star-glint {
+  0% { stroke-opacity: 0; }
+  50% { stroke-opacity: 1; }
+}
+
+@keyframes star-burst {
+  0% { opacity: 0; transform: scale(0.6); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.3); }
+}
+
+@keyframes star-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stars.play .star,
+  .stars.play .star * {
+    animation: none !important;
+  }
+}
+
+/* The stars of a node of the Trail, on a plate under it; they arrive with the node just answered. */
+.path-stars {
+  position: absolute;
+  left: 0;
+  top: 24px;
+  z-index: 1;
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: 0 1px 3px rgb(30 43 58 / 0.18);
+  font-size: 13px;
+  transform: translateX(-50%);
+}
+
+.path-stars.arriving {
+  animation: plate-up 0.35s var(--spring) both;
+}
+
+@keyframes plate-up {
+  from { opacity: 0; transform: translate(-50%, -16px) scale(0.5); }
+  to { opacity: 1; transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .path-stars.arriving {
+    animation: none;
+  }
+}
+
 /* Wrap-up */
 
 .bilan-stats {
@@ -1790,6 +2024,63 @@ a.session-card:active {
 
 .bilan-stat.streak strong {
   color: var(--streak);
+}
+
+.bilan-stars {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+  padding: 1.1rem 1.25rem;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 2px solid var(--line);
+}
+
+.bilan-stars-parts {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bilan-stars-parts li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.4rem 0;
+  border-top: 1px solid var(--line);
+  font-weight: 800;
+}
+
+.bilan-stars-parts li:first-child {
+  border-top: 0;
+}
+
+.bilan-stars-parts .stars {
+  font-size: 1.15rem;
+}
+
+.bilan-stars-total {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 2px solid var(--line);
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.bilan-stars-total .stars {
+  font-size: 1.9rem;
+}
+
+.bilan-stars-total strong {
+  color: var(--text);
+  font-size: 1.8rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
 }
 
 .session-nav {
@@ -2875,6 +3166,13 @@ input:disabled {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.correction-verdict {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.75rem;
 }
 
 .correction-title {

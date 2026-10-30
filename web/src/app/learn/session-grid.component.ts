@@ -5,15 +5,16 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { Chapter, Course, SessionEntry } from '../core/api';
 import { ServerSettingsService } from '../core/server-settings.service';
 import { RichTextComponent } from '../shared/rich-text.component';
+import { StarsComponent } from './stars.component';
 
 /**
  * The sessions of a course as a grid of cards, chapter by chapter: finished, to resume, written,
- * or not written yet. A written session is a link; one not written yet is shown flat. A session
+ * or not written yet, with the stars earned in each. A written session is a link; one not written yet is shown flat. A session
  * waiting for its prerequisites says which on hover: locked in guided mode, advised after them in free mode.
  */
 @Component({
   selector: 'app-session-grid',
-  imports: [IconComponent, RouterLink, TranslocoPipe, RichTextComponent],
+  imports: [IconComponent, RouterLink, TranslocoPipe, RichTextComponent, StarsComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @for (chapter of shown(); track chapter.id) {
@@ -67,6 +68,13 @@ import { RichTextComponent } from '../shared/rich-text.component';
                           {{ 'course.progress' | transloco: entry }}
                         }
                       </span>
+                      @if (entry.possibleStars > 0 && (entry.stars > 0 || entry.finished)) {
+                        <span class="session-stars">
+                          <app-stars [count]="1" [max]="1" decorative />
+                          <span aria-hidden="true">{{ entry.stars }} / {{ entry.possibleStars }}</span>
+                          <span class="visually-hidden">{{ 'course.stars' | transloco: entry }}</span>
+                        </span>
+                      }
                     </span>
                   }
                 </a>

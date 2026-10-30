@@ -82,7 +82,7 @@ class ServerApiTest {
         HttpResponse<String> attempt = post("/api/subjects/reseaux/exercises/s11-w1/attempts",
                 "{\"kind\":\"value\",\"value\":\"  Le Forwarding \"}");
 
-        assertThat(attempt.body()).contains("\"verdict\":\"correct\"", "\"attempts\":1", "consulte la table");
+        assertThat(attempt.body()).contains("\"verdict\":\"correct\"", "\"attempts\":1", "consulte la table", "\"stars\":3");
         assertThat(get("/api/subjects/reseaux/exercises/s11-w1/solution").body())
                 .contains("\"kind\":\"value\"", "forwarding", "consulte la table");
     }
@@ -98,6 +98,14 @@ class ServerApiTest {
                 "\"id\":\"from-stream-to-ocean\"");
         assertThat(get("/api/ranks").body()).contains("{\"tier\":\"grand-sage\",\"division\":0,\"from\":400000.0,\"firstLevel\":491}",
                 "{\"tier\":\"luminary\",\"division\":0,\"from\":80000.0,\"firstLevel\":421}");
+    }
+
+    @Test
+    void the_stars_of_an_answer_stay_with_the_lesson_and_its_session() throws Exception {
+        post("/api/subjects/reseaux/exercises/s11-a1/attempts?session=s11", "{\"kind\":\"value\",\"value\":\"48\"}");
+
+        assertThat(get("/api/subjects/reseaux/sessions/s11").body()).contains("\"answeredHere\":\"correct\",\"answeredStars\":3");
+        assertThat(get("/api/subjects/reseaux").body()).contains("\"stars\":3,\"possibleStars\":12");
     }
 
     @Test

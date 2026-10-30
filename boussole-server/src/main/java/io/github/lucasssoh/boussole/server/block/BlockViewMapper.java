@@ -1,6 +1,6 @@
 package io.github.lucasssoh.boussole.server.block;
 
-import io.github.lucasssoh.boussole.core.learn.check.Verdict;
+import io.github.lucasssoh.boussole.core.learn.progress.FirstAnswer;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
 import io.github.lucasssoh.boussole.format.model.answer.Answer;
 import io.github.lucasssoh.boussole.format.model.answer.FillAnswer;
@@ -47,11 +47,11 @@ public final class BlockViewMapper {
     private final String sourcesDir;
     private final Map<String, Block> referenced;
     private final Map<String, ExerciseProgress> progress;
-    private final Map<String, Verdict> answered;
+    private final Map<String, FirstAnswer> answered;
 
     /** {@code answered}: the questions already answered in the session, whose answer is final. */
     public BlockViewMapper(
-            String sourcesDir, Map<String, Block> referenced, Map<String, ExerciseProgress> progress, Map<String, Verdict> answered) {
+            String sourcesDir, Map<String, Block> referenced, Map<String, ExerciseProgress> progress, Map<String, FirstAnswer> answered) {
         this.sourcesDir = sourcesDir;
         this.referenced = referenced;
         this.progress = progress;

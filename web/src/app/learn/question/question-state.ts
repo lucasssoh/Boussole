@@ -13,6 +13,7 @@ import {
 import { storeValue, storedText } from '../../core/local-preferences';
 import { StatsService } from '../../core/stats.service';
 import { SessionRun } from '../session-run';
+import { StarTone, starTone } from '../stars';
 
 /**
  * What every question does, MCQ or exercise: send an attempt, reveal the next hint, show the
@@ -41,6 +42,12 @@ export class QuestionState {
    */
   private readonly earlierVerdict = signal<Verdict | null>(null);
   readonly verdict = computed(() => this.result()?.verdict ?? this.earlierVerdict());
+  /** The stars of the answer, out of 3; an answer kept by an older Boussole has those the server gives. */
+  private readonly earlierStars: WritableSignal<number | null>;
+  readonly stars = computed(() => this.result()?.stars ?? this.earlierStars());
+  readonly starTone: StarTone | null;
+  /** Answered in this sitting, rather than shown again: its stars arrive one by one. */
+  readonly fresh = signal(false);
 
   /** The learner answers once: for this sitting, and for good in a lesson. */
   readonly answered = computed(() => this.verdict() !== null);
@@ -75,6 +82,8 @@ export class QuestionState {
     this.progress = signal(progress);
     this.hints = signal(hints.revealed);
     this.hintTotal = hints.total;
+    this.starTone = starTone({ hook, reused, free: isFree });
+    this.earlierStars = signal(progress.answeredStars ?? null);
     const earlier = progress.answeredHere;
     if (earlier) {
       // A question is created while a page computes what it shows, where signals cannot be written.
@@ -90,6 +99,7 @@ export class QuestionState {
     await this.call(async () => {
       const result = await this.api.attempt(this.subject, this.id, request, this.session, this.language);
       this.result.set(result);
+      this.fresh.set(true);
       this.solution.set(result.solution);
       this.progress.set(result.progress);
       if (this.correctionShown()) {
@@ -98,7 +108,7 @@ export class QuestionState {
       if (this.run?.kind() === 'lesson') {
         storeValue(this.keptKey(), JSON.stringify({ request, result } satisfies KeptAnswer));
       }
-      this.run?.record(this.id, result.verdict, result.pointsGained);
+      this.run?.record(this.id, result.verdict, result.pointsGained, result.stars);
       this.stats?.refresh();
     });
   }

@@ -20,7 +20,7 @@ package "content" {
 }
 
 package "progress" {
-  class SqliteProgressRepository
+  class SqliteProgressRepository <<exercise_progress, attempt, session_finished>>
   class SqliteDatabase {
     +{static} open(Path) : SqliteDatabase
     ~connect() : Connection
@@ -76,5 +76,6 @@ BoussoleConfigFile ..> BoussolePaths : forCurrentUser()
 note bottom of SqliteDatabase
   Migrations in db/V*.sql, run once each,
   counted by PRAGMA user_version.
+  Each attempt keeps its points and its stars (V4).
 end note
 @enduml

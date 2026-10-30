@@ -28,7 +28,7 @@ public final class OpenSession {
         CourseSession found = lookup.session(course, session);
         return new OpenedSession(course, CourseVersions.languages(lookup.versions(subject)), found, referenced(course, found),
                 progress.exercises(subject),
-                AnswerOnce.appliesTo(found) ? progress.firstVerdicts(new SessionKey(subject, session)) : Map.of());
+                AnswerOnce.appliesTo(found) ? progress.firstAnswers(new SessionKey(subject, session)) : Map.of());
     }
 
     private static Map<String, Block> referenced(Course course, CourseSession session) {

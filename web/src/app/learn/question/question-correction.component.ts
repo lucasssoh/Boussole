@@ -4,22 +4,28 @@ import { formatPoints } from '../../shared/ranks';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { BlockListComponent } from '../blocks/block-list.component';
 import { QuestionState } from './question-state';
+import { StarsComponent } from '../stars.component';
 
 /**
- * The correction under a question, once it is answered: the verdict, what the answer was worth
- * and the points it earned,
+ * The correction under a question, once it is answered: the verdict and its stars (arriving one
+ * by one when just answered), what the answer was worth and the points it earned,
  * what was expected (projected by the question, [expected]) and why it is right (the solution of
  * the file). A free exercise shows it before the learner grades their answer.
  */
 @Component({
   selector: 'app-question-correction',
-  imports: [TranslocoPipe, forwardRef(() => BlockListComponent)],
+  imports: [TranslocoPipe, StarsComponent, forwardRef(() => BlockListComponent)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'correction', role: 'status', '[class]': "'correction ' + (state().isFree ? 'neutral' : verdict() ?? 'neutral')" },
   template: `
     <div class="correction-head">
-      <span class="correction-title">
-        {{ (state().isFree ? 'question.proposedCorrection' : verdict() ? 'verdict.' + verdict() : 'question.solutionTitle') | transloco }}
+      <span class="correction-verdict">
+        <span class="correction-title">
+          {{ (state().isFree ? 'question.proposedCorrection' : verdict() ? 'verdict.' + verdict() : 'question.solutionTitle') | transloco }}
+        </span>
+        @if (state().starTone && state().stars() !== null && verdict()) {
+          <app-stars [count]="state().stars()!" [tone]="state().starTone!" [play]="state().fresh()" />
+        }
       </span>
       @if (state().result(); as result) {
         <span class="correction-score">

@@ -4,6 +4,7 @@ import io.github.lucasssoh.boussole.core.learn.reward.SessionFinishedRecord;
 import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
+import io.github.lucasssoh.boussole.core.learn.progress.FirstAnswer;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 import io.github.lucasssoh.boussole.core.learn.progress.LastActivity;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
@@ -26,7 +27,7 @@ final class InMemoryProgressRepository implements ProgressRepository {
     private final Map<String, LastActivity> last = new HashMap<>();
     private final List<AttemptRecord> history = new ArrayList<>();
     private final List<SessionFinishedRecord> finishedAt = new ArrayList<>();
-    private final Map<SessionKey, Map<String, Verdict>> firstInSession = new HashMap<>();
+    private final Map<SessionKey, Map<String, FirstAnswer>> firstInSession = new HashMap<>();
 
     @Override
     public ExerciseProgress exercise(ExerciseKey key) {
@@ -53,16 +54,18 @@ final class InMemoryProgressRepository implements ProgressRepository {
     }
 
     @Override
-    public void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, double points, Instant at) {
+    public void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, double points, int stars, Instant at) {
         last.put(key.subject(), new LastActivity(at, session, false));
         history.add(new AttemptRecord(key.subject(), key.exercise(), session, at, verdict, points));
         session.ifPresent(id -> firstInSession.computeIfAbsent(new SessionKey(key.subject(), id), unused -> new HashMap<>())
-                .putIfAbsent(key.exercise(), verdict));
+                .putIfAbsent(key.exercise(), new FirstAnswer(verdict, stars)));
     }
 
     @Override
-    public Map<String, Verdict> firstVerdicts(SessionKey session) {
-        return Map.copyOf(firstInSession.getOrDefault(session, Map.of()));
+    public Map<String, Map<String, FirstAnswer>> firstAnswers(String subject) {
+        return firstInSession.entrySet().stream()
+                .filter(entry -> entry.getKey().subject().equals(subject))
+                .collect(Collectors.toMap(entry -> entry.getKey().session(), entry -> Map.copyOf(entry.getValue())));
     }
 
     @Override

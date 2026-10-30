@@ -6,6 +6,7 @@ import io.github.lucasssoh.boussole.core.learn.ContentRepository;
 import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseProgress;
+import io.github.lucasssoh.boussole.core.learn.progress.FirstAnswer;
 import io.github.lucasssoh.boussole.core.learn.progress.LastActivity;
 import io.github.lucasssoh.boussole.core.learn.progress.ProgressRepository;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
@@ -191,10 +192,10 @@ class RewardTest {
         @Override public ExerciseProgress exercise(ExerciseKey key) { return ExerciseProgress.NONE; }
         @Override public Map<String, ExerciseProgress> exercises(String subject) { return Map.of(); }
         @Override public void saveExercise(ExerciseKey key, ExerciseProgress progress, Instant at) { }
-        @Override public void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, double points, Instant at) { }
+        @Override public void recordAttempt(ExerciseKey key, Optional<String> session, Verdict verdict, double points, int stars, Instant at) { }
         @Override public void saveSessionFinished(SessionKey key, Instant at, Duration spent, double bonus) { }
         @Override public Set<String> finishedSessions(String subject) { return Set.of(); }
-        @Override public Map<String, Verdict> firstVerdicts(SessionKey session) { return Map.of(); }
+        @Override public Map<String, Map<String, FirstAnswer>> firstAnswers(String subject) { return Map.of(); }
         @Override public List<AttemptRecord> attemptHistory() { return attempts; }
         @Override public List<SessionFinishedRecord> sessionsFinished() { return finished; }
         @Override public Optional<LastActivity> lastActivity(String subject) { return Optional.empty(); }

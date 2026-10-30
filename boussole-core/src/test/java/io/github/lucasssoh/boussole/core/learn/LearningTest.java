@@ -7,6 +7,7 @@ import io.github.lucasssoh.boussole.core.learn.check.ChoicesResponse;
 import io.github.lucasssoh.boussole.core.learn.check.ValueResponse;
 import io.github.lucasssoh.boussole.core.learn.check.Verdict;
 import io.github.lucasssoh.boussole.core.learn.progress.ExerciseKey;
+import io.github.lucasssoh.boussole.core.learn.progress.FirstAnswer;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import io.github.lucasssoh.boussole.core.learn.progress.SessionProgress;
 import io.github.lucasssoh.boussole.core.learn.reward.Achievement;
@@ -130,7 +131,7 @@ class LearningTest {
 
         assertThatThrownBy(() -> submit.submit(MAC_BITS, new ValueResponse("48"), Optional.of("s11"), Optional.empty()))
                 .isInstanceOf(LearningRuleException.class);
-        assertThat(new OpenSession(content, progress).open("reseaux", "s11", Optional.empty()).answered()).containsEntry("s11-a1", Verdict.WRONG);
+        assertThat(new OpenSession(content, progress).open("reseaux", "s11", Optional.empty()).answered()).containsEntry("s11-a1", new FirstAnswer(Verdict.WRONG, 0));
     }
 
     @Test
@@ -205,8 +206,25 @@ class LearningTest {
 
         CourseOverview overview = new OpenCourse(content, progress).open("reseaux", Optional.empty());
 
-        assertThat(overview.sessionProgress().get("s11")).isEqualTo(new SessionProgress(5, 2, 1));
-        assertThat(overview.sessionProgress().get("r19")).isEqualTo(new SessionProgress(3, 2, 1));
+        assertThat(overview.sessionProgress().get("s11")).isEqualTo(new SessionProgress(5, 2, 1, 0, 12));
+        assertThat(overview.sessionProgress().get("r19")).isEqualTo(new SessionProgress(3, 2, 1, 0, 3));
+    }
+
+    @Test
+    void the_stars_of_a_session_count_the_first_answers_to_its_own_questions() {
+        SubmitAttempt submit = new SubmitAttempt(content, progress, RewardedSubjects.all(), clock);
+        AttemptOutcome right = submit.submit(MAC_BITS, new ValueResponse("48"), Optional.of("s11"), Optional.empty());
+        submit.submit(new ExerciseKey("reseaux", "s11-a2"), new ChoicesResponse(Set.of(0)), Optional.of("s11"), Optional.empty());
+        submit.submit(new ExerciseKey("reseaux", "s11-a2"), new ChoicesResponse(Set.of(1)), Optional.of("r19"), Optional.empty());
+
+        CourseOverview overview = new OpenCourse(content, progress).open("reseaux", Optional.empty());
+
+        assertThat(right.stars()).isEqualTo(3);
+        assertThat(overview.sessionProgress().get("s11").stars()).isEqualTo(3);
+        // A question asked again in a review is not one of its own: it shows its stars, but adds none.
+        assertThat(overview.sessionProgress().get("r19").stars()).isZero();
+        assertThat(new OpenSession(content, progress).open("reseaux", "s11", Optional.empty()).answered())
+                .containsEntry("s11-a1", new FirstAnswer(Verdict.CORRECT, 3));
     }
 
     @Test

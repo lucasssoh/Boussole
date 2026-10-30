@@ -45,6 +45,7 @@ export const FR: Translations = {
     questions: '{{questions}} questions',
     progress: '{{answered}} sur {{questions}} faites · {{right}} justes',
     progressLabel: '{{answered}} questions faites sur {{questions}}, dont {{right}} justes',
+    stars: 'Étoiles : {{stars}} sur {{possibleStars}}',
     sessions: 'Séances',
     score: 'Score',
     scoreDetail: '{{earned}} gagnés · {{missed}} manqués · {{toPlay}} à jouer',
@@ -82,6 +83,8 @@ export const FR: Translations = {
     tallyOwn: 'Premières réponses',
     tallyAgain: 'Reprises',
     tallyMissed: 'Manquées',
+    starsTitle: 'Étoiles de la séance',
+    starsTotal: 'étoiles',
     firstTime: 'justes du premier coup',
     contents: 'Sommaire',
   },
@@ -304,6 +307,11 @@ export const FR: Translations = {
   },
   screen: { start: 'Objectif', explanation: 'Explication', example: 'Exemple', mcq: 'QCM', exercise: 'Exercice', end: 'Bilan' },
   verdict: { correct: 'Juste !', partly: 'Presque !', wrong: 'Pas cette fois' },
+  stars: {
+    gold: 'Étoiles : {{count}} sur 3',
+    blue: 'Étoiles d’une question déjà vue : {{count}} sur 3',
+    outline: 'Ton estimation, en étoiles : {{count}} sur 3',
+  },
   free: {
     compare: 'Comparer avec la solution',
     write: 'Écris ta réponse ici, puis compare-la à la solution. Elle reste sur cette page.',

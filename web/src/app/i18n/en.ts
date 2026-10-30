@@ -43,6 +43,7 @@ export const EN = {
     questions: '{{questions}} questions',
     progress: '{{answered}} of {{questions}} answered · {{right}} right',
     progressLabel: '{{answered}} of {{questions}} questions answered, {{right}} right',
+    stars: 'Stars: {{stars}} of {{possibleStars}}',
     sessions: 'Sessions',
     score: 'Score',
     scoreDetail: '{{earned}} earned · {{missed}} missed · {{toPlay}} to play',
@@ -80,6 +81,8 @@ export const EN = {
     tallyOwn: 'First answers',
     tallyAgain: 'Asked again',
     tallyMissed: 'Missed',
+    starsTitle: 'Stars of the session',
+    starsTotal: 'stars',
     firstTime: 'right at the first attempt',
     contents: 'Contents',
   },
@@ -302,6 +305,11 @@ export const EN = {
   },
   screen: { start: 'Goal', explanation: 'Explanation', example: 'Example', mcq: 'MCQ', exercise: 'Exercise', end: 'Wrap-up' },
   verdict: { correct: 'Right!', partly: 'Almost!', wrong: 'Not this time' },
+  stars: {
+    gold: 'Stars: {{count}} of 3',
+    blue: 'Stars of a question met before: {{count}} of 3',
+    outline: 'Your estimate, in stars: {{count}} of 3',
+  },
   free: {
     compare: 'Compare with the solution',
     write: 'Write your answer here, then compare it with the solution. It stays on this page.',

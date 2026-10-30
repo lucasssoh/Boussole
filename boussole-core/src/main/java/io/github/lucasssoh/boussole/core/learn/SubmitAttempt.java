@@ -11,6 +11,7 @@ import io.github.lucasssoh.boussole.core.learn.progress.SessionKey;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
 import io.github.lucasssoh.boussole.format.model.block.McqBlock;
 import io.github.lucasssoh.boussole.core.learn.reward.RewardedSubjects;
+import io.github.lucasssoh.boussole.core.learn.reward.Stars;
 import io.github.lucasssoh.boussole.core.learn.reward.PointRules;
 import io.github.lucasssoh.boussole.core.learn.reward.QuestionScore;
 import io.github.lucasssoh.boussole.format.model.TrackLevel;
@@ -49,15 +50,16 @@ public final class SubmitAttempt {
         };
         QuestionScore score = QuestionScore.of(question, response, result);
         ExerciseProgress before = progress.exercise(key);
-        boolean firstHere = session.map(id -> !progress.firstVerdicts(new SessionKey(key.subject(), id)).containsKey(key.exercise()))
+        boolean firstHere = session.map(id -> !progress.firstAnswers(new SessionKey(key.subject(), id)).containsKey(key.exercise()))
                 .orElse(false);
         double points = rewarded.rewards(key.subject())
                 ? PointRules.weight(before.attempts() == 0, firstHere) * score.earned() * coefficient(key.subject())
                 : 0;
         ExerciseProgress after = before.withAttempt(result.verdict());
         progress.saveExercise(key, after, clock.instant());
-        progress.recordAttempt(key, session, result.verdict(), points, clock.instant());
-        return new AttemptOutcome(result, after, score, points);
+        int stars = Stars.of(score, result.verdict());
+        progress.recordAttempt(key, session, result.verdict(), points, stars, clock.instant());
+        return new AttemptOutcome(result, after, score, points, stars);
     }
 
     /** What the level of the track multiplies its points by; 1 when it does not say. */
@@ -67,7 +69,7 @@ public final class SubmitAttempt {
 
     private void refuseASecondAnswer(ExerciseKey key, String session) {
         boolean lesson = AnswerOnce.appliesTo(lookup.session(lookup.course(key.subject(), Optional.empty()), session));
-        if (lesson && progress.firstVerdicts(new SessionKey(key.subject(), session)).containsKey(key.exercise())) {
+        if (lesson && progress.firstAnswers(new SessionKey(key.subject(), session)).containsKey(key.exercise())) {
             throw new LearningRuleException(key.exercise() + " is already answered in " + session + ": in a lesson, the first answer is final");
         }
     }

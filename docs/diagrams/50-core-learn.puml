@@ -63,9 +63,11 @@ package "learn.progress" {
     +exercise(ExerciseKey) : ExerciseProgress
     +exercises(subject) : Map<String, ExerciseProgress>
     +saveExercise(ExerciseKey, ExerciseProgress, Instant)
-    +saveSessionFinished(SessionKey, Instant, Duration)
+    +saveSessionFinished(SessionKey, Instant, Duration, bonus)
     +finishedSessions(subject) : Set<String>
-    +recordAttempt(ExerciseKey, session, Verdict, Instant)
+    +recordAttempt(ExerciseKey, session, Verdict, points, stars, Instant)
+    +firstAnswers(SessionKey) : Map<String, FirstAnswer>
+    +firstAnswers(subject) : Map<session, Map<String, FirstAnswer>>
     +lastActivity(subject) : Optional<LastActivity>
     +attemptHistory() : List<AttemptRecord>
     +sessionsFinished() : List<SessionFinishedRecord>
@@ -73,6 +75,11 @@ package "learn.progress" {
   class LastActivity <<record>>
   class SessionProgress <<record>> {
     questions, answered, right : int
+    stars, possibleStars : int
+  }
+  class FirstAnswer <<record>> {
+    verdict : Verdict
+    stars : int
   }
   class ExerciseProgress <<record>> {
     attempts : int
@@ -94,6 +101,10 @@ package "learn.reward" {
     +{static} flawlessBonus(sessionPoints) : double
     +AGAIN = 0.5
     +FLAWLESS = 0.10
+  }
+  class Stars <<helpers>> {
+    +{static} of(QuestionScore, Verdict) : int
+    +MAX = 3
   }
   class QuestionScore <<record>> {
     earned, possible : double
@@ -246,6 +257,10 @@ FinishSession --> RewardedSubjects : rewarded
 ReadStudyStats ..> StudyStats
 StudyStats *-- FieldStanding
 SubmitAttempt ..> QuestionScore : score
+SubmitAttempt ..> Stars : stars
+Stars ..> QuestionScore : share earned
+ProgressRepository ..> FirstAnswer
+CourseOverviews ..> FirstAnswer : stars per session
 SubmitAttempt ..> PointRules : points
 FinishSession ..> PointRules : flawless bonus
 CourseOverviews --> ProgressRepository
