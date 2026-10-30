@@ -54,6 +54,8 @@
   --star-empty-edge: #b3bfc9;
   --star-empty-line: #bfcad3;
   --radius: 18px;
+  /* The top bar's height: what sticks under it starts there. */
+  --top-bar: 4rem;
   --content-width: 48rem;
   --font: 'Nunito Variable', Nunito, system-ui, sans-serif;
   --mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
@@ -302,7 +304,8 @@ a:focus-visible {
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  min-height: 3.5rem;
+  box-sizing: border-box;
+  height: var(--top-bar);
   padding: 0.4rem 1.25rem;
   background: var(--surface);
   border-bottom: 2px solid var(--line);
@@ -1310,7 +1313,7 @@ a.session-card:active {
   --panel-width: max(22rem, 38vw);
   display: grid;
   grid-template-columns: 19rem minmax(0, 1fr) 0px;
-  min-height: calc(100vh - 3.5rem);
+  min-height: calc(100vh - var(--top-bar));
   overflow-x: clip;
   transition: grid-template-columns 0.28s cubic-bezier(0.2, 0.8, 0.3, 1);
 }
@@ -1333,19 +1336,20 @@ a.session-card:active {
   container-type: inline-size;
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 3.5rem);
+  min-height: calc(100vh - var(--top-bar));
   padding: 1.5rem 1.5rem 0;
 }
 
 /* The path follows the current screen, and the learner may scroll it too. */
 .session-path {
   position: sticky;
-  top: 3.5rem;
+  top: var(--top-bar);
   align-self: start;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 3.5rem);
+  height: calc(100vh - var(--top-bar));
   overflow: hidden;
+  background: var(--bg);
 }
 
 /* The path scrolls by hand too, its scroll bar on the left (direction: rtl), the track inside left to right. */
@@ -1624,7 +1628,7 @@ a.session-card:active {
 
 .screen-bar {
   position: sticky;
-  top: 3.5rem;
+  top: var(--top-bar);
   z-index: 10;
   display: flex;
   flex-wrap: wrap;
@@ -2185,9 +2189,9 @@ a.session-card:active {
 
 .side-panel {
   position: sticky;
-  top: 3.5rem;
+  top: var(--top-bar);
   width: var(--panel-width);
-  height: calc(100vh - 3.5rem);
+  height: calc(100vh - var(--top-bar));
   display: flex;
   flex-direction: column;
   border-left: 2px solid var(--line);
@@ -2540,7 +2544,7 @@ a.session-card:active {
   .player.outline-open .session-path {
     display: flex;
     position: fixed;
-    inset: 3.5rem auto 0 0;
+    inset: var(--top-bar) auto 0 0;
     z-index: 35;
     width: min(18rem, 85vw);
     height: auto;
@@ -2550,7 +2554,7 @@ a.session-card:active {
   .player.outline-open .outline-backdrop {
     display: block;
     position: fixed;
-    inset: 3.5rem 0 0 0;
+    inset: var(--top-bar) 0 0 0;
     z-index: 34;
     min-height: 0;
     border: 0;
@@ -2561,6 +2565,11 @@ a.session-card:active {
 
   .outline-toggle {
     display: inline-flex;
+  }
+
+  /* Over the text, the path is a drawer of its own: the bar of the screen stays under it. */
+  .player.outline-open .session-path {
+    border-right: 2px solid var(--line);
   }
 
   .side-panel {
@@ -3821,6 +3830,21 @@ app-settings-drawer {
   background: color-mix(in srgb, currentColor 15%, transparent);
 }
 
+/* On a phone, the gauge above its words, as wide as the column. */
+@media (max-width: 640px) {
+  .profile-next {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.35rem;
+    width: min(100%, 18rem);
+    text-align: center;
+  }
+
+  .profile-next .xp-track {
+    width: 100%;
+  }
+}
+
 .profile-ranks {
   margin-top: 0.35rem;
   padding: 0.35rem 0.9rem;
@@ -5028,4 +5052,36 @@ span.map-node.unwritten {
 
 .frame.beyond .frame-title {
   color: var(--beyond-ink);
+}
+
+/* On a phone: the bar of the screen keeps the Trail, the documents and the count; the part is in the Trail. */
+@media (max-width: 640px) {
+  .session {
+    padding: 1rem 1rem 0;
+  }
+
+  .screen-bar {
+    margin-top: -1rem;
+  }
+
+  .screen-where {
+    display: none;
+  }
+
+  .screen-bar .screen-count {
+    margin-left: auto;
+  }
+
+  /* The buttons below are a bar of their own, over the text, clear of the phone's edge. */
+  .screen-nav {
+    width: auto;
+    margin: 1.5rem -1rem 0;
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    background: var(--surface);
+    border-top: 2px solid var(--line);
+  }
+
+  .screen-nav .primary {
+    padding: 0 1.25rem;
+  }
 }
