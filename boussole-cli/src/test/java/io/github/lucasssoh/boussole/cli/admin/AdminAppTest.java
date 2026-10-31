@@ -90,6 +90,17 @@ class AdminAppTest {
     }
 
     @Test
+    void tab_and_shift_tab_go_round_the_screens() throws IOException {
+        AdminApp app = app(100, 30);
+
+        app.key(new KeyStroke(KeyType.Tab));
+        assertThat(shown(app)).contains("Server stopped.");
+        app.key(new KeyStroke(KeyType.ReverseTab));
+        app.key(new KeyStroke(KeyType.ReverseTab));
+        assertThat(shown(app)).contains("v Validate");
+    }
+
+    @Test
     void a_folder_without_a_subject_is_not_added() throws IOException {
         AdminApp app = app(100, 30);
         app.key(typed('3'));

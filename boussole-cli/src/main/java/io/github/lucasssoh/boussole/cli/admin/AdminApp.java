@@ -30,7 +30,7 @@ final class AdminApp {
     static final int MIN_COLUMNS = 80;
     static final int MIN_ROWS = 24;
     private static final Duration MESSAGE_TIME = Duration.ofSeconds(8);
-    private static final List<Hint> GLOBAL = List.of(new Hint("F1–F3", "Screen"), new Hint("q", "Quit"));
+    private static final List<Hint> GLOBAL = List.of(new Hint("Tab", "Screen"), new Hint("q", "Quit"));
 
     private final Screen screen;
     private final String version;
@@ -101,6 +101,10 @@ final class AdminApp {
         }
         if (message != null && message.until != null) {
             message = null;
+        }
+        if (key.getKeyType() == KeyType.Tab || key.getKeyType() == KeyType.ReverseTab) {
+            show(Math.floorMod(current + (key.getKeyType() == KeyType.Tab ? 1 : -1), tabs.size()));
+            return;
         }
         if (tabs.get(current).key(key)) {
             return;
@@ -223,7 +227,7 @@ final class AdminApp {
 
     private void drawHints(Painter painter, int row, int columns) {
         int column = 0;
-        for (Hint hint : prompt != null ? prompt.hints() : concat(tabs.get(current).hints(), GLOBAL)) {
+        for (Hint hint : prompt != null ? prompt.hints() : concat(GLOBAL, tabs.get(current).hints())) {
             column = painter.text(column, row, hint.key(), columns - column, Style.KEY);
             column = painter.text(column, row, " " + hint.label() + "   ", columns - column, Style.DIM);
         }

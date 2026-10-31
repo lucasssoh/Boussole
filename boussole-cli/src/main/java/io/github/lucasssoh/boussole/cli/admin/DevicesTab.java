@@ -27,7 +27,7 @@ final class DevicesTab implements AdminTab {
 
     private static final List<Hint> LIST = List.of(new Hint("a", "Pair"), new Hint("Enter", "Accept"), new Hint("Del", "Deny"),
             new Hint("n", "Rename"), new Hint("c", "Access"), new Hint("r", "Remove"));
-    private static final List<Hint> PAIRING = List.of(new Hint("Tab", "Access"), new Hint("Esc", "Close"));
+    private static final List<Hint> PAIRING = List.of(new Hint("Space", "Access"), new Hint("Esc", "Close"));
 
     private static final DateTimeFormatter SEEN_TODAY = DateTimeFormatter.ofPattern("HH:mm");
     private static final DateTimeFormatter SEEN_BEFORE = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -226,7 +226,7 @@ final class DevicesTab implements AdminTab {
                 pairing = null;
                 return true;
             }
-            if (key.getKeyType() == KeyType.Tab) {
+            if (key.getKeyType() == KeyType.Character && key.getCharacter() == ' ') {
                 pair(!open.readOnly());
                 return true;
             }
