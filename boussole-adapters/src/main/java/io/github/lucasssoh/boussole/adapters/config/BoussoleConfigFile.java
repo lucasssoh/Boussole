@@ -14,12 +14,13 @@ import org.snakeyaml.engine.v2.exceptions.MarkedYamlEngineException;
 import org.snakeyaml.engine.v2.exceptions.YamlEngineException;
 
 /**
- * Reads {@code config.yaml}, and adds a subject folder to it while keeping the rest of the file,
- * comments included, as the learner wrote it.
+ * Reads {@code config.yaml}, and adds or removes a subject folder or turns network access on or
+ * off while keeping the rest of the file, comments included, as the learner wrote it.
  */
 public final class BoussoleConfigFile {
 
     private static final String SUBJECTS = "subjects:";
+    private static final String NETWORK = "network:";
 
     private final Path file;
     private final Path home;
@@ -82,6 +83,50 @@ public final class BoussoleConfigFile {
         }
         write(String.join("\n", lines) + "\n");
         return true;
+    }
+
+    /** Takes the folder out of the subjects; its files stay. Says whether it was there. */
+    public boolean removeSubject(Path folder) {
+        Path absolute = folder.toAbsolutePath().normalize();
+        List<String> lines = Files.exists(file) ? new ArrayList<>(text().lines().toList()) : new ArrayList<>();
+        int key = indexOfSubjectsKey(lines);
+        if (key < 0) {
+            return false;
+        }
+        for (int index = key + 1; index < lines.size() && isListItemOrBlank(lines.get(index)); index++) {
+            String item = lines.get(index).strip();
+            if (!item.isEmpty() && expand(unquoted(item.substring(2).strip())).equals(absolute)) {
+                lines.remove(index);
+                write(String.join("\n", lines) + "\n");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Sets {@code network}, in place when the key is written, else at the end. */
+    public void setNetwork(boolean on) {
+        List<String> lines = Files.exists(file) ? new ArrayList<>(text().lines().toList()) : new ArrayList<>();
+        String line = NETWORK + " " + on;
+        int key = -1;
+        for (int index = 0; index < lines.size(); index++) {
+            if (lines.get(index).startsWith(NETWORK)) {
+                key = index;
+            }
+        }
+        if (key < 0) {
+            lines.add(line);
+        } else {
+            String comment = lines.get(key).contains(" #") ? lines.get(key).substring(lines.get(key).indexOf(" #")) : "";
+            lines.set(key, line + comment);
+        }
+        write(String.join("\n", lines) + "\n");
+    }
+
+    private static String unquoted(String value) {
+        return value.length() > 1 && (value.startsWith("\"") && value.endsWith("\"") || value.startsWith("'") && value.endsWith("'"))
+                ? value.substring(1, value.length() - 1)
+                : value;
     }
 
     private static int indexOfSubjectsKey(List<String> lines) {

@@ -188,6 +188,8 @@ picocli. One class per command.
 | `boussole validate SUBJECT_DIR [--check-videos]` | Runs the validator. |
 | `boussole sources SUBJECT_DIR [--all]` | Lists the documents against `cursus/sources.yaml`: new, changed, pending, gone, with the entries to add. |
 | `boussole index SUBJECT_DIR [--before SESSION]` | Lists every question of a subject, one per line, with how many times it is asked again (`::ref`): agents pick warmup and review questions there. |
+| `boussole devices [pair\|accept\|deny\|rename\|access\|remove]` | Pairs other devices of the network and manages them, through the running server's `/api/devices`. |
+| `boussole` (alone, beta) | In a terminal, the same full screen (Lanterna, `cli.admin`); without a terminal, the help: the server (start, stop, restart, network on or off in `config.yaml`), the devices (requests, pairing with its QR code), the tracks of `config.yaml` (validated as `boussole validate` does, with their documents to take into account; add or remove a folder). `ServerControl` and `TrackCheck` are what it shares with `open`, `stop` and `validate`. |
 | `boussole remind EVENT` (V2) | Shows the reminder of an event (called by system timers). |
 | `boussole import-legacy …` (planned) | Imports the former Markdown sessions and Boussole settings. |
 
@@ -487,7 +489,7 @@ On macOS and Windows the equivalent per-user folders are used.
 | Server | Spring Boot 4 |
 | Persistence | SQLite (xerial JDBC), migrations run by `SqliteDatabase` |
 | Course files | own line-based parser for the structure, SnakeYAML Engine, PDFBox for page counts; Markdown rendered by markdown-it in `web/` |
-| CLI | picocli |
+| CLI | picocli; Lanterna for `boussole` alone; QR-Code generator (Nayuki) |
 | Interface | Angular 22 (standalone components, signals), Transloco, markdown-it, KaTeX, Mermaid |
 | Tests | JUnit 6, AssertJ, ArchUnit; Vitest for `web/` |
 

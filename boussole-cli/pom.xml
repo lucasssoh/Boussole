@@ -40,6 +40,11 @@
             <groupId>io.nayuki</groupId>
             <artifactId>qrcodegen</artifactId>
         </dependency>
+        <dependency>
+            <!-- The full-screen terminal of `boussole` alone. -->
+            <groupId>com.googlecode.lanterna</groupId>
+            <artifactId>lanterna</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>

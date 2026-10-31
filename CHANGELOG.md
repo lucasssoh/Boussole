@@ -7,6 +7,7 @@ minor release may break things and says so.
 ## Unreleased
 
 ### Added
+- **`boussole` alone (beta):** the server, the devices and your tracks, full screen in the terminal. Start, stop or restart the server and turn network access on or off; accept a device's request or show a code and its QR code; see each track's problems and new documents, add a folder or take one off the list.
 - **Other devices:** with `network: true` in `config.yaml`, a phone, a tablet or a TV on the same network can open Boussole once paired: `boussole devices pair` shows a QR code and a code, or the device shows a code to accept with `boussole devices accept`. Without pairing, the network gets nothing. A device may be read-only; `boussole devices remove` takes one away.
 - **Stars:** each answer now shows up to 3 stars for how much of it was right: in the correction, under its step on the Trail, in the wrap-up and on each session card. A question met before (a warmup, a quick review) shows blue stars that do not count in the total; a free exercise shows your own estimate, outlined.
 

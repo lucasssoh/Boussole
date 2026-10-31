@@ -13,7 +13,7 @@ import java.time.Duration;
 import java.util.Map;
 
 /** The running Boussole of this computer, asked through its API on 127.0.0.1. */
-final class LocalServer {
+public final class LocalServer {
 
     private static final Duration TIMEOUT = Duration.ofSeconds(10);
     private static final ObjectMapper JSON = new ObjectMapper();
@@ -25,23 +25,27 @@ final class LocalServer {
         this.port = port;
     }
 
-    static LocalServer ofConfig() {
-        return new LocalServer(BoussoleConfigFile.forCurrentUser().read().port());
+    public static LocalServer ofConfig() {
+        return on(BoussoleConfigFile.forCurrentUser().read().port());
     }
 
-    JsonNode get(String path) {
+    public static LocalServer on(int port) {
+        return new LocalServer(port);
+    }
+
+    public JsonNode get(String path) {
         return send("GET", path, null);
     }
 
-    JsonNode post(String path, Map<String, String> body) {
+    public JsonNode post(String path, Map<String, String> body) {
         return send("POST", path, body);
     }
 
-    JsonNode patch(String path, Map<String, String> body) {
+    public JsonNode patch(String path, Map<String, String> body) {
         return send("PATCH", path, body);
     }
 
-    void delete(String path) {
+    public void delete(String path) {
         send("DELETE", path, null);
     }
 

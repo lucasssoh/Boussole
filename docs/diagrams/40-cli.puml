@@ -5,7 +5,7 @@ skinparam nodesep 40
 skinparam ranksep 50
 hide empty members
 hide circle
-title boussole-cli — the boussole command (packages cli, cli.init, cli.serve, cli.devices)
+title boussole-cli — the boussole command (packages cli, cli.init, cli.serve, cli.devices, cli.admin)
 
 package "cli" {
   class BoussoleCommand <<@Command boussole>> {
@@ -27,6 +27,9 @@ package "cli" {
     errorsOnly : boolean
     checkVideos : boolean
     +call() : Integer
+  }
+  class TrackCheck {
+    +{static} of(folder, videos, subjects) : InspectionReport
   }
   class ReportPrinter {
     ~print(InspectionReport)
@@ -77,6 +80,37 @@ package "cli.serve" {
   class BrowserOpener {
     ~{static} open(String url) : boolean
   }
+  class ServerControl {
+    +isRunning() : boolean
+    +start(Runnable starting) : boolean
+    +stop() : boolean
+    +open(String path) : boolean
+    +{static} openFolder(Path) : boolean
+  }
+}
+
+package "cli.admin" {
+  class AdminLauncher <<boussole alone, beta>> {
+    +{static} hasTerminal() : boolean
+    +{static} run()
+  }
+  class AdminApp <<Lanterna screen>> {
+    ~key(KeyStroke)
+    ~draw()
+    ~job(working, Callable<String>)
+    ~ask(label, initial, then)
+    ~confirm(question, then)
+  }
+  interface AdminTab {
+    +refresh()
+    +draw(Painter, top, height)
+    +key(KeyStroke) : boolean
+    +hints() : List<Hint>
+  }
+  class ServerTab <<F1>>
+  class DevicesTab <<F2>>
+  class TracksTab <<F3>>
+  class Painter <<text, panes, QR code>>
 }
 
 package "cli.devices" {
@@ -151,6 +185,25 @@ BoussoleCommand --> ValidateCommand : subcommand
 BoussoleCommand --> SourcesCommand : subcommand
 BoussoleCommand --> IndexCommand : subcommand
 BoussoleCommand --> DevicesCommand : subcommand
+BoussoleCommand --> AdminLauncher : alone, in a terminal
+AdminLauncher --> AdminApp : a terminal of its own
+AdminApp --> AdminTab : F1-F3
+AdminTab <|.. ServerTab
+AdminTab <|.. DevicesTab
+AdminTab <|.. TracksTab
+AdminApp ..> Painter
+ServerTab --> ServerControl : start, stop, restart
+ServerTab ..> BoussoleConfigFile : network on or off
+DevicesTab --> LocalServer : /api/devices
+TracksTab --> TrackCheck : validates
+TracksTab ..> BoussoleConfigFile : adds, removes a folder
+TracksTab ..> ServerControl : opens
+OpenCommand --> ServerControl : starts
+StopCommand --> ServerControl : stops
+ServerControl --> ServerProbe
+ServerControl --> BackgroundServer
+ServerControl --> ServerPidFile
+ServerControl --> BrowserOpener
 DevicesCommand --> PairCommand
 DevicesCommand --> AcceptCommand
 DevicesCommand --> DenyCommand
@@ -163,18 +216,16 @@ PairCommand ..> Devices
 ServeCommand ..> NetworkAddresses : network: true
 ServeCommand ..> LocalCertificate : makes or keeps it
 BoussoleCommand --> ManifestVersion
-ValidateCommand --> SubjectInspector : inspects
+ValidateCommand --> TrackCheck
+TrackCheck --> SubjectInspector : inspects
+TrackCheck ..> TrackVersionFolders : other versions
 ValidateCommand ..> YoutubeOEmbedCatalog : --check-videos
 ValidateCommand --> ReportPrinter : prints
 ValidateCommand ..> ExitCode
 OpenCommand --> BoussoleConfigFile : adds the subject
-OpenCommand --> ServerProbe : running?
-OpenCommand --> BackgroundServer : else starts
 OpenCommand --> BrowserOpener
 BackgroundServer --> Launcher : the packaged program, or a copy of the jar, serve
 ServeCommand --> ServerPidFile : writes
-StopCommand --> ServerPidFile : unanswered server
-StopCommand --> ServerProbe
 ServeCommand --> BoussoleServer : starts
 ServeCommand --> BoussoleConfigFile
 ServeCommand ..> BoussolePaths : state.db
@@ -190,6 +241,5 @@ AgentKitInstaller --> AgentKit : skills, format
 AgentKitInstaller --> MarkedBlock : AGENTS.md
 SubjectScaffold ..> InitReport
 AgentKitInstaller ..> InitReport
-ValidateCommand ..> TrackVersionFolders : other versions
 
 @enduml

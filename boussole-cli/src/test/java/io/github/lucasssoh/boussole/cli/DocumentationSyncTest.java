@@ -128,7 +128,8 @@ class DocumentationSyncTest {
                         classesIn(cli, "io.github.lucasssoh.boussole.cli"),
                         classesIn(cli.resolve("init"), "io.github.lucasssoh.boussole.cli.init"),
                         classesIn(cli.resolve("serve"), "io.github.lucasssoh.boussole.cli.serve"),
-                        classesIn(cli.resolve("devices"), "io.github.lucasssoh.boussole.cli.devices"))
+                        classesIn(cli.resolve("devices"), "io.github.lucasssoh.boussole.cli.devices"),
+                        classesIn(cli.resolve("admin"), "io.github.lucasssoh.boussole.cli.admin"))
                 .flatMap(stream -> stream)
                 .filter(type -> type.isAnnotationPresent(Command.class))
                 .map(Class::getSimpleName)

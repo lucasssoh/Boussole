@@ -131,6 +131,9 @@ On another device of the same network (a phone, a tablet, a TV): add `network: t
 Without a keyboard, the device shows a code; accept it with `boussole devices accept <code>`.
 `boussole devices` lists them; `boussole devices remove <name>` takes one away.
 
+`boussole` alone gathers it full screen in the terminal (beta): the server (start, stop,
+network), the devices, and your tracks with their problems and their new documents.
+
 ```mermaid
 flowchart LR
   D["Your documents"] --> A["Your AI agent"]

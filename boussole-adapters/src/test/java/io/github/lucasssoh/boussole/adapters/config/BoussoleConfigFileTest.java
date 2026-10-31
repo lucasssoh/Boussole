@@ -83,4 +83,28 @@ class BoussoleConfigFileTest {
 
         assertThat(config().read().subjects()).containsExactly(home.resolve("courses/OC"));
     }
+
+    @Test
+    void removes_a_folder_and_keeps_the_rest() throws Exception {
+        Files.createDirectories(home.resolve(".config/boussole"));
+        Files.writeString(config().path(), "# mine\nsubjects:\n  - ~/courses/OC\n  - \"/srv/A&C\"\nport: 7500\n");
+
+        assertThat(config().removeSubject(Path.of("/srv/A&C"))).isTrue();
+        assertThat(config().removeSubject(home.resolve("courses/RESEAUX"))).isFalse();
+
+        assertThat(Files.readString(config().path())).isEqualTo("# mine\nsubjects:\n  - ~/courses/OC\nport: 7500\n");
+    }
+
+    @Test
+    void turns_the_network_on_and_off_in_place() throws Exception {
+        Files.createDirectories(home.resolve(".config/boussole"));
+        Files.writeString(config().path(), "port: 7500\n");
+
+        config().setNetwork(true);
+        assertThat(config().read().network()).isTrue();
+        Files.writeString(config().path(), Files.readString(config().path()).replace("network: true", "network: true # phone"));
+        config().setNetwork(false);
+
+        assertThat(Files.readString(config().path())).isEqualTo("port: 7500\nnetwork: false # phone\n");
+    }
 }

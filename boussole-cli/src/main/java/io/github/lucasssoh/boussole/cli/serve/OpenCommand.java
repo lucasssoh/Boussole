@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import picocli.CommandLine.Command;
@@ -33,8 +32,6 @@ import picocli.CommandLine.Spec;
             "with --resume, open its session to resume, the one in progress or else the next one."
         })
 public final class OpenCommand implements Callable<Integer> {
-
-    private static final Duration STARTUP = Duration.ofSeconds(40);
 
     @Parameters(paramLabel = "FOLDER", arity = "0..1", description = "A subject folder, the one holding subject.yaml.")
     private Path folder;
@@ -64,26 +61,17 @@ public final class OpenCommand implements Callable<Integer> {
                 out.println("Added " + folder.toAbsolutePath().normalize() + " to " + config.path() + ".");
             }
         }
-        ServerProbe probe = new ServerProbe(config.read().port());
-        if (!probe.isBoussole()) {
-            if (probe.portTaken()) {
-                err.println("boussole: port " + config.read().port() + " is taken by a program that does not answer as Boussole."
-                        + " If it is a Boussole that stopped answering, boussole stop ends it; otherwise set another port: in "
-                        + config.path());
-                return ExitCode.UNUSABLE;
-            }
-            BoussolePaths paths = BoussolePaths.forCurrentUser();
-            Path log = paths.serverLog();
-            if (BackgroundServer.start(paths).isEmpty()) {
-                err.println("boussole: start the server with boussole serve, then open " + probe.url(""));
-                return ExitCode.UNUSABLE;
-            }
-            out.println("Starting the server…");
-            if (!probe.waitUntilUp(STARTUP)) {
-                err.println("boussole: the server did not start; see " + log);
-                return ExitCode.UNUSABLE;
-            }
+        ServerControl server = new ServerControl(config, BoussolePaths.forCurrentUser());
+        try {
+            server.start(() -> {
+                out.println("Starting the server…");
+                out.flush();
+            });
+        } catch (ServerControl.StartFailedException e) {
+            err.println("boussole: " + e.getMessage());
+            return ExitCode.UNUSABLE;
         }
+        ServerProbe probe = server.probe();
         String url = probe.url(subject.map(id -> "subjects/" + id
                 + (resume ? probe.sessionToResume(id).map(session -> "/sessions/" + session).orElse("") : "")).orElse(""));
         out.println((BrowserOpener.open(url) ? "Opened " : "Open ") + url);

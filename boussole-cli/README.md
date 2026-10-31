@@ -7,7 +7,9 @@ jar, `target/boussole.jar`.
 |---|---|
 | `cli` | `validate`, and what every command shares (`Launcher`, `ExitCode`) |
 | `cli.init` | `init`: the subject files and the agent kit (skills and `FORMAT.md`, copied into the jar from the repository) |
-| `cli.serve` | `open`, `serve`, `stop` |
+| `cli.serve` | `open`, `serve`, `stop`, and `ServerControl`, which the full screen shares |
+| `cli.devices` | `devices` and its subcommands, through the running server's `/api/devices` |
+| `cli.admin` | `boussole` alone (beta): the server, the devices and the tracks full screen (Lanterna); one class per screen |
 
 `boussole open` recognises a running Boussole by `GET /api/server`; when none answers, it
 starts `serve` as a process of its own, its output in `~/.local/state/boussole/server.log`. That
