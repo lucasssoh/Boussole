@@ -1,10 +1,18 @@
 #!/bin/sh
 # Runs Boussole from a built checkout (mvn package). Link it into your PATH:
 #   ln -s "$PWD/bin/boussole" ~/.local/bin/boussole
+# It runs a copy of the jar: Java reads its classes from the jar as it goes, and a build that
+# replaced it during a long command (the full screen, serve) would break it. The jar itself is
+# named in boussole.jar, for what Boussole writes about how to run it.
 here=$(dirname "$(readlink -f "$0")")
-jar="$here/../boussole-cli/target/boussole.jar"
+jar=$(readlink -f "$here/../boussole-cli/target/boussole.jar")
 if [ ! -f "$jar" ]; then
-    echo "boussole: $jar is missing, run 'mvn package' first" >&2
+    echo "boussole: $here/../boussole-cli/target/boussole.jar is missing, run 'mvn package' first" >&2
     exit 2
 fi
-exec java -jar "$jar" "$@"
+copy=$(mktemp "${TMPDIR:-/tmp}/boussole-XXXXXX.jar") || exit 2
+trap 'rm -f "$copy"' EXIT
+trap 'exit 130' INT TERM
+cp "$jar" "$copy" || exit 2
+java -Dboussole.jar="$jar" -jar "$copy" "$@"
+exit $?

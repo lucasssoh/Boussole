@@ -16,3 +16,6 @@ starts `serve` as a process of its own, its output in `~/.local/state/boussole/s
 process runs a copy of the jar (`server.jar`, same folder): a running server loads its classes
 from its jar as it goes, and would break if a new build replaced `boussole.jar`. `serve` writes
 its process ID in `server.pid`, so that `boussole stop` can end a server that no longer answers.
+For the same reason, `bin/boussole` runs a copy of `boussole.jar`, so that a build does not break
+a command still running (the full screen, `serve`); it names the jar itself in the
+`boussole.jar` property, which `Launcher` reads for the commands Boussole writes for agents.

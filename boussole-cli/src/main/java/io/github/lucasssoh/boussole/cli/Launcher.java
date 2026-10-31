@@ -9,7 +9,8 @@ import java.util.Optional;
  * How this Boussole was started, so that instructions written for agents name a command that
  * runs this very version, even when another program is called {@code boussole}, and so that
  * {@code boussole open} can start the server the same way: from a packaged Boussole (its own
- * program, its own Java inside, {@code app}), or from {@code boussole.jar} ({@code jar}).
+ * program, its own Java inside, {@code app}), or from {@code boussole.jar} ({@code jar}). The
+ * {@code boussole.jar} property names the jar when a copy of it runs ({@code bin/boussole}).
  */
 public record Launcher(Optional<Path> app, Optional<Path> jar) {
 
@@ -17,7 +18,10 @@ public record Launcher(Optional<Path> app, Optional<Path> jar) {
         Optional<Path> app = Optional.ofNullable(System.getProperty("jpackage.app-path")).map(path -> Path.of(path).toAbsolutePath());
         String classPath = System.getProperty("java.class.path", "");
         boolean singleJar = !classPath.contains(java.io.File.pathSeparator) && classPath.endsWith(".jar");
-        return new Launcher(app, singleJar ? Optional.of(Path.of(classPath).toAbsolutePath()) : Optional.empty());
+        Optional<Path> jar = Optional.ofNullable(System.getProperty("boussole.jar")).map(Path::of)
+                .or(() -> singleJar ? Optional.of(Path.of(classPath)) : Optional.empty())
+                .map(Path::toAbsolutePath);
+        return new Launcher(app, jar);
     }
 
     public String validateCommand() {
