@@ -582,7 +582,10 @@ final class TracksTab implements AdminTab {
         status.limit().ifPresent(limit -> {
             String resets = limit.resets().map(at -> ", resets at " + LocalTime.ofInstant(at, ZoneId.systemDefault()).withSecond(0).withNano(0))
                     .orElse("");
-            if (limit.reached()) {
+            boolean reset = limit.resets().map(at -> at.isBefore(Instant.now())).orElse(false);
+            if (limit.reached() && reset) {
+                lines.add(new PlanLine("Stopped by the usage limit, which has reset since.", Style.DIM));
+            } else if (limit.reached()) {
                 lines.add(new PlanLine("Usage limit reached" + resets + ".", Style.ERROR));
             } else if (live && limit.used() >= 0.5) {
                 lines.add(new PlanLine(String.format(Locale.ROOT, "%d%% of the usage limit used%s.", Math.round(limit.used() * 100), resets),
