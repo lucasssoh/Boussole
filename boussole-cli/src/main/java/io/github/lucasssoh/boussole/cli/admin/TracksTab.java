@@ -2,6 +2,7 @@ package io.github.lucasssoh.boussole.cli.admin;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
 import io.github.lucasssoh.boussole.adapters.config.BoussoleConfigFile;
 import io.github.lucasssoh.boussole.cli.TrackCheck;
 import io.github.lucasssoh.boussole.cli.admin.Painter.Style;
@@ -46,6 +47,8 @@ final class TracksTab implements AdminTab {
     private static final String HOME = System.getProperty("user.home");
     /** Problems a page turns: two lines each. */
     private static final int PAGE = 5;
+    /** Lines, or problems, a turn of the wheel scrolls. */
+    private static final int WHEEL = 3;
     /** The width the plan is counted at to scroll it: the narrowest screen. */
     private static final int PLAN_WIDTH = 76;
 
@@ -717,6 +720,20 @@ final class TracksTab implements AdminTab {
     @Override
     public boolean key(KeyStroke key) {
         List<Track> read = tracks;
+        if (key instanceof MouseAction mouse) {
+            switch (mouse.getActionType()) {
+                case SCROLL_DOWN -> scroll(WHEEL);
+                case SCROLL_UP -> scroll(-WHEEL);
+                default -> {
+                    return false;
+                }
+            }
+            return true;
+        }
+        if (key.getKeyType() == KeyType.Character && key.getCharacter() == ' ') {
+            scroll(key.isShiftDown() ? -page() : page());
+            return true;
+        }
         switch (key.getKeyType()) {
             case ArrowUp -> {
                 selected = Math.max(0, selected - 1);
@@ -753,10 +770,6 @@ final class TracksTab implements AdminTab {
     private boolean character(char typed) {
         Optional<Track> track = chosen();
         switch (typed) {
-            case 'j' -> scroll(1);
-            case 'k' -> scroll(-1);
-            case 'l' -> scroll(page());
-            case 'h' -> scroll(-page());
             case 'v' -> {
                 if (!reading) {
                     check("Validated.");
@@ -866,7 +879,7 @@ final class TracksTab implements AdminTab {
         boolean proposed = chosen.map(Track::proposed).orElse(false);
         boolean running = chosen.flatMap(this::agent).map(status -> status.state() == AgentRun.State.RUNNING).orElse(false);
         List<Hint> hints = new ArrayList<>(List.of(new Hint("v", "Validate"), new Hint("p", plan ? "Problems" : "Plan"),
-                new Hint("hjkl", "Scroll")));
+                new Hint("Space", "Scroll")));
         if (proposed) {
             hints.add(new Hint("a", "Approve"));
         }

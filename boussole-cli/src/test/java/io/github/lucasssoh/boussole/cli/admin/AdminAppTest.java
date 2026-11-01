@@ -2,7 +2,10 @@ package io.github.lucasssoh.boussole.cli.admin;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.input.MouseActionType;
+import com.googlecode.lanterna.input.MouseAction;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.TerminalScreen;
@@ -225,7 +228,7 @@ class AdminAppTest {
     }
 
     @Test
-    void j_and_k_scroll_the_plan_by_a_line_and_h_and_l_by_a_page() throws Exception {
+    void space_and_the_wheel_scroll_the_plan_and_h_and_l_change_screen() throws Exception {
         Path track = approvedTrack(home.resolve("long"));
         StringBuilder sessions = new StringBuilder("status: approved\nchapters:\n  - id: turing\n    title: Machines\n    dir: 01-turing\n    sessions:\n");
         for (int number = 10; number < 40; number++) {
@@ -241,25 +244,30 @@ class AdminAppTest {
             shown = shown(app);
         }
         app.key(typed('p'));
-        assertThat(shown(app)).contains("0 of 30 sessions", "hjkl Scroll");
+        assertThat(shown(app)).contains("0 of 30 sessions", "Space Scroll");
 
-        app.key(typed('j'));
-        assertThat(shown(app)).doesNotContain("0 of 30 sessions").contains("1 chapter · 30 h");
-        app.key(typed('k'));
+        app.key(new MouseAction(MouseActionType.SCROLL_DOWN, 5, new TerminalPosition(10, 20)));
+        assertThat(shown(app)).doesNotContain("0 of 30 sessions");
+        app.key(new MouseAction(MouseActionType.SCROLL_UP, 4, new TerminalPosition(10, 20)));
         assertThat(shown(app)).contains("0 of 30 sessions");
-        app.key(typed('l'));
+        app.key(typed(' '));
         assertThat(shown(app)).doesNotContain("1 chapter · 30 h").contains("Séance 16");
-        app.key(typed('h'));
+        app.key(new KeyStroke(' ', false, false, true));
         assertThat(shown(app)).contains("0 of 30 sessions");
 
         for (int press = 0; press < 20; press++) {
-            app.key(typed('l'));
+            app.key(typed(' '));
             shown(app);
         }
-        assertThat(shown(app)).contains("Séance 39").doesNotContain("Séance 16 ");
+        assertThat(shown(app)).contains("Séance 39");
         String atTheEnd = shown(app);
-        app.key(typed('k'));
-        assertThat(shown(app)).as("one k moves up at once, even after going past the end").isNotEqualTo(atTheEnd);
+        app.key(new MouseAction(MouseActionType.SCROLL_UP, 4, new TerminalPosition(10, 20)));
+        assertThat(shown(app)).as("going back up moves at once, even after going past the end").isNotEqualTo(atTheEnd);
+
+        app.key(typed('l'));
+        assertThat(shown(app)).contains("Configuration");
+        app.key(typed('h'));
+        assertThat(shown(app)).contains("Space Scroll");
     }
 
     @Test

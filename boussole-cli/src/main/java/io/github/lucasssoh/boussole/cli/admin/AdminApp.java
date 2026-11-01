@@ -102,11 +102,16 @@ final class AdminApp {
         if (message != null && message.until != null) {
             message = null;
         }
+        key = direction(key);
         if (key.getKeyType() == KeyType.Tab || key.getKeyType() == KeyType.ReverseTab) {
             show(Math.floorMod(current + (key.getKeyType() == KeyType.Tab ? 1 : -1), tabs.size()));
             return;
         }
         if (tabs.get(current).key(key)) {
+            return;
+        }
+        if (key.getKeyType() == KeyType.ArrowLeft || key.getKeyType() == KeyType.ArrowRight) {
+            show(Math.floorMod(current + (key.getKeyType() == KeyType.ArrowRight ? 1 : -1), tabs.size()));
             return;
         }
         int screenKey = switch (key.getKeyType()) {
@@ -121,6 +126,21 @@ final class AdminApp {
         } else if (key.getKeyType() == KeyType.Character && key.getCharacter() == 'q') {
             quit = true;
         }
+    }
+
+    /** h, j, k and l are the arrows, on every screen. */
+    static KeyStroke direction(KeyStroke key) {
+        if (key.getKeyType() != KeyType.Character || key.isCtrlDown() || key.isAltDown()) {
+            return key;
+        }
+        KeyType arrow = switch (key.getCharacter()) {
+            case 'h' -> KeyType.ArrowLeft;
+            case 'j' -> KeyType.ArrowDown;
+            case 'k' -> KeyType.ArrowUp;
+            case 'l' -> KeyType.ArrowRight;
+            default -> null;
+        };
+        return arrow == null ? key : new KeyStroke(arrow);
     }
 
     void show(int tab) {

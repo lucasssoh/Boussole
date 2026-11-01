@@ -2,6 +2,7 @@ package io.github.lucasssoh.boussole.cli.admin;
 
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import com.googlecode.lanterna.terminal.MouseCaptureMode;
 import io.github.lucasssoh.boussole.adapters.config.BoussoleConfigFile;
 import io.github.lucasssoh.boussole.cli.serve.ServerControl;
 import java.io.Console;
@@ -24,7 +25,9 @@ public final class AdminLauncher {
         BoussoleConfigFile config = BoussoleConfigFile.forCurrentUser();
         config.read();
         String version = Optional.ofNullable(AdminLauncher.class.getPackage().getImplementationVersion()).orElse("dev");
-        TerminalScreen screen = new TerminalScreen(new DefaultTerminalFactory().setForceTextTerminal(true).createTerminal());
+        TerminalScreen screen = new TerminalScreen(new DefaultTerminalFactory().setForceTextTerminal(true)
+                // the wheel of a mouse or a trackpad scrolls; Shift and drag still select text in most terminals
+                .setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE).createTerminal());
         new AdminApp(screen, config, ServerControl.forCurrentUser(), version).run();
     }
 }
