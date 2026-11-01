@@ -133,7 +133,9 @@ Without a keyboard, the device shows a code; accept it with `boussole devices ac
 
 `boussole` alone gathers it full screen in the terminal (beta): the server (start, stop,
 network), the devices, and your tracks with their problems, their new documents and their plan,
-to approve when an agent proposed it.
+to approve when an agent proposed it. Once the plan is approved, `r` starts an agent (Claude
+Code) that writes the sessions, and the screen shows the tokens it spends. The folders next to
+your tracks that hold a plan show up too, to add.
 
 ```mermaid
 flowchart LR

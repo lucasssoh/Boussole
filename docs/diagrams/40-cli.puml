@@ -111,6 +111,7 @@ package "cli.admin" {
   class DevicesTab <<F2>>
   class TracksTab <<F3>>
   class PlanApproval <<status: approved>>
+  class AgentRun <<claude --print, .boussole/runs>>
   class Painter <<text, panes, QR code>>
 }
 
@@ -200,6 +201,7 @@ TracksTab --> TrackCheck : validates
 TracksTab ..> BoussoleConfigFile : adds, removes a folder
 TracksTab ..> ServerControl : opens
 TracksTab ..> PlanApproval : approves the plan
+TracksTab ..> AgentRun : starts, stops, reads the tokens
 OpenCommand --> ServerControl : starts
 StopCommand --> ServerControl : stops
 ServerControl --> ServerProbe

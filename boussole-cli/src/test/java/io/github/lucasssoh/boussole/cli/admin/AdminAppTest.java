@@ -159,7 +159,69 @@ class AdminAppTest {
         }
 
         assertThat(syllabus).startsWith("# Plan proposé par l'agent.\nstatus: approved # à valider\nchapters:");
-        assertThat(shown(app)).contains("Approved: the agents write its sessions").doesNotContain("a Approve");
+        assertThat(shown(app)).contains("Approved: r starts an agent to write the 1 session left").doesNotContain("a Approve");
+    }
+
+    private static Path approvedTrack(Path folder) throws IOException {
+        Files.createDirectories(folder.resolve("cursus"));
+        Files.writeString(folder.resolve("subject.yaml"), "format: 1\nid: " + folder.getFileName() + "\nname: Calcul\nlang: fr\nsources: .\n");
+        Files.writeString(folder.resolve("cursus/syllabus.yaml"), """
+                status: approved
+                chapters:
+                  - id: turing
+                    title: Machines de Turing
+                    dir: 01-turing
+                    sessions:
+                      - {id: s11, title: Le 7-uplet, duration: 60, goal: Écrire le 7-uplet., file: 11-septuplet.md}
+                """);
+        return folder;
+    }
+
+    @Test
+    void the_folders_beside_a_listed_track_that_hold_a_plan_are_shown_to_add() throws IOException {
+        Path courses = Files.createDirectories(home.resolve("courses"));
+        Path listed = approvedTrack(courses.resolve("listed"));
+        approvedTrack(courses.resolve("beside"));
+        Files.createDirectories(courses.resolve("no-plan"));
+        Files.writeString(courses.resolve("no-plan/subject.yaml"), "format: 1\nid: no-plan\nname: Rien\nlang: fr\n");
+
+        List<TracksTab.Track> read = TracksTab.read(List.of(listed));
+
+        assertThat(read).extracting(track -> track.folder().getFileName().toString(), TracksTab.Track::listed)
+                .containsExactly(org.assertj.core.groups.Tuple.tuple("listed", true), org.assertj.core.groups.Tuple.tuple("beside", false));
+    }
+
+    @Test
+    void r_starts_an_agent_on_an_approved_plan_and_the_screen_shows_its_tokens() throws Exception {
+        Path track = approvedTrack(home.resolve("lmc"));
+        Path agent = home.resolve("fake-claude");
+        Files.writeString(agent, "#!/bin/sh\ncat <<'EOF'\n" + AgentRunTest.EVENTS + "EOF\n");
+        agent.toFile().setExecutable(true);
+        System.setProperty("boussole.agent", agent.toString());
+        try {
+            AdminApp app = app(140, 40, track);
+            app.key(typed('3'));
+            String shown = shown(app);
+            for (int wait = 0; wait < 100 && !shown.contains("approved"); wait++) {
+                Thread.sleep(100);
+                shown = shown(app);
+            }
+            assertThat(shown).contains("r Run agent");
+
+            app.key(typed('r'));
+            app.key(typed('y'));
+            for (int wait = 0; wait < 100 && !shown.contains("done 10k"); wait++) {
+                Thread.sleep(100);
+                shown = shown(app);
+            }
+
+            assertThat(shown).contains("done 10k", "Agent done in 2 min.", "Tokens 10k: 1k in, 2k out, 3k read from the cache, 4k written to it · $1.50 at list price",
+                    "Sessions written.");
+            assertThat(Files.list(track.resolve(".boussole/runs")).map(file -> file.getFileName().toString()))
+                    .anyMatch(name -> name.endsWith(".jsonl")).anyMatch(name -> name.endsWith(".pid"));
+        } finally {
+            System.clearProperty("boussole.agent");
+        }
     }
 
     @Test

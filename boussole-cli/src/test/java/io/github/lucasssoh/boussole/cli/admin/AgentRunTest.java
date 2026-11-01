@@ -1,0 +1,64 @@
+package io.github.lucasssoh.boussole.cli.admin;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+class AgentRunTest {
+
+    @TempDir
+    Path dir;
+
+    /** Two parts of one message, a second message, then the result with the totals of every model. */
+    static final String EVENTS = """
+            {"type":"system","subtype":"init"}
+            {"type":"assistant","message":{"id":"m1","content":[{"type":"text","text":"Je lis le plan."}],"usage":{"input_tokens":10,"output_tokens":5,"cache_read_input_tokens":100,"cache_creation_input_tokens":50}}}
+            {"type":"assistant","message":{"id":"m1","content":[{"type":"tool_use","name":"Read","input":{"file_path":"cursus/syllabus.yaml"}}],"usage":{"input_tokens":10,"output_tokens":5,"cache_read_input_tokens":100,"cache_creation_input_tokens":50}}}
+            {"type":"assistant","message":{"id":"m2","content":[{"type":"tool_use","name":"Agent","input":{"description":"Write chapter 1"}}],"usage":{"input_tokens":1,"output_tokens":2,"cache_read_input_tokens":3,"cache_creation_input_tokens":4}}}
+            {"type":"result","subtype":"success","is_error":false,"duration_ms":125000,"total_cost_usd":1.5,"result":"Sessions written.","modelUsage":{"claude-opus-5-5":{"inputTokens":1000,"outputTokens":2000,"cacheReadInputTokens":3000,"cacheCreationInputTokens":4000}}}
+            """;
+
+    @Test
+    void aFinishedRunGivesTheTokensOfEveryModelAndItsCost() throws Exception {
+        Path log = Files.writeString(dir.resolve("20261101-120000.jsonl"), EVENTS);
+
+        AgentRun.Status status = AgentRun.read(log);
+
+        assertThat(status.state()).isEqualTo(AgentRun.State.DONE);
+        assertThat(status.tokens()).isEqualTo(new AgentRun.Tokens(1000, 2000, 3000, 4000));
+        assertThat(status.costUsd()).contains(1.5);
+        assertThat(status.result()).isEqualTo("Sessions written.");
+        assertThat(status.line()).isEqualTo("done 10k");
+    }
+
+    @Test
+    void aRunWithoutItsResultCountsEachMessageOnce() throws Exception {
+        String unfinished = EVENTS.lines().filter(line -> !line.contains("\"result\"")).reduce("", (a, b) -> a + b + "\n");
+        Path log = Files.writeString(dir.resolve("20261101-120000.jsonl"), unfinished);
+
+        AgentRun.Status status = AgentRun.read(log);
+
+        assertThat(status.state()).isEqualTo(AgentRun.State.STOPPED);
+        assertThat(status.tokens()).isEqualTo(new AgentRun.Tokens(11, 7, 103, 54));
+        assertThat(status.recent()).containsExactly("Je lis le plan.", "Read cursus/syllabus.yaml", "Agent Write chapter 1");
+    }
+
+    @Test
+    void theAgentMayOnlyChangeFilesAndRunTheValidatorAndTheIndex() {
+        List<String> command = AgentRun.command("claude", "/opt/boussole.jar");
+
+        assertThat(command).startsWith("claude", "--print").contains("acceptEdits", "Bash(boussole validate:*)",
+                "Bash(java -jar /opt/boussole.jar index:*)").doesNotContain("Bash", "WebFetch");
+    }
+
+    @Test
+    void tokensReadShort() {
+        assertThat(AgentRun.count(512)).isEqualTo("512");
+        assertThat(AgentRun.count(34_567)).isEqualTo("34k");
+        assertThat(AgentRun.count(14_200_000)).isEqualTo("14.2M");
+    }
+}

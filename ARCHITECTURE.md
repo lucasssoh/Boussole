@@ -382,7 +382,15 @@ POST /api/server/stop                    boussole stop
 
 ## 7. Agent skills
 
-The application does not call any AI. Agents work on the files, the application reads them.
+The application does not call any AI itself. Agents work on the files, the application reads
+them. The one exception is a convenience of `boussole` alone: on the Tracks screen, `r` starts
+Claude Code (`claude --print`, or the program named by the `boussole.agent` system property) in
+the folder of a track whose plan is approved. That agent may change the files of the track and
+run `boussole validate` and `boussole index`, nothing else (`--permission-mode acceptEdits` and
+`--allowedTools`). Its events go to `.boussole/runs/<time>.jsonl`, with its process number in a
+`.pid` beside them, so that the screen shows where it stands and the tokens it spent (the totals
+of every model it used, the agents it started included, and the cost at list price) even after
+`boussole` closed and opened again.
 The skills shipped in `skills/`:
 
 | Skill | Role |
@@ -443,6 +451,7 @@ reminders:
 | Progress, plan, history, paired devices | `$XDG_DATA_HOME/boussole/state.db` |
 | Network certificate | `$XDG_DATA_HOME/boussole/network/` (`network.p12` and its password, readable by its owner only) |
 | Courses | the subject folders listed in the configuration, never inside Boussole |
+| Agent runs started from `boussole` | `<subject>/.boussole/runs/` |
 | Built-in tracks | `$XDG_DATA_HOME/boussole/guide/<track>/<language>/`, rewritten at each start |
 
 On macOS and Windows the equivalent per-user folders are used.

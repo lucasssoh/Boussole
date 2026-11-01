@@ -1,0 +1,299 @@
+package io.github.lucasssoh.boussole.cli.admin;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+
+/**
+ * An agent that writes the sessions of an approved plan: Claude Code run with {@code --print} in
+ * the folder of the track, its events kept in {@code .boussole/runs/<time>.jsonl}, so that the
+ * Tracks screen shows where it stands and the tokens it spent, even after {@code boussole} closed
+ * and opened again. The agent may change the files of the track and run {@code boussole validate}
+ * and {@code boussole index}, nothing else.
+ */
+final class AgentRun {
+
+    static final String PROMPT = """
+            The plan of this track is approved (cursus/syllabus.yaml, status: approved). Follow AGENTS.md: \
+            write the sessions that have no file yet, in the order of the plan, with the prerequisites the \
+            plan gives them; one agent per chapter, three at a time at most, each writing only in its \
+            chapter's folder. Write in the language of the track. You cannot ask the learner anything: \
+            when a choice is theirs, take the safest one and say so in your report. End with \
+            `boussole validate .` without errors, then a short report: what was written, what you \
+            assumed, what is left.""";
+
+    private static final ObjectMapper JSON = new ObjectMapper();
+    /** What each log said at a size: the screen asks every second, the log grows only while the agent runs. */
+    private static final Map<Path, Read> READ = new ConcurrentHashMap<>();
+
+    private record Read(long size, Status status) {
+    }
+
+    private static final DateTimeFormatter NAME = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss", Locale.ROOT);
+
+    /** Where a run stands. */
+    enum State {
+        RUNNING, DONE, FAILED, STOPPED
+    }
+
+    /** Tokens as Claude counts them: read from the cache, written to it, and the rest. */
+    record Tokens(long input, long output, long cacheRead, long cacheWrite) {
+
+        static final Tokens NONE = new Tokens(0, 0, 0, 0);
+
+        long total() {
+            return input + output + cacheRead + cacheWrite;
+        }
+
+        Tokens plus(Tokens other) {
+            return new Tokens(input + other.input, output + other.output, cacheRead + other.cacheRead, cacheWrite + other.cacheWrite);
+        }
+    }
+
+    /** A run as its file tells it. */
+    record Status(Path log, State state, Tokens tokens, Optional<Double> costUsd, Instant started, Optional<Duration> took,
+                  List<String> recent, String result) {
+
+        String line() {
+            return switch (state) {
+                case RUNNING -> "running " + count(tokens.total());
+                case DONE -> "done " + count(tokens.total());
+                case FAILED -> "failed";
+                case STOPPED -> "stopped " + count(tokens.total());
+            };
+        }
+    }
+
+    private AgentRun() {
+    }
+
+    static Path runs(Path track) {
+        return track.resolve(".boussole").resolve("runs");
+    }
+
+    /** The command that starts the agent: {@code agent} is {@code claude}, or a stand-in in tests. */
+    static List<String> command(String agent, String jar) {
+        List<String> command = new ArrayList<>(List.of(agent, "--print", PROMPT, "--output-format", "stream-json", "--verbose",
+                "--permission-mode", "acceptEdits", "--allowedTools",
+                "Read", "Write", "Edit", "Glob", "Grep", "Agent", "Task", "TodoWrite",
+                "Bash(boussole validate:*)", "Bash(boussole index:*)"));
+        if (jar != null && !jar.isBlank()) {
+            command.add("Bash(java -jar " + jar + " validate:*)");
+            command.add("Bash(java -jar " + jar + " index:*)");
+        }
+        return List.copyOf(command);
+    }
+
+    /** Starts the agent in {@code track}; it goes on when {@code boussole} closes. */
+    static Path start(Path track, List<String> command) {
+        try {
+            Path runs = Files.createDirectories(runs(track));
+            String name = LocalDateTime.now().format(NAME);
+            Path log = runs.resolve(name + ".jsonl");
+            Process process = new ProcessBuilder(command)
+                    .directory(track.toFile())
+                    .redirectOutput(log.toFile())
+                    .redirectError(runs.resolve(name + ".err").toFile())
+                    .redirectInput(ProcessBuilder.Redirect.from(Path.of("/dev/null").toFile()))
+                    .start();
+            Files.writeString(runs.resolve(name + ".pid"), String.valueOf(process.pid()));
+            return log;
+        } catch (IOException e) {
+            throw new UncheckedIOException("Cannot start " + command.getFirst() + ": " + e.getMessage(), e);
+        }
+    }
+
+    /** Stops the running agent of this log, and the agents it started. */
+    static boolean stop(Path log) {
+        return process(log).map(handle -> {
+            handle.descendants().forEach(ProcessHandle::destroy);
+            return handle.destroy();
+        }).orElse(false);
+    }
+
+    private static Optional<ProcessHandle> process(Path log) {
+        Path pid = sibling(log, ".pid");
+        try {
+            return Files.isRegularFile(pid)
+                    ? ProcessHandle.of(Long.parseLong(Files.readString(pid).strip())).filter(ProcessHandle::isAlive)
+                    : Optional.empty();
+        } catch (IOException | NumberFormatException e) {
+            return Optional.empty();
+        }
+    }
+
+    /** The last run of the track, if it has one. */
+    static Optional<Status> last(Path track) {
+        Path runs = runs(track);
+        if (!Files.isDirectory(runs)) {
+            return Optional.empty();
+        }
+        try (Stream<Path> files = Files.list(runs)) {
+            return files.filter(file -> file.getFileName().toString().endsWith(".jsonl"))
+                    .max(Comparator.comparing(file -> file.getFileName().toString()))
+                    .map(AgentRun::cached);
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+    }
+
+    private static Status cached(Path log) {
+        long size;
+        try {
+            size = Files.size(log);
+        } catch (IOException e) {
+            return read(log);
+        }
+        Read known = READ.get(log);
+        if (known != null && known.size() == size
+                && (known.status().state() != State.RUNNING || process(log).isPresent())) {
+            return known.status();
+        }
+        Status status = read(log);
+        READ.put(log, new Read(size, status));
+        return status;
+    }
+
+    /** Reads the events of a run: the tokens of each message once, its last actions, its result. */
+    static Status read(Path log) {
+        Tokens tokens = Tokens.NONE;
+        Set<String> counted = new HashSet<>();
+        List<String> recent = new ArrayList<>();
+        Optional<Double> cost = Optional.empty();
+        Optional<Duration> took = Optional.empty();
+        Tokens finalTokens = null;
+        State ended = null;
+        String result = "";
+        try (BufferedReader lines = Files.newBufferedReader(log, StandardCharsets.UTF_8)) {
+            for (String line = lines.readLine(); line != null; line = lines.readLine()) {
+                JsonNode event;
+                try {
+                    event = JSON.readTree(line);
+                } catch (RuntimeException notJson) {
+                    continue;
+                }
+                String type = event.path("type").asString("");
+                if (type.equals("assistant")) {
+                    JsonNode message = event.path("message");
+                    String id = message.path("id").asString("");
+                    if (!id.isEmpty() && counted.add(id)) {
+                        tokens = tokens.plus(tokens(message.path("usage")));
+                    }
+                    for (JsonNode part : message.path("content")) {
+                        action(part).ifPresent(action -> {
+                            recent.add(action);
+                            if (recent.size() > 6) {
+                                recent.removeFirst();
+                            }
+                        });
+                    }
+                } else if (type.equals("result")) {
+                    ended = event.path("is_error").asBoolean(false) || !event.path("subtype").asString("success").equals("success")
+                            ? State.FAILED : State.DONE;
+                    result = event.path("result").asString("");
+                    if (event.has("total_cost_usd")) {
+                        cost = Optional.of(event.path("total_cost_usd").asDouble());
+                    }
+                    if (event.has("duration_ms")) {
+                        took = Optional.of(Duration.ofMillis(event.path("duration_ms").asLong()));
+                    }
+                    finalTokens = modelTokens(event.path("modelUsage"));
+                }
+            }
+        } catch (IOException e) {
+            return new Status(log, State.FAILED, tokens, cost, started(log), took, recent, e.getMessage());
+        }
+        if (finalTokens != null && finalTokens.total() > 0) {
+            tokens = finalTokens;
+        }
+        State state = ended != null ? ended : process(log).isPresent() ? State.RUNNING : State.STOPPED;
+        if (state == State.STOPPED && tokens.total() == 0) {
+            state = State.FAILED;
+            result = firstLine(sibling(log, ".err"));
+        }
+        return new Status(log, state, tokens, cost, started(log), took, List.copyOf(recent), result);
+    }
+
+    private static Tokens tokens(JsonNode usage) {
+        return new Tokens(usage.path("input_tokens").asLong(0), usage.path("output_tokens").asLong(0),
+                usage.path("cache_read_input_tokens").asLong(0), usage.path("cache_creation_input_tokens").asLong(0));
+    }
+
+    /** The totals of every model of the session, the agents it started included. */
+    private static Tokens modelTokens(JsonNode models) {
+        Tokens total = Tokens.NONE;
+        for (JsonNode model : models) {
+            total = total.plus(new Tokens(model.path("inputTokens").asLong(0), model.path("outputTokens").asLong(0),
+                    model.path("cacheReadInputTokens").asLong(0), model.path("cacheCreationInputTokens").asLong(0)));
+        }
+        return total;
+    }
+
+    private static Optional<String> action(JsonNode part) {
+        return switch (part.path("type").asString("")) {
+            case "tool_use" -> {
+                JsonNode input = part.path("input");
+                String about = Stream.of("description", "file_path", "command", "pattern")
+                        .map(key -> input.path(key).asString(""))
+                        .filter(value -> !value.isBlank())
+                        .findFirst()
+                        .orElse("");
+                yield Optional.of(part.path("name").asString("tool") + (about.isEmpty() ? "" : " " + oneLine(about)));
+            }
+            case "text" -> Optional.of(oneLine(part.path("text").asString(""))).filter(text -> !text.isBlank());
+            default -> Optional.empty();
+        };
+    }
+
+    private static String oneLine(String text) {
+        return text.strip().replaceAll("\\s+", " ");
+    }
+
+    private static Path sibling(Path log, String extension) {
+        String name = log.getFileName().toString();
+        return log.resolveSibling(name.substring(0, name.length() - ".jsonl".length()) + extension);
+    }
+
+    private static String firstLine(Path file) {
+        try {
+            return Files.isRegularFile(file) ? Files.readAllLines(file).stream().filter(line -> !line.isBlank()).findFirst().orElse("") : "";
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
+    private static Instant started(Path log) {
+        try {
+            return Files.getLastModifiedTime(sibling(log, ".pid")).toInstant();
+        } catch (IOException e) {
+            return Instant.EPOCH;
+        }
+    }
+
+    /** {@code 1.2M}, {@code 340k}, {@code 512}. */
+    static String count(long tokens) {
+        if (tokens >= 1_000_000) {
+            return String.format(Locale.ROOT, "%.1fM", tokens / 1_000_000.0);
+        }
+        return tokens >= 1_000 ? tokens / 1_000 + "k" : String.valueOf(tokens);
+    }
+}
