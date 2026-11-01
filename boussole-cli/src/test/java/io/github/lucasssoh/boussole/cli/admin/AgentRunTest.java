@@ -59,7 +59,7 @@ class AgentRunTest {
         List<String> command = AgentRun.command("claude", "/opt/boussole.jar");
 
         assertThat(command).startsWith("claude", "--print").contains("acceptEdits", "Bash(boussole validate:*)",
-                "Bash(java -jar /opt/boussole.jar index:*)", "Bash(pdftotext:*)", "Bash(python3:*)").doesNotContain("Bash", "WebFetch");
+                "Bash(java -jar /opt/boussole.jar index:*)", "Bash(pdftotext:*)", "Bash(python3:*)", "--settings").doesNotContain("Bash", "WebFetch");
     }
 
     @Test
@@ -78,6 +78,8 @@ class AgentRunTest {
         assertThat(status.chapter("01-turing")).contains(new AgentRun.Chapter("12-formaliser.md", "Bash Validate the course"));
         assertThat(status.chapter("03-lambda")).contains(new AgentRun.Chapter("31-termes.md", "Edit /c/L&MC/cursus/03-lambda/31-termes.md"));
         assertThat(status.chapter("02-other")).isEmpty();
+        assertThat(AgentRun.command("claude", null).get(AgentRun.command("claude", null).indexOf("--settings") + 1))
+                .contains("\"sandbox\"", "\"autoAllowBashIfSandboxed\":true", "\"allowUnsandboxedCommands\":false");
     }
 
     @Test

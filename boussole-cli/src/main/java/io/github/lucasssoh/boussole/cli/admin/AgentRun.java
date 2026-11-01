@@ -46,6 +46,7 @@ final class AgentRun {
             assumed, what is left.""";
 
     private static final ObjectMapper JSON = new ObjectMapper();
+    static final String SANDBOX = "{\"sandbox\":{\"enabled\":true,\"autoAllowBashIfSandboxed\":true,\"allowUnsandboxedCommands\":false}}";
     /** What each log said at a size: the screen asks every second, the log grows only while the agent runs. */
     private static final Map<Path, Read> READ = new ConcurrentHashMap<>();
 
@@ -130,7 +131,9 @@ final class AgentRun {
                 "Read", "Write", "Edit", "Glob", "Grep", "Agent", "Task", "TodoWrite",
                 "Bash(boussole validate:*)", "Bash(boussole index:*)",
                 // to read the documents, and to check an answer by computing it
-                "Bash(pdftotext:*)", "Bash(pdfinfo:*)", "Bash(ls:*)", "Bash(python3:*)"));
+                "Bash(pdftotext:*)", "Bash(pdfinfo:*)", "Bash(ls:*)", "Bash(python3:*)",
+                // any other command runs in the sandbox of Claude Code: it writes only in the track, with no network
+                "--settings", SANDBOX));
         if (jar != null && !jar.isBlank()) {
             command.add("Bash(java -jar " + jar + " validate:*)");
             command.add("Bash(java -jar " + jar + " index:*)");
@@ -437,7 +440,8 @@ final class AgentRun {
 
     /** The chapter folder and the session file a write or an edit touches: {@code cursus/<folder>/<file>.md}. */
     static Optional<String[]> chapterFile(JsonNode part) {
-        if (!part.path("type").asString("").equals("tool_use")) {
+        // reading a session is not writing it
+        if (!part.path("type").asString("").equals("tool_use") || !part.path("name").asString("Write").matches("Write|Edit|MultiEdit")) {
             return Optional.empty();
         }
         String path = part.path("input").path("file_path").asString("").replace('\\', '/');
