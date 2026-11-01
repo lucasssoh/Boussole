@@ -251,6 +251,15 @@ class AdminAppTest {
         assertThat(shown(app)).doesNotContain("1 chapter · 30 sessions").contains("Séance 16");
         app.key(typed('h'));
         assertThat(shown(app)).contains("Approved: r starts");
+
+        for (int press = 0; press < 20; press++) {
+            app.key(typed('l'));
+            shown(app);
+        }
+        assertThat(shown(app)).contains("Séance 39").doesNotContain("Séance 16 ");
+        String atTheEnd = shown(app);
+        app.key(typed('k'));
+        assertThat(shown(app)).as("one k moves up at once, even after going past the end").isNotEqualTo(atTheEnd);
     }
 
     @Test

@@ -269,22 +269,28 @@ final class TracksTab implements AdminTab {
         int detailTop = top + listHeight;
         int detailHeight = height - listHeight;
         if (plan) {
-            drawPlan(painter, track, agent(track), scroll, detailTop, columns, detailHeight);
+            scroll = drawPlan(painter, track, agent(track), scroll, detailTop, columns, detailHeight);
             return;
         }
         int half = columns * 3 / 5;
-        drawProblems(painter, track, scroll, 0, detailTop, half, detailHeight);
+        scroll = drawProblems(painter, track, scroll, 0, detailTop, half, detailHeight);
         drawDocuments(painter, track, half, detailTop, columns - half, detailHeight);
     }
 
-    private static void drawProblems(Painter painter, Track track, int scroll, int column, int top, int width, int height) {
+    /**
+     * Draws the problems from the {@code scroll}-th, or from the last one that still fills the
+     * pane; returns where it started, so that going back up moves at once.
+     */
+    private static int drawProblems(Painter painter, Track track, int scroll, int column, int top, int width, int height) {
         painter.pane(column, top, width, height, track.name() + " · Problems", false);
         int inner = width - 4;
         int row = top + 1;
         if (!track.problem().isEmpty()) {
             painter.text(column + 2, row, track.problem(), inner, Style.ERROR);
-            return;
+            return 0;
         }
+        int fit = Math.max(1, (height - 3) / 2);
+        scroll = Math.max(0, Math.min(scroll, track.diagnostics().size() - fit));
         if (track.diagnostics().isEmpty()) {
             painter.text(column + 2, row, "none", inner, Style.DIM);
         }
@@ -301,6 +307,7 @@ final class TracksTab implements AdminTab {
             painter.text(end, row++, place, inner - (end - column - 2), Style.PLAIN);
             painter.text(column + 4, row++, diagnostic.message(), inner - 2, Style.DIM);
         }
+        return scroll;
     }
 
     /** One line of the plan as drawn. */
@@ -406,8 +413,9 @@ final class TracksTab implements AdminTab {
         return minutes < 60 ? minutes + " min" : minutes / 60 + " h" + (minutes % 60 == 0 ? "" : String.format(Locale.ROOT, " %02d", minutes % 60));
     }
 
-    private static void drawPlan(Painter painter, Track track, Optional<AgentRun.Status> agent, int scroll, int top, int width,
-                                 int height) {
+    /** Draws the plan from its {@code scroll}-th line, at most up to its end; returns where it started. */
+    private static int drawPlan(Painter painter, Track track, Optional<AgentRun.Status> agent, int scroll, int top, int width,
+                                int height) {
         painter.pane(0, top, width, height, track.name() + " · Plan", false);
         int inner = width - 4;
         List<PlanLine> lines = planLines(track, agent, inner);
@@ -423,6 +431,7 @@ final class TracksTab implements AdminTab {
         if (first + room < lines.size()) {
             painter.text(width - 4, top + height - 1, " ↓ ", 3, Style.DIM);
         }
+        return first;
     }
 
     private static void drawDocuments(Painter painter, Track track, int column, int top, int width, int height) {
