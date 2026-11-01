@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Map;
@@ -54,6 +56,9 @@ final class TracksTab implements AdminTab {
     private int selected;
     private int scroll;
     private boolean plan;
+    /** While an agent writes, the tracks are validated again this often. */
+    private static final Duration RECHECK = Duration.ofSeconds(30);
+    private volatile Instant checked = Instant.EPOCH;
     /** The last agent run of each track, read again while the screen shows. */
     private final Map<Path, AgentRun.Status> agents = new ConcurrentHashMap<>();
 
@@ -139,11 +144,22 @@ final class TracksTab implements AdminTab {
             check(null);
         }
         List<Track> read = tracks;
-        if (read != null) {
-            for (Track track : read) {
-                AgentRun.last(track.folder()).ifPresentOrElse(status -> agents.put(track.folder(), status),
-                        () -> agents.remove(track.folder()));
-            }
+        if (read == null) {
+            return;
+        }
+        boolean writing = false;
+        boolean ended = false;
+        for (Track track : read) {
+            Optional<AgentRun.Status> before = agent(track);
+            Optional<AgentRun.Status> now = AgentRun.last(track.folder());
+            now.ifPresentOrElse(status -> agents.put(track.folder(), status), () -> agents.remove(track.folder()));
+            boolean running = now.map(status -> status.state() == AgentRun.State.RUNNING).orElse(false);
+            writing |= running;
+            ended |= !running && before.map(status -> status.state() == AgentRun.State.RUNNING).orElse(false);
+        }
+        // the sessions an agent writes show up as it goes
+        if (!reading && (ended || writing && Duration.between(checked, Instant.now()).compareTo(RECHECK) > 0)) {
+            check(null);
         }
     }
 
@@ -154,6 +170,7 @@ final class TracksTab implements AdminTab {
     /** Reads every track again, away from the screen. */
     private void check(String done) {
         reading = true;
+        checked = Instant.now();
         app.job("Validating…", () -> {
             try {
                 tracks = read(config.read().subjects());
@@ -373,8 +390,9 @@ final class TracksTab implements AdminTab {
             case STOPPED -> "Agent stopped.";
         };
         lines.add(new PlanLine(state, style));
-        lines.add(new PlanLine(AgentRun.count(tokens.total()) + " tokens"
-                + status.costUsd().map(cost -> String.format(Locale.ROOT, " · $%.2f", cost)).orElse(""), Style.PLAIN));
+        lines.add(new PlanLine(status.costUsd().map(cost -> String.format(Locale.ROOT, "$%.2f · ", cost)).orElse("")
+                + AgentRun.count(tokens.total()) + " tokens"
+                + (tokens.cacheRead() > 0 ? " (" + AgentRun.count(tokens.cacheRead()) + " reread from the cache)" : ""), Style.PLAIN));
         List<String> recent = switch (status.state()) {
             case RUNNING -> status.recent();
             case DONE -> status.result().isBlank() ? List.of() : List.of(oneLine(status.result()));

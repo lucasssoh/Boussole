@@ -215,7 +215,7 @@ class AdminAppTest {
                 shown = shown(app);
             }
 
-            assertThat(shown).contains("done 10k", "Agent done in 2 min.", "10k tokens · $1.50",
+            assertThat(shown).contains("done 10k", "$1.50 · 10k tokens (3k reread from the cache)",
                     "Sessions written.");
             assertThat(Files.list(track.resolve(".boussole/runs")).map(file -> file.getFileName().toString()))
                     .anyMatch(name -> name.endsWith(".jsonl")).anyMatch(name -> name.endsWith(".pid"));

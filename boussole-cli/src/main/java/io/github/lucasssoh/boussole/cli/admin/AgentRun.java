@@ -109,8 +109,10 @@ final class AgentRun {
             Path runs = Files.createDirectories(runs(track));
             String name = LocalDateTime.now().format(NAME);
             Path log = runs.resolve(name + ".jsonl");
-            Process process = new ProcessBuilder(command)
-                    .directory(track.toFile())
+            ProcessBuilder builder = new ProcessBuilder(command).directory(track.toFile());
+            // the agents of each chapter run in the background: wait for them, however long they take
+            builder.environment().put("CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS", "0");
+            Process process = builder
                     .redirectOutput(log.toFile())
                     .redirectError(runs.resolve(name + ".err").toFile())
                     .redirectInput(ProcessBuilder.Redirect.from(Path.of("/dev/null").toFile()))
@@ -213,9 +215,6 @@ final class AgentRun {
                     if (event.has("total_cost_usd")) {
                         cost = Optional.of(event.path("total_cost_usd").asDouble());
                     }
-                    if (event.has("duration_ms")) {
-                        took = Optional.of(Duration.ofMillis(event.path("duration_ms").asLong()));
-                    }
                     finalTokens = modelTokens(event.path("modelUsage"));
                 }
             }
@@ -225,7 +224,11 @@ final class AgentRun {
         if (finalTokens != null && finalTokens.total() > 0) {
             tokens = finalTokens;
         }
-        State state = ended != null ? ended : process(log).isPresent() ? State.RUNNING : State.STOPPED;
+        boolean alive = process(log).isPresent();
+        State state = alive ? State.RUNNING : ended != null ? ended : State.STOPPED;
+        if (!alive) {
+            took = elapsed(log);
+        }
         if (state == State.STOPPED && tokens.total() == 0) {
             state = State.FAILED;
             result = firstLine(sibling(log, ".err"));
@@ -278,6 +281,17 @@ final class AgentRun {
             return Files.isRegularFile(file) ? Files.readAllLines(file).stream().filter(line -> !line.isBlank()).findFirst().orElse("") : "";
         } catch (IOException e) {
             return "";
+        }
+    }
+
+    /** From the start to the last event: the agents of the chapters included, which the result does not time. */
+    private static Optional<Duration> elapsed(Path log) {
+        try {
+            Instant started = started(log);
+            return started.equals(Instant.EPOCH) ? Optional.empty()
+                    : Optional.of(Duration.between(started, Files.getLastModifiedTime(log).toInstant()));
+        } catch (IOException e) {
+            return Optional.empty();
         }
     }
 

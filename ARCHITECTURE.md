@@ -387,7 +387,8 @@ them. The one exception is a convenience of `boussole` alone: on the Tracks scre
 Claude Code (`claude --print`, or the program named by the `boussole.agent` system property) in
 the folder of a track whose plan is approved. That agent may change the files of the track and
 run `boussole validate` and `boussole index`, nothing else (`--permission-mode acceptEdits` and
-`--allowedTools`). Its events go to `.boussole/runs/<time>.jsonl`, with its process number in a
+`--allowedTools`), and waits for the agents of the chapters it starts in the background
+(`CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`; Claude Code stops them after 10 minutes otherwise). Its events go to `.boussole/runs/<time>.jsonl`, with its process number in a
 `.pid` beside them, so that the screen shows where it stands and the tokens it spent (the totals
 of every model it used, the agents it started included, and the cost at list price) even after
 `boussole` closed and opened again.
