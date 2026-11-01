@@ -92,6 +92,8 @@ class AgentRunTest {
                 {"type":"system","subtype":"permission_denied","tool_use_id":"u1","tool_name":"Bash"}
                 {"type":"system","subtype":"background_tasks_changed","tasks":[{"task_id":"a2c39a44e2266ebbe"}]}
                 {"type":"rate_limit_event","rate_limit_info":{"status":"rejected","resetsAt":1793548800,"rateLimitType":"five_hour","unifiedWindows":{"five_hour":{"utilization":1.04}}}}
+                {"type":"system","subtype":"task_updated","task_id":"a2c39a44e2266ebbe","patch":{"status":"failed","error":"Agent terminated early due to an API error: You've hit your 5-hour limit"}}
+                {"type":"system","subtype":"task_notification","task_id":"a2c39a44e2266ebbe","status":"failed"}
                 {"type":"system","subtype":"background_tasks_changed","tasks":[]}
                 {"type":"result","subtype":"success","is_error":false,"result":"You've hit your limit"}
                 """;
@@ -100,9 +102,9 @@ class AgentRunTest {
         AgentRun.Status status = AgentRun.read(log);
 
         assertThat(status.tasks()).extracting(AgentRun.Task::id, AgentRun.Task::state, AgentRun.Task::tools)
-                .containsExactly(org.assertj.core.groups.Tuple.tuple("a2c39a44e2266ebbe", AgentRun.TaskState.STOPPED, 2),
+                .containsExactly(org.assertj.core.groups.Tuple.tuple("a2c39a44e2266ebbe", AgentRun.TaskState.FAILED, 2),
                         org.assertj.core.groups.Tuple.tuple("a28b0c8283d4291b6", AgentRun.TaskState.DONE, 0));
-        assertThat(status.tasks().getFirst().action()).isEqualTo("Reading .boussole/FORMAT.md");
+        assertThat(status.tasks().getFirst().action()).isEqualTo("Agent terminated early due to an API error: You've hit your 5-hour limit");
         assertThat(status.refused()).containsExactly("pdftotext");
         assertThat(status.limit()).hasValueSatisfying(limit -> assertThat(limit.reached()).isTrue());
         assertThat(status.state()).isEqualTo(AgentRun.State.STOPPED);

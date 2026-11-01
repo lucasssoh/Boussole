@@ -483,16 +483,28 @@ final class TracksTab implements AdminTab {
             String mark = switch (task.state()) {
                 case RUNNING -> spinner();
                 case DONE -> "✓";
+                case FAILED -> "✗";
                 case STOPPED -> "■";
             };
             String id = task.id().length() > 8 ? task.id().substring(0, 8) : task.id();
-            String numbers = (task.state() == AgentRun.TaskState.RUNNING ? "" : task.state() == AgentRun.TaskState.DONE ? "done · " : "stopped · ")
+            String numbers = (switch (task.state()) {
+                        case RUNNING -> "";
+                        case DONE -> "done · ";
+                        case FAILED -> "failed · ";
+                        case STOPPED -> "stopped · ";
+                    })
                     + duration((int) task.took().toMinutes()) + " · " + count(task.tools(), "action") + " · "
                     + AgentRun.count(task.tokens()) + " tokens";
             lines.add(new PlanLine(indent + (last ? "└─ " : "├─ ") + mark + " " + id + "  " + task.description() + "  " + numbers,
-                    task.state() == AgentRun.TaskState.RUNNING ? Style.WARNING : task.state() == AgentRun.TaskState.DONE ? Style.GOOD : Style.DIM));
-            if (task.state() == AgentRun.TaskState.RUNNING && !task.action().isBlank()) {
-                lines.add(new PlanLine(indent + (last ? "   " : "│  ") + "  " + task.action(), Style.DIM));
+                    switch (task.state()) {
+                        case RUNNING -> Style.WARNING;
+                        case DONE -> Style.GOOD;
+                        case FAILED -> Style.ERROR;
+                        case STOPPED -> Style.DIM;
+                    }));
+            boolean failed = task.state() == AgentRun.TaskState.FAILED;
+            if ((task.state() == AgentRun.TaskState.RUNNING || failed) && !task.action().isBlank()) {
+                lines.add(new PlanLine(indent + (last ? "   " : "│  ") + "  " + oneLine(task.action()), failed ? Style.ERROR : Style.DIM));
             }
         }
         if (!status.refused().isEmpty()) {

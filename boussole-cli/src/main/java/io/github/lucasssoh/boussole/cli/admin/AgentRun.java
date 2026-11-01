@@ -108,7 +108,7 @@ final class AgentRun {
     }
 
     enum TaskState {
-        RUNNING, DONE, STOPPED
+        RUNNING, DONE, FAILED, STOPPED
     }
 
     /** The work in a chapter folder: the session file touched last and the last action there. */
@@ -316,11 +316,19 @@ final class AgentRun {
                         }
                         case "permission_denied" -> refused.add(commands.getOrDefault(event.path("tool_use_id").asString(""),
                                 event.path("tool_name").asString("")));
-                        default -> {
-                            // task_notification and the like: a task that says it ended
-                            if (!id.isEmpty() && tasks.containsKey(id) && !event.path("status").asString("").isEmpty()) {
-                                tasks.get(id).ended = true;
+                        case "task_updated", "task_notification" -> {
+                            TaskLog task = tasks.get(id);
+                            JsonNode said = event.has("patch") ? event.path("patch") : event;
+                            String outcome = said.path("status").asString("");
+                            if (task != null && !outcome.isEmpty() && !outcome.equals("running")) {
+                                task.ended = true;
+                                task.status = outcome;
+                                if (!said.path("error").asString("").isBlank()) {
+                                    task.error = said.path("error").asString("");
+                                }
                             }
+                        }
+                        default -> {
                         }
                     }
                 } else if (type.equals("rate_limit_event")) {
@@ -370,8 +378,11 @@ final class AgentRun {
                     String toolUse = taskOfToolUse.entrySet().stream().filter(entry -> entry.getValue().equals(task.id))
                             .map(Map.Entry::getKey).findFirst().orElse("");
                     return new Task(task.id, task.description, task.depth,
-                            task.ended ? task.cut ? TaskState.STOPPED : TaskState.DONE : live ? TaskState.RUNNING : TaskState.STOPPED,
-                            task.action, task.tokens, task.tools, Duration.ofMillis(task.millis), Optional.ofNullable(folderOf.get(toolUse)));
+                            !task.ended ? live ? TaskState.RUNNING : TaskState.STOPPED
+                                    : task.status.equals("failed") ? TaskState.FAILED
+                                    : task.cut || task.status.equals("killed") || task.status.equals("stopped") ? TaskState.STOPPED
+                                    : TaskState.DONE,
+                            task.error.isBlank() ? task.action : task.error, task.tokens, task.tools, Duration.ofMillis(task.millis), Optional.ofNullable(folderOf.get(toolUse)));
                 })
                 .toList();
         return new Status(log, state, tokens, cost, started(log), took, List.copyOf(recent), result, Map.copyOf(chapters), started,
@@ -390,6 +401,9 @@ final class AgentRun {
         boolean ended;
         /** Ended once the usage limit was reached: stopped, not done. */
         boolean cut;
+        /** What the task said when it ended: {@code completed}, {@code failed}, {@code killed}. */
+        String status = "";
+        String error = "";
 
         TaskLog(String id, String description, int depth) {
             this.id = id;
