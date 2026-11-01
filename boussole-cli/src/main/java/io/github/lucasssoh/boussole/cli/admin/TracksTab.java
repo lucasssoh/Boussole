@@ -453,10 +453,8 @@ final class TracksTab implements AdminTab {
                 selected = read == null ? 0 : Math.min(Math.max(0, read.size() - 1), selected + 1);
                 scroll = 0;
             }
-            case PageDown -> scroll = Math.min(scroll + (plan ? PAGE * 2 : PAGE), Math.max(0,
-                    chosen().map(track -> (plan ? planLines(track, agent(track), PLAN_WIDTH).size() : track.diagnostics().size()) - 1)
-                            .orElse(0)));
-            case PageUp -> scroll = Math.max(0, scroll - (plan ? PAGE * 2 : PAGE));
+            case PageDown -> scroll(page());
+            case PageUp -> scroll(-page());
             case Character -> {
                 return character(key.getCharacter());
             }
@@ -467,9 +465,25 @@ final class TracksTab implements AdminTab {
         return true;
     }
 
+    /** A page of the plan, or of the problems, which take two lines each. */
+    private int page() {
+        return plan ? PAGE * 2 : PAGE;
+    }
+
+    /** Moves the plan or the problems by {@code by} lines or problems, within what there is. */
+    private void scroll(int by) {
+        int last = chosen().map(track -> (plan ? planLines(track, agent(track), PLAN_WIDTH).size() : track.diagnostics().size()) - 1)
+                .orElse(0);
+        scroll = Math.max(0, Math.min(scroll + by, Math.max(0, last)));
+    }
+
     private boolean character(char typed) {
         Optional<Track> track = chosen();
         switch (typed) {
+            case 'j' -> scroll(1);
+            case 'k' -> scroll(-1);
+            case 'l' -> scroll(page());
+            case 'h' -> scroll(-page());
             case 'v' -> {
                 if (!reading) {
                     check("Validated.");
@@ -576,7 +590,7 @@ final class TracksTab implements AdminTab {
         boolean proposed = chosen.map(Track::proposed).orElse(false);
         boolean running = chosen.flatMap(this::agent).map(status -> status.state() == AgentRun.State.RUNNING).orElse(false);
         List<Hint> hints = new ArrayList<>(List.of(new Hint("v", "Validate"), new Hint("p", plan ? "Problems" : "Plan"),
-                new Hint("PgDn", plan ? "Scroll" : "Problems")));
+                new Hint("hjkl", "Scroll")));
         if (proposed) {
             hints.add(new Hint("a", "Approve"));
         }

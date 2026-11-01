@@ -225,6 +225,35 @@ class AdminAppTest {
     }
 
     @Test
+    void j_and_k_scroll_the_plan_by_a_line_and_h_and_l_by_a_page() throws Exception {
+        Path track = approvedTrack(home.resolve("long"));
+        StringBuilder sessions = new StringBuilder("status: approved\nchapters:\n  - id: turing\n    title: Machines\n    dir: 01-turing\n    sessions:\n");
+        for (int number = 10; number < 40; number++) {
+            sessions.append("      - {id: s").append(number).append(", title: Séance ").append(number)
+                    .append(", duration: 60, goal: Faire., file: s").append(number).append(".md}\n");
+        }
+        Files.writeString(track.resolve("cursus/syllabus.yaml"), sessions.toString());
+        AdminApp app = app(120, 30, track);
+        app.key(typed('3'));
+        String shown = shown(app);
+        for (int wait = 0; wait < 100 && !shown.contains("approved"); wait++) {
+            Thread.sleep(100);
+            shown = shown(app);
+        }
+        app.key(typed('p'));
+        assertThat(shown(app)).contains("Approved: r starts", "hjkl Scroll");
+
+        app.key(typed('j'));
+        assertThat(shown(app)).doesNotContain("Approved: r starts").contains("1 chapter · 30 sessions");
+        app.key(typed('k'));
+        assertThat(shown(app)).contains("Approved: r starts");
+        app.key(typed('l'));
+        assertThat(shown(app)).doesNotContain("1 chapter · 30 sessions").contains("Séance 16");
+        app.key(typed('h'));
+        assertThat(shown(app)).contains("Approved: r starts");
+    }
+
+    @Test
     void a_terminal_too_small_says_the_size_it_needs() throws IOException {
         AdminApp app = app(60, 20);
 
