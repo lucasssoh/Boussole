@@ -119,7 +119,8 @@ final class TracksTab implements AdminTab {
         }
 
         String problemsLine() {
-            return course.isEmpty() ? "—" : errors() + warnings() == 0 ? "none" : errors() + " E · " + warnings() + " W";
+            return course.isEmpty() ? "—" : errors() > 0 ? count((int) errors(), "error")
+                    : warnings() > 0 ? count((int) warnings(), "warning") : "none";
         }
 
         String documentsLine() {
@@ -238,11 +239,11 @@ final class TracksTab implements AdminTab {
         int listHeight = Math.min(Math.max(1, read.size()) + 3, height / 2);
         painter.pane(0, top, columns, listHeight, "Tracks", false);
         int name = Math.max(10, Math.min(30, read.stream().mapToInt(track -> track.name().length()).max().orElse(0)));
-        int numbers = 9 + 2 + 8 + 2 + 13 + 2 + 10 + 2 + 12;
+        int numbers = 9 + 2 + 8 + 2 + 13 + 2 + 12 + 2 + 12;
         int folder = Math.max(10, width - 2 - name - 2 - 2 - numbers);
         painter.text(2, top + 1, "  " + Painter.column("Name", name) + "  " + Painter.column("Folder", folder) + "  "
                 + Painter.column("Sessions", 9) + "  " + Painter.column("Plan", 8) + "  " + Painter.column("Agent", 13) + "  "
-                + Painter.column("Problems", 10)
+                + Painter.column("Problems", 12)
                 + "  Documents", width, Style.DIM);
         if (read.isEmpty()) {
             painter.text(4, top + 2, "none", width - 2, Style.DIM);
@@ -256,7 +257,7 @@ final class TracksTab implements AdminTab {
             String line = (chosen ? "▸ " : "  ") + Painter.column(track.name(), name) + "  " + Painter.column(Painter.folder(track.folder()), folder)
                     + "  " + Painter.column(track.sessions(), 9) + "  " + Painter.column(track.planLine(), 8) + "  "
                     + Painter.column(agent(track).map(AgentRun.Status::line).orElse("—"), 13) + "  "
-                    + Painter.column(track.problemsLine(), 10) + "  "
+                    + Painter.column(track.problemsLine(), 12) + "  "
                     + Painter.column(track.listed() ? track.documentsLine() : "not listed", 12);
             Style style = chosen ? Style.SELECTED : !track.listed() ? Style.DIM : !track.problem().isEmpty() || track.errors() > 0 ? Style.ERROR
                     : track.warnings() > 0 || !track.documents().isEmpty() || track.proposed() ? Style.WARNING : Style.PLAIN;
@@ -329,15 +330,14 @@ final class TracksTab implements AdminTab {
         agent.ifPresent(status -> agentLines(status, width, lines));
         CourseSyllabus syllabus = track.course().get().syllabus();
         if (syllabus.chapters().isEmpty()) {
-            lines.add(new PlanLine("No plan yet: an agent proposes one with the cursus-plan playbook.", Style.DIM));
+            lines.add(new PlanLine("No plan yet.", Style.DIM));
             return lines;
         }
         List<SyllabusSession> all = syllabus.chapters().stream().flatMap(chapter -> chapter.sessions().stream()).toList();
         int minutes = all.stream().mapToInt(SyllabusSession::duration).sum();
         lines.add(syllabus.status() == SyllabusStatus.PROPOSED
-                ? new PlanLine("Proposed by an agent: read it, then a approves it and the agents write its sessions.", Style.WARNING)
-                : new PlanLine(track.left() == 0 ? "Approved, and every session is written."
-                        : "Approved: r starts an agent to write the " + count((int) track.left(), "session") + " left, in this order.",
+                ? new PlanLine("Waiting for your approval.", Style.WARNING)
+                : new PlanLine(track.left() == 0 ? "Every session is written." : count((int) track.left(), "session") + " left to write.",
                         Style.GOOD));
         lines.add(new PlanLine(count(syllabus.chapters().size(), "chapter") + " · " + count(all.size(), "session") + " · " + duration(minutes),
                 Style.DIM));
@@ -367,21 +367,20 @@ final class TracksTab implements AdminTab {
         };
         String state = switch (status.state()) {
             case RUNNING -> "Agent running" + (status.started().getEpochSecond() > 0 ? " since "
-                    + LocalTime.ofInstant(status.started(), ZoneId.systemDefault()).withNano(0) : "")
-                    + ": x stops it.";
+                    + LocalTime.ofInstant(status.started(), ZoneId.systemDefault()).withNano(0) : "") + ".";
             case DONE -> "Agent done" + status.took().map(took -> " in " + duration((int) took.toMinutes())).orElse("") + ".";
             case FAILED -> "Agent failed" + (status.result().isBlank() ? "." : ": " + oneLine(status.result()));
-            case STOPPED -> "Agent stopped before the end.";
+            case STOPPED -> "Agent stopped.";
         };
         lines.add(new PlanLine(state, style));
-        lines.add(new PlanLine("Tokens " + AgentRun.count(tokens.total()) + ": " + AgentRun.count(tokens.input()) + " in, "
-                + AgentRun.count(tokens.output()) + " out, " + AgentRun.count(tokens.cacheRead()) + " read from the cache, "
-                + AgentRun.count(tokens.cacheWrite()) + " written to it"
-                + status.costUsd().map(cost -> String.format(Locale.ROOT, " · $%.2f at list price", cost)).orElse(""), Style.PLAIN));
-        List<String> recent = status.state() == AgentRun.State.RUNNING ? status.recent()
-                : status.result().isBlank() ? List.of() : List.of(oneLine(status.result()));
+        lines.add(new PlanLine(AgentRun.count(tokens.total()) + " tokens"
+                + status.costUsd().map(cost -> String.format(Locale.ROOT, " · $%.2f", cost)).orElse(""), Style.PLAIN));
+        List<String> recent = switch (status.state()) {
+            case RUNNING -> status.recent();
+            case DONE -> status.result().isBlank() ? List.of() : List.of(oneLine(status.result()));
+            case FAILED, STOPPED -> List.of("Log: " + Painter.folder(status.log()));
+        };
         recent.forEach(line -> lines.add(new PlanLine("  " + Painter.fit(line, Math.max(10, width - 2)), Style.DIM)));
-        lines.add(new PlanLine("Log: " + Painter.folder(status.log()), Style.DIM));
         lines.add(new PlanLine("", Style.PLAIN));
     }
 
@@ -537,11 +536,11 @@ final class TracksTab implements AdminTab {
 
     private void approve(Track track) {
         if (!track.proposed()) {
-            app.say(track.course().isEmpty() ? "No plan to approve." : "The plan of " + track.name() + " is " + track.planLine() + ".");
+            app.say(track.course().isEmpty() ? "No plan to approve." : "The plan of " + track.name() + " is already approved.");
             return;
         }
         plan = true;
-        app.confirm("Approve the plan of " + track.name() + "? The agents then write its sessions.", () -> {
+        app.confirm("Approve the plan of " + track.name() + "?", () -> {
             PlanApproval.approve(track.folder());
             check("Plan of " + track.name() + " approved.");
         });
@@ -549,15 +548,14 @@ final class TracksTab implements AdminTab {
 
     private void run(Track track) {
         if (agent(track).map(status -> status.state() == AgentRun.State.RUNNING).orElse(false)) {
-            app.say("An agent already writes " + track.name() + ": x stops it.");
+            app.say("An agent is already writing " + track.name() + ".");
         } else if (!track.approved()) {
-            app.say(track.course().isEmpty() ? "No plan here." : "Approve the plan first: p shows it, a approves it.");
+            app.say(track.course().isEmpty() ? "No plan here." : "Approve the plan first.");
         } else if (track.left() == 0) {
             app.say("Every session of " + track.name() + " is written.");
         } else {
             plan = true;
-            app.confirm("Start an agent to write the " + count((int) track.left(), "session") + " left of " + track.name()
-                    + "? It runs Claude Code and spends tokens.", () -> app.job("Starting the agent…", () -> {
+            app.confirm("Write the " + count((int) track.left(), "session") + " left of " + track.name() + " with Claude Code?", () -> app.job("Starting the agent…", () -> {
                 Path log = AgentRun.start(track.folder(), AgentRun.command(System.getProperty("boussole.agent", "claude"),
                         System.getProperty("boussole.jar")));
                 agents.put(track.folder(), AgentRun.read(log));
@@ -569,12 +567,12 @@ final class TracksTab implements AdminTab {
     private void stop(Track track) {
         Optional<AgentRun.Status> running = agent(track).filter(status -> status.state() == AgentRun.State.RUNNING);
         if (running.isEmpty()) {
-            app.say("No agent runs on " + track.name() + ".");
+            app.say("No agent is writing " + track.name() + ".");
             return;
         }
-        app.confirm("Stop the agent of " + track.name() + "? What it wrote stays.", () -> {
+        app.confirm("Stop the agent writing " + track.name() + "?", () -> {
             AgentRun.stop(running.get().log());
-            app.say("Agent of " + track.name() + " stopped.");
+            app.say("Agent stopped.");
         });
     }
 

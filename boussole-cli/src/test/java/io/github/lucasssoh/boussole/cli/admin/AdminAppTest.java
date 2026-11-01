@@ -159,7 +159,7 @@ class AdminAppTest {
         }
 
         assertThat(syllabus).startsWith("# Plan proposé par l'agent.\nstatus: approved # à valider\nchapters:");
-        assertThat(shown(app)).contains("Approved: r starts an agent to write the 1 session left").doesNotContain("a Approve");
+        assertThat(shown(app)).contains("1 session left to write.").doesNotContain("a Approve");
     }
 
     private static Path approvedTrack(Path folder) throws IOException {
@@ -215,7 +215,7 @@ class AdminAppTest {
                 shown = shown(app);
             }
 
-            assertThat(shown).contains("done 10k", "Agent done in 2 min.", "Tokens 10k: 1k in, 2k out, 3k read from the cache, 4k written to it · $1.50 at list price",
+            assertThat(shown).contains("done 10k", "Agent done in 2 min.", "10k tokens · $1.50",
                     "Sessions written.");
             assertThat(Files.list(track.resolve(".boussole/runs")).map(file -> file.getFileName().toString()))
                     .anyMatch(name -> name.endsWith(".jsonl")).anyMatch(name -> name.endsWith(".pid"));
@@ -241,16 +241,16 @@ class AdminAppTest {
             shown = shown(app);
         }
         app.key(typed('p'));
-        assertThat(shown(app)).contains("Approved: r starts", "hjkl Scroll");
+        assertThat(shown(app)).contains("30 sessions left to write.", "hjkl Scroll");
 
         app.key(typed('j'));
-        assertThat(shown(app)).doesNotContain("Approved: r starts").contains("1 chapter · 30 sessions");
+        assertThat(shown(app)).doesNotContain("30 sessions left to write.").contains("1 chapter · 30 sessions");
         app.key(typed('k'));
-        assertThat(shown(app)).contains("Approved: r starts");
+        assertThat(shown(app)).contains("30 sessions left to write.");
         app.key(typed('l'));
         assertThat(shown(app)).doesNotContain("1 chapter · 30 sessions").contains("Séance 16");
         app.key(typed('h'));
-        assertThat(shown(app)).contains("Approved: r starts");
+        assertThat(shown(app)).contains("30 sessions left to write.");
 
         for (int press = 0; press < 20; press++) {
             app.key(typed('l'));
