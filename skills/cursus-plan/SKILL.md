@@ -81,7 +81,16 @@ chapters:
         duration: 60
         goal: Dire ce que la couche 3 apporte par rapport à la couche 2.
         file: 11-role-couche-reseau.md
+      - id: s12
+        title: RIB, FIB et plus long préfixe
+        duration: 60
+        goal: Lire une table de routage et choisir la bonne route.
+        file: 12-rib-fib-lpm.md
+        prerequisites: [reseaux.couche-reseau.s11]
 ```
+
+- Write the `prerequisites` you decided (§2) in the syllabus, as full session IDs: the agent that
+  writes the session later starts from them, and the validator orders the chapters with them.
 
 - Titles and goals are in the language of the course.
 - IDs: lowercase letters, digits and `-`. Chapter folders `01-…`, `02-…`; session IDs `s11`,

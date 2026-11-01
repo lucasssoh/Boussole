@@ -45,6 +45,7 @@ c -> r9
 | `goal` | yes | one sentence: what the learner can do at the end |
 | `file` | yes | the session file, in the folder of the chapter |
 | `kind` | no | the kind of session (next notion) |
+| `prerequisites` | no | the sessions it needs first, by full identifier (next notion) |
 
 :::example[The plan of Git basics]
 ```yaml
@@ -182,6 +183,39 @@ Read the table of the three kinds of session again.
 :::solution
 `kind: exam`, up to **240** minutes. Without `kind`, it is **a lesson** (`lesson`). An approved
 plan is **`approved`**.
+:::
+::::
+
+The plan also says what each session needs first, with `prerequisites`: the agent decides it
+with the plan, and the agent that writes the session later starts from it. The session file
+repeats the same list in its front matter; when the two differ, the validator says so (`F045`).
+
+```yaml
+      - id: s2
+        title: The first commit
+        duration: 15
+        goal: Record a change with git add and git commit.
+        file: s2-first-commit.md
+        prerequisites: [git-basics.first-steps.s1]
+```
+
+::::mcq{#f2-a4}
+The plan gives `s2` the prerequisite `git-basics.first-steps.s1`. The agent writes `s2` without
+a `prerequisites` field in its front matter. What does the validator say?
+
+- [x] `F045`: the session must list the same prerequisites as the plan
+- [ ] Nothing: the plan is enough
+  > The plan and the session would tell two stories: the session file repeats the list.
+- [ ] `F030`: the prerequisite does not exist
+  > `s1` exists; `F030` is for an identifier that points to nothing.
+
+:::hint
+What happens when the plan and the session file say two different things?
+:::
+
+:::solution
+**`F045`**: the front matter of `s2` must say `prerequisites: [git-basics.first-steps.s1]`, as the
+plan does, or both change together.
 :::
 ::::
 

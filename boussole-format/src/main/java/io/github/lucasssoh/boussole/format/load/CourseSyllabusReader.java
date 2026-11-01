@@ -80,6 +80,7 @@ final class CourseSyllabusReader {
                 duration,
                 map.requiredText("goal"),
                 map.requiredText("file"),
+                map.texts("prerequisites"),
                 map.positionOf("id"));
     }
 }

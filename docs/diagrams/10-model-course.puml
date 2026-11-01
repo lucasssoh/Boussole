@@ -12,6 +12,7 @@ class Course <<record>> {
   learner : Optional<LearnerProfile>
   sources : Optional<CourseSources>
   +blocks() : Stream<Block>
+  +prerequisites(SyllabusChapter, SyllabusSession) : List<String>
   +sessionId(SyllabusChapter, SyllabusSession) : SessionId
 }
 class CourseSubject <<record>> {
@@ -55,6 +56,7 @@ class SyllabusChapter <<record>> {
 class SyllabusSession <<record>> {
   id, title, goal, file : String
   duration : int
+  prerequisites : List<String>
 }
 enum SessionKind {
   LESSON

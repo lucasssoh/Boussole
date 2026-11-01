@@ -118,7 +118,8 @@ session should be split, and propose how.
   and today's `date`. When you revise a session someone else wrote, keep their line and add
   yours with `role: revised`. The learner sees it.
 - Front matter: `objectives` (the goal, possibly split in two or three), `terms` (every lexicon
-  ID used in the session), `prerequisites` (full session IDs), `sources` (files and pages).
+  ID used in the session), `prerequisites` (full session IDs: the list the syllabus gives the
+  session, copied as is, `F045` otherwise), `sources` (files and pages).
 - `prerequisites` lists only the sessions this one **really needs** (a notion it uses without
   explaining it again), never simply the previous one: in guided mode the learner cannot begin
   the session until they are finished, so a needless prerequisite blocks them for nothing; one

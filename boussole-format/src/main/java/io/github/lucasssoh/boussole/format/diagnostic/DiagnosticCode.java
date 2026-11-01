@@ -39,6 +39,7 @@ public enum DiagnosticCode {
     F042(ERROR, "question asked again before it is taught"),
     F043(ERROR, "hook question outside the warmup"),
     F044(ERROR, "chapters that wait for one another"),
+    F045(ERROR, "prerequisites that differ between the syllabus and the session"),
     P001(WARNING, "notion without exercise"),
     P002(WARNING, "notion with several examples"),
     P003(WARNING, "warmup not first, or practice not last"),

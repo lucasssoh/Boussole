@@ -42,6 +42,7 @@ package "validate" {
     class CitationRule <<P014>>
     class HookPlaceRule <<F043>>
     class ChapterOrderRule <<F044>>
+    class PlannedPrerequisitesRule <<F045>>
     class VideoExistsRule <<F032>>
     class NotionExerciseRule <<P001>>
     class SingleExampleRule <<P002>>

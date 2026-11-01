@@ -3,6 +3,8 @@ package io.github.lucasssoh.boussole.format.validate.rule;
 import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCode;
 import io.github.lucasssoh.boussole.format.diagnostic.DiagnosticCollector;
 import io.github.lucasssoh.boussole.format.diagnostic.SourcePosition;
+import io.github.lucasssoh.boussole.format.model.SyllabusChapter;
+import io.github.lucasssoh.boussole.format.model.SyllabusSession;
 import io.github.lucasssoh.boussole.format.model.Course;
 import io.github.lucasssoh.boussole.format.model.CourseSession;
 import io.github.lucasssoh.boussole.format.model.LexiconTerm;
@@ -35,6 +37,15 @@ public final class ReferenceRule implements ValidationRule {
             term.see().stream()
                     .filter(id -> course.lexicon().byId(id).isEmpty())
                     .forEach(id -> unknown(diagnostics, term.position(), "term `" + term.id() + "` sees `" + id + "`, which is not in the lexicon"));
+        }
+
+        for (SyllabusChapter chapter : course.syllabus().chapters()) {
+            for (SyllabusSession session : chapter.sessions()) {
+                session.prerequisites().stream()
+                        .filter(id -> CourseIds.fullSessionId(course, id).isEmpty())
+                        .forEach(id -> unknown(diagnostics, session.position(), "prerequisite `" + id + "` of `" + session.id()
+                                + "` is not a session of the syllabus (write <subject>.<chapter>.<session>)"));
+            }
         }
 
         for (CourseSession loaded : course.sessions()) {

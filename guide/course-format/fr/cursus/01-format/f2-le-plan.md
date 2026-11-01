@@ -45,6 +45,7 @@ c -> r9
 | `goal` | oui | une phrase : ce que l'apprenant sait faire à la fin |
 | `file` | oui | le fichier de la séance, dans le dossier du chapitre |
 | `kind` | non | le type de séance (notion suivante) |
+| `prerequisites` | non | les séances dont elle a besoin avant, par identifiant complet (notion suivante) |
 
 :::example[Le plan des bases de Git]
 ```yaml
@@ -183,6 +184,40 @@ Relis le tableau des trois types de séance.
 :::solution
 `kind: exam`, jusqu'à **240** minutes. Sans `kind`, c'est une **leçon** (`lesson`). Un plan
 validé est **`approved`**.
+:::
+::::
+
+Le plan dit aussi ce dont chaque séance a besoin avant, avec `prerequisites` : l'agent le
+décide avec le plan, et l'agent qui écrit la séance plus tard part de là. Le fichier de la
+séance reprend la même liste dans son en-tête ; quand les deux diffèrent, le validateur le dit
+(`F045`).
+
+```yaml
+      - id: s2
+        title: Le premier commit
+        duration: 15
+        goal: Enregistrer un changement avec git add et git commit.
+        file: s2-premier-commit.md
+        prerequisites: [git-bases.premiers-pas.s1]
+```
+
+::::mcq{#f2-a4}
+Le plan donne à `s2` le prérequis `git-bases.premiers-pas.s1`. L'agent écrit `s2` sans champ
+`prerequisites` dans son en-tête. Que dit le validateur ?
+
+- [x] `F045` : la séance doit lister les mêmes prérequis que le plan
+- [ ] Rien : le plan suffit
+  > Le plan et la séance raconteraient deux histoires : le fichier de la séance reprend la liste.
+- [ ] `F030` : le prérequis n'existe pas
+  > `s1` existe ; `F030` concerne un identifiant qui ne mène nulle part.
+
+:::hint
+Que se passe-t-il quand le plan et le fichier de la séance disent deux choses différentes ?
+:::
+
+:::solution
+**`F045`** : l'en-tête de `s2` doit dire `prerequisites: [git-bases.premiers-pas.s1]`, comme le
+plan, ou bien les deux changent ensemble.
 :::
 ::::
 

@@ -16,6 +16,7 @@ import io.github.lucasssoh.boussole.format.validate.rule.McqFeedbackRule;
 import io.github.lucasssoh.boussole.format.validate.rule.QuickCheckRule;
 import io.github.lucasssoh.boussole.format.validate.rule.CitationRule;
 import io.github.lucasssoh.boussole.format.validate.rule.ChapterOrderRule;
+import io.github.lucasssoh.boussole.format.validate.rule.PlannedPrerequisitesRule;
 import io.github.lucasssoh.boussole.format.validate.rule.HookPlaceRule;
 import io.github.lucasssoh.boussole.format.validate.rule.ReferenceOrderRule;
 import io.github.lucasssoh.boussole.format.validate.rule.ReferenceRule;
@@ -55,6 +56,7 @@ public final class Validator {
                 new ReferenceOrderRule(),
                 new HookPlaceRule(),
                 new ChapterOrderRule(),
+                new PlannedPrerequisitesRule(),
                 new SourceFileRule(),
                 new SourceInventoryRule(),
                 new SourceProvenanceRule(),

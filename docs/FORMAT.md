@@ -172,6 +172,7 @@ chapters:
 | `sessions[].duration` | yes | For a lesson, estimated minutes of work at a normal pace, 15 to 120: an estimate of the content, not a time limit, since a lesson ends with its closing. For a review (5 to 120) or an exam (5 to 240), the time allowed. |
 | `sessions[].goal` | yes | One sentence: what the learner can do at the end. |
 | `sessions[].file` | yes | File in the chapter folder. It may not exist yet while the course is being written. |
+| `sessions[].prerequisites` | no | Full session IDs it needs first, as the plan decided them. Before the file is written, they order the chapters (`F044`) and tell the agent that writes the session; once it is written, its front matter lists the same ones (`F045` otherwise). |
 
 The full ID of a session is `<subject>.<chapter>.<session>`, for example
 `reseaux.couche-reseau.s11`. The order in the file is the order of the course.
@@ -223,7 +224,7 @@ sources:
 |---|---|---|
 | `id` | yes | Must match the session's `id` in the syllabus. |
 | `objectives` | yes | One to five sentences starting with a verb. |
-| `prerequisites` | no | Full session IDs the learner should have finished before: only those really needed, not simply the previous session. In guided mode the session waits until they are finished; in free mode Boussole advises them. A prerequisite in another chapter of the track makes the **whole chapter** wait for that chapter: a chapter is finished before the chapters that need it, and the map of the track draws the chapters in that order (`F044` if two chapters wait for each other). *Resume* goes to a session whose prerequisites are finished and whose chapter waits for no other. |
+| `prerequisites` | no | The same list as the session's `prerequisites` in the syllabus, when the plan gives them (`F045` otherwise). Full session IDs the learner should have finished before: only those really needed, not simply the previous session. In guided mode the session waits until they are finished; in free mode Boussole advises them. A prerequisite in another chapter of the track makes the **whole chapter** wait for that chapter: a chapter is finished before the chapters that need it, and the map of the track draws the chapters in that order (`F044` if two chapters wait for each other). *Resume* goes to a session whose prerequisites are finished and whose chapter waits for no other. |
 | `terms` | no | Lexicon IDs used in the session, shown as its vocabulary list. |
 | `sources` | no | Files of `sources/`, optionally with `#page=N`. |
 | `written_by` | no (`P012` without it) | Who wrote the session, then who revised or translated it, one line each: a `model` (an AI, by its **exact ID**, such as `claude-opus-5-5`) with the `tool` that ran it, or a `name` (a person); a `date` (`2026-10-21`); a `role`, `wrote` (default), `revised` or `translated`. The learner sees it on the first step of the session. |
@@ -495,6 +496,7 @@ chapter.
 | `F042` | error | A `::ref` to a question of the same session or of a later one, in the order of the syllabus: a warmup or a review asks only about what was studied before. |
 | `F043` | error | A question with `hook=true` outside the warmup. |
 | `F044` | error | Chapters that wait for one another: a chapter waits for every chapter one of its sessions has a prerequisite in, so the chapters must follow one order. |
+| `F045` | error | A written session whose `prerequisites` differ from those the syllabus plans for it: write the same list in both. |
 | `F032` | warning | `video` that YouTube does not know (checked only with `--check-videos`). |
 | `P001` | warning | A notion without exercise or `mcq`. |
 | `P002` | warning | A notion with more than one `example`. |

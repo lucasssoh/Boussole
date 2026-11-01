@@ -29,12 +29,14 @@ public record ChapterLinks(Map<String, Set<String>> after) {
         String subject = course.subject().id();
         Map<String, Set<String>> after = new LinkedHashMap<>();
         course.syllabus().chapters().forEach(chapter -> after.put(chapter.id(), new LinkedHashSet<>()));
-        for (CourseSession session : course.sessions()) {
-            for (String prerequisite : session.session().header().prerequisites()) {
-                String[] parts = prerequisite.split("\\.");
-                if (parts.length == 3 && parts[0].equals(subject) && after.containsKey(parts[1])
-                        && !parts[1].equals(session.chapter().id())) {
-                    after.get(session.chapter().id()).add(parts[1]);
+        for (SyllabusChapter chapter : course.syllabus().chapters()) {
+            for (SyllabusSession session : chapter.sessions()) {
+                for (String prerequisite : course.prerequisites(chapter, session)) {
+                    String[] parts = prerequisite.split("\\.");
+                    if (parts.length == 3 && parts[0].equals(subject) && after.containsKey(parts[1])
+                            && !parts[1].equals(chapter.id())) {
+                        after.get(chapter.id()).add(parts[1]);
+                    }
                 }
             }
         }

@@ -24,6 +24,19 @@ public record Course(
         return sessions.stream().flatMap(loaded -> loaded.session().blocks());
     }
 
+    /**
+     * What a session needs first: the prerequisites of its front matter once written, those the
+     * syllabus planned before that, or when the front matter has none.
+     */
+    public List<String> prerequisites(SyllabusChapter chapter, SyllabusSession entry) {
+        return sessions.stream()
+                .filter(session -> session.chapter().id().equals(chapter.id()) && session.entry().id().equals(entry.id()))
+                .map(session -> session.session().header().prerequisites())
+                .filter(written -> !written.isEmpty())
+                .findFirst()
+                .orElse(entry.prerequisites());
+    }
+
     public SessionId sessionId(SyllabusChapter chapter, SyllabusSession entry) {
         return new SessionId(subject.id(), chapter.id(), entry.id());
     }
