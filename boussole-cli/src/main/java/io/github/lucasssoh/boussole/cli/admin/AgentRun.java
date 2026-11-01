@@ -76,11 +76,11 @@ final class AgentRun {
     /** A run as its file tells it. */
     record Status(Path log, State state, Tokens tokens, Optional<Double> costUsd, Instant started, Optional<Duration> took,
                   List<String> recent, String result, Map<String, Chapter> chapters, List<Task> tasks, List<String> refused,
-                  Optional<Limit> limit) {
+                  Optional<Limit> limit, String sessionId) {
 
         Status(Path log, State state, Tokens tokens, Optional<Double> costUsd, Instant started, Optional<Duration> took,
                List<String> recent, String result) {
-            this(log, state, tokens, costUsd, started, took, recent, result, Map.of(), List.of(), List.of(), Optional.empty());
+            this(log, state, tokens, costUsd, started, took, recent, result, Map.of(), List.of(), List.of(), Optional.empty(), "");
         }
 
         /** The last action of the agent that coordinates. */
@@ -253,6 +253,7 @@ final class AgentRun {
         Tokens finalTokens = null;
         State ended = null;
         String result = "";
+        String sessionId = "";
         try (BufferedReader lines = Files.newBufferedReader(log, StandardCharsets.UTF_8)) {
             for (String line = lines.readLine(); line != null; line = lines.readLine()) {
                 JsonNode event;
@@ -262,6 +263,9 @@ final class AgentRun {
                     continue;
                 }
                 String type = event.path("type").asString("");
+                if (sessionId.isEmpty()) {
+                    sessionId = event.path("session_id").asString("");
+                }
                 if (type.equals("assistant")) {
                     JsonNode message = event.path("message");
                     String id = message.path("id").asString("");
@@ -389,7 +393,7 @@ final class AgentRun {
                 })
                 .toList();
         return new Status(log, state, tokens, cost, started(log), took, List.copyOf(recent), result, Map.copyOf(chapters), started,
-                List.copyOf(refused), Optional.ofNullable(limit));
+                List.copyOf(refused), Optional.ofNullable(limit), sessionId);
     }
 
     /** What a task said of itself, as its events come. */
@@ -432,7 +436,7 @@ final class AgentRun {
     }
 
     /** The chapter folder and the session file a write or an edit touches: {@code cursus/<folder>/<file>.md}. */
-    private static Optional<String[]> chapterFile(JsonNode part) {
+    static Optional<String[]> chapterFile(JsonNode part) {
         if (!part.path("type").asString("").equals("tool_use")) {
             return Optional.empty();
         }
@@ -445,7 +449,7 @@ final class AgentRun {
         return parts.length == 2 ? Optional.of(parts) : Optional.empty();
     }
 
-    private static Tokens tokens(JsonNode usage) {
+    static Tokens tokens(JsonNode usage) {
         return new Tokens(usage.path("input_tokens").asLong(0), usage.path("output_tokens").asLong(0),
                 usage.path("cache_read_input_tokens").asLong(0), usage.path("cache_creation_input_tokens").asLong(0));
     }
@@ -458,6 +462,11 @@ final class AgentRun {
                     model.path("cacheReadInputTokens").asLong(0), model.path("cacheCreationInputTokens").asLong(0)));
         }
         return total;
+    }
+
+    /** What a tool use does, in a line: {@code Read cursus/syllabus.yaml}. */
+    static Optional<String> describe(JsonNode part) {
+        return action(part).filter(line -> part.path("type").asString("").equals("tool_use"));
     }
 
     private static Optional<String> action(JsonNode part) {

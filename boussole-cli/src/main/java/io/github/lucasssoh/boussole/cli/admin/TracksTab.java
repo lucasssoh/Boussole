@@ -62,6 +62,74 @@ final class TracksTab implements AdminTab {
     private volatile Instant checked = Instant.EPOCH;
     /** The last agent run of each track, read again while the screen shows. */
     private final Map<Path, AgentRun.Status> agents = new ConcurrentHashMap<>();
+    /** The sessions of agents on the bus of each track, and the session files changed a moment ago. */
+    private final Map<Path, List<AgentBus.Session>> buses = new ConcurrentHashMap<>();
+    private final Map<Path, Map<String, String>> touched = new ConcurrentHashMap<>();
+    /** A session file changed this recently is taken as being written, whatever writes it. */
+    private static final Duration TOUCHED = Duration.ofMinutes(2);
+
+    /**
+     * What works on a track: the agent {@code r} started, the sessions on its bus (any agent), and
+     * the session files changed a moment ago, chapter folder to file, for an agent that says nothing.
+     */
+    record Watch(Optional<AgentRun.Status> run, List<AgentBus.Session> bus, Map<String, String> touched) {
+
+        static final Watch NONE = new Watch(Optional.empty(), List.of(), Map.of());
+
+        boolean runRunning() {
+            return run.map(status -> status.state() == AgentRun.State.RUNNING).orElse(false);
+        }
+
+        /** The bus sessions to show apart: not the one of the run, already shown with it. */
+        List<AgentBus.Session> others() {
+            String own = run.map(AgentRun.Status::sessionId).orElse("");
+            return bus.stream().filter(session -> !session.id().equals(own)).toList();
+        }
+
+        boolean working() {
+            return runRunning() || others().stream().anyMatch(session -> session.state() == AgentBus.SessionState.WORKING)
+                    || !touched.isEmpty();
+        }
+
+        /** The session file being written in a chapter folder, and the last action there. */
+        Optional<AgentRun.Chapter> chapter(String dir) {
+            Optional<AgentRun.Chapter> found = run.filter(status -> status.state() == AgentRun.State.RUNNING)
+                    .flatMap(status -> status.chapter(dir));
+            for (AgentBus.Session session : others()) {
+                if (found.isEmpty() && session.state() != AgentBus.SessionState.ENDED) {
+                    found = Optional.ofNullable(session.chapters().get(dir));
+                }
+            }
+            return found.or(() -> Optional.ofNullable(touched.get(dir)).map(file -> new AgentRun.Chapter(file, "")));
+        }
+    }
+
+    private Watch watch(Track track) {
+        return new Watch(agent(track), buses.getOrDefault(track.folder(), List.of()), touched.getOrDefault(track.folder(), Map.of()));
+    }
+
+    /** The session files of the plan changed less than {@link #TOUCHED} ago: chapter folder to the latest. */
+    static Map<String, String> touched(Track track, Instant now) {
+        Map<String, String> found = new java.util.HashMap<>();
+        track.course().ifPresent(course -> {
+            for (SyllabusChapter chapter : course.syllabus().chapters()) {
+                Instant latest = Instant.EPOCH;
+                for (SyllabusSession session : chapter.sessions()) {
+                    try {
+                        Path file = track.folder().resolve("cursus").resolve(chapter.dir()).resolve(session.file());
+                        Instant changed = Files.isRegularFile(file) ? Files.getLastModifiedTime(file).toInstant() : Instant.EPOCH;
+                        if (changed.isAfter(now.minus(TOUCHED)) && changed.isAfter(latest)) {
+                            latest = changed;
+                            found.put(chapter.dir(), session.file());
+                        }
+                    } catch (IOException e) {
+                        // a file that cannot be read is not being written
+                    }
+                }
+            }
+        });
+        return Map.copyOf(found);
+    }
 
     TracksTab(AdminApp app, BoussoleConfigFile config, ServerControl control) {
         this.app = app;
@@ -150,13 +218,15 @@ final class TracksTab implements AdminTab {
         }
         boolean writing = false;
         boolean ended = false;
+        Instant moment = Instant.now();
         for (Track track : read) {
-            Optional<AgentRun.Status> before = agent(track);
-            Optional<AgentRun.Status> now = AgentRun.last(track.folder());
-            now.ifPresentOrElse(status -> agents.put(track.folder(), status), () -> agents.remove(track.folder()));
-            boolean running = now.map(status -> status.state() == AgentRun.State.RUNNING).orElse(false);
-            writing |= running;
-            ended |= !running && before.map(status -> status.state() == AgentRun.State.RUNNING).orElse(false);
+            boolean before = watch(track).working();
+            AgentRun.last(track.folder()).ifPresentOrElse(status -> agents.put(track.folder(), status), () -> agents.remove(track.folder()));
+            buses.put(track.folder(), AgentBus.sessions(track.folder(), moment));
+            touched.put(track.folder(), touched(track, moment));
+            boolean working = watch(track).working();
+            writing |= working;
+            ended |= before && !working;
         }
         // the sessions an agent writes show up as it goes
         if (!reading && (ended || writing && Duration.between(checked, Instant.now()).compareTo(RECHECK) > 0)) {
@@ -274,7 +344,7 @@ final class TracksTab implements AdminTab {
             boolean chosen = index == selected;
             String line = (chosen ? "▸ " : "  ") + Painter.column(track.name(), name) + "  " + Painter.column(Painter.folder(track.folder()), folder)
                     + "  " + Painter.column(track.sessions(), 9) + "  " + Painter.column(track.planLine(), 8) + "  "
-                    + Painter.column(agent(track).map(status -> agentColumn(status, track)).orElse("—"), 13) + "  "
+                    + Painter.column(agentColumn(watch(track), track), 13) + "  "
                     + Painter.column(track.problemsLine(), 12) + "  "
                     + Painter.column(track.listed() ? track.documentsLine() : "not listed", 12);
             Style style = chosen ? Style.SELECTED : !track.listed() ? Style.DIM : !track.problem().isEmpty() || track.errors() > 0 ? Style.ERROR
@@ -288,7 +358,7 @@ final class TracksTab implements AdminTab {
         int detailTop = top + listHeight;
         int detailHeight = height - listHeight;
         if (plan) {
-            scroll = drawPlan(painter, track, agent(track), scroll, detailTop, columns, detailHeight);
+            scroll = drawPlan(painter, track, watch(track), scroll, detailTop, columns, detailHeight);
             return;
         }
         int half = columns * 3 / 5;
@@ -337,10 +407,13 @@ final class TracksTab implements AdminTab {
     private static final String GOAL = " ".repeat(19);
 
     static List<String> planText(Track track, Optional<AgentRun.Status> agent, int width) {
-        return planLines(track, agent, width).stream().map(PlanLine::text).toList();
+        Instant now = Instant.now();
+        Watch watch = new Watch(agent, AgentBus.sessions(track.folder(), now), touched(track, now));
+        return planLines(track, watch, width).stream().map(PlanLine::text).toList();
     }
 
-    private static List<PlanLine> planLines(Track track, Optional<AgentRun.Status> agent, int width) {
+    private static List<PlanLine> planLines(Track track, Watch watch, int width) {
+        Optional<AgentRun.Status> agent = watch.run();
         List<PlanLine> lines = new ArrayList<>();
         if (track.course().isEmpty()) {
             return lines;
@@ -353,12 +426,14 @@ final class TracksTab implements AdminTab {
         }
         List<SyllabusSession> all = syllabus.chapters().stream().flatMap(chapter -> chapter.sessions().stream()).toList();
         int written = course.sessions().size();
-        Optional<AgentRun.Status> running = agent.filter(status -> status.state() == AgentRun.State.RUNNING);
-        agent.ifPresent(status -> agentLines(status, lines));
+        boolean running = watch.working();
+        agent.filter(status -> status.state() == AgentRun.State.RUNNING || watch.others().isEmpty())
+                .ifPresent(status -> agentLines(status, lines));
+        watch.others().forEach(session -> busLines(session, lines));
         if (syllabus.status() == SyllabusStatus.PROPOSED) {
             lines.add(new PlanLine("Waiting for your approval.", Style.WARNING));
         } else {
-            lines.add(new PlanLine((running.isPresent() ? movingBar(written, all.size(), 30) : bar(written, all.size(), 30))
+            lines.add(new PlanLine((running ? movingBar(written, all.size(), 30) : bar(written, all.size(), 30))
                     + "  " + written + " of " + count(all.size(), "session"),
                     written == all.size() ? Style.GOOD : Style.PLAIN));
         }
@@ -370,7 +445,7 @@ final class TracksTab implements AdminTab {
         int number = 0;
         for (SyllabusChapter chapter : syllabus.chapters()) {
             int done = (int) chapter.sessions().stream().filter(session -> track.written(chapter, session)).count();
-            Optional<AgentRun.Chapter> work = running.flatMap(status -> status.chapter(chapter.dir()));
+            Optional<AgentRun.Chapter> work = watch.chapter(chapter.dir());
             Optional<SyllabusSession> current = work.flatMap(found -> chapter.sessions().stream()
                     .filter(session -> session.file().equals(found.file())).findFirst());
             String state = current.map(session -> "writing " + session.id())
@@ -397,14 +472,19 @@ final class TracksTab implements AdminTab {
     }
 
     /** {@code writing 7/32}: what the agent does, and the sessions written. */
-    private static String agentColumn(AgentRun.Status status, Track track) {
-        String word = switch (status.state()) {
+    private static String agentColumn(Watch watch, Track track) {
+        if (watch.working()) {
+            return spinner() + " writing " + track.sessions();
+        }
+        if (watch.others().stream().anyMatch(session -> session.state() == AgentBus.SessionState.WAITING)) {
+            return "waiting " + track.sessions();
+        }
+        return watch.run().map(status -> switch (status.state()) {
             case RUNNING -> spinner() + " writing";
             case DONE -> "done";
             case FAILED -> "failed";
             case STOPPED -> "stopped";
-        };
-        return word + " " + track.sessions();
+        } + " " + track.sessions()).orElse("—");
     }
 
     /** {@code waits for chapter 1} when a chapter it needs is not written yet. */
@@ -438,6 +518,43 @@ final class TracksTab implements AdminTab {
     static String bar(int done, int total, int width) {
         int full = total == 0 ? 0 : (int) Math.round(width * (double) done / total);
         return "█".repeat(full) + "░".repeat(width - full);
+    }
+
+    /** A session on the bus: Claude Code opened by hand, or any agent that calls {@code boussole bus}. */
+    private static void busLines(AgentBus.Session session, List<PlanLine> lines) {
+        String since = LocalTime.ofInstant(session.started(), ZoneId.systemDefault()).withSecond(0).withNano(0).toString();
+        String tokens = session.tokens().total() > 0 ? " · " + AgentRun.count(session.tokens().total()) + " tokens" : "";
+        String head = switch (session.state()) {
+            case WORKING -> spinner() + " " + session.tool() + " working since " + since + " · "
+                    + duration((int) Duration.between(session.started(), Instant.now()).toMinutes());
+            case WAITING -> "◇ " + session.tool() + " waiting for you · since " + since;
+            case ENDED -> "✓ " + session.tool() + " ended · " + duration((int) Duration.between(session.started(), session.last()).toMinutes());
+        };
+        lines.add(new PlanLine(head + tokens, switch (session.state()) {
+            case WORKING -> Style.WARNING;
+            case WAITING -> Style.PLAIN;
+            case ENDED -> Style.DIM;
+        }));
+        if (session.state() == AgentBus.SessionState.WORKING && !session.action().isBlank()) {
+            lines.add(new PlanLine("  " + oneLine(session.action()), Style.DIM));
+        }
+        List<AgentBus.Agent> agents = session.agents();
+        for (int index = 0; index < agents.size(); index++) {
+            AgentBus.Agent agent = agents.get(index);
+            boolean last = index == agents.size() - 1;
+            boolean live = agent.ended().isEmpty() && session.state() != AgentBus.SessionState.ENDED;
+            String id = agent.id().length() > 8 ? agent.id().substring(0, 8) : agent.id();
+            Instant end = agent.ended().orElse(live ? Instant.now() : session.last());
+            String numbers = (live ? "" : "done · ") + duration((int) Duration.between(agent.started(), end).toMinutes())
+                    + (agent.tokens().total() > 0 ? " · " + AgentRun.count(agent.tokens().total()) + " tokens" : "");
+            lines.add(new PlanLine((last ? "└─ " : "├─ ") + (live ? spinner() : "✓") + " " + id + "  "
+                    + (agent.type().isBlank() ? "" : agent.type() + "  ") + agent.description() + "  " + numbers,
+                    live ? Style.WARNING : Style.GOOD));
+            if (live && !agent.action().isBlank()) {
+                lines.add(new PlanLine((last ? "   " : "│  ") + "  " + oneLine(agent.action()), Style.DIM));
+            }
+        }
+        lines.add(new PlanLine("", Style.PLAIN));
     }
 
     private static void agentLines(AgentRun.Status status, List<PlanLine> lines) {
@@ -558,11 +675,11 @@ final class TracksTab implements AdminTab {
     }
 
     /** Draws the plan from its {@code scroll}-th line, at most up to its end; returns where it started. */
-    private static int drawPlan(Painter painter, Track track, Optional<AgentRun.Status> agent, int scroll, int top, int width,
+    private static int drawPlan(Painter painter, Track track, Watch watch, int scroll, int top, int width,
                                 int height) {
         painter.pane(0, top, width, height, track.name() + " · Plan", false);
         int inner = width - 4;
-        List<PlanLine> lines = planLines(track, agent, inner);
+        List<PlanLine> lines = planLines(track, watch, inner);
         int room = height - 2;
         int first = Math.max(0, Math.min(scroll, lines.size() - room));
         if (first > 0) {
@@ -625,7 +742,7 @@ final class TracksTab implements AdminTab {
 
     /** Moves the plan or the problems by {@code by} lines or problems, within what there is. */
     private void scroll(int by) {
-        int last = chosen().map(track -> (plan ? planLines(track, agent(track), PLAN_WIDTH).size() : track.diagnostics().size()) - 1)
+        int last = chosen().map(track -> (plan ? planLines(track, watch(track), PLAN_WIDTH).size() : track.diagnostics().size()) - 1)
                 .orElse(0);
         scroll = Math.max(0, Math.min(scroll + by, Math.max(0, last)));
     }
@@ -705,6 +822,7 @@ final class TracksTab implements AdminTab {
                 String agent = System.getProperty("boussole.agent");
                 List<String> command = AgentRun.command(agent == null ? "claude" : agent, jar);
                 // a stand-in agent (tests) does not notify the desktop
+                io.github.lucasssoh.boussole.cli.init.ClaudeHooks.install(track.folder());
                 Path log = AgentRun.start(track.folder(), agent == null ? AgentRun.notifying(track.name(), jar, command) : command);
                 agents.put(track.folder(), AgentRun.read(log));
                 return "Agent started on " + track.name() + ".";

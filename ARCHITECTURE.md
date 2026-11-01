@@ -419,12 +419,26 @@ The skills shipped in `skills/`:
 | `.boussole/skills/<skill>/SKILL.md`, `.boussole/FORMAT.md` | Boussole | rewritten, so skills follow the installed version |
 | `AGENTS.md` | shared | only the block between `boussole:start` and `boussole:end` is replaced; the rest is the learner's |
 | `CLAUDE.md` | shared | an `@AGENTS.md` line is added once, since Claude Code reads `CLAUDE.md` rather than `AGENTS.md` |
+| `.claude/settings.json` | shared | only the hooks marked `boussole-bus` are replaced; the rest is the learner's |
 | `subject.yaml`, `cursus/syllabus.yaml` | the course | created when missing, never overwritten |
 | `learner.yaml` | the learner | copied from `$XDG_CONFIG_HOME/boussole/learner.yaml` when missing and that file exists, never overwritten |
 
 `AGENTS.md` gives the exact command that runs the validator of this installation
 (the packaged program, or `java -jar …/boussole.jar validate .`), so agents run the right version even when another
 program is called `boussole`.
+
+**The bus of a track.** Whatever agent works on a track, `boussole` shows what it does on the
+Tracks screen. Each one adds lines to `.boussole/bus/events.jsonl`, the time in seconds then a
+JSON object:
+
+- Claude Code by itself, through the hooks `boussole init` writes in `.claude/settings.json`
+  (`SessionStart`, `PreToolUse`, `SubagentStart`, `SubagentStop`, `Stop`, `SessionEnd`): a line
+  of shell that appends what Claude Code gives the hook, a few milliseconds per action. The
+  tokens come from the transcripts the hooks name.
+- Any other agent with `boussole bus EVENT --tool NAME` (`start`, `doing`, `writing`,
+  `agent-start`, `agent-end`, `waiting`, `end`), as the `AGENTS.md` of the track tells it.
+- An agent that says nothing still shows: a session file of the plan changed in the last two
+  minutes is shown as being written.
 
 A learner's path: run `boussole init` on the folder of documents, ask an agent to build the
 course, read and approve the syllabus, let the agent write the sessions; the interface reloads

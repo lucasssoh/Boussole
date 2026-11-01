@@ -15,6 +15,9 @@ package "cli" {
     folder : Path
     all : boolean
   }
+  class BusCommand <<@Command bus>> {
+    event, --tool, --agent, --file
+  }
   class IndexCommand <<@Command index>> {
     folder : Path
     before : String
@@ -112,6 +115,7 @@ package "cli.admin" {
   class TracksTab <<F3>>
   class PlanApproval <<status: approved>>
   class AgentRun <<claude --print, .boussole/runs>>
+  class AgentBus <<.boussole/bus/events.jsonl>>
   class Painter <<text, panes, QR code>>
 }
 
@@ -157,6 +161,7 @@ package "cli.init" {
   }
   class SubjectScaffold
   class AgentKitInstaller
+  class ClaudeHooks <<.claude/settings.json, the bus>>
   class AgentKit <<resources>>
   class MarkedBlock
   class SubjectFolder
@@ -186,6 +191,7 @@ NewCommand ..> BoussoleConfigFile : tracks_dir, adds the track
 BoussoleCommand --> ValidateCommand : subcommand
 BoussoleCommand --> SourcesCommand : subcommand
 BoussoleCommand --> IndexCommand : subcommand
+BoussoleCommand --> BusCommand : subcommand
 BoussoleCommand --> DevicesCommand : subcommand
 BoussoleCommand --> AdminLauncher : alone, in a terminal
 AdminLauncher --> AdminApp : a terminal of its own
@@ -202,6 +208,8 @@ TracksTab ..> BoussoleConfigFile : adds, removes a folder
 TracksTab ..> ServerControl : opens
 TracksTab ..> PlanApproval : approves the plan
 TracksTab ..> AgentRun : starts, stops, reads the tokens
+TracksTab ..> AgentBus : follows every agent of a track
+BusCommand ..> AgentBus : writes the line of an agent
 OpenCommand --> ServerControl : starts
 StopCommand --> ServerControl : stops
 ServerControl --> ServerProbe
@@ -243,6 +251,7 @@ SubjectScaffold ..> Slug
 AgentKitInstaller --> SubjectFolder
 AgentKitInstaller --> AgentKit : skills, format
 AgentKitInstaller --> MarkedBlock : AGENTS.md
+AgentKitInstaller --> ClaudeHooks : the bus
 SubjectScaffold ..> InitReport
 AgentKitInstaller ..> InitReport
 

@@ -29,6 +29,11 @@ final class AgentKitInstaller {
         folder.write(AGENTS, MarkedBlock.upsert(folder.read(AGENTS), AgentKit.agentsBlock(sources, validateCommand)));
         report.add(hadAgents ? Action.UPDATED : Action.CREATED, AGENTS);
 
+        // The bus: every session of Claude Code in the folder says what it does, for boussole to follow.
+        boolean hadHooks = folder.exists(ClaudeHooks.SETTINGS);
+        folder.write(ClaudeHooks.SETTINGS, ClaudeHooks.merge(folder.read(ClaudeHooks.SETTINGS)));
+        report.add(hadHooks ? Action.UPDATED : Action.CREATED, ClaudeHooks.SETTINGS);
+
         // Claude Code reads CLAUDE.md, not AGENTS.md: an import line makes it read both.
         String claude = folder.read(CLAUDE).orElse("");
         if (claude.lines().anyMatch(line -> line.strip().equals(CLAUDE_IMPORT))) {

@@ -54,6 +54,22 @@ Writing or revising many sessions (a whole track, several chapters):
 - `boussole index .` lists every question of the track: an agent picks its warmup and review
   questions there rather than opening every session.
 
+Tell Boussole what you do, so that the learner follows it on the Tracks screen of `boussole`.
+Claude Code does it by itself (the hooks of `.claude/settings.json`); any other agent runs
+`boussole bus` from this folder, with `--tool` set to its name (`codex`, `gemini`, `cursor`…):
+
+| When | Command |
+|---|---|
+| You start working on the track | `boussole bus start --tool <name>` |
+| You start writing a session | `boussole bus writing --tool <name> --file cursus/<chapter>/<file>.md` |
+| You start an agent for a chapter | `boussole bus agent-start --tool <name> --agent <id> --text "Write chapter 2"` |
+| That agent starts a session | `boussole bus writing --tool <name> --agent <id> --file cursus/<chapter>/<file>.md` |
+| That agent ends | `boussole bus agent-end --tool <name> --agent <id>` |
+| You wait for the learner | `boussole bus waiting --tool <name>` |
+| You are done | `boussole bus end --tool <name>` |
+
+`bus` is the same command as `validate` below, with `bus …` in place of `validate .`.
+
 Which model, when you can choose (in Claude Code, the `model` of an agent):
 
 | Task | Model |
@@ -85,5 +101,5 @@ Rules:
   ```
 
   Run it after every change, until it ends without error, before saying a task is done.
-  `boussole sources .` and `boussole index .` are the same command with `sources` or `index` in
-  place of `validate`.
+  `boussole sources .`, `boussole index .` and `boussole bus …` are the same command with
+  `sources`, `index` or `bus` in place of `validate`.
