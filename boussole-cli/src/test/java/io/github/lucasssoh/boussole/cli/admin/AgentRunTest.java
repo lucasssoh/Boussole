@@ -81,6 +81,34 @@ class AgentRunTest {
     }
 
     @Test
+    void theAgentsOfTheChaptersAreFollowedFromTheirStartToTheirEnd() throws Exception {
+        String events = """
+                {"type":"system","subtype":"task_started","task_id":"a2c39a44e2266ebbe","tool_use_id":"t1","description":"Write chapter 01 sessions","spawn_depth":1}
+                {"type":"system","subtype":"background_tasks_changed","tasks":[{"task_id":"a2c39a44e2266ebbe"}]}
+                {"type":"system","subtype":"task_started","task_id":"a28b0c8283d4291b6","tool_use_id":"t3","description":"Write chapter 03 sessions","spawn_depth":1}
+                {"type":"system","subtype":"background_tasks_changed","tasks":[{"task_id":"a2c39a44e2266ebbe"},{"task_id":"a28b0c8283d4291b6"}]}
+                {"type":"system","subtype":"task_progress","task_id":"a2c39a44e2266ebbe","description":"Reading .boussole/FORMAT.md","usage":{"total_tokens":20581,"tool_uses":2,"duration_ms":125000}}
+                {"type":"assistant","parent_tool_use_id":"t1","message":{"id":"b1","content":[{"type":"tool_use","id":"u1","name":"Bash","input":{"command":"cd \\"/c/L&MC\\" && pdftotext -layout MdeTuring.pdf -"}}]}}
+                {"type":"system","subtype":"permission_denied","tool_use_id":"u1","tool_name":"Bash"}
+                {"type":"system","subtype":"background_tasks_changed","tasks":[{"task_id":"a2c39a44e2266ebbe"}]}
+                {"type":"rate_limit_event","rate_limit_info":{"status":"rejected","resetsAt":1793548800,"rateLimitType":"five_hour","unifiedWindows":{"five_hour":{"utilization":1.04}}}}
+                {"type":"system","subtype":"background_tasks_changed","tasks":[]}
+                {"type":"result","subtype":"success","is_error":false,"result":"You've hit your limit"}
+                """;
+        Path log = Files.writeString(dir.resolve("20261101-120000.jsonl"), events);
+
+        AgentRun.Status status = AgentRun.read(log);
+
+        assertThat(status.tasks()).extracting(AgentRun.Task::id, AgentRun.Task::state, AgentRun.Task::tools)
+                .containsExactly(org.assertj.core.groups.Tuple.tuple("a2c39a44e2266ebbe", AgentRun.TaskState.STOPPED, 2),
+                        org.assertj.core.groups.Tuple.tuple("a28b0c8283d4291b6", AgentRun.TaskState.DONE, 0));
+        assertThat(status.tasks().getFirst().action()).isEqualTo("Reading .boussole/FORMAT.md");
+        assertThat(status.refused()).containsExactly("pdftotext");
+        assertThat(status.limit()).hasValueSatisfying(limit -> assertThat(limit.reached()).isTrue());
+        assertThat(status.state()).isEqualTo(AgentRun.State.STOPPED);
+    }
+
+    @Test
     void theNotificationComesAfterTheAgentWithTheNameOfTheTrack() {
         List<String> command = AgentRun.notifying("L&MC", "/opt/boussole.jar", List.of("claude", "--print"));
 

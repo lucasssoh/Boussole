@@ -358,7 +358,8 @@ final class TracksTab implements AdminTab {
         if (syllabus.status() == SyllabusStatus.PROPOSED) {
             lines.add(new PlanLine("Waiting for your approval.", Style.WARNING));
         } else {
-            lines.add(new PlanLine(bar(written, all.size(), 30) + "  " + written + " of " + count(all.size(), "session"),
+            lines.add(new PlanLine((running.isPresent() ? movingBar(written, all.size(), 30) : bar(written, all.size(), 30))
+                    + "  " + written + " of " + count(all.size(), "session"),
                     written == all.size() ? Style.GOOD : Style.PLAIN));
         }
         lines.add(new PlanLine(count(syllabus.chapters().size(), "chapter") + " · "
@@ -376,12 +377,12 @@ final class TracksTab implements AdminTab {
                     .orElse(done == chapter.sessions().size() ? "done" : done > 0 ? "" : waitsFor(chapter, links, syllabus, track));
             lines.add(new PlanLine("", Style.PLAIN));
             lines.add(new PlanLine(Painter.column(++number + ". " + chapter.title(), titleWidth) + "  "
-                    + bar(done, chapter.sessions().size(), 10) + "  " + Painter.column(done + " of " + chapter.sessions().size(), 9)
+                    + (current.isPresent() ? movingBar(done, chapter.sessions().size(), 10) : bar(done, chapter.sessions().size(), 10)) + "  " + Painter.column(done + " of " + chapter.sessions().size(), 9)
                     + "  " + state, Style.TITLE));
             for (SyllabusSession session : chapter.sessions()) {
                 boolean writing = current.filter(session::equals).isPresent();
                 boolean isWritten = track.written(chapter, session);
-                String mark = writing ? "✎ " : isWritten ? "✓ " : "· ";
+                String mark = writing ? spinner() + " " : isWritten ? "✓ " : "· ";
                 String line = "   " + mark + Painter.column(session.id(), 5) + " " + Painter.column(session.duration() + " min", 7) + " "
                         + session.title();
                 lines.add(new PlanLine(line, writing ? Style.WARNING : isWritten ? Style.GOOD : Style.PLAIN));
@@ -398,7 +399,7 @@ final class TracksTab implements AdminTab {
     /** {@code writing 7/32}: what the agent does, and the sessions written. */
     private static String agentColumn(AgentRun.Status status, Track track) {
         String word = switch (status.state()) {
-            case RUNNING -> "writing";
+            case RUNNING -> spinner() + " writing";
             case DONE -> "done";
             case FAILED -> "failed";
             case STOPPED -> "stopped";
@@ -417,32 +418,86 @@ final class TracksTab implements AdminTab {
                 .orElse("");
     }
 
+    private static final String[] SPINNER = {"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"};
+
+    /** A frame of the spinner, by the clock: the screen draws twenty times a second. */
+    static String spinner() {
+        return SPINNER[(int) (System.currentTimeMillis() / 100 % SPINNER.length)];
+    }
+
+    /** The bar of work under way: the cell being filled blinks. */
+    static String movingBar(int done, int total, int width) {
+        String bar = bar(done, total, width);
+        int next = bar.indexOf('░');
+        if (next < 0 || System.currentTimeMillis() / 400 % 2 == 0) {
+            return bar;
+        }
+        return bar.substring(0, next) + "▒" + bar.substring(next + 1);
+    }
+
     static String bar(int done, int total, int width) {
         int full = total == 0 ? 0 : (int) Math.round(width * (double) done / total);
         return "█".repeat(full) + "░".repeat(width - full);
     }
 
     private static void agentLines(AgentRun.Status status, List<PlanLine> lines) {
+        boolean live = status.state() == AgentRun.State.RUNNING;
         Style style = switch (status.state()) {
             case RUNNING -> Style.WARNING;
             case DONE -> Style.GOOD;
             case FAILED -> Style.ERROR;
             case STOPPED -> Style.DIM;
         };
-        String time = status.state() == AgentRun.State.RUNNING
+        String time = live
                 ? (status.started().getEpochSecond() > 0 ? " since " + LocalTime.ofInstant(status.started(), ZoneId.systemDefault())
                         .withNano(0).withSecond(0) + " · " + duration((int) Duration.between(status.started(), Instant.now()).toMinutes()) : "")
                 : status.took().map(took -> " · " + duration((int) took.toMinutes())).orElse("");
         String state = switch (status.state()) {
-            case RUNNING -> "Agent running";
-            case DONE -> "Agent done";
-            case FAILED -> "Agent failed";
-            case STOPPED -> "Agent stopped";
+            case RUNNING -> spinner() + " Agent running";
+            case DONE -> "✓ Agent done";
+            case FAILED -> "✗ Agent failed";
+            case STOPPED -> "■ Agent stopped";
         };
-        lines.add(new PlanLine(state + time + status.costUsd().map(cost -> String.format(Locale.ROOT, " · $%.2f", cost)).orElse(""), style));
         AgentRun.Tokens tokens = status.tokens();
-        lines.add(new PlanLine(AgentRun.count(tokens.total()) + " tokens"
-                + (tokens.cacheRead() > 0 ? " (" + AgentRun.count(tokens.cacheRead()) + " reread from the cache)" : ""), Style.DIM));
+        lines.add(new PlanLine(state + time + status.costUsd().map(cost -> String.format(Locale.ROOT, " · $%.2f", cost)).orElse("")
+                + " · " + AgentRun.count(tokens.total()) + " tokens"
+                + (tokens.cacheRead() > 0 ? " (" + AgentRun.count(tokens.cacheRead()) + " reread from the cache)" : ""), style));
+        status.limit().ifPresent(limit -> {
+            String resets = limit.resets().map(at -> ", resets at " + LocalTime.ofInstant(at, ZoneId.systemDefault()).withSecond(0).withNano(0))
+                    .orElse("");
+            if (limit.reached()) {
+                lines.add(new PlanLine("Usage limit reached" + resets + ".", Style.ERROR));
+            } else if (live && limit.used() >= 0.5) {
+                lines.add(new PlanLine(String.format(Locale.ROOT, "%d%% of the usage limit used%s.", Math.round(limit.used() * 100), resets),
+                        limit.used() >= 0.9 ? Style.WARNING : Style.DIM));
+            }
+        });
+        if (live && !status.action().isBlank()) {
+            lines.add(new PlanLine("  " + status.action(), Style.DIM));
+        }
+        List<AgentRun.Task> tasks = status.tasks();
+        for (int index = 0; index < tasks.size(); index++) {
+            AgentRun.Task task = tasks.get(index);
+            boolean last = index == tasks.size() - 1;
+            String indent = "  ".repeat(Math.max(0, task.depth() - 1));
+            String mark = switch (task.state()) {
+                case RUNNING -> spinner();
+                case DONE -> "✓";
+                case STOPPED -> "■";
+            };
+            String id = task.id().length() > 8 ? task.id().substring(0, 8) : task.id();
+            String numbers = (task.state() == AgentRun.TaskState.RUNNING ? "" : task.state() == AgentRun.TaskState.DONE ? "done · " : "stopped · ")
+                    + duration((int) task.took().toMinutes()) + " · " + count(task.tools(), "action") + " · "
+                    + AgentRun.count(task.tokens()) + " tokens";
+            lines.add(new PlanLine(indent + (last ? "└─ " : "├─ ") + mark + " " + id + "  " + task.description() + "  " + numbers,
+                    task.state() == AgentRun.TaskState.RUNNING ? Style.WARNING : task.state() == AgentRun.TaskState.DONE ? Style.GOOD : Style.DIM));
+            if (task.state() == AgentRun.TaskState.RUNNING && !task.action().isBlank()) {
+                lines.add(new PlanLine(indent + (last ? "   " : "│  ") + "  " + task.action(), Style.DIM));
+            }
+        }
+        if (!status.refused().isEmpty()) {
+            lines.add(new PlanLine("Refused: " + String.join(", ", status.refused()), Style.WARNING));
+        }
         switch (status.state()) {
             case DONE -> {
                 if (!status.result().isBlank()) {

@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -73,11 +74,17 @@ final class AgentRun {
 
     /** A run as its file tells it. */
     record Status(Path log, State state, Tokens tokens, Optional<Double> costUsd, Instant started, Optional<Duration> took,
-                  List<String> recent, String result, Map<String, Chapter> chapters) {
+                  List<String> recent, String result, Map<String, Chapter> chapters, List<Task> tasks, List<String> refused,
+                  Optional<Limit> limit) {
 
         Status(Path log, State state, Tokens tokens, Optional<Double> costUsd, Instant started, Optional<Duration> took,
                List<String> recent, String result) {
-            this(log, state, tokens, costUsd, started, took, recent, result, Map.of());
+            this(log, state, tokens, costUsd, started, took, recent, result, Map.of(), List.of(), List.of(), Optional.empty());
+        }
+
+        /** The last action of the agent that coordinates. */
+        String action() {
+            return recent.isEmpty() ? "" : recent.getLast();
         }
 
         /** What happens in the chapter of this folder, if an agent works in it. */
@@ -85,6 +92,23 @@ final class AgentRun {
             return Optional.ofNullable(chapters.get(dir));
         }
 
+    }
+
+    /**
+     * An agent the coordinating agent started: its {@code id}, what it was asked, how deep it sits
+     * (1 under the coordinating agent), where it stands, and the chapter folder it writes in, once
+     * it wrote there.
+     */
+    record Task(String id, String description, int depth, TaskState state, String action, long tokens, int tools,
+                Duration took, Optional<String> folder) {
+    }
+
+    /** The usage limit of the account, as Claude Code last saw it: the share used, reached or not, when it resets. */
+    record Limit(String window, double used, boolean reached, Optional<Instant> resets) {
+    }
+
+    enum TaskState {
+        RUNNING, DONE, STOPPED
     }
 
     /** The work in a chapter folder: the session file touched last and the last action there. */
@@ -214,6 +238,12 @@ final class AgentRun {
         Set<String> counted = new HashSet<>();
         Map<String, String> folderOf = new HashMap<>();
         Map<String, Chapter> chapters = new LinkedHashMap<>();
+        Map<String, TaskLog> tasks = new LinkedHashMap<>();
+        Map<String, String> taskOfToolUse = new HashMap<>();
+        Set<String> active = null;
+        Map<String, String> commands = new HashMap<>();
+        Set<String> refused = new LinkedHashSet<>();
+        Limit limit = null;
         List<String> recent = new ArrayList<>();
         Optional<Double> cost = Optional.empty();
         Optional<Duration> took = Optional.empty();
@@ -237,6 +267,9 @@ final class AgentRun {
                     }
                     String agent = event.path("parent_tool_use_id").asString("main");
                     for (JsonNode part : message.path("content")) {
+                        if (part.path("type").asString("").equals("tool_use")) {
+                            commands.put(part.path("id").asString(""), program(part));
+                        }
                         chapterFile(part).ifPresent(file -> {
                             folderOf.put(agent, file[0]);
                             chapters.put(file[0], new Chapter(file[1], chapters.containsKey(file[0]) ? chapters.get(file[0]).action() : ""));
@@ -252,10 +285,59 @@ final class AgentRun {
                             }
                         });
                     }
+                } else if (type.equals("system")) {
+                    String id = event.path("task_id").asString("");
+                    switch (event.path("subtype").asString("")) {
+                        case "task_started" -> {
+                            TaskLog task = new TaskLog(id, event.path("description").asString(""), event.path("spawn_depth").asInt(1));
+                            tasks.put(id, task);
+                            taskOfToolUse.put(event.path("tool_use_id").asString(""), id);
+                        }
+                        case "task_progress" -> {
+                            TaskLog task = tasks.get(id);
+                            if (task != null) {
+                                task.action = event.path("description").asString(task.action);
+                                task.tokens = event.path("usage").path("total_tokens").asLong(task.tokens);
+                                task.tools = event.path("usage").path("tool_uses").asInt(task.tools);
+                                task.millis = event.path("usage").path("duration_ms").asLong(task.millis);
+                            }
+                        }
+                        case "background_tasks_changed" -> {
+                            active = new HashSet<>();
+                            for (JsonNode task : event.path("tasks")) {
+                                active.add(task.path("task_id").asString(""));
+                            }
+                            for (TaskLog task : tasks.values()) {
+                                if (!task.ended && !active.contains(task.id)) {
+                                    task.ended = true;
+                                    task.cut = limit != null && limit.reached();
+                                }
+                            }
+                        }
+                        case "permission_denied" -> refused.add(commands.getOrDefault(event.path("tool_use_id").asString(""),
+                                event.path("tool_name").asString("")));
+                        default -> {
+                            // task_notification and the like: a task that says it ended
+                            if (!id.isEmpty() && tasks.containsKey(id) && !event.path("status").asString("").isEmpty()) {
+                                tasks.get(id).ended = true;
+                            }
+                        }
+                    }
+                } else if (type.equals("rate_limit_event")) {
+                    JsonNode info = event.path("rate_limit_info");
+                    String window = info.path("rateLimitType").asString("");
+                    JsonNode windowInfo = info.path("unifiedWindows").path(window);
+                    long resets = info.path("resetsAt").asLong(0);
+                    limit = new Limit(window, windowInfo.path("utilization").asDouble(info.path("utilization").asDouble(0)),
+                            info.path("status").asString("").equals("rejected"),
+                            resets > 0 ? Optional.of(Instant.ofEpochSecond(resets)) : Optional.empty());
                 } else if (type.equals("result")) {
                     ended = event.path("is_error").asBoolean(false) || !event.path("subtype").asString("success").equals("success")
                             ? State.FAILED : State.DONE;
-                    result = event.path("result").asString("");
+                    String said = event.path("result").asString("");
+                    if (!said.isBlank()) {
+                        result = said;
+                    }
                     if (event.has("total_cost_usd")) {
                         cost = Optional.of(event.path("total_cost_usd").asDouble());
                     }
@@ -273,15 +355,63 @@ final class AgentRun {
         if (!alive) {
             took = elapsed(log);
         }
-        // Claude Code says so when it stopped the agents of the chapters before they were done
-        if (state == State.DONE && errors(log).contains("Background tasks still running")) {
+        // Claude Code says so when it stopped the agents of the chapters before they were done, and
+        // ends with success when the usage limit stopped it
+        if (state == State.DONE && (errors(log).contains("Background tasks still running") || limit != null && limit.reached())) {
             state = State.STOPPED;
         }
-        if (state == State.STOPPED && tokens.total() == 0) {
+        if (state == State.STOPPED && tokens.total() == 0 && limit == null) {
             state = State.FAILED;
             result = firstLine(sibling(log, ".err"));
         }
-        return new Status(log, state, tokens, cost, started(log), took, List.copyOf(recent), result, Map.copyOf(chapters));
+        boolean live = state == State.RUNNING;
+        List<Task> started = tasks.values().stream()
+                .map(task -> {
+                    String toolUse = taskOfToolUse.entrySet().stream().filter(entry -> entry.getValue().equals(task.id))
+                            .map(Map.Entry::getKey).findFirst().orElse("");
+                    return new Task(task.id, task.description, task.depth,
+                            task.ended ? task.cut ? TaskState.STOPPED : TaskState.DONE : live ? TaskState.RUNNING : TaskState.STOPPED,
+                            task.action, task.tokens, task.tools, Duration.ofMillis(task.millis), Optional.ofNullable(folderOf.get(toolUse)));
+                })
+                .toList();
+        return new Status(log, state, tokens, cost, started(log), took, List.copyOf(recent), result, Map.copyOf(chapters), started,
+                List.copyOf(refused), Optional.ofNullable(limit));
+    }
+
+    /** What a task said of itself, as its events come. */
+    private static final class TaskLog {
+        final String id;
+        final String description;
+        final int depth;
+        String action = "";
+        long tokens;
+        int tools;
+        long millis;
+        boolean ended;
+        /** Ended once the usage limit was reached: stopped, not done. */
+        boolean cut;
+
+        TaskLog(String id, String description, int depth) {
+            this.id = id;
+            this.description = description;
+            this.depth = depth;
+        }
+    }
+
+    /** The program a command runs, past the {@code cd … &&} that leads to it: {@code pdftotext}. */
+    static String program(JsonNode part) {
+        String name = part.path("name").asString("");
+        String command = part.path("input").path("command").asString("");
+        if (!name.equals("Bash") || command.isBlank()) {
+            return name;
+        }
+        for (String piece : command.split("&&|;|\\|\\|")) {
+            String word = piece.strip().split("\\s+")[0];
+            if (!word.isEmpty() && !word.equals("cd")) {
+                return word;
+            }
+        }
+        return name;
     }
 
     /** The chapter folder and the session file a write or an edit touches: {@code cursus/<folder>/<file>.md}. */
