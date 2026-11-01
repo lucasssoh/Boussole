@@ -30,8 +30,9 @@ import tools.jackson.databind.ObjectMapper;
  * An agent that writes the sessions of an approved plan: Claude Code run with {@code --print} in
  * the folder of the track, its events kept in {@code .boussole/runs/<time>.jsonl}, so that the
  * Tracks screen shows where it stands and the tokens it spent, even after {@code boussole} closed
- * and opened again. The agent may change the files of the track and run {@code boussole validate}
- * and {@code boussole index}, nothing else.
+ * and opened again. The agent may change the files of the track, run {@code boussole validate} and
+ * {@code boussole index}, read the documents ({@code pdftotext}, {@code pdfinfo}, {@code ls}) and
+ * run {@code python3} to check an answer, nothing else.
  */
 final class AgentRun {
 
@@ -127,7 +128,9 @@ final class AgentRun {
         List<String> command = new ArrayList<>(List.of(agent, "--print", PROMPT, "--output-format", "stream-json", "--verbose",
                 "--permission-mode", "acceptEdits", "--allowedTools",
                 "Read", "Write", "Edit", "Glob", "Grep", "Agent", "Task", "TodoWrite",
-                "Bash(boussole validate:*)", "Bash(boussole index:*)"));
+                "Bash(boussole validate:*)", "Bash(boussole index:*)",
+                // to read the documents, and to check an answer by computing it
+                "Bash(pdftotext:*)", "Bash(pdfinfo:*)", "Bash(ls:*)", "Bash(python3:*)"));
         if (jar != null && !jar.isBlank()) {
             command.add("Bash(java -jar " + jar + " validate:*)");
             command.add("Bash(java -jar " + jar + " index:*)");

@@ -55,11 +55,11 @@ class AgentRunTest {
     }
 
     @Test
-    void theAgentMayOnlyChangeFilesAndRunTheValidatorAndTheIndex() {
+    void theAgentMayChangeFilesRunTheValidatorReadTheDocumentsAndComputeAnswers() {
         List<String> command = AgentRun.command("claude", "/opt/boussole.jar");
 
         assertThat(command).startsWith("claude", "--print").contains("acceptEdits", "Bash(boussole validate:*)",
-                "Bash(java -jar /opt/boussole.jar index:*)").doesNotContain("Bash", "WebFetch");
+                "Bash(java -jar /opt/boussole.jar index:*)", "Bash(pdftotext:*)", "Bash(python3:*)").doesNotContain("Bash", "WebFetch");
     }
 
     @Test
