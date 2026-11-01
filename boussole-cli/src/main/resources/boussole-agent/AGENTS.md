@@ -34,7 +34,8 @@ Where to start:
   **cursus-plan**.
 - `cursus/syllabus.yaml` has no chapter → **cursus-plan**.
 - `status: proposed` → the learner has not approved the plan yet: show it and ask for approval
-  (**cursus-plan**, §4).
+  (**cursus-plan**, §4). They may approve it in `boussole` too, on the Tracks screen: read
+  `status` again before you start.
 - `status: approved` → write the first session of the syllabus that has no file yet, one at a
   time, in order: **seance-write** for a lesson, **exam-build** for a review or an exam.
 

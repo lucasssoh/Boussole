@@ -90,7 +90,9 @@ L'agent avance en trois temps :
 3. **Les séances.** Une à une, chacune vérifiée par le :term[validateur]{id=validateur}.
 
 :::note
-Tant que tu ne l'as pas validé, le plan reste **proposé** : aucune séance ne s'écrit.
+Tant que tu ne l'as pas validé, le plan reste **proposé** : aucune séance ne s'écrit. Pour le
+relire et le valider plus tard, tape `boussole`, puis sur l'écran Tracks `p` montre le plan et `a`
+le valide : le prochain agent que tu lances en écrit les séances.
 :::
 
 Tu peux commencer la première séance pendant que l'agent écrit la suivante : elle apparaît dès

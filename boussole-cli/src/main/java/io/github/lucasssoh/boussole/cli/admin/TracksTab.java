@@ -9,6 +9,10 @@ import io.github.lucasssoh.boussole.cli.serve.ServerControl;
 import io.github.lucasssoh.boussole.format.InspectionReport;
 import io.github.lucasssoh.boussole.format.diagnostic.Diagnostic;
 import io.github.lucasssoh.boussole.format.model.Course;
+import io.github.lucasssoh.boussole.format.model.CourseSyllabus;
+import io.github.lucasssoh.boussole.format.model.SyllabusChapter;
+import io.github.lucasssoh.boussole.format.model.SyllabusSession;
+import io.github.lucasssoh.boussole.format.model.SyllabusStatus;
 import io.github.lucasssoh.boussole.format.source.FolderSourceDocuments;
 import io.github.lucasssoh.boussole.format.source.SourceInventory;
 import io.github.lucasssoh.boussole.format.source.SourceInventory.SourceState;
@@ -22,13 +26,16 @@ import java.util.Optional;
 
 /**
  * F3: the tracks of {@code config.yaml}, each validated as {@code boussole validate} does, with its
- * documents to take into account; add a folder to the list or take one out.
+ * documents to take into account; its plan, to approve when an agent proposed it; add a folder to
+ * the list or take one out.
  */
 final class TracksTab implements AdminTab {
 
     private static final String HOME = System.getProperty("user.home");
     /** Problems a page turns: two lines each. */
     private static final int PAGE = 5;
+    /** The width the plan is counted at to scroll it: the narrowest screen. */
+    private static final int PLAN_WIDTH = 76;
 
     private final AdminApp app;
     private final BoussoleConfigFile config;
@@ -37,6 +44,7 @@ final class TracksTab implements AdminTab {
     private volatile boolean reading;
     private int selected;
     private int scroll;
+    private boolean plan;
 
     TracksTab(AdminApp app, BoussoleConfigFile config, ServerControl control) {
         this.app = app;
@@ -62,6 +70,22 @@ final class TracksTab implements AdminTab {
         String sessions() {
             return course.map(read -> read.sessions().size() + "/"
                     + read.syllabus().chapters().stream().mapToLong(chapter -> chapter.sessions().size()).sum()).orElse("—");
+        }
+
+        String planLine() {
+            return course.map(read -> read.syllabus().chapters().isEmpty() ? "none"
+                    : read.syllabus().status().name().toLowerCase(Locale.ROOT)).orElse("—");
+        }
+
+        boolean proposed() {
+            return course.map(read -> read.syllabus().status() == SyllabusStatus.PROPOSED && !read.syllabus().chapters().isEmpty())
+                    .orElse(false);
+        }
+
+        boolean written(SyllabusChapter chapter, SyllabusSession session) {
+            return course.map(read -> read.sessions().stream()
+                    .anyMatch(found -> found.chapter().id().equals(chapter.id()) && found.entry().id().equals(session.id())))
+                    .orElse(false);
         }
 
         String documentsLine() {
@@ -138,10 +162,10 @@ final class TracksTab implements AdminTab {
         int listHeight = Math.min(Math.max(1, read.size()) + 3, height / 2);
         painter.pane(0, top, columns, listHeight, "Tracks", false);
         int name = Math.max(10, Math.min(30, read.stream().mapToInt(track -> track.name().length()).max().orElse(0)));
-        int numbers = 9 + 2 + 6 + 2 + 8 + 2 + 12;
+        int numbers = 9 + 2 + 8 + 2 + 6 + 2 + 8 + 2 + 12;
         int folder = Math.max(10, width - 2 - name - 2 - 2 - numbers);
         painter.text(2, top + 1, "  " + Painter.column("Name", name) + "  " + Painter.column("Folder", folder) + "  "
-                + Painter.column("Sessions", 9) + "  " + Painter.column("Errors", 6) + "  " + Painter.column("Warnings", 8)
+                + Painter.column("Sessions", 9) + "  " + Painter.column("Plan", 8) + "  " + Painter.column("Errors", 6) + "  " + Painter.column("Warnings", 8)
                 + "  Documents", width, Style.DIM);
         if (read.isEmpty()) {
             painter.text(4, top + 2, "none", width - 2, Style.DIM);
@@ -153,10 +177,11 @@ final class TracksTab implements AdminTab {
             Track track = read.get(index);
             boolean chosen = index == selected;
             String line = (chosen ? "▸ " : "  ") + Painter.column(track.name(), name) + "  " + Painter.column(Painter.folder(track.folder()), folder)
-                    + "  " + Painter.column(track.sessions(), 9) + "  " + Painter.column(String.valueOf(track.errors()), 6) + "  "
+                    + "  " + Painter.column(track.sessions(), 9) + "  " + Painter.column(track.planLine(), 8) + "  "
+                    + Painter.column(String.valueOf(track.errors()), 6) + "  "
                     + Painter.column(String.valueOf(track.warnings()), 8) + "  " + Painter.column(track.documentsLine(), 12);
             Style style = chosen ? Style.SELECTED : !track.problem().isEmpty() || track.errors() > 0 ? Style.ERROR
-                    : track.warnings() > 0 || !track.documents().isEmpty() ? Style.WARNING : Style.PLAIN;
+                    : track.warnings() > 0 || !track.documents().isEmpty() || track.proposed() ? Style.WARNING : Style.PLAIN;
             painter.text(2, row++, line, width, style);
         }
         if (current.isEmpty()) {
@@ -165,6 +190,10 @@ final class TracksTab implements AdminTab {
         Track track = current.get();
         int detailTop = top + listHeight;
         int detailHeight = height - listHeight;
+        if (plan) {
+            drawPlan(painter, track, scroll, detailTop, columns, detailHeight);
+            return;
+        }
         int half = columns * 3 / 5;
         drawProblems(painter, track, scroll, 0, detailTop, half, detailHeight);
         drawDocuments(painter, track, half, detailTop, columns - half, detailHeight);
@@ -196,6 +225,92 @@ final class TracksTab implements AdminTab {
         }
     }
 
+    /** One line of the plan as drawn. */
+    private record PlanLine(String text, Style style) {
+    }
+
+    /** Under the title of its session, where a goal starts. */
+    private static final String GOAL = " ".repeat(19);
+
+    static List<String> planText(Track track, int width) {
+        return planLines(track, width).stream().map(PlanLine::text).toList();
+    }
+
+    private static List<PlanLine> planLines(Track track, int width) {
+        List<PlanLine> lines = new ArrayList<>();
+        if (track.course().isEmpty()) {
+            return lines;
+        }
+        CourseSyllabus syllabus = track.course().get().syllabus();
+        if (syllabus.chapters().isEmpty()) {
+            lines.add(new PlanLine("No plan yet: an agent proposes one with the cursus-plan playbook.", Style.DIM));
+            return lines;
+        }
+        List<SyllabusSession> all = syllabus.chapters().stream().flatMap(chapter -> chapter.sessions().stream()).toList();
+        int minutes = all.stream().mapToInt(SyllabusSession::duration).sum();
+        lines.add(syllabus.status() == SyllabusStatus.PROPOSED
+                ? new PlanLine("Proposed by an agent: read it, then a approves it and the agents write its sessions.", Style.WARNING)
+                : new PlanLine("Approved: the agents write its sessions in this order.", Style.GOOD));
+        lines.add(new PlanLine(count(syllabus.chapters().size(), "chapter") + " · " + count(all.size(), "session") + " · " + duration(minutes),
+                Style.DIM));
+        int number = 0;
+        for (SyllabusChapter chapter : syllabus.chapters()) {
+            lines.add(new PlanLine("", Style.PLAIN));
+            lines.add(new PlanLine(++number + ". " + chapter.title(), Style.TITLE));
+            for (SyllabusSession session : chapter.sessions()) {
+                boolean written = track.written(chapter, session);
+                lines.add(new PlanLine("   " + (written ? "✓ " : "  ") + Painter.column(session.id(), 5) + " "
+                        + Painter.column(session.duration() + " min", 7) + " " + session.title(), written ? Style.GOOD : Style.PLAIN));
+                if (session.goal() != null && !session.goal().isBlank()) {
+                    wrap(session.goal(), width - GOAL.length()).forEach(line -> lines.add(new PlanLine(GOAL + line, Style.DIM)));
+                }
+            }
+        }
+        return lines;
+    }
+
+    static List<String> wrap(String text, int width) {
+        List<String> lines = new ArrayList<>();
+        StringBuilder line = new StringBuilder();
+        for (String word : text.trim().split("\\s+")) {
+            if (!line.isEmpty() && line.length() + 1 + word.length() > Math.max(20, width)) {
+                lines.add(line.toString());
+                line.setLength(0);
+            }
+            line.append(line.isEmpty() ? "" : " ").append(word);
+        }
+        if (!line.isEmpty()) {
+            lines.add(line.toString());
+        }
+        return lines;
+    }
+
+    private static String count(int number, String word) {
+        return number + " " + word + (number == 1 ? "" : "s");
+    }
+
+    private static String duration(int minutes) {
+        return minutes < 60 ? minutes + " min" : minutes / 60 + " h" + (minutes % 60 == 0 ? "" : String.format(Locale.ROOT, " %02d", minutes % 60));
+    }
+
+    private static void drawPlan(Painter painter, Track track, int scroll, int top, int width, int height) {
+        painter.pane(0, top, width, height, track.name() + " · Plan", false);
+        int inner = width - 4;
+        List<PlanLine> lines = planLines(track, inner);
+        int room = height - 2;
+        int first = Math.max(0, Math.min(scroll, lines.size() - room));
+        if (first > 0) {
+            painter.text(width - 4, top, " ↑ ", 3, Style.DIM);
+        }
+        int row = top + 1;
+        for (int index = first; index < lines.size() && row < top + 1 + room; index++) {
+            painter.text(2, row++, lines.get(index).text(), inner, lines.get(index).style());
+        }
+        if (first + room < lines.size()) {
+            painter.text(width - 4, top + height - 1, " ↓ ", 3, Style.DIM);
+        }
+    }
+
     private static void drawDocuments(Painter painter, Track track, int column, int top, int width, int height) {
         painter.pane(column, top, width, height, "Documents", false);
         int inner = width - 4;
@@ -224,8 +339,9 @@ final class TracksTab implements AdminTab {
                 selected = read == null ? 0 : Math.min(Math.max(0, read.size() - 1), selected + 1);
                 scroll = 0;
             }
-            case PageDown -> scroll = Math.min(scroll + PAGE, Math.max(0, chosen().map(track -> track.diagnostics().size() - 1).orElse(0)));
-            case PageUp -> scroll = Math.max(0, scroll - PAGE);
+            case PageDown -> scroll = Math.min(scroll + (plan ? PAGE * 2 : PAGE), Math.max(0,
+                    chosen().map(track -> (plan ? planLines(track, PLAN_WIDTH).size() : track.diagnostics().size()) - 1).orElse(0)));
+            case PageUp -> scroll = Math.max(0, scroll - (plan ? PAGE * 2 : PAGE));
             case Character -> {
                 return character(key.getCharacter());
             }
@@ -244,6 +360,11 @@ final class TracksTab implements AdminTab {
                     check("Validated.");
                 }
             }
+            case 'p' -> {
+                plan = !plan;
+                scroll = 0;
+            }
+            case 'a' -> track.ifPresent(this::approve);
             case 'o' -> track.flatMap(Track::course).ifPresent(course -> app.job("Opening…", () -> {
                 control.start(() -> { });
                 String path = "subjects/" + course.subject().id();
@@ -268,6 +389,18 @@ final class TracksTab implements AdminTab {
         return true;
     }
 
+    private void approve(Track track) {
+        if (!track.proposed()) {
+            app.say(track.course().isEmpty() ? "No plan to approve." : "The plan of " + track.name() + " is " + track.planLine() + ".");
+            return;
+        }
+        plan = true;
+        app.confirm("Approve the plan of " + track.name() + "? The agents then write its sessions.", () -> {
+            PlanApproval.approve(track.folder());
+            check("Plan of " + track.name() + " approved.");
+        });
+    }
+
     private void add(String typed) {
         if (typed.isEmpty() || typed.equals("~/")) {
             return;
@@ -285,6 +418,13 @@ final class TracksTab implements AdminTab {
 
     @Override
     public List<Hint> hints() {
-        return List.of(new Hint("v", "Validate"), new Hint("PgDn", "Problems"), new Hint("o", "Open"), new Hint("f", "Folder"), new Hint("+", "Add"), new Hint("-", "Remove"));
+        boolean proposed = chosen().map(Track::proposed).orElse(false);
+        List<Hint> hints = new ArrayList<>(List.of(new Hint("v", "Validate"), new Hint("p", plan ? "Problems" : "Plan"),
+                new Hint("PgDn", plan ? "Scroll" : "Problems")));
+        if (proposed) {
+            hints.add(new Hint("a", "Approve"));
+        }
+        hints.addAll(List.of(new Hint("o", "Open"), new Hint("f", "Folder"), new Hint("+", "Add"), new Hint("-", "Remove")));
+        return hints;
     }
 }

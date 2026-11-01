@@ -108,7 +108,12 @@ out and why.
 Then ask for approval. With an interactive question tool (Claude Code: `AskUserQuestion`), ask
 "Do you approve this plan?" with the options *Approve*, *Change something*, *Not now*; without
 one, ask the same in a message. On *Approve*, set `status: approved` and say so. On *Change
-something*, apply their changes, show the plan again and ask again. On *Not now*, stop: they can
-also edit `cursus/syllabus.yaml` themselves and set `status: approved`.
+something*, apply their changes, show the plan again and ask again. On *Not now*, stop.
+
+When you cannot ask (an agent running in the background, or the learner gone), leave
+`status: proposed` and end your report with the plan: the learner reads it and approves it in
+`boussole`, on the Tracks screen (`p` shows the plan, `a` approves it), or by setting
+`status: approved` in `cursus/syllabus.yaml` themselves. The next agent sees `approved` and
+writes the sessions.
 
 Do not write any session before the plan is approved.

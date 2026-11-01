@@ -89,7 +89,9 @@ The agent goes in three steps:
 3. **The sessions.** One at a time, each one checked by the :term[validator]{id=validator}.
 
 :::note
-Until you approve it, the plan stays **proposed**: no session is written.
+Until you approve it, the plan stays **proposed**: no session is written. To read it and approve
+it later, type `boussole`, then on the Tracks screen `p` shows the plan and `a` approves it: the
+next agent you start writes its sessions.
 :::
 
 You can start the first session while the agent writes the next: it shows up as soon as it is

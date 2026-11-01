@@ -30,7 +30,11 @@ class AdminAppTest {
     private BoussoleConfigFile config;
 
     private AdminApp app(int columns, int rows) throws IOException {
-        Files.writeString(home.resolve("config.yaml"), "port: " + freePort() + "\nsubjects:\n  - " + RESEAUX + "\n");
+        return app(columns, rows, RESEAUX);
+    }
+
+    private AdminApp app(int columns, int rows, Path track) throws IOException {
+        Files.writeString(home.resolve("config.yaml"), "port: " + freePort() + "\nsubjects:\n  - " + track + "\n");
         config = new BoussoleConfigFile(home.resolve("config.yaml"), home);
         screen = new TerminalScreen(new DefaultVirtualTerminal(new TerminalSize(columns, rows)));
         screen.startScreen();
@@ -115,6 +119,47 @@ class AdminAppTest {
 
         assertThat(shown(app)).contains("no subject.yaml");
         assertThat(config.read().subjects()).containsExactly(RESEAUX);
+    }
+
+    @Test
+    void the_plan_an_agent_proposed_is_shown_then_approved_with_its_comments_kept() throws Exception {
+        Path track = home.resolve("lmc");
+        Files.createDirectories(track.resolve("cursus"));
+        Files.writeString(track.resolve("subject.yaml"), "format: 1\nid: lmc\nname: Calcul\nlang: fr\nsources: .\n");
+        Files.writeString(track.resolve("cursus/syllabus.yaml"), """
+                # Plan proposé par l'agent.
+                status: proposed   # à valider
+                chapters:
+                  - id: turing
+                    title: Machines de Turing
+                    dir: 01-turing
+                    sessions:
+                      - id: s11
+                        title: Le 7-uplet
+                        duration: 60
+                        goal: Écrire le 7-uplet d'une machine.
+                        file: 11-septuplet.md
+                """);
+        AdminApp app = app(120, 30, track);
+        app.key(typed('3'));
+        String shown = shown(app);
+        for (int wait = 0; wait < 100 && !shown.contains("proposed"); wait++) {
+            Thread.sleep(100);
+            shown = shown(app);
+        }
+
+        app.key(typed('p'));
+        assertThat(shown(app)).contains("Calcul · Plan", "1 chapter · 1 session · 1 h", "1. Machines de Turing", "s11", "Le 7-uplet",
+                "a Approve");
+        app.key(typed('a'));
+        app.key(typed('y'));
+        String syllabus = Files.readString(track.resolve("cursus/syllabus.yaml"));
+        for (int wait = 0; wait < 100 && !shown(app).contains("approved."); wait++) {
+            Thread.sleep(100);
+        }
+
+        assertThat(syllabus).startsWith("# Plan proposé par l'agent.\nstatus: approved # à valider\nchapters:");
+        assertThat(shown(app)).contains("Approved: the agents write its sessions").doesNotContain("a Approve");
     }
 
     @Test
