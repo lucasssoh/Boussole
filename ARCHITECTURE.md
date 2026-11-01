@@ -391,7 +391,10 @@ run `boussole validate` and `boussole index`, nothing else (`--permission-mode a
 (`CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`; Claude Code stops them after 10 minutes otherwise). Its events go to `.boussole/runs/<time>.jsonl`, with its process number in a
 `.pid` beside them, so that the screen shows where it stands and the tokens it spent (the totals
 of every model it used, the agents it started included, and the cost at list price) even after
-`boussole` closed and opened again.
+`boussole` closed and opened again: the session each agent of a chapter writes comes from the
+files it writes in `cursus/<chapter>/`. The agent runs inside a short `sh` script that, once it
+ends, asks the validator how many sessions are written and says it with `notify-send`, when the
+desktop has it.
 The skills shipped in `skills/`:
 
 | Skill | Role |

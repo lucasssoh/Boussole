@@ -159,7 +159,7 @@ class AdminAppTest {
         }
 
         assertThat(syllabus).startsWith("# Plan proposé par l'agent.\nstatus: approved # à valider\nchapters:");
-        assertThat(shown(app)).contains("1 session left to write.").doesNotContain("a Approve");
+        assertThat(shown(app)).contains("0 of 1 session").doesNotContain("a Approve");
     }
 
     private static Path approvedTrack(Path folder) throws IOException {
@@ -210,12 +210,12 @@ class AdminAppTest {
 
             app.key(typed('r'));
             app.key(typed('y'));
-            for (int wait = 0; wait < 100 && !shown.contains("done 10k"); wait++) {
+            for (int wait = 0; wait < 100 && !shown.contains("done 0/1"); wait++) {
                 Thread.sleep(100);
                 shown = shown(app);
             }
 
-            assertThat(shown).contains("done 10k", "$1.50 · 10k tokens (3k reread from the cache)",
+            assertThat(shown).contains("done 0/1", "Agent done", " · $1.50", "10k tokens (3k reread from the cache)",
                     "Sessions written.");
             assertThat(Files.list(track.resolve(".boussole/runs")).map(file -> file.getFileName().toString()))
                     .anyMatch(name -> name.endsWith(".jsonl")).anyMatch(name -> name.endsWith(".pid"));
@@ -241,16 +241,16 @@ class AdminAppTest {
             shown = shown(app);
         }
         app.key(typed('p'));
-        assertThat(shown(app)).contains("30 sessions left to write.", "hjkl Scroll");
+        assertThat(shown(app)).contains("0 of 30 sessions", "hjkl Scroll");
 
         app.key(typed('j'));
-        assertThat(shown(app)).doesNotContain("30 sessions left to write.").contains("1 chapter · 30 sessions");
+        assertThat(shown(app)).doesNotContain("0 of 30 sessions").contains("1 chapter · 30 h");
         app.key(typed('k'));
-        assertThat(shown(app)).contains("30 sessions left to write.");
+        assertThat(shown(app)).contains("0 of 30 sessions");
         app.key(typed('l'));
-        assertThat(shown(app)).doesNotContain("1 chapter · 30 sessions").contains("Séance 16");
+        assertThat(shown(app)).doesNotContain("1 chapter · 30 h").contains("Séance 16");
         app.key(typed('h'));
-        assertThat(shown(app)).contains("30 sessions left to write.");
+        assertThat(shown(app)).contains("0 of 30 sessions");
 
         for (int press = 0; press < 20; press++) {
             app.key(typed('l'));

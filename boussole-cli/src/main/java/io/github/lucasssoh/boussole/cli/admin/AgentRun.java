@@ -12,7 +12,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -71,16 +73,22 @@ final class AgentRun {
 
     /** A run as its file tells it. */
     record Status(Path log, State state, Tokens tokens, Optional<Double> costUsd, Instant started, Optional<Duration> took,
-                  List<String> recent, String result) {
+                  List<String> recent, String result, Map<String, Chapter> chapters) {
 
-        String line() {
-            return switch (state) {
-                case RUNNING -> "running " + count(tokens.total());
-                case DONE -> "done " + count(tokens.total());
-                case FAILED -> "failed";
-                case STOPPED -> "stopped " + count(tokens.total());
-            };
+        Status(Path log, State state, Tokens tokens, Optional<Double> costUsd, Instant started, Optional<Duration> took,
+               List<String> recent, String result) {
+            this(log, state, tokens, costUsd, started, took, recent, result, Map.of());
         }
+
+        /** What happens in the chapter of this folder, if an agent works in it. */
+        Optional<Chapter> chapter(String dir) {
+            return Optional.ofNullable(chapters.get(dir));
+        }
+
+    }
+
+    /** The work in a chapter folder: the session file touched last and the last action there. */
+    record Chapter(String file, String action) {
     }
 
     private AgentRun() {
@@ -100,6 +108,31 @@ final class AgentRun {
             command.add("Bash(java -jar " + jar + " validate:*)");
             command.add("Bash(java -jar " + jar + " index:*)");
         }
+        return List.copyOf(command);
+    }
+
+    /**
+     * Once the agent ends, a notification of the desktop ({@code notify-send}, when there is one)
+     * says how many sessions are written, so that {@code boussole} need not stay open. {@code $1}
+     * is the name of the track, {@code $2} the jar of Boussole or empty; the agent follows.
+     */
+    private static final String NOTIFY = """
+            name=$1; jar=$2; shift 2
+            "$@"; code=$?
+            if command -v notify-send >/dev/null 2>&1; then
+              if [ -n "$jar" ]; then report=$(java -jar "$jar" validate . 2>/dev/null | tail -n 1)
+              else report=$(boussole validate . 2>/dev/null | tail -n 1); fi
+              written=${report##*; }
+              if [ "$code" -eq 0 ]; then notify-send -a Boussole "$name" "$written"
+              else notify-send -a Boussole "$name" "Agent stopped. $written"; fi
+            fi
+            exit $code
+            """;
+
+    /** The agent, then the notification of its end. */
+    static List<String> notifying(String name, String jar, List<String> agent) {
+        List<String> command = new ArrayList<>(List.of("sh", "-c", NOTIFY, "boussole-agent", name, jar == null ? "" : jar));
+        command.addAll(agent);
         return List.copyOf(command);
     }
 
@@ -179,6 +212,8 @@ final class AgentRun {
     static Status read(Path log) {
         Tokens tokens = Tokens.NONE;
         Set<String> counted = new HashSet<>();
+        Map<String, String> folderOf = new HashMap<>();
+        Map<String, Chapter> chapters = new LinkedHashMap<>();
         List<String> recent = new ArrayList<>();
         Optional<Double> cost = Optional.empty();
         Optional<Duration> took = Optional.empty();
@@ -200,7 +235,16 @@ final class AgentRun {
                     if (!id.isEmpty() && counted.add(id)) {
                         tokens = tokens.plus(tokens(message.path("usage")));
                     }
+                    String agent = event.path("parent_tool_use_id").asString("main");
                     for (JsonNode part : message.path("content")) {
+                        chapterFile(part).ifPresent(file -> {
+                            folderOf.put(agent, file[0]);
+                            chapters.put(file[0], new Chapter(file[1], chapters.containsKey(file[0]) ? chapters.get(file[0]).action() : ""));
+                        });
+                        String folder = folderOf.get(agent);
+                        if (folder != null && !agent.equals("main")) {
+                            action(part).ifPresent(action -> chapters.put(folder, new Chapter(chapters.get(folder).file(), action)));
+                        }
                         action(part).ifPresent(action -> {
                             recent.add(action);
                             if (recent.size() > 6) {
@@ -229,11 +273,29 @@ final class AgentRun {
         if (!alive) {
             took = elapsed(log);
         }
+        // Claude Code says so when it stopped the agents of the chapters before they were done
+        if (state == State.DONE && errors(log).contains("Background tasks still running")) {
+            state = State.STOPPED;
+        }
         if (state == State.STOPPED && tokens.total() == 0) {
             state = State.FAILED;
             result = firstLine(sibling(log, ".err"));
         }
-        return new Status(log, state, tokens, cost, started(log), took, List.copyOf(recent), result);
+        return new Status(log, state, tokens, cost, started(log), took, List.copyOf(recent), result, Map.copyOf(chapters));
+    }
+
+    /** The chapter folder and the session file a write or an edit touches: {@code cursus/<folder>/<file>.md}. */
+    private static Optional<String[]> chapterFile(JsonNode part) {
+        if (!part.path("type").asString("").equals("tool_use")) {
+            return Optional.empty();
+        }
+        String path = part.path("input").path("file_path").asString("").replace('\\', '/');
+        int cursus = path.lastIndexOf("cursus/");
+        if (cursus < 0 || !path.endsWith(".md")) {
+            return Optional.empty();
+        }
+        String[] parts = path.substring(cursus + "cursus/".length()).split("/");
+        return parts.length == 2 ? Optional.of(parts) : Optional.empty();
     }
 
     private static Tokens tokens(JsonNode usage) {
@@ -274,6 +336,15 @@ final class AgentRun {
     private static Path sibling(Path log, String extension) {
         String name = log.getFileName().toString();
         return log.resolveSibling(name.substring(0, name.length() - ".jsonl".length()) + extension);
+    }
+
+    private static String errors(Path log) {
+        try {
+            Path file = sibling(log, ".err");
+            return Files.isRegularFile(file) ? Files.readString(file) : "";
+        } catch (IOException e) {
+            return "";
+        }
     }
 
     private static String firstLine(Path file) {

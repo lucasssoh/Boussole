@@ -32,7 +32,14 @@ class AgentRunTest {
         assertThat(status.tokens()).isEqualTo(new AgentRun.Tokens(1000, 2000, 3000, 4000));
         assertThat(status.costUsd()).contains(1.5);
         assertThat(status.result()).isEqualTo("Sessions written.");
-        assertThat(status.line()).isEqualTo("done 10k");
+    }
+
+    @Test
+    void aRunWhoseChapterAgentsWereCutIsStopped() throws Exception {
+        Path log = Files.writeString(dir.resolve("20261101-120000.jsonl"), EVENTS);
+        Files.writeString(dir.resolve("20261101-120000.err"), "Background tasks still running 10m after the last turn; stopping them.\n");
+
+        assertThat(AgentRun.read(log).state()).isEqualTo(AgentRun.State.STOPPED);
     }
 
     @Test
@@ -53,6 +60,32 @@ class AgentRunTest {
 
         assertThat(command).startsWith("claude", "--print").contains("acceptEdits", "Bash(boussole validate:*)",
                 "Bash(java -jar /opt/boussole.jar index:*)").doesNotContain("Bash", "WebFetch");
+    }
+
+    @Test
+    void eachChapterGivesTheSessionItsAgentWritesAndItsLastAction() throws Exception {
+        String events = """
+                {"type":"assistant","message":{"id":"a1","content":[{"type":"tool_use","name":"Agent","input":{"description":"Write chapter 1"}}]}}
+                {"type":"assistant","parent_tool_use_id":"t1","message":{"id":"b1","content":[{"type":"tool_use","name":"Write","input":{"file_path":"/c/L&MC/cursus/01-turing/11-mots.md"}}]}}
+                {"type":"assistant","parent_tool_use_id":"t1","message":{"id":"b2","content":[{"type":"tool_use","name":"Write","input":{"file_path":"/c/L&MC/cursus/01-turing/12-formaliser.md"}}]}}
+                {"type":"assistant","parent_tool_use_id":"t1","message":{"id":"b3","content":[{"type":"tool_use","name":"Bash","input":{"description":"Validate the course"}}]}}
+                {"type":"assistant","parent_tool_use_id":"t3","message":{"id":"c1","content":[{"type":"tool_use","name":"Edit","input":{"file_path":"/c/L&MC/cursus/03-lambda/31-termes.md"}}]}}
+                """;
+        Path log = Files.writeString(dir.resolve("20261101-120000.jsonl"), events);
+
+        AgentRun.Status status = AgentRun.read(log);
+
+        assertThat(status.chapter("01-turing")).contains(new AgentRun.Chapter("12-formaliser.md", "Bash Validate the course"));
+        assertThat(status.chapter("03-lambda")).contains(new AgentRun.Chapter("31-termes.md", "Edit /c/L&MC/cursus/03-lambda/31-termes.md"));
+        assertThat(status.chapter("02-other")).isEmpty();
+    }
+
+    @Test
+    void theNotificationComesAfterTheAgentWithTheNameOfTheTrack() {
+        List<String> command = AgentRun.notifying("L&MC", "/opt/boussole.jar", List.of("claude", "--print"));
+
+        assertThat(command).startsWith("sh", "-c").endsWith("boussole-agent", "L&MC", "/opt/boussole.jar", "claude", "--print");
+        assertThat(command.get(2)).contains("notify-send", "validate .");
     }
 
     @Test

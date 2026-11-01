@@ -8,6 +8,7 @@ import io.github.lucasssoh.boussole.cli.admin.Painter.Style;
 import io.github.lucasssoh.boussole.cli.serve.ServerControl;
 import io.github.lucasssoh.boussole.format.InspectionReport;
 import io.github.lucasssoh.boussole.format.diagnostic.Diagnostic;
+import io.github.lucasssoh.boussole.format.model.ChapterLinks;
 import io.github.lucasssoh.boussole.format.model.Course;
 import io.github.lucasssoh.boussole.format.model.CourseSyllabus;
 import io.github.lucasssoh.boussole.format.model.SyllabusChapter;
@@ -273,7 +274,7 @@ final class TracksTab implements AdminTab {
             boolean chosen = index == selected;
             String line = (chosen ? "▸ " : "  ") + Painter.column(track.name(), name) + "  " + Painter.column(Painter.folder(track.folder()), folder)
                     + "  " + Painter.column(track.sessions(), 9) + "  " + Painter.column(track.planLine(), 8) + "  "
-                    + Painter.column(agent(track).map(AgentRun.Status::line).orElse("—"), 13) + "  "
+                    + Painter.column(agent(track).map(status -> agentColumn(status, track)).orElse("—"), 13) + "  "
                     + Painter.column(track.problemsLine(), 12) + "  "
                     + Painter.column(track.listed() ? track.documentsLine() : "not listed", 12);
             Style style = chosen ? Style.SELECTED : !track.listed() ? Style.DIM : !track.problem().isEmpty() || track.errors() > 0 ? Style.ERROR
@@ -344,61 +345,120 @@ final class TracksTab implements AdminTab {
         if (track.course().isEmpty()) {
             return lines;
         }
-        agent.ifPresent(status -> agentLines(status, width, lines));
-        CourseSyllabus syllabus = track.course().get().syllabus();
+        Course course = track.course().get();
+        CourseSyllabus syllabus = course.syllabus();
         if (syllabus.chapters().isEmpty()) {
             lines.add(new PlanLine("No plan yet.", Style.DIM));
             return lines;
         }
         List<SyllabusSession> all = syllabus.chapters().stream().flatMap(chapter -> chapter.sessions().stream()).toList();
-        int minutes = all.stream().mapToInt(SyllabusSession::duration).sum();
-        lines.add(syllabus.status() == SyllabusStatus.PROPOSED
-                ? new PlanLine("Waiting for your approval.", Style.WARNING)
-                : new PlanLine(track.left() == 0 ? "Every session is written." : count((int) track.left(), "session") + " left to write.",
-                        Style.GOOD));
-        lines.add(new PlanLine(count(syllabus.chapters().size(), "chapter") + " · " + count(all.size(), "session") + " · " + duration(minutes),
-                Style.DIM));
+        int written = course.sessions().size();
+        Optional<AgentRun.Status> running = agent.filter(status -> status.state() == AgentRun.State.RUNNING);
+        agent.ifPresent(status -> agentLines(status, lines));
+        if (syllabus.status() == SyllabusStatus.PROPOSED) {
+            lines.add(new PlanLine("Waiting for your approval.", Style.WARNING));
+        } else {
+            lines.add(new PlanLine(bar(written, all.size(), 30) + "  " + written + " of " + count(all.size(), "session"),
+                    written == all.size() ? Style.GOOD : Style.PLAIN));
+        }
+        lines.add(new PlanLine(count(syllabus.chapters().size(), "chapter") + " · "
+                + (syllabus.status() == SyllabusStatus.PROPOSED ? count(all.size(), "session") + " · " : "")
+                + duration(all.stream().mapToInt(SyllabusSession::duration).sum()), Style.DIM));
+        ChapterLinks links = ChapterLinks.of(course);
+        int titleWidth = Math.max(16, Math.min(40, width - 40));
         int number = 0;
         for (SyllabusChapter chapter : syllabus.chapters()) {
+            int done = (int) chapter.sessions().stream().filter(session -> track.written(chapter, session)).count();
+            Optional<AgentRun.Chapter> work = running.flatMap(status -> status.chapter(chapter.dir()));
+            Optional<SyllabusSession> current = work.flatMap(found -> chapter.sessions().stream()
+                    .filter(session -> session.file().equals(found.file())).findFirst());
+            String state = current.map(session -> "writing " + session.id())
+                    .orElse(done == chapter.sessions().size() ? "done" : done > 0 ? "" : waitsFor(chapter, links, syllabus, track));
             lines.add(new PlanLine("", Style.PLAIN));
-            lines.add(new PlanLine(++number + ". " + chapter.title(), Style.TITLE));
+            lines.add(new PlanLine(Painter.column(++number + ". " + chapter.title(), titleWidth) + "  "
+                    + bar(done, chapter.sessions().size(), 10) + "  " + Painter.column(done + " of " + chapter.sessions().size(), 9)
+                    + "  " + state, Style.TITLE));
             for (SyllabusSession session : chapter.sessions()) {
-                boolean written = track.written(chapter, session);
-                lines.add(new PlanLine("   " + (written ? "✓ " : "  ") + Painter.column(session.id(), 5) + " "
-                        + Painter.column(session.duration() + " min", 7) + " " + session.title(), written ? Style.GOOD : Style.PLAIN));
-                if (session.goal() != null && !session.goal().isBlank()) {
-                    wrap(session.goal(), width - GOAL.length()).forEach(line -> lines.add(new PlanLine(GOAL + line, Style.DIM)));
+                boolean writing = current.filter(session::equals).isPresent();
+                boolean isWritten = track.written(chapter, session);
+                String mark = writing ? "✎ " : isWritten ? "✓ " : "· ";
+                String line = "   " + mark + Painter.column(session.id(), 5) + " " + Painter.column(session.duration() + " min", 7) + " "
+                        + session.title();
+                lines.add(new PlanLine(line, writing ? Style.WARNING : isWritten ? Style.GOOD : Style.PLAIN));
+                if (writing && !work.get().action().isBlank()) {
+                    lines.add(new PlanLine(GOAL + Painter.fit(work.get().action(), Math.max(10, width - GOAL.length())), Style.WARNING));
+                } else if (!isWritten && session.goal() != null && !session.goal().isBlank()) {
+                    wrap(session.goal(), width - GOAL.length()).forEach(goal -> lines.add(new PlanLine(GOAL + goal, Style.DIM)));
                 }
             }
         }
         return lines;
     }
 
-    private static void agentLines(AgentRun.Status status, int width, List<PlanLine> lines) {
-        AgentRun.Tokens tokens = status.tokens();
+    /** {@code writing 7/32}: what the agent does, and the sessions written. */
+    private static String agentColumn(AgentRun.Status status, Track track) {
+        String word = switch (status.state()) {
+            case RUNNING -> "writing";
+            case DONE -> "done";
+            case FAILED -> "failed";
+            case STOPPED -> "stopped";
+        };
+        return word + " " + track.sessions();
+    }
+
+    /** {@code waits for chapter 1} when a chapter it needs is not written yet. */
+    private static String waitsFor(SyllabusChapter chapter, ChapterLinks links, CourseSyllabus syllabus, Track track) {
+        List<SyllabusChapter> chapters = syllabus.chapters();
+        return links.after(chapter.id()).stream()
+                .flatMap(id -> chapters.stream().filter(other -> other.id().equals(id)))
+                .filter(other -> other.sessions().stream().anyMatch(session -> !track.written(other, session)))
+                .map(other -> "waits for chapter " + (chapters.indexOf(other) + 1))
+                .findFirst()
+                .orElse("");
+    }
+
+    static String bar(int done, int total, int width) {
+        int full = total == 0 ? 0 : (int) Math.round(width * (double) done / total);
+        return "█".repeat(full) + "░".repeat(width - full);
+    }
+
+    private static void agentLines(AgentRun.Status status, List<PlanLine> lines) {
         Style style = switch (status.state()) {
             case RUNNING -> Style.WARNING;
             case DONE -> Style.GOOD;
             case FAILED -> Style.ERROR;
             case STOPPED -> Style.DIM;
         };
+        String time = status.state() == AgentRun.State.RUNNING
+                ? (status.started().getEpochSecond() > 0 ? " since " + LocalTime.ofInstant(status.started(), ZoneId.systemDefault())
+                        .withNano(0).withSecond(0) + " · " + duration((int) Duration.between(status.started(), Instant.now()).toMinutes()) : "")
+                : status.took().map(took -> " · " + duration((int) took.toMinutes())).orElse("");
         String state = switch (status.state()) {
-            case RUNNING -> "Agent running" + (status.started().getEpochSecond() > 0 ? " since "
-                    + LocalTime.ofInstant(status.started(), ZoneId.systemDefault()).withNano(0) : "") + ".";
-            case DONE -> "Agent done" + status.took().map(took -> " in " + duration((int) took.toMinutes())).orElse("") + ".";
-            case FAILED -> "Agent failed" + (status.result().isBlank() ? "." : ": " + oneLine(status.result()));
-            case STOPPED -> "Agent stopped.";
+            case RUNNING -> "Agent running";
+            case DONE -> "Agent done";
+            case FAILED -> "Agent failed";
+            case STOPPED -> "Agent stopped";
         };
-        lines.add(new PlanLine(state, style));
-        lines.add(new PlanLine(status.costUsd().map(cost -> String.format(Locale.ROOT, "$%.2f · ", cost)).orElse("")
-                + AgentRun.count(tokens.total()) + " tokens"
-                + (tokens.cacheRead() > 0 ? " (" + AgentRun.count(tokens.cacheRead()) + " reread from the cache)" : ""), Style.PLAIN));
-        List<String> recent = switch (status.state()) {
-            case RUNNING -> status.recent();
-            case DONE -> status.result().isBlank() ? List.of() : List.of(oneLine(status.result()));
-            case FAILED, STOPPED -> List.of("Log: " + Painter.folder(status.log()));
-        };
-        recent.forEach(line -> lines.add(new PlanLine("  " + Painter.fit(line, Math.max(10, width - 2)), Style.DIM)));
+        lines.add(new PlanLine(state + time + status.costUsd().map(cost -> String.format(Locale.ROOT, " · $%.2f", cost)).orElse(""), style));
+        AgentRun.Tokens tokens = status.tokens();
+        lines.add(new PlanLine(AgentRun.count(tokens.total()) + " tokens"
+                + (tokens.cacheRead() > 0 ? " (" + AgentRun.count(tokens.cacheRead()) + " reread from the cache)" : ""), Style.DIM));
+        switch (status.state()) {
+            case DONE -> {
+                if (!status.result().isBlank()) {
+                    lines.add(new PlanLine(oneLine(status.result()), Style.DIM));
+                }
+            }
+            case FAILED -> {
+                if (!status.result().isBlank()) {
+                    lines.add(new PlanLine(oneLine(status.result()), Style.ERROR));
+                }
+                lines.add(new PlanLine("Log: " + Painter.folder(status.log()), Style.DIM));
+            }
+            case STOPPED -> lines.add(new PlanLine("Log: " + Painter.folder(status.log()), Style.DIM));
+            case RUNNING -> {
+            }
+        }
         lines.add(new PlanLine("", Style.PLAIN));
     }
 
@@ -574,8 +634,11 @@ final class TracksTab implements AdminTab {
         } else {
             plan = true;
             app.confirm("Write the " + count((int) track.left(), "session") + " left of " + track.name() + " with Claude Code?", () -> app.job("Starting the agent…", () -> {
-                Path log = AgentRun.start(track.folder(), AgentRun.command(System.getProperty("boussole.agent", "claude"),
-                        System.getProperty("boussole.jar")));
+                String jar = System.getProperty("boussole.jar");
+                String agent = System.getProperty("boussole.agent");
+                List<String> command = AgentRun.command(agent == null ? "claude" : agent, jar);
+                // a stand-in agent (tests) does not notify the desktop
+                Path log = AgentRun.start(track.folder(), agent == null ? AgentRun.notifying(track.name(), jar, command) : command);
                 agents.put(track.folder(), AgentRun.read(log));
                 return "Agent started on " + track.name() + ".";
             }));
