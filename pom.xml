@@ -135,6 +135,14 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.5.5</version>
+                    <configuration>
+                        <!-- Tests never read the configuration or the progress of the person who builds. -->
+                        <environmentVariables>
+                            <XDG_CONFIG_HOME>${project.build.directory}/test-home/config</XDG_CONFIG_HOME>
+                            <XDG_DATA_HOME>${project.build.directory}/test-home/data</XDG_DATA_HOME>
+                            <XDG_STATE_HOME>${project.build.directory}/test-home/state</XDG_STATE_HOME>
+                        </environmentVariables>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
