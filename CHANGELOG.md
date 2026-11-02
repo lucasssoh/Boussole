@@ -16,6 +16,9 @@ minor release may break things and says so.
 - **Other devices:** with `network: true` in `config.yaml`, a phone, a tablet or a TV on the same network can open Boussole once paired: `boussole devices pair` shows a QR code and a code, or the device shows a code to accept with `boussole devices accept`. Without pairing, the network gets nothing. A device may be read-only; `boussole devices remove` takes one away.
 - **Stars:** each answer now shows up to 3 stars for how much of it was right: in the correction, under its step on the Trail, in the wrap-up and on each session card. A question met before (a warmup, a quick review) shows blue stars that do not count in the total; a free exercise shows your own estimate, outlined.
 
+### Changed
+- **Clearer questions:** the playbooks ask agents for statements in whole sentences that set the context first, give the whole setup, end with the question and label each blank with what goes there: no more guessing which situation a question means, in a quick review too. The vocabulary of the course stays as the teacher writes it.
+
 ### Fixed
 - **On a phone:** the Trail opens over the step with a ground of its own, below the top bar; Previous and Next sit in a bar of their own; the part's name leaves the bar above the step, the Trail shows it; the profile's gauge sits above its words.
 - **Free exercises:** self-grading no longer awards points, and the answer is labelled as a proposed correction.

@@ -90,6 +90,10 @@ session should be split, and propose how.
 - **Faithful to the sources**: same notations, same vocabulary, same conventions as the
   teacher. If the documents and your knowledge disagree, follow the documents and add a
   `:::note` explaining the difference.
+- **Sentences a learner reads once**: whole sentences with a verb, one idea each, the context
+  before the details. Never notes in shorthand: a sentence the learner must decode costs the
+  attention the notion needs. The vocabulary and abbreviations of the course stay as the
+  teacher writes them. Statements of exercises follow `exercise-author`.
 - **Nothing that only decorates**: an anecdote, an image or a video that does not serve the
   goal takes attention away from it. Leave it out.
 - **Go from one form to another**: when the course shows the same thing in several forms (a

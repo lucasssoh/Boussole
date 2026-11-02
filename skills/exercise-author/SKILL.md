@@ -33,8 +33,56 @@ draw maths: write them in plain text with Unicode (`≤`, `x₁`, `u²`), never 
 
 ## Statements
 
-- One clear question. Give every value needed, in the units of the course.
+A statement the learner has to decode before they can think teaches nothing. An exercise also
+comes back alone, in a warmup or a quick review, with no session around it: it must make sense
+by itself.
+
+- **Whole sentences**, as the teacher would say them aloud: a verb, articles, one idea per
+  sentence. Never telegraphic notes (« Instance critique de LS pour $m = 3$ : d'abord… »).
+  Symbols sit inside a sentence, never instead of it.
+- **Ask the question**: the statement ends with what to find, as a question or an instruction
+  (« Combien… ? », « Calcule… »). A list of labels after a colon is not a question.
+- **Set the context first**: one sentence on the situation and what is being looked for
+  (« On cherche une liste de tâches où LS fait aussi mal que possible »), before any value. The
+  learner should know what kind of problem this is before reading its numbers.
+- **Give the whole setup**: every value, in the units of the course, and every rule the answer
+  depends on (the order of a list, how ties are broken, where to start, what is given and what
+  is to be found). When the answer follows from a construction of the course, the statement
+  describes that construction; it never expects the learner to recall it unnamed. The learner
+  should never have to try several configurations to guess which one the question means.
+- The words, abbreviations and notations **of the course** (LS, $OPT$, $C_{\max}$) are kept as
+  the teacher writes them: learning them is part of the course. What must be spelt out is the
+  situation, not the vocabulary.
+- **Each gap of a `fill` gets a label that says what goes there**: a short question or phrase,
+  with its unit (« Combien de tâches de durée 1 ? »), not a bare symbol.
+- **Exactly one answer**: a learner who knows the notion but has never seen this example finds
+  one answer only. If two readings are possible, the statement is not finished.
 - Same notation as the example just before it.
+
+Before and after:
+
+```markdown
+Critical instance of LS for $m = 3$: first unit tasks, then one task of length $m$.
+
+- Number of unit tasks: [[1]]
+- $C_{\max}$ of LS: [[2]]
+```
+
+```markdown
+We look for a list of tasks on which the list scheduling algorithm LS does as badly as it can,
+with $m = 3$ machines. LS takes the tasks in the order of the list and puts each one on the
+machine that is free first. The list starts with enough tasks of length 1 to keep the 3
+machines busy for $m - 1 = 2$ units of time, and ends with one task of length $m = 3$.
+
+- How many tasks of length 1 does the list hold? [[1]]
+- What total length $C_{\max}$ does LS reach? [[2]]
+```
+
+Hints and solutions follow the same rules: whole sentences, nothing left for the learner to
+decode.
+
+**Reread** every statement as the learner meets it in a quick review: alone, weeks later. If a
+sentence needs reading twice, rewrite it.
 - A statement may show a `:::graph` (a network, a weighted graph, a tree) instead of describing
   it in words: the learner reads the figure, the question asks about it. Mark nothing with `!`
   that would give the answer away; the `solution` can repeat the graph with the answer marked.
