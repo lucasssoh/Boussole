@@ -63,6 +63,17 @@ class AgentRunTest {
     }
 
     @Test
+    void thePromptCarriesTheBriefUnlessItIsTooLong() {
+        String prompt = AgentRun.prompt(AgentRun.TAKE_IN, "Track t (T), lang fr.\n");
+
+        assertThat(prompt).startsWith(AgentRun.TAKE_IN).contains("sources-update", "Brief, computed by Boussole", "Track t (T)");
+        assertThat(AgentRun.prompt(AgentRun.PROMPT, "x".repeat(AgentRun.BRIEF_LIMIT + 1)))
+                .endsWith("Run `boussole brief .` first: it says where the track stands.");
+        assertThat(AgentRun.command("claude", "/opt/boussole.jar", prompt))
+                .contains(prompt, "Bash(boussole brief:*)", "Bash(java -jar /opt/boussole.jar sources:*)");
+    }
+
+    @Test
     void eachChapterGivesTheSessionItsAgentWritesAndItsLastAction() throws Exception {
         String events = """
                 {"type":"assistant","message":{"id":"a1","content":[{"type":"tool_use","name":"Agent","input":{"description":"Write chapter 1"}}]}}

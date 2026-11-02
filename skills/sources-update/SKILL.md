@@ -11,13 +11,21 @@ compares the sources folder with `cursus/sources.yaml` and reports the differenc
 the learner's progress is stored against the IDs, and sessions already studied must stay as they
 are unless a document says they are wrong.
 
-## 1. See what changed
+## 1. See what changed, and where the track stands
 
 Run, from the subject folder:
 
 ```
+boussole brief .
 boussole sources .
 ```
+
+`boussole brief .` says, in a few lines, where the track stands: the documents to take in, each
+chapter with its documents, its sessions (written or not) and the notions of those written, the
+IDs taken, the terms of the lexicon, the learner's profile. **Start from it instead of reading
+the track again**: read the documents to take in, and, to match the notation and the tone, one
+written session of the chapter you extend, no more. Questions for warmups and reviews come from
+`boussole index .`. Reading every session again costs far more than the work itself.
 
 (the same program as `boussole validate .`, with `sources` instead of `validate`; see
 `AGENTS.md`). It lists each document that is **new**, **changed**, **pending** or **gone**, and
@@ -79,6 +87,9 @@ A document that comes from the web keeps where it comes from in its entry: `url`
 `licence` and `retrieved` (`docs/FORMAT.md` §8). Never copy a page whose licence does not allow
 it: write a source note `web/<name>.md` in your own words instead, with its address and short
 quotes.
+
+When you hand the writing to an agent per chapter, give each one the lines of the brief for its
+chapter and the documents it takes in, not the whole track.
 
 Run `boussole validate .` until there is no error; `F033`–`F035` must be gone for every document
 you handled (`pending` ones stay, by design). Then write the new sessions in order, as usual

@@ -25,7 +25,7 @@ import picocli.CommandLine.Spec;
         versionProvider = ManifestVersion.class,
         description = {"Turn your course documents into a course, and plan when to study it.",
             "Alone, in a terminal: the server, the devices and the tracks, full screen (beta)."},
-        subcommands = {OpenCommand.class, ServeCommand.class, StopCommand.class, NewCommand.class, InitCommand.class, ValidateCommand.class, SourcesCommand.class, IndexCommand.class, BusCommand.class, DevicesCommand.class})
+        subcommands = {OpenCommand.class, ServeCommand.class, StopCommand.class, NewCommand.class, InitCommand.class, ValidateCommand.class, SourcesCommand.class, BriefCommand.class, IndexCommand.class, BusCommand.class, DevicesCommand.class})
 public final class BoussoleCommand implements Callable<Integer> {
 
     @Spec

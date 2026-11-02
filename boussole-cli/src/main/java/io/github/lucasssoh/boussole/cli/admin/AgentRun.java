@@ -30,8 +30,10 @@ import tools.jackson.databind.ObjectMapper;
  * An agent that writes the sessions of an approved plan: Claude Code run with {@code --print} in
  * the folder of the track, its events kept in {@code .boussole/runs/<time>.jsonl}, so that the
  * Tracks screen shows where it stands and the tokens it spent, even after {@code boussole} closed
- * and opened again. The agent may change the files of the track, run {@code boussole validate} and
- * {@code boussole index}, read the documents ({@code pdftotext}, {@code pdfinfo}, {@code ls}) and
+ * and opened again. Its prompt carries the brief of the track ({@code boussole brief}), so that it
+ * continues the track instead of reading it all again. It writes the sessions left, or takes in
+ * the documents that arrived. The agent may change the files of the track, run
+ * {@code boussole validate}, {@code index}, {@code brief} and {@code sources}, read the documents ({@code pdftotext}, {@code pdfinfo}, {@code ls}) and
  * run {@code python3} to check an answer, nothing else.
  */
 final class AgentRun {
@@ -44,6 +46,34 @@ final class AgentRun {
             when a choice is theirs, take the safest one and say so in your report. End with \
             `boussole validate .` without errors, then a short report: what was written, what you \
             assumed, what is left.""";
+
+    /** For a track whose plan is approved and whose sources folder holds documents to take in. */
+    static final String TAKE_IN = """
+            Documents arrived, changed or went in the sources of this track, whose plan is approved. Follow \
+            AGENTS.md and the sources-update playbook. Read only the documents to take in, never the whole \
+            track again: the brief below says where it stands. Record each document in cursus/sources.yaml, \
+            its sha256 copied from `boussole sources .`. If the plan must change (new chapters or sessions), \
+            change it, set status: proposed and stop there: the learner approves the change before its \
+            sessions are written. Otherwise make what the documents call for (a corrected session, exercises \
+            in a practice), one agent per chapter concerned. Write in the language of the track. You cannot \
+            ask the learner anything: when a choice is theirs, take the safest one and say so in your report. \
+            End with `boussole validate .` without errors, then a short report: each document, what it \
+            changed, what is left.""";
+
+    /** Longer than this, the brief stays out of the prompt (an argument has a limit) and the agent runs {@code boussole brief .}. */
+    static final int BRIEF_LIMIT = 60_000;
+
+    /**
+     * The prompt and the brief of the track, so that the agent starts from where the track stands
+     * instead of reading it all; each agent of a chapter gets the lines of its chapter.
+     */
+    static String prompt(String task, String brief) {
+        if (brief.isBlank() || brief.length() > BRIEF_LIMIT) {
+            return task + " Run `boussole brief .` first: it says where the track stands.";
+        }
+        return task + " Give each agent of a chapter the lines of the brief for its chapter.\n\n"
+                + "Brief, computed by Boussole from the files of the track (`boussole brief .`):\n\n" + brief;
+    }
 
     private static final ObjectMapper JSON = new ObjectMapper();
     static final String SANDBOX = "{\"sandbox\":{\"enabled\":true,\"autoAllowBashIfSandboxed\":true,\"allowUnsandboxedCommands\":false}}";
@@ -126,10 +156,15 @@ final class AgentRun {
 
     /** The command that starts the agent: {@code agent} is {@code claude}, or a stand-in in tests. */
     static List<String> command(String agent, String jar) {
-        List<String> command = new ArrayList<>(List.of(agent, "--print", PROMPT, "--output-format", "stream-json", "--verbose",
+        return command(agent, jar, PROMPT);
+    }
+
+    /** The same, asked {@code prompt}. */
+    static List<String> command(String agent, String jar, String prompt) {
+        List<String> command = new ArrayList<>(List.of(agent, "--print", prompt, "--output-format", "stream-json", "--verbose",
                 "--permission-mode", "acceptEdits", "--allowedTools",
                 "Read", "Write", "Edit", "Glob", "Grep", "Agent", "Task", "TodoWrite",
-                "Bash(boussole validate:*)", "Bash(boussole index:*)",
+                "Bash(boussole validate:*)", "Bash(boussole index:*)", "Bash(boussole brief:*)", "Bash(boussole sources:*)",
                 // to read the documents, and to check an answer by computing it
                 "Bash(pdftotext:*)", "Bash(pdfinfo:*)", "Bash(ls:*)", "Bash(python3:*)",
                 // any other command runs in the sandbox of Claude Code: it writes only in the track, with no network
@@ -137,6 +172,8 @@ final class AgentRun {
         if (jar != null && !jar.isBlank()) {
             command.add("Bash(java -jar " + jar + " validate:*)");
             command.add("Bash(java -jar " + jar + " index:*)");
+            command.add("Bash(java -jar " + jar + " brief:*)");
+            command.add("Bash(java -jar " + jar + " sources:*)");
         }
         return List.copyOf(command);
     }

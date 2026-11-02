@@ -62,13 +62,16 @@ l'agent.
 Deux gestes suffisent :
 
 1. **Ajoute le fichier** dans le dossier du parcours.
-2. **Lance ton :term[agent]{id=agent}** comme d'habitude.
+2. **Lance ton :term[agent]{id=agent}** comme d'habitude, ou tape `boussole`, puis `r` sur
+   l'écran Tracks.
 
 L'agent commence par le validateur. Il voit le nouveau document, le lit et l'intègre :
 
 - il **ajoute** des séances, avec de nouveaux numéros ;
 - il garde intact ce que tu as déjà étudié ;
 - il te demande ton accord si le plan change.
+
+Il ne lit que le nouveau document, pas tout le parcours à nouveau.
 
 ::::mcq{#g4-a2}
 Tu ajoutes les transparents du cours 7. Que deviennent tes séances déjà faites ?

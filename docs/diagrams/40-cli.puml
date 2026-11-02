@@ -18,6 +18,13 @@ package "cli" {
   class BusCommand <<@Command bus>> {
     event, --tool, --agent, --file
   }
+  class BriefCommand <<@Command brief>> {
+    folder : Path
+  }
+  class TrackBrief {
+    +{static} of(Course, List<SourceState>) : String
+    +{static} toTakeIn(List<SourceState>) : List<SourceState>
+  }
   class IndexCommand <<@Command index>> {
     folder : Path
     before : String
@@ -190,6 +197,8 @@ NewCommand --> AgentKitInstaller : agent kit
 NewCommand ..> BoussoleConfigFile : tracks_dir, adds the track
 BoussoleCommand --> ValidateCommand : subcommand
 BoussoleCommand --> SourcesCommand : subcommand
+BoussoleCommand --> BriefCommand : subcommand
+BriefCommand --> TrackBrief
 BoussoleCommand --> IndexCommand : subcommand
 BoussoleCommand --> BusCommand : subcommand
 BoussoleCommand --> DevicesCommand : subcommand
@@ -204,6 +213,7 @@ ServerTab --> ServerControl : start, stop, restart
 ServerTab ..> BoussoleConfigFile : network on or off
 DevicesTab --> LocalServer : /api/devices
 TracksTab --> TrackCheck : validates
+TracksTab ..> TrackBrief : the prompt of the agent
 TracksTab ..> BoussoleConfigFile : adds, removes a folder
 TracksTab ..> ServerControl : opens
 TracksTab ..> PlanApproval : approves the plan

@@ -61,13 +61,16 @@ The numbers follow the order of the table: new, changed, gone, twice.
 Two moves are enough:
 
 1. **Add the file** to the folder of the track.
-2. **Start your :term[agent]{id=agent}** as usual.
+2. **Start your :term[agent]{id=agent}** as usual, or type `boussole`, then `r` on the
+   Tracks screen.
 
 The agent starts with the validator. It sees the new document, reads it and takes it in:
 
 - it **adds** sessions, with new numbers;
 - it keeps what you have studied intact;
 - it asks for your approval if the plan changes.
+
+It reads only the new document, not the whole track again.
 
 ::::mcq{#g4-a2}
 You add the slides of lecture 7. What becomes of the sessions you have done?

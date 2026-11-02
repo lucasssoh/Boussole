@@ -4,6 +4,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.input.MouseAction;
 import io.github.lucasssoh.boussole.adapters.config.BoussoleConfigFile;
+import io.github.lucasssoh.boussole.cli.TrackBrief;
 import io.github.lucasssoh.boussole.cli.TrackCheck;
 import io.github.lucasssoh.boussole.cli.admin.Painter.Style;
 import io.github.lucasssoh.boussole.cli.serve.ServerControl;
@@ -155,6 +156,11 @@ final class TracksTab implements AdminTab {
         long left() {
             return course.map(read -> read.syllabus().chapters().stream().mapToLong(chapter -> chapter.sessions().size()).sum()
                     - read.sessions().size()).orElse(0L);
+        }
+
+        /** The documents that ask for an agent: new, changed, gone. */
+        int toTakeIn() {
+            return TrackBrief.toTakeIn(documents).size();
         }
 
         boolean approved() {
@@ -825,18 +831,25 @@ final class TracksTab implements AdminTab {
     }
 
     private void run(Track track) {
+        int toTakeIn = track.toTakeIn();
         if (agent(track).map(status -> status.state() == AgentRun.State.RUNNING).orElse(false)) {
             app.say("An agent is already writing " + track.name() + ".");
         } else if (!track.approved()) {
             app.say(track.course().isEmpty() ? "No plan here." : "Approve the plan first.");
-        } else if (track.left() == 0) {
+        } else if (toTakeIn == 0 && track.left() == 0) {
             app.say("Every session of " + track.name() + " is written.");
         } else {
             plan = true;
-            app.confirm("Write the " + count((int) track.left(), "session") + " left of " + track.name() + " with Claude Code?", () -> app.job("Starting the agent…", () -> {
+            // the documents first: the sessions left may change with them
+            String question = toTakeIn > 0
+                    ? "Take the " + count(toTakeIn, "document") + " to do into " + track.name() + " with Claude Code?"
+                    : "Write the " + count((int) track.left(), "session") + " left of " + track.name() + " with Claude Code?";
+            String task = toTakeIn > 0 ? AgentRun.TAKE_IN : AgentRun.PROMPT;
+            app.confirm(question, () -> app.job("Starting the agent…", () -> {
                 String jar = System.getProperty("boussole.jar");
                 String agent = System.getProperty("boussole.agent");
-                List<String> command = AgentRun.command(agent == null ? "claude" : agent, jar);
+                String brief = track.course().map(course -> TrackBrief.of(course, track.documents())).orElse("");
+                List<String> command = AgentRun.command(agent == null ? "claude" : agent, jar, AgentRun.prompt(task, brief));
                 // a stand-in agent (tests) does not notify the desktop
                 io.github.lucasssoh.boussole.cli.init.ClaudeHooks.install(track.folder());
                 Path log = AgentRun.start(track.folder(), agent == null ? AgentRun.notifying(track.name(), jar, command) : command);
@@ -885,6 +898,8 @@ final class TracksTab implements AdminTab {
         }
         if (running) {
             hints.add(new Hint("x", "Stop agent"));
+        } else if (chosen.map(track -> track.approved() && track.toTakeIn() > 0).orElse(false)) {
+            hints.add(new Hint("r", "Take in documents"));
         } else if (chosen.map(track -> track.approved() && track.left() > 0).orElse(false)) {
             hints.add(new Hint("r", "Run agent"));
         }

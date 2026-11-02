@@ -53,6 +53,9 @@ Writing or revising many sessions (a whole track, several chapters):
   coordinator runs it on the whole track at the end.
 - `boussole index .` lists every question of the track: an agent picks its warmup and review
   questions there rather than opening every session.
+- `boussole brief .` says where the track stands in a few lines: documents to take in, chapters,
+  sessions written or not, their notions, the lexicon. Continue a track from it (new documents,
+  sessions left) instead of reading it all again; give each agent the lines of its chapter.
 
 Tell Boussole what you do, so that the learner follows it on the Tracks screen of `boussole`.
 Claude Code does it by itself (the hooks of `.claude/settings.json`); any other agent runs
@@ -101,5 +104,5 @@ Rules:
   ```
 
   Run it after every change, until it ends without error, before saying a task is done.
-  `boussole sources .`, `boussole index .` and `boussole bus …` are the same command with
-  `sources`, `index` or `bus` in place of `validate`.
+  `boussole sources .`, `boussole brief .`, `boussole index .` and `boussole bus …` are the same
+  command with `sources`, `brief`, `index` or `bus` in place of `validate`.
