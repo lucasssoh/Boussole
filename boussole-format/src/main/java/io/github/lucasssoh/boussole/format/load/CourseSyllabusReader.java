@@ -8,7 +8,10 @@ import io.github.lucasssoh.boussole.format.model.SessionKind;
 import io.github.lucasssoh.boussole.format.model.CourseSyllabus;
 import io.github.lucasssoh.boussole.format.model.SyllabusStatus;
 import io.github.lucasssoh.boussole.format.yaml.YamlMap;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Locale;
+import java.util.Optional;
 
 /** Reads {@code cursus/syllabus.yaml}. */
 final class CourseSyllabusReader {
@@ -21,6 +24,7 @@ final class CourseSyllabusReader {
                 .flatMap(text -> YamlMap.parse(text, YamlMap.YamlSource.of(SubjectFolderFiles.SYLLABUS, diagnostics)))
                 .map(map -> new CourseSyllabus(
                         status(map, diagnostics),
+                        locked(map, diagnostics),
                         map.maps("chapters").stream().map(chapter -> chapter(chapter, diagnostics)).toList()))
                 .orElse(CourseSyllabus.empty());
     }
@@ -37,6 +41,17 @@ final class CourseSyllabusReader {
                 yield SyllabusStatus.PROPOSED;
             }
         };
+    }
+
+    private static Optional<LocalDate> locked(YamlMap map, DiagnosticCollector diagnostics) {
+        Optional<String> locked = map.text("locked").map(String::strip).filter(text -> !text.isEmpty());
+        try {
+            return locked.map(LocalDate::parse);
+        } catch (DateTimeParseException e) {
+            diagnostics.report(DiagnosticCode.F001, map.positionOf("locked"),
+                    "`locked` is the day the track was locked, written 2026-12-10, not `" + locked.orElse("") + "`");
+            return Optional.empty();
+        }
     }
 
     private static SyllabusChapter chapter(YamlMap map, DiagnosticCollector diagnostics) {

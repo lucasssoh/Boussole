@@ -44,6 +44,7 @@ are about the teaching contract and matter to the learner.
 | F038 | a video file browsers may not play | ask the learner to convert it to MP4 or WebM (`ffmpeg -i in.mkv out.mp4`), then point `src` to the new file |
 | F037 | a `graph` line Boussole cannot read, a node twice, a loop, or places given for some nodes only | one node (`a "Label" @ 0,1`) or edge (`a -> b : 3`) per line; `@` on every node or none; FORMAT.md §5.5 |
 | F033 to F036 | a document is new, changed, gone, or the same as another | follow `sources-update`: take it into the course, then record it in `cursus/sources.yaml` |
+| F046 | a document arrived or changed after the learner locked the track | nothing: leave it out, and tell the learner. Never remove `locked` yourself; only they unlock the track |
 | P001–P005 | teaching contract | add the exercise, keep one example, move warmup/practice, add hints (MCQs too: one or two, never the answer), list terms |
 | P006, P007 | the session does not follow `learner.yaml` | close it as `closing` asks; add the quick MCQ before the example |
 | P011 | a `graph` of more than 12 nodes | split it into two graphs, or keep only what the explanation needs |

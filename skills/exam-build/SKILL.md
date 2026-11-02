@@ -49,6 +49,10 @@ Example: a 20-minute review → 14 single-choice MCQs and 2 numeric exercises (1
   one question asks **which method applies** between two close notions.
 - **Cumulative review** (planned by `cursus-plan` mid-track and before each exam): questions
   from every chapter so far, weighted towards those studied longest ago.
+- **Final mock exam** (the last session of the plan, an `exam`): write it only once the track is
+  locked (`locked` in `cursus/syllabus.yaml`); before that, leave it and say it waits for the lock.
+  Once locked, building it again costs as much as building it the first time: when the learner
+  asks for it, say so first, then do it if they confirm.
 - **Mock exam**: read the **past exams** in the sources first, and mirror them: same kinds of
   questions, same balance between chapters, same difficulty, same length. Write new questions;
   do not reuse the lessons'. Say in the statement when a question is adapted from a past exam.

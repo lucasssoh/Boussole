@@ -26,4 +26,19 @@ class ClaudeHooksTest {
 
         assertThat(ClaudeHooks.merge(Optional.of(once))).isEqualTo(once);
     }
+
+    @Test
+    void withTheSandboxEveryCommandRunsInItAndIsAllowed() {
+        String merged = ClaudeHooks.merge(Optional.of("{\"permissions\":{\"allow\":[\"Read\"]}}"), true);
+
+        assertThat(merged).contains("\"enabled\" : true", "\"allowUnsandboxedCommands\" : false", "\"Read\", \"Bash\"");
+        assertThat(ClaudeHooks.merge(Optional.of(merged), true)).isEqualTo(merged);
+    }
+
+    @Test
+    void withoutTheSandboxOrWithTheLearnersOwnNothingIsAllowedMore() {
+        assertThat(ClaudeHooks.merge(Optional.empty(), false)).doesNotContain("sandbox", "Bash");
+        assertThat(ClaudeHooks.merge(Optional.of("{\"sandbox\":{\"enabled\":false}}"), true))
+                .contains("\"enabled\" : false").doesNotContain("Bash");
+    }
 }

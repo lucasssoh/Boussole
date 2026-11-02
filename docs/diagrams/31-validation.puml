@@ -35,7 +35,7 @@ package "validate" {
     class ReferenceRule <<F030>>
     class ReferenceOrderRule <<F042>>
     class SourceFileRule <<F031>>
-    class SourceInventoryRule <<F033-F036>>
+    class SourceInventoryRule <<F033-F036, F046>>
     class SourceProvenanceRule <<F039>>
     class AuthorshipRule <<P012>>
     class TrackProfileRule <<P013>>

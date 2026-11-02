@@ -55,11 +55,12 @@ class AgentRunTest {
     }
 
     @Test
-    void theAgentMayChangeFilesRunTheValidatorReadTheDocumentsAndComputeAnswers() {
-        List<String> command = AgentRun.command("claude", "/opt/boussole.jar");
+    void theAgentRunsAnyCommandInTheSandboxAndWritesFilesOnlyInTheTrack() {
+        List<String> command = AgentRun.command("claude", AgentRun.PROMPT);
 
-        assertThat(command).startsWith("claude", "--print").contains("acceptEdits", "Bash(boussole validate:*)",
-                "Bash(java -jar /opt/boussole.jar index:*)", "Bash(pdftotext:*)", "Bash(python3:*)", "--settings").doesNotContain("Bash", "WebFetch");
+        assertThat(command).startsWith("claude", "--print").contains("acceptEdits", "Bash", "--settings", AgentRun.SANDBOX)
+                .doesNotContain("Write", "Edit", "WebFetch", "--dangerously-skip-permissions");
+        assertThat(AgentRun.prompt(AgentRun.PROMPT, "")).contains(AgentRun.FREEDOM);
     }
 
     @Test
@@ -69,8 +70,7 @@ class AgentRunTest {
         assertThat(prompt).startsWith(AgentRun.TAKE_IN).contains("sources-update", "Brief, computed by Boussole", "Track t (T)");
         assertThat(AgentRun.prompt(AgentRun.PROMPT, "x".repeat(AgentRun.BRIEF_LIMIT + 1)))
                 .endsWith("Run `boussole brief .` first: it says where the track stands.");
-        assertThat(AgentRun.command("claude", "/opt/boussole.jar", prompt))
-                .contains(prompt, "Bash(boussole brief:*)", "Bash(java -jar /opt/boussole.jar sources:*)");
+        assertThat(AgentRun.command("claude", prompt)).contains(prompt);
     }
 
     @Test
@@ -89,7 +89,7 @@ class AgentRunTest {
         assertThat(status.chapter("01-turing")).contains(new AgentRun.Chapter("12-formaliser.md", "Bash Validate the course"));
         assertThat(status.chapter("03-lambda")).contains(new AgentRun.Chapter("31-termes.md", "Edit /c/L&MC/cursus/03-lambda/31-termes.md"));
         assertThat(status.chapter("02-other")).isEmpty();
-        assertThat(AgentRun.command("claude", null).get(AgentRun.command("claude", null).indexOf("--settings") + 1))
+        assertThat(AgentRun.command("claude", AgentRun.PROMPT).get(AgentRun.command("claude", AgentRun.PROMPT).indexOf("--settings") + 1))
                 .contains("\"sandbox\"", "\"autoAllowBashIfSandboxed\":true", "\"allowUnsandboxedCommands\":false");
     }
 

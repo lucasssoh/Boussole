@@ -6,6 +6,7 @@ import com.googlecode.lanterna.input.MouseAction;
 import io.github.lucasssoh.boussole.adapters.config.BoussoleConfigFile;
 import io.github.lucasssoh.boussole.cli.TrackBrief;
 import io.github.lucasssoh.boussole.cli.TrackCheck;
+import io.github.lucasssoh.boussole.cli.TrackLock;
 import io.github.lucasssoh.boussole.cli.admin.Painter.Style;
 import io.github.lucasssoh.boussole.cli.serve.ServerControl;
 import io.github.lucasssoh.boussole.format.InspectionReport;
@@ -155,14 +156,19 @@ final class TracksTab implements AdminTab {
             return new Track(folder, course, diagnostics, documents, problem, false);
         }
 
+        /** The sessions an agent may write now: the final mock exam waits for the lock. */
         long left() {
             return course.map(read -> read.syllabus().chapters().stream().mapToLong(chapter -> chapter.sessions().size()).sum()
-                    - read.sessions().size()).orElse(0L);
+                    - read.sessions().size() - (TrackBrief.finalExamWaiting(read).isPresent() ? 1 : 0)).orElse(0L);
         }
 
-        /** The documents that ask for an agent: new, changed, gone. */
+        /** The documents that ask for an agent: new, changed, gone; once locked, only those gone. */
         int toTakeIn() {
-            return TrackBrief.toTakeIn(documents).size();
+            return course.map(read -> TrackBrief.toTakeIn(read, documents).size()).orElse(0);
+        }
+
+        boolean locked() {
+            return course.map(read -> read.syllabus().isLocked()).orElse(false);
         }
 
         boolean approved() {
@@ -209,7 +215,8 @@ final class TracksTab implements AdminTab {
         }
 
         String documentsLine() {
-            return course.isEmpty() ? "—" : documents.isEmpty() ? "up to date" : documents.size() + " to do";
+            return course.isEmpty() ? "—" : locked() ? toTakeIn() > 0 ? toTakeIn() + " to do" : "locked"
+                    : documents.isEmpty() ? "up to date" : documents.size() + " to do";
         }
     }
 
@@ -715,7 +722,7 @@ final class TracksTab implements AdminTab {
             drawPick(painter, pick, column, top, width, height);
             return;
         }
-        painter.pane(column, top, width, height, "Documents", false);
+        painter.pane(column, top, width, height, track.locked() ? "Documents · locked" : "Documents", false);
         int inner = width - 4;
         int row = top + 1;
         if (track.documents().isEmpty()) {
@@ -814,6 +821,7 @@ final class TracksTab implements AdminTab {
             case 'a' -> track.ifPresent(this::approve);
             case 'r' -> track.ifPresent(this::run);
             case 'x' -> track.ifPresent(this::stop);
+            case 'L' -> track.ifPresent(this::lock);
             case 'o' -> track.flatMap(Track::course).ifPresent(course -> app.job("Opening…", () -> {
                 control.start(() -> { });
                 String path = "subjects/" + course.subject().id();
@@ -901,10 +909,12 @@ final class TracksTab implements AdminTab {
             app.say(track.course().isEmpty() ? "No plan here." : "Approve the plan first.");
         } else if (track.toTakeIn() > 0) {
             // the learner chooses the documents: the sessions left may change with them
-            pick = new DocumentPick(track.folder(), TrackBrief.toTakeIn(track.documents()));
+            pick = new DocumentPick(track.folder(), TrackBrief.toTakeIn(track.course().orElseThrow(), track.documents()));
             plan = false;
         } else if (track.left() == 0) {
-            app.say("Every session of " + track.name() + " is written.");
+            app.say(track.course().flatMap(TrackBrief::finalExamWaiting).isPresent()
+                    ? "The final mock exam waits: L locks " + track.name() + " once every document is in."
+                    : "Every session of " + track.name() + " is written.");
         } else {
             start(track, AgentRun.PROMPT, Set.of(), "Write the " + count((int) track.left(), "session") + " left of " + track.name()
                     + " with Claude Code?");
@@ -913,18 +923,49 @@ final class TracksTab implements AdminTab {
 
     /** Starts the agent on {@code task}, the brief of the track in its prompt, once the learner says yes. */
     private void start(Track track, String task, Set<String> documents, String question) {
+        Optional<String> problem = System.getProperty("boussole.agent") == null
+                ? io.github.lucasssoh.boussole.cli.init.Sandbox.problem() : Optional.empty();
+        if (problem.isPresent()) {
+            app.error("No agent without its sandbox: " + problem.get() + ".");
+            return;
+        }
         plan = true;
         app.confirm(question, () -> app.job("Starting the agent…", () -> {
             String jar = System.getProperty("boussole.jar");
             String agent = System.getProperty("boussole.agent");
             String brief = track.course().map(course -> TrackBrief.of(course, track.documents(), documents)).orElse("");
-            List<String> command = AgentRun.command(agent == null ? "claude" : agent, jar, AgentRun.prompt(task, brief));
+            List<String> command = AgentRun.command(agent == null ? "claude" : agent, AgentRun.prompt(task, brief));
             // a stand-in agent (tests) does not notify the desktop
             io.github.lucasssoh.boussole.cli.init.ClaudeHooks.install(track.folder());
             Path log = AgentRun.start(track.folder(), agent == null ? AgentRun.notifying(track.name(), jar, command) : command);
             agents.put(track.folder(), AgentRun.read(log));
             return "Agent started on " + track.name() + ".";
         }));
+    }
+
+    /**
+     * Locks the track, or unlocks it. Unlocking once the final mock exam is written warns that a
+     * document taken in then means building it again, with what a session costs on this track.
+     */
+    private void lock(Track track) {
+        if (track.course().map(course -> course.syllabus().chapters().isEmpty()).orElse(true)) {
+            app.say("No plan to lock.");
+        } else if (track.locked()) {
+            String cost = track.course().filter(TrackBrief::finalExamWritten)
+                    .map(course -> " A document taken in then means building the final mock exam again"
+                            + AgentRun.perSession(track.folder(), course.sessions().size())
+                            .map(tokens -> ": about " + AgentRun.count(tokens) + " tokens, a session's average here.").orElse("."))
+                    .orElse("");
+            app.confirm("Unlock " + track.name() + "?" + cost, () -> {
+                TrackLock.unlock(track.folder());
+                check(track.name() + " unlocked.");
+            });
+        } else {
+            app.confirm("Lock " + track.name() + "? Documents added from now on are left out, and the final mock exam can be written.", () -> {
+                TrackLock.lock(track.folder(), java.time.LocalDate.now());
+                check(track.name() + " locked.");
+            });
+        }
     }
 
     private void stop(Track track) {
@@ -974,6 +1015,9 @@ final class TracksTab implements AdminTab {
             hints.add(new Hint("r", "Take in documents"));
         } else if (chosen.map(track -> track.approved() && track.left() > 0).orElse(false)) {
             hints.add(new Hint("r", "Run agent"));
+        }
+        if (chosen.map(Track::approved).orElse(false)) {
+            hints.add(new Hint("L", chosen.get().locked() ? "Unlock" : "Lock"));
         }
         hints.addAll(List.of(new Hint("o", "Open"), new Hint("f", "Folder"), new Hint("+", "Add"), new Hint("-", "Remove")));
         return hints;

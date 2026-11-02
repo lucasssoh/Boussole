@@ -31,11 +31,31 @@ public final class TrackBrief {
     private TrackBrief() {
     }
 
-    /** The documents that ask for an agent: new, changed, gone. Pending ones wait by choice. */
-    public static List<SourceState> toTakeIn(List<SourceState> states) {
+    /**
+     * The documents that ask for an agent: new, changed, gone. Pending ones wait by choice; once
+     * the track is locked, new and changed ones are left out, and only those gone remain.
+     */
+    public static List<SourceState> toTakeIn(Course course, List<SourceState> states) {
+        boolean locked = course.syllabus().isLocked();
         return states.stream()
-                .filter(state -> state.state() == State.NEW || state.state() == State.CHANGED || state.state() == State.GONE)
+                .filter(state -> state.state() == State.GONE
+                        || !locked && (state.state() == State.NEW || state.state() == State.CHANGED))
                 .toList();
+    }
+
+    /** Whether the final mock exam of the plan has its file. */
+    public static boolean finalExamWritten(Course course) {
+        return course.syllabus().finalExam().map(exam -> written(course, course.syllabus().chapters().getLast(), exam)).orElse(false);
+    }
+
+    /** The final mock exam, while it waits for the lock: planned, not written, the track not locked. */
+    public static Optional<SyllabusSession> finalExamWaiting(Course course) {
+        return course.syllabus().finalExam().filter(exam -> !course.syllabus().isLocked() && !finalExamWritten(course));
+    }
+
+    private static boolean written(Course course, SyllabusChapter chapter, SyllabusSession entry) {
+        return course.sessions().stream()
+                .anyMatch(session -> session.chapter().id().equals(chapter.id()) && session.entry().id().equals(entry.id()));
     }
 
     /** The documents of the sources folder of {@code course}, compared with {@code cursus/sources.yaml}. */
@@ -59,10 +79,14 @@ public final class TrackBrief {
                 .append(", plan ").append(course.syllabus().status().name().toLowerCase(Locale.ROOT)).append(".\n");
         course.learner().ifPresent(learner -> out.append("Learner: ").append(learner(learner)).append(".\n"));
 
-        List<SourceState> toTakeIn = toTakeIn(states).stream()
+        course.syllabus().locked().ifPresentOrElse(
+                day -> out.append("Locked on ").append(day).append(" by the learner: documents added since are left out (F046).\n"),
+                () -> finalExamWaiting(course).ifPresent(exam -> out.append("Not locked: the final mock exam (").append(exam.id())
+                        .append(") waits until the learner locks the track; do not write it.\n")));
+        List<SourceState> toTakeIn = toTakeIn(course, states).stream()
                 .filter(state -> only.isEmpty() || only.contains(state.file()))
                 .toList();
-        List<SourceState> later = toTakeIn(states).stream().filter(state -> !toTakeIn.contains(state)).toList();
+        List<SourceState> later = toTakeIn(course, states).stream().filter(state -> !toTakeIn.contains(state)).toList();
         out.append("\nDocuments to take in: ").append(toTakeIn.isEmpty() ? "none" : toTakeIn.size()).append('\n');
         toTakeIn.forEach(state -> out.append("  ").append(String.format(Locale.ROOT, "%-8s", name(state.state())))
                 .append(state.file())
@@ -73,6 +97,14 @@ public final class TrackBrief {
         if (!later.isEmpty()) {
             out.append("Left for later by the learner (do not take them in, do not record them): ")
                     .append(later.stream().map(SourceState::file).collect(Collectors.joining(", "))).append('\n');
+        }
+        if (course.syllabus().isLocked()) {
+            List<SourceState> leftOut = states.stream()
+                    .filter(state -> state.state() == State.NEW || state.state() == State.CHANGED).toList();
+            if (!leftOut.isEmpty()) {
+                out.append("Left out, the track being locked: ")
+                        .append(leftOut.stream().map(SourceState::file).collect(Collectors.joining(", "))).append('\n');
+            }
         }
         List<SourceState> pending = states.stream().filter(state -> state.state() == State.PENDING).toList();
         if (!pending.isEmpty()) {
@@ -92,8 +124,9 @@ public final class TrackBrief {
                 Optional<CourseSession> written = course.sessions().stream()
                         .filter(session -> session.chapter().id().equals(chapter.id()) && session.entry().id().equals(entry.id()))
                         .findFirst();
+                boolean waits = finalExamWaiting(course).filter(exam -> exam == entry).isPresent();
                 out.append(String.format(Locale.ROOT, "    %-6s %-6s %3d min  %-8s %s%n", entry.id(),
-                        entry.kind().name().toLowerCase(Locale.ROOT), entry.duration(), written.isPresent() ? "written" : "to write",
+                        entry.kind().name().toLowerCase(Locale.ROOT), entry.duration(), written.isPresent() ? "written" : waits ? "waits" : "to write",
                         entry.title()));
                 written.map(TrackBrief::notions).filter(notions -> !notions.isEmpty())
                         .ifPresent(notions -> out.append("           notions: ").append(notions).append('\n'));

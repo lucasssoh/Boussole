@@ -3,12 +3,17 @@ id: f9
 objectives:
   - Write a quick review or a mock exam, with `::ref` and new questions.
   - Fit the number of questions to the time allowed.
+  - Know when the final mock exam is written, once the track is locked.
 terms: [quick-review, mock-exam, nudge, notion, worked-example]
 prerequisites: [boussole-format.format.f4]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code
     date: 2026-10-21
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-11-02
+    role: revised
 ---
 
 :::::warmup
@@ -172,6 +177,61 @@ otherwise, the validator reports [[3]].
 
 :::solution
 Between **8** and **11** minutes; outside, **`P008`**.
+:::
+::::
+
+## The final mock exam and the lock {#lock}
+
+**When is the mock exam at the end of a track written?** Last. The final mock exam is the last
+session of the plan, when it is an `exam`. It covers the whole track, so it waits until every
+document is in: the learner then **locks** the track, with `boussole lock .` or `L` in
+`boussole`. That writes the day in `cursus/syllabus.yaml`:
+
+| Track | Documents that arrive | The final mock exam |
+|---|---|---|
+| not locked | taken in by the agent | waits, unwritten |
+| locked (`locked: 2026-12-10`) | left out, reported as `F046` | written |
+
+Only the learner locks or unlocks. Unlocking is allowed, but a document taken in after the final
+mock exam means building it again.
+
+:::example[A locked plan]
+```yaml
+status: approved
+locked: 2026-12-10
+chapters:
+  - id: graphes
+    title: Graphs
+    dir: 03-graphes
+    sessions:
+      - id: e39
+        title: Final mock exam
+        kind: exam
+        duration: 120
+        goal: Pass the exam under its real conditions.
+        file: 39-examen-blanc.md
+```
+
+`e39` closes the plan and is an `exam`: it is the final mock exam, and the agent may write it.
+:::
+
+::::mcq{#f9-a5}
+The track is locked. The learner drops the slides of a last lecture into its folder. What
+happens?
+
+- [x] The validator reports `F046`, and the agent leaves the document out
+- [ ] The agent takes it in and builds the final mock exam again
+  > Not while the track is locked: the learner unlocks it first.
+- [ ] The validator reports `F033`, as for any new document
+  > Once the track is locked, a new document gives `F046`, not `F033`.
+
+:::hint
+Who decides that every document is in?
+:::
+
+:::solution
+Locked means every document is in: a later one is **left out (`F046`)** until the learner unlocks
+the track.
 :::
 ::::
 

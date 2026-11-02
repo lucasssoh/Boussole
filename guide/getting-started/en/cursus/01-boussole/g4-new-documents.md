@@ -72,6 +72,9 @@ The agent starts with the validator. It sees the new document, reads it and take
 
 It reads only the new document, not the whole track again.
 
+Every document in? **Lock the track**: `L` in `boussole`, or `boussole lock .`. The final mock
+exam is written then, on the whole track; a document added later is left out.
+
 ::::mcq{#g4-a2}
 You add the slides of lecture 7. What becomes of the sessions you have done?
 

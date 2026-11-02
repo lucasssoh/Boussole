@@ -3,12 +3,17 @@ id: f9
 objectives:
   - Écrire une révision express ou un examen blanc, avec `::ref` et des questions neuves.
   - Ajuster le nombre de questions au temps accordé.
+  - Savoir quand s'écrit l'examen blanc final, une fois le parcours verrouillé.
 terms: [quick-review, mock-exam, nudge, notion, worked-example]
 prerequisites: [boussole-format.format.f4]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code
     date: 2026-10-21
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-11-02
+    role: revised
 ---
 
 :::::warmup
@@ -173,6 +178,61 @@ sinon, le validateur signale [[3]].
 
 :::solution
 Entre **8** et **11** minutes ; en dehors, **`P008`**.
+:::
+::::
+
+## L'examen blanc final et le verrou {#lock}
+
+**Quand s'écrit l'examen blanc de fin de parcours ?** En dernier. L'examen blanc final est la
+dernière séance du plan, quand c'est un `exam`. Il couvre tout le parcours : il attend donc que
+tous les documents soient là. L'apprenant **verrouille** alors le parcours, avec
+`boussole lock .` ou `L` dans `boussole`. Le jour s'écrit dans `cursus/syllabus.yaml` :
+
+| Parcours | Documents qui arrivent | L'examen blanc final |
+|---|---|---|
+| non verrouillé | intégrés par l'agent | attend, non écrit |
+| verrouillé (`locked: 2026-12-10`) | laissés de côté, signalés par `F046` | écrit |
+
+Seul l'apprenant verrouille ou déverrouille. Déverrouiller reste permis, mais un document intégré
+après l'examen blanc final oblige à le refaire.
+
+:::example[Un plan verrouillé]
+```yaml
+status: approved
+locked: 2026-12-10
+chapters:
+  - id: graphes
+    title: Graphes
+    dir: 03-graphes
+    sessions:
+      - id: e39
+        title: Examen blanc final
+        kind: exam
+        duration: 120
+        goal: Réussir l'examen dans ses conditions réelles.
+        file: 39-examen-blanc.md
+```
+
+`e39` clôt le plan et c'est un `exam` : c'est l'examen blanc final, et l'agent peut l'écrire.
+:::
+
+::::mcq{#f9-a5}
+Le parcours est verrouillé. L'apprenant dépose dans son dossier les transparents d'un dernier
+cours. Que se passe-t-il ?
+
+- [x] Le validateur signale `F046`, et l'agent laisse le document de côté
+- [ ] L'agent l'intègre et refait l'examen blanc final
+  > Pas tant que le parcours est verrouillé : l'apprenant le déverrouille d'abord.
+- [ ] Le validateur signale `F033`, comme pour tout nouveau document
+  > Une fois le parcours verrouillé, un nouveau document donne `F046`, pas `F033`.
+
+:::hint
+Qui décide que tous les documents sont là ?
+:::
+
+:::solution
+Verrouillé veut dire que tous les documents sont là : un document plus tardif est **laissé de
+côté (`F046`)** jusqu'à ce que l'apprenant déverrouille le parcours.
 :::
 ::::
 

@@ -56,6 +56,14 @@ public final class ClaudeHooks {
 
     /** The settings with Boussole's hooks, everything else as it was. */
     static String merge(Optional<String> settings) {
+        return merge(settings, Sandbox.problem().isEmpty());
+    }
+
+    /**
+     * The same; with {@code sandbox}, every command of an agent runs in the sandbox and is allowed
+     * (see {@link Sandbox}), unless the learner set the sandbox up their own way.
+     */
+    static String merge(Optional<String> settings, boolean sandbox) {
         JsonNode read = settings.filter(text -> !text.isBlank()).map(JSON::readTree).orElse(null);
         ObjectNode root = read instanceof ObjectNode object ? object : JSON.createObjectNode();
         ObjectNode hooks = root.get("hooks") instanceof ObjectNode existing ? existing : root.putObject("hooks");
@@ -71,6 +79,18 @@ public final class ClaudeHooks {
                 group.put("matcher", "*");
             }
             group.putArray("hooks").addObject().put("type", "command").put("command", COMMAND);
+        }
+        if (sandbox && !root.has("sandbox")) {
+            root.set("sandbox", JSON.readTree(Sandbox.SETTINGS).get("sandbox"));
+            ObjectNode permissions = root.get("permissions") instanceof ObjectNode existing ? existing : root.putObject("permissions");
+            ArrayNode allow = permissions.get("allow") instanceof ArrayNode existing ? existing : permissions.putArray("allow");
+            boolean bash = false;
+            for (JsonNode rule : allow) {
+                bash |= rule.asString("").equals("Bash");
+            }
+            if (!bash) {
+                allow.add("Bash");
+            }
         }
         return JSON.writeValueAsString(root) + "\n";
     }

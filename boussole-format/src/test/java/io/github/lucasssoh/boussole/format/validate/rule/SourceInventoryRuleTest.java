@@ -48,6 +48,30 @@ class SourceInventoryRuleTest {
     }
 
     @Test
+    void onceTheTrackIsLockedANewOrChangedDocumentIsLeftOut() {
+        var report = SubjectFixture.in(dir)
+                .syllabusYaml("status: approved\nlocked: 2026-12-10\nchapters: []\n")
+                .document("cours.md", "cours, corrigé")
+                .document("cours8.md", "cours 8")
+                .sources("- file: cours.md\n  sha256: " + COURS + "\n")
+                .inspect();
+
+        assertThat(report.withCode(DiagnosticCode.F033)).isEmpty();
+        assertThat(report.withCode(DiagnosticCode.F034)).isEmpty();
+        assertThat(report.withCode(DiagnosticCode.F046)).hasSize(2).anySatisfy(diagnostic -> assertThat(diagnostic.message())
+                .isEqualTo("`cours8.md` arrived after the track was locked (2026-12-10): it is left out. To take it in, the learner"
+                        + " unlocks the track (boussole lock . --off), and the final mock exam may have to be built again"));
+    }
+
+    @Test
+    void aLockThatIsNotADateIsReported() {
+        var report = SubjectFixture.in(dir).syllabusYaml("status: approved\nlocked: yes\nchapters: []\n").inspect();
+
+        assertThat(report.withCode(DiagnosticCode.F001)).anySatisfy(diagnostic -> assertThat(diagnostic.message())
+                .contains("`locked` is the day the track was locked, written 2026-12-10"));
+    }
+
+    @Test
     void aPendingDocumentStillAsksForWork() {
         var report = SubjectFixture.in(dir)
                 .document("chapitre4.md", "à venir")

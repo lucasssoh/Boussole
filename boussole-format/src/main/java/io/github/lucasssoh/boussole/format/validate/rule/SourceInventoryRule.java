@@ -6,6 +6,7 @@ import io.github.lucasssoh.boussole.format.diagnostic.SourcePosition;
 import io.github.lucasssoh.boussole.format.model.Course;
 import io.github.lucasssoh.boussole.format.source.SourceInventory;
 import io.github.lucasssoh.boussole.format.source.SourceInventory.SourceState;
+import io.github.lucasssoh.boussole.format.source.SourceInventory.State;
 import io.github.lucasssoh.boussole.format.validate.ValidationContext;
 import io.github.lucasssoh.boussole.format.validate.ValidationRule;
 import java.util.List;
@@ -40,6 +41,13 @@ public final class SourceInventoryRule implements ValidationRule {
         }
         for (SourceState state : states) {
             SourcePosition where = state.entry().map(entry -> entry.position()).orElse(SourcePosition.fileOnly(SOURCES));
+            if (course.syllabus().isLocked() && (state.state() == State.NEW || state.state() == State.CHANGED)) {
+                diagnostics.report(DiagnosticCode.F046, where, "`" + state.file() + "` "
+                        + (state.state() == State.NEW ? "arrived" : "changed") + " after the track was locked ("
+                        + course.syllabus().locked().get() + "): it is left out. To take it in, the learner unlocks the track"
+                        + " (boussole lock . --off), and the final mock exam may have to be built again");
+                continue;
+            }
             switch (state.state()) {
                 case NEW -> diagnostics.report(DiagnosticCode.F033, where,
                         "new document `" + state.file() + "`, not yet in " + SOURCES + HOW);

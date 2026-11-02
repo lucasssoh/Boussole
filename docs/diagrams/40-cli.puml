@@ -18,13 +18,22 @@ package "cli" {
   class BusCommand <<@Command bus>> {
     event, --tool, --agent, --file
   }
+  class LockCommand <<@Command lock>> {
+    folder : Path
+    off : boolean
+  }
+  class TrackLock <<locked in syllabus.yaml>> {
+    +{static} lock(folder, LocalDate)
+    +{static} unlock(folder)
+  }
   class BriefCommand <<@Command brief>> {
     folder : Path
     only : List<String>
   }
   class TrackBrief {
     +{static} of(Course, List<SourceState>, only) : String
-    +{static} toTakeIn(List<SourceState>) : List<SourceState>
+    +{static} toTakeIn(Course, List<SourceState>) : List<SourceState>
+    +{static} finalExamWaiting(Course) : Optional<SyllabusSession>
   }
   class IndexCommand <<@Command index>> {
     folder : Path
@@ -170,7 +179,11 @@ package "cli.init" {
   }
   class SubjectScaffold
   class AgentKitInstaller
-  class ClaudeHooks <<.claude/settings.json, the bus>>
+  class ClaudeHooks <<.claude/settings.json, the bus, the sandbox>>
+  class Sandbox <<bwrap, socat; writes only in the track>> {
+    +{static} SETTINGS : String
+    +{static} problem() : Optional<String>
+  }
   class AgentKit <<resources>>
   class MarkedBlock
   class SubjectFolder
@@ -200,6 +213,8 @@ NewCommand ..> BoussoleConfigFile : tracks_dir, adds the track
 BoussoleCommand --> ValidateCommand : subcommand
 BoussoleCommand --> SourcesCommand : subcommand
 BoussoleCommand --> BriefCommand : subcommand
+BoussoleCommand --> LockCommand : subcommand
+LockCommand --> TrackLock
 BriefCommand --> TrackBrief
 BoussoleCommand --> IndexCommand : subcommand
 BoussoleCommand --> BusCommand : subcommand
@@ -217,6 +232,8 @@ DevicesTab --> LocalServer : /api/devices
 TracksTab --> TrackCheck : validates
 TracksTab ..> TrackBrief : the prompt of the agent
 TracksTab --> DocumentPick : r, the documents ticked
+TracksTab ..> TrackLock : L, locks or unlocks
+AgentRun ..> Sandbox : settings, what it needs
 TracksTab ..> BoussoleConfigFile : adds, removes a folder
 TracksTab ..> ServerControl : opens
 TracksTab ..> PlanApproval : approves the plan
@@ -265,6 +282,7 @@ AgentKitInstaller --> SubjectFolder
 AgentKitInstaller --> AgentKit : skills, format
 AgentKitInstaller --> MarkedBlock : AGENTS.md
 AgentKitInstaller --> ClaudeHooks : the bus
+ClaudeHooks ..> Sandbox : when it is installed
 SubjectScaffold ..> InitReport
 AgentKitInstaller ..> InitReport
 

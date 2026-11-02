@@ -32,9 +32,9 @@ import tools.jackson.databind.ObjectMapper;
  * Tracks screen shows where it stands and the tokens it spent, even after {@code boussole} closed
  * and opened again. Its prompt carries the brief of the track ({@code boussole brief}), so that it
  * continues the track instead of reading it all again. It writes the sessions left, or takes in
- * the documents that arrived. The agent may change the files of the track, run
- * {@code boussole validate}, {@code index}, {@code brief} and {@code sources}, read the documents ({@code pdftotext}, {@code pdfinfo}, {@code ls}) and
- * run {@code python3} to check an answer, nothing else.
+ * the documents that arrived. The agent changes the files of the track only, and runs any
+ * command in the sandbox of Claude Code ({@code bwrap} and {@code socat} on Linux), which writes
+ * only in the track and has no network.
  */
 final class AgentRun {
 
@@ -42,7 +42,8 @@ final class AgentRun {
             The plan of this track is approved (cursus/syllabus.yaml, status: approved). Follow AGENTS.md: \
             write the sessions that have no file yet, in the order of the plan, with the prerequisites the \
             plan gives them; one agent per chapter, three at a time at most, each writing only in its \
-            chapter's folder. Write in the language of the track. You cannot ask the learner anything: \
+            chapter's folder. The final mock exam (the last session, when it is an exam) waits until the \
+            learner locks the track (`locked` in the syllabus): leave it unwritten until then. Write in the language of the track. You cannot ask the learner anything: \
             when a choice is theirs, take the safest one and say so in your report. End with \
             `boussole validate .` without errors, then a short report: what was written, what you \
             assumed, what is left.""";
@@ -61,6 +62,13 @@ final class AgentRun {
             End with `boussole validate .` without errors, then a short report: each document, what it \
             changed, what is left.""";
 
+    /** What the agent may do, so that it does not hold back a command that would spare it reading again. */
+    static final String FREEDOM = """
+            Every command runs in a sandbox that writes only in this folder and has no network: use any \
+            command that helps (loops, ls, pdftotext, pdfinfo, python3, boussole), and pass it on to the \
+            agents you start.""";
+
+
     /** Longer than this, the brief stays out of the prompt (an argument has a limit) and the agent runs {@code boussole brief .}. */
     static final int BRIEF_LIMIT = 60_000;
 
@@ -69,6 +77,7 @@ final class AgentRun {
      * instead of reading it all; each agent of a chapter gets the lines of its chapter.
      */
     static String prompt(String task, String brief) {
+        task = task + " " + FREEDOM;
         if (brief.isBlank() || brief.length() > BRIEF_LIMIT) {
             return task + " Run `boussole brief .` first: it says where the track stands.";
         }
@@ -77,7 +86,7 @@ final class AgentRun {
     }
 
     private static final ObjectMapper JSON = new ObjectMapper();
-    static final String SANDBOX = "{\"sandbox\":{\"enabled\":true,\"autoAllowBashIfSandboxed\":true,\"allowUnsandboxedCommands\":false}}";
+    static final String SANDBOX = io.github.lucasssoh.boussole.cli.init.Sandbox.SETTINGS;
     /** What each log said at a size: the screen asks every second, the log grows only while the agent runs. */
     private static final Map<Path, Read> READ = new ConcurrentHashMap<>();
 
@@ -156,27 +165,15 @@ final class AgentRun {
     }
 
     /** The command that starts the agent: {@code agent} is {@code claude}, or a stand-in in tests. */
-    static List<String> command(String agent, String jar) {
-        return command(agent, jar, PROMPT);
-    }
-
-    /** The same, asked {@code prompt}. */
-    static List<String> command(String agent, String jar, String prompt) {
-        List<String> command = new ArrayList<>(List.of(agent, "--print", prompt, "--output-format", "stream-json", "--verbose",
-                "--permission-mode", "acceptEdits", "--allowedTools",
-                "Read", "Write", "Edit", "Glob", "Grep", "Agent", "Task", "TodoWrite",
-                "Bash(boussole validate:*)", "Bash(boussole index:*)", "Bash(boussole brief:*)", "Bash(boussole sources:*)",
-                // to read the documents, and to check an answer by computing it
-                "Bash(pdftotext:*)", "Bash(pdfinfo:*)", "Bash(ls:*)", "Bash(python3:*)",
-                // any other command runs in the sandbox of Claude Code: it writes only in the track, with no network
-                "--settings", SANDBOX));
-        if (jar != null && !jar.isBlank()) {
-            command.add("Bash(java -jar " + jar + " validate:*)");
-            command.add("Bash(java -jar " + jar + " index:*)");
-            command.add("Bash(java -jar " + jar + " brief:*)");
-            command.add("Bash(java -jar " + jar + " sources:*)");
-        }
-        return List.copyOf(command);
+    static List<String> command(String agent, String prompt) {
+        // Every command runs in the sandbox of Claude Code, which writes only in the track and has
+        // no network, so any command is allowed: a loop or a variable the rules of a command cannot
+        // check is no longer refused, which cost the agent a detour each time. Write and Edit are not
+        // listed: acceptEdits allows them in the track only.
+        return List.of(agent, "--print", prompt, "--output-format", "stream-json", "--verbose",
+                "--permission-mode", "acceptEdits",
+                "--allowedTools", "Read", "Glob", "Grep", "Agent", "Task", "TodoWrite", "Bash",
+                "--settings", SANDBOX);
     }
 
     /**
@@ -569,6 +566,21 @@ final class AgentRun {
             return Files.getLastModifiedTime(sibling(log, ".pid")).toInstant();
         } catch (IOException e) {
             return Instant.EPOCH;
+        }
+    }
+
+    /** The tokens of every run on the track, over the sessions written: what a session cost there, if known. */
+    static Optional<Long> perSession(Path track, int written) {
+        Path runs = runs(track);
+        if (written == 0 || !Files.isDirectory(runs)) {
+            return Optional.empty();
+        }
+        try (Stream<Path> files = Files.list(runs)) {
+            long total = files.filter(file -> file.getFileName().toString().endsWith(".jsonl"))
+                    .mapToLong(file -> read(file).tokens().total()).sum();
+            return total == 0 ? Optional.empty() : Optional.of(total / written);
+        } catch (IOException e) {
+            return Optional.empty();
         }
     }
 

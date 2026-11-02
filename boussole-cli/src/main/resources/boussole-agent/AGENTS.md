@@ -85,6 +85,16 @@ When in doubt, the most capable: a wrong course costs more than the tokens it sa
 
 Rules:
 
+- **The lock is the learner's.** `locked` in `cursus/syllabus.yaml` says every document is in:
+  documents added after are left out (`F046`), and the final mock exam (the last session of the
+  plan, an `exam`) can be written; before the lock, leave it unwritten. Never set or remove
+  `locked` yourself: suggest it. On a locked track, before you take a document in or build the
+  final mock exam or sessions again, tell the learner that it costs about as much as writing them
+  the first time, and go on only if they confirm.
+- **Use any command that helps.** When `.claude/settings.json` holds the `sandbox` Boussole set
+  up (Claude Code), every command runs in it, writes only in this folder and has no network, so
+  loops, `ls`, `pdftotext` or `python3` are all allowed. A command that reads a whole
+  folder at once costs less than reading its files one by one.
 - **Never modify, move or delete the learner's documents**, in {{sources}}.
 - **Asking the learner**: when you need a choice from them, use your interactive
   multiple-choice tool if you have one (Claude Code: `AskUserQuestion`, answered with the arrow

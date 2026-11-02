@@ -52,7 +52,9 @@ write sessions here: the learner approves the plan first.
   learner). Their `duration` is the time allowed, not an estimate. They are built with the
   `exam-build` skill. Add a **cumulative review** (`kind: review`, 20 to 30 minutes) halfway
   through the track and before each exam, on every chapter so far: what was learnt weeks ago is
-  what is forgotten, and asking it again then is what makes it stay.
+  what is forgotten, and asking it again then is what makes it stay. When the track prepares a
+  final exam, its mock exam is the **last session of the plan**: it waits until the learner locks
+  the track (`.boussole/FORMAT.md` §3), so that it covers every document.
 - **List the notions and what each needs.** For each notion, the earlier notions it uses. A
   notion used before the session that teaches it is a mistake of the plan: move it, or plan its
   session earlier. These dependencies become the `prerequisites` of the sessions: only those

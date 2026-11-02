@@ -38,7 +38,11 @@ enum Domain {
   …
   +isced() : String
 }
-class CourseSyllabus <<record>>
+class CourseSyllabus <<record>> {
+  locked : Optional<LocalDate>
+  +isLocked() : boolean
+  +finalExam() : Optional<SyllabusSession>
+}
 class ChapterLinks <<record>> {
   after : Map<String, Set<String>>
   +{static} of(Course) : ChapterLinks

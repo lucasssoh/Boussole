@@ -188,6 +188,7 @@ picocli. One class per command.
 | `boussole validate SUBJECT_DIR [--check-videos]` | Runs the validator. |
 | `boussole sources SUBJECT_DIR [--all]` | Lists the documents against `cursus/sources.yaml`: new, changed, pending, gone, with the entries to add. |
 | `boussole brief SUBJECT_DIR [--only DOCUMENT]…` | Says where a subject stands, for an agent that continues it: documents to take in, each chapter with its documents, sessions (written or not) and notions, the lexicon, the learner's profile. |
+| `boussole lock SUBJECT_DIR [--off]` | Locks a subject once every document is in (`locked` in `syllabus.yaml`): documents added later are left out (`F046`), the final mock exam can be written. `--off` unlocks it. |
 | `boussole index SUBJECT_DIR [--before SESSION]` | Lists every question of a subject, one per line, with how many times it is asked again (`::ref`): agents pick warmup and review questions there. |
 | `boussole devices [pair\|accept\|deny\|rename\|access\|remove]` | Pairs other devices of the network and manages them, through the running server's `/api/devices`. |
 | `boussole` (alone, beta) | In a terminal, the same full screen (Lanterna, `cli.admin`); without a terminal, the help: the server (start, stop, restart, network on or off in `config.yaml`), the devices (requests, pairing with its QR code), the tracks of `config.yaml` (validated as `boussole validate` does, with their documents to take into account; add or remove a folder). `ServerControl` and `TrackCheck` are what it shares with `open`, `stop` and `validate`. |
@@ -388,13 +389,17 @@ them. The one exception is a convenience of `boussole` alone: on the Tracks scre
 Claude Code (`claude --print`, or the program named by the `boussole.agent` system property) in
 the folder of a track whose plan is approved: to take in the documents that arrived, changed or
 went, those the learner ticks (`DocumentPick`; the others wait, named in the brief as left for
-later), else to write the sessions left. Its prompt carries the brief of the
+later), else to write the sessions left; the final mock exam (the last session of the plan, an `exam`)
+waits until the learner locks the track (`L`, `TrackLock`). Its prompt carries the brief of the
 track (`TrackBrief`, the output of `boussole brief`), so that it continues the track instead of
-reading every session again. That agent may change the files of the track,
-run `boussole validate`, `index`, `brief` and `sources`, read the documents (`pdftotext`, `pdfinfo`, `ls`)
-and run `python3` to check an answer by computing it (`--permission-mode acceptEdits` and
-`--allowedTools`); any other command runs in the sandbox of Claude Code (`bwrap` on Linux), which
-writes only in the track and has no network (`--settings` with `sandbox.autoAllowBashIfSandboxed`), and waits for the agents of the chapters it starts in the background
+reading every session again. That agent changes the files of the track only (`--permission-mode acceptEdits`, `Write` and
+`Edit` left out of `--allowedTools`), and runs any command (`Bash` allowed) in the sandbox of
+Claude Code (`Sandbox`; `bwrap` and `socat` on Linux, none on Windows: else the agent is not started), which writes
+only in the track and has no network (`--settings` with `sandbox.allowUnsandboxedCommands: false`):
+a loop or a variable, which rules by command prefix cannot check, is no longer refused. The same
+sandbox and `Bash` rule go into the `.claude/settings.json` of the track (`ClaudeHooks`), unless
+the learner set up a sandbox of their own, so that an agent opened by hand gets them too. The
+agent waits for the agents of the chapters it starts in the background
 (`CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`; Claude Code stops them after 10 minutes otherwise). Its events go to `.boussole/runs/<time>.jsonl`, with its process number in a
 `.pid` beside them, so that the screen shows where it stands and the tokens it spent (the totals
 of every model it used, the agents it started included, and the cost at list price) even after

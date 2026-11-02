@@ -44,6 +44,15 @@ Write the file first (§4) for what the course **already** uses, from the `sourc
 chapters and sessions; mark `ignored` what it deliberately leaves out (use a pattern for a whole
 folder); only what remains is really new.
 
+**The track is locked** (`locked` in `cursus/syllabus.yaml`, `F046` instead of `F033`/`F034`)?
+Then take nothing in: the learner said every document is in. Tell them which documents wait,
+and that unlocking (`boussole lock . --off`) takes them in, at the cost of building the final
+mock exam again if it is written. Never unlock the track yourself.
+
+**Suggest locking** when a document says it is the last lecture, or the learner says every
+document is in: `boussole lock .`, or `L` in `boussole`. The final mock exam is written then.
+Never lock the track yourself.
+
 ## 2. Read and classify each new or changed document
 
 Read it (for a PDF, `pdftotext -layout <file> -`). Decide what it is, one document at a time:

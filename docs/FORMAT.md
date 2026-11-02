@@ -135,6 +135,7 @@ after that.
 
 ```yaml
 status: approved              # proposed | approved
+locked: 2026-12-10            # set by the learner once every document is in
 chapters:
   - id: couche-reseau
     title: La couche réseau
@@ -162,6 +163,7 @@ chapters:
 | Field | Required | Meaning |
 |---|---|---|
 | `status` | yes | `proposed` or `approved`. |
+| `locked` | no | The day the learner locked the track: every document is in. Documents that arrive after are left out (`F046`), and the final mock exam can be written. Only the learner sets or removes it (`boussole lock .`, `--off` to unlock). |
 | `chapters[].id` | yes | Slug, unique in the subject. |
 | `chapters[].title` | yes | Display title. |
 | `chapters[].dir` | yes | Folder under `cursus/`. |
@@ -173,6 +175,10 @@ chapters:
 | `sessions[].goal` | yes | One sentence: what the learner can do at the end. |
 | `sessions[].file` | yes | File in the chapter folder. It may not exist yet while the course is being written. |
 | `sessions[].prerequisites` | no | Full session IDs it needs first, as the plan decided them. Before the file is written, they order the chapters (`F044`) and tell the agent that writes the session; once it is written, its front matter lists the same ones (`F045` otherwise). |
+
+The **final mock exam** is the last session of the plan when it is an `exam`. It covers the whole
+track, so it is written only once the track is `locked`; until then it waits, unwritten. Unlocking
+is allowed, but a document taken in after it means building it again.
 
 The full ID of a session is `<subject>.<chapter>.<session>`, for example
 `reseaux.couche-reseau.s11`. The order in the file is the order of the course.
@@ -497,6 +503,7 @@ chapter.
 | `F043` | error | A question with `hook=true` outside the warmup. |
 | `F044` | error | Chapters that wait for one another: a chapter waits for every chapter one of its sessions has a prerequisite in, so the chapters must follow one order. |
 | `F045` | error | A written session whose `prerequisites` differ from those the syllabus plans for it: write the same list in both. |
+| `F046` | warning | A document new or changed after the track was `locked`: it is left out. Only the learner takes it in, by unlocking the track (`boussole lock . --off`). |
 | `F032` | warning | `video` that YouTube does not know (checked only with `--check-videos`). |
 | `P001` | warning | A notion without exercise or `mcq`. |
 | `P002` | warning | A notion with more than one `example`. |
@@ -605,6 +612,8 @@ A document is any file of the sources folder, sub-folders included, with one of 
 `webm`, `ogv`, `mov`, `mkv`, `avi`; hidden files and
 folders are not. When the sources folder is the subject folder itself (`sources: .`), the files of
 the course (`cursus/`, `subject.yaml`, `learner.yaml`, `AGENTS.md`, `CLAUDE.md`) are not documents.
+Once the track is locked (`locked` in the syllabus, §3), a new or changed document gives `F046`
+instead of `F033` or `F034`: it is left out until the learner unlocks the track.
 An entry naming the file exactly wins over a pattern. `boussole sources <subject folder>` lists
 what is new, changed, pending or gone, with the entries to add and their SHA-256.
 

@@ -158,6 +158,9 @@ between its three screens.
   plan shows each chapter's progress, the session being written and the tokens spent, and a
   notification tells you when the agent is done.
 
+  Once every document is in, lock the track (`L`, or `boussole lock .`): documents added later
+  are left out, and the final mock exam is written then, on the whole track.
+
 Folders next to your tracks that hold a plan show up too, ready to add.
 
 To pair a device without the full screen, add `network: true` to `config.yaml` and restart
@@ -197,6 +200,11 @@ unblock it once:
 ```
 xattr -dr com.apple.quarantine boussole.app
 ```
+
+To let `boussole` start an agent that writes your tracks (Claude Code), install `bubblewrap` and
+`socat` on Linux (`sudo dnf install bubblewrap socat`, or `sudo apt install bubblewrap socat`):
+the agent runs its commands in a sandbox that writes only in the folder of the track. On Windows,
+use Boussole in WSL for this.
 
 ## Documentation
 
