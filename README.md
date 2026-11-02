@@ -154,8 +154,8 @@ apart on the home page to come back to.
 
 ## Installing
 
-Download the archive for your system from the [releases](https://github.com/lucasssoh/Boussole/releases):
-Boussole comes with its own Java, nothing else to install.
+Download the archive for your system from the [releases](https://github.com/lucasssoh/Boussole/releases).
+It includes its own Java, so you need nothing else.
 
 | System | Archive | The `boussole` command |
 |---|---|---|
@@ -163,7 +163,9 @@ Boussole comes with its own Java, nothing else to install.
 | macOS | `boussole-<version>-macos-arm64.tar.gz` | `boussole.app/Contents/MacOS/boussole` |
 | Windows | `boussole-<version>-windows-x64.zip` | `boussole\boussole.exe` |
 
-On Linux, for instance:
+Extract it and run `boussole open`. Boussole opens in your browser.
+
+On Linux, to type `boussole` from any folder:
 
 ```
 tar -xzf boussole-*-linux-x64.tar.gz -C ~/.local/share
@@ -171,8 +173,12 @@ ln -s ~/.local/share/boussole/bin/boussole ~/.local/bin/boussole
 boussole open
 ```
 
-On macOS, the archive is not signed yet: after extracting it, run
-`xattr -dr com.apple.quarantine boussole.app` once.
+On macOS, the system blocks Boussole because the app isn't signed yet. After extracting it,
+unblock it once:
+
+```
+xattr -dr com.apple.quarantine boussole.app
+```
 
 ## Documentation
 
