@@ -59,7 +59,7 @@ class AgentRunTest {
         List<String> command = AgentRun.command("claude", AgentRun.PROMPT);
 
         assertThat(command).startsWith("claude", "--print").contains("acceptEdits", "Bash", "--settings", AgentRun.SANDBOX)
-                .doesNotContain("Write", "Edit", "WebFetch", "--dangerously-skip-permissions");
+                .contains("WebSearch", "WebFetch").doesNotContain("Write", "Edit", "--dangerously-skip-permissions");
         assertThat(AgentRun.prompt(AgentRun.PROMPT, "")).contains(AgentRun.FREEDOM);
     }
 
@@ -136,5 +136,13 @@ class AgentRunTest {
         assertThat(AgentRun.count(512)).isEqualTo("512");
         assertThat(AgentRun.count(34_567)).isEqualTo("34k");
         assertThat(AgentRun.count(14_200_000)).isEqualTo("14.2M");
+    }
+
+    @Test
+    void theTokensAreCountedAtInputPrice() {
+        AgentRun.Tokens tokens = new AgentRun.Tokens(100, 1_000, 1_000_000, 10_000);
+
+        assertThat(tokens.weighted()).isEqualTo(100 + 100_000 + 12_500 + 5_000);
+        assertThat(tokens.total()).isEqualTo(1_011_100);
     }
 }

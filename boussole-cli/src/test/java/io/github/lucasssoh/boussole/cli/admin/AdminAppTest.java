@@ -195,7 +195,7 @@ class AdminAppTest {
     }
 
     @Test
-    void r_starts_an_agent_on_an_approved_plan_and_the_screen_shows_its_tokens() throws Exception {
+    void r_starts_an_agent_on_an_approved_plan_and_the_screen_shows_its_tokens_at_input_price() throws Exception {
         Path track = approvedTrack(home.resolve("lmc"));
         Path agent = home.resolve("fake-claude");
         Files.writeString(agent, "#!/bin/sh\ncat <<'EOF'\n" + AgentRunTest.EVENTS + "EOF\n");
@@ -218,7 +218,7 @@ class AdminAppTest {
                 shown = shown(app);
             }
 
-            assertThat(shown).contains("done 0/1", "Agent done", " · $1.50", "10k tokens (3k reread from the cache)",
+            assertThat(shown).contains("done 0/1", "Agent done", " · $1.50", "16k tokens at input price (10k counted raw)",
                     "Sessions written.");
             assertThat(Files.list(track.resolve(".boussole/runs")).map(file -> file.getFileName().toString()))
                     .anyMatch(name -> name.endsWith(".jsonl")).anyMatch(name -> name.endsWith(".pid"));

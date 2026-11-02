@@ -596,8 +596,8 @@ final class TracksTab implements AdminTab {
         };
         AgentRun.Tokens tokens = status.tokens();
         lines.add(new PlanLine(state + time + status.costUsd().map(cost -> String.format(Locale.ROOT, " · $%.2f", cost)).orElse("")
-                + " · " + AgentRun.count(tokens.total()) + " tokens"
-                + (tokens.cacheRead() > 0 ? " (" + AgentRun.count(tokens.cacheRead()) + " reread from the cache)" : ""), style));
+                + " · " + AgentRun.count(tokens.weighted()) + " tokens at input price"
+                + (tokens.cacheRead() > 0 ? " (" + AgentRun.count(tokens.total()) + " counted raw)" : ""), style));
         status.limit().ifPresent(limit -> {
             String resets = limit.resets().map(at -> ", resets at " + LocalTime.ofInstant(at, ZoneId.systemDefault()).withSecond(0).withNano(0))
                     .orElse("");
@@ -954,7 +954,7 @@ final class TracksTab implements AdminTab {
             String cost = track.course().filter(TrackBrief::finalExamWritten)
                     .map(course -> " A document taken in then means building the final mock exam again"
                             + AgentRun.perSession(track.folder(), course.sessions().size())
-                            .map(tokens -> ": about " + AgentRun.count(tokens) + " tokens, a session's average here.").orElse("."))
+                            .map(tokens -> ": about " + AgentRun.count(tokens) + " tokens at input price, a session's average here.").orElse("."))
                     .orElse("");
             app.confirm("Unlock " + track.name() + "?" + cost, () -> {
                 TrackLock.unlock(track.folder());

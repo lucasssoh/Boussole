@@ -393,7 +393,8 @@ later), else to write the sessions left; the final mock exam (the last session o
 waits until the learner locks the track (`L`, `TrackLock`). Its prompt carries the brief of the
 track (`TrackBrief`, the output of `boussole brief`), so that it continues the track instead of
 reading every session again. That agent changes the files of the track only (`--permission-mode acceptEdits`, `Write` and
-`Edit` left out of `--allowedTools`), and runs any command (`Bash` allowed) in the sandbox of
+`Edit` left out of `--allowedTools`), searches the web (`WebSearch`, `WebFetch`: guessing costs more than a search), and runs any
+command (`Bash` allowed) in the sandbox of
 Claude Code (`Sandbox`; `bwrap` and `socat` on Linux, none on Windows: else the agent is not started), which writes
 only in the track and has no network (`--settings` with `sandbox.allowUnsandboxedCommands: false`):
 a loop or a variable, which rules by command prefix cannot check, is no longer refused. The same
@@ -402,7 +403,8 @@ the learner set up a sandbox of their own, so that an agent opened by hand gets 
 agent waits for the agents of the chapters it starts in the background
 (`CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`; Claude Code stops them after 10 minutes otherwise). Its events go to `.boussole/runs/<time>.jsonl`, with its process number in a
 `.pid` beside them, so that the screen shows where it stands and the tokens it spent (the totals
-of every model it used, the agents it started included, and the cost at list price) even after
+of every model it used, the agents it started included, counted at input price as
+`docs/research/couts.md` does, `Tokens.weighted()`, and the cost at list price) even after
 `boussole` closed and opened again: the session each agent of a chapter writes comes from the
 files it writes in `cursus/<chapter>/`. The agent runs inside a short `sh` script that, once it
 ends, asks the validator how many sessions are written and says it with `notify-send`, when the

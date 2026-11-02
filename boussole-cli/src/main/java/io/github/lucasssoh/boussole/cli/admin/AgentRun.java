@@ -65,8 +65,8 @@ final class AgentRun {
     /** What the agent may do, so that it does not hold back a command that would spare it reading again. */
     static final String FREEDOM = """
             Every command runs in a sandbox that writes only in this folder and has no network: use any \
-            command that helps (loops, ls, pdftotext, pdfinfo, python3, boussole), and pass it on to the \
-            agents you start.""";
+            command that helps (loops, ls, pdftotext, pdfinfo, python3, boussole); search the web with \
+            WebSearch and WebFetch rather than guess. Pass this on to the agents you start.""";
 
 
     /** Longer than this, the brief stays out of the prompt (an argument has a limit) and the agent runs {@code boussole brief .}. */
@@ -107,6 +107,15 @@ final class AgentRun {
 
         long total() {
             return input + output + cacheRead + cacheWrite;
+        }
+
+        /**
+         * The tokens counted at the price of an input token, as {@code docs/research/couts.md}
+         * does: a reread from the cache costs a tenth, a write to it 1.25, an output token 5.
+         * What a run costs, where {@link #total()} mostly counts cheap rereads.
+         */
+        long weighted() {
+            return Math.round(input + cacheRead * 0.1 + cacheWrite * 1.25 + output * 5.0);
         }
 
         Tokens plus(Tokens other) {
@@ -172,7 +181,8 @@ final class AgentRun {
         // listed: acceptEdits allows them in the track only.
         return List.of(agent, "--print", prompt, "--output-format", "stream-json", "--verbose",
                 "--permission-mode", "acceptEdits",
-                "--allowedTools", "Read", "Glob", "Grep", "Agent", "Task", "TodoWrite", "Bash",
+                // the web too: an agent that cannot search guesses, and guessing costs more than a search
+                "--allowedTools", "Read", "Glob", "Grep", "Agent", "Task", "TodoWrite", "Bash", "WebSearch", "WebFetch",
                 "--settings", SANDBOX);
     }
 
@@ -569,7 +579,7 @@ final class AgentRun {
         }
     }
 
-    /** The tokens of every run on the track, over the sessions written: what a session cost there, if known. */
+    /** The tokens of every run on the track at input price, over the sessions written: what a session cost there, if known. */
     static Optional<Long> perSession(Path track, int written) {
         Path runs = runs(track);
         if (written == 0 || !Files.isDirectory(runs)) {
@@ -577,7 +587,7 @@ final class AgentRun {
         }
         try (Stream<Path> files = Files.list(runs)) {
             long total = files.filter(file -> file.getFileName().toString().endsWith(".jsonl"))
-                    .mapToLong(file -> read(file).tokens().total()).sum();
+                    .mapToLong(file -> read(file).tokens().weighted()).sum();
             return total == 0 ? Optional.empty() : Optional.of(total / written);
         } catch (IOException e) {
             return Optional.empty();
