@@ -27,6 +27,10 @@ the track again**: read the documents to take in, and, to match the notation and
 written session of the chapter you extend, no more. Questions for warmups and reviews come from
 `boussole index .`. Reading every session again costs far more than the work itself.
 
+The learner may choose which documents to take in now (in `boussole`, or by naming them). Then
+take in **only those**: `boussole brief . --only <document>` (repeat `--only` for each) lists the
+others as left for later. Leave those as they are: no entry in `cursus/sources.yaml`, no session.
+
 (the same program as `boussole validate .`, with `sources` instead of `validate`; see
 `AGENTS.md`). It lists each document that is **new**, **changed**, **pending** or **gone**, and
 prints the entries to add to `cursus/sources.yaml`, SHA-256 included. Never compute or invent a

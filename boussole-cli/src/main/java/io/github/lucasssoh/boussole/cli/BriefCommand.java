@@ -5,10 +5,13 @@ import io.github.lucasssoh.boussole.format.load.CourseLoader;
 import io.github.lucasssoh.boussole.format.model.Course;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Model.CommandSpec;
+import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Spec;
 
@@ -28,6 +31,10 @@ final class BriefCommand implements Callable<Integer> {
     @Parameters(paramLabel = "FOLDER", description = "The subject folder, the one holding subject.yaml.")
     private Path folder;
 
+    @Option(names = "--only", paramLabel = "DOCUMENT",
+            description = "Take in only this document (as `boussole sources` names it), the others wait; repeat it for several.")
+    private List<String> only = List.of();
+
     @Spec
     private CommandSpec spec;
 
@@ -38,7 +45,7 @@ final class BriefCommand implements Callable<Integer> {
             spec.commandLine().getErr().println("boussole: " + folder + " has no readable subject.yaml");
             return ExitCode.UNUSABLE;
         }
-        spec.commandLine().getOut().print(TrackBrief.of(course.get(), TrackBrief.documents(folder, course.get())));
+        spec.commandLine().getOut().print(TrackBrief.of(course.get(), TrackBrief.documents(folder, course.get()), Set.copyOf(only)));
         spec.commandLine().getOut().flush();
         return ExitCode.OK;
     }

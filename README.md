@@ -153,7 +153,8 @@ between its three screens.
   without a keyboard shows (`Enter`), change what each one can do, or remove one.
 - **Tracks**: each track with its problems, its new documents and its plan. Approve the plan an
   agent proposed (`a`), then start an agent (Claude Code) that writes the sessions (`r`). New documents in the folder?
-  `r` takes them in first, reading only them, not the whole track again. The
+  `r` lists them: tick the ones to take in (`Space`), then `Enter`. The agent reads only those,
+  not the whole track again; the others wait. The
   plan shows each chapter's progress, the session being written and the tokens spent, and a
   notification tells you when the agent is done.
 

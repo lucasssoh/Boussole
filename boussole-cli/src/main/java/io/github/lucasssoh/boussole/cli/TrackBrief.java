@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -44,13 +45,24 @@ public final class TrackBrief {
     }
 
     public static String of(Course course, List<SourceState> states) {
+        return of(course, states, Set.of());
+    }
+
+    /**
+     * The same, the documents to take in limited to {@code only} when it names any: the learner
+     * chose them, and the others wait, neither taken in nor recorded.
+     */
+    public static String of(Course course, List<SourceState> states, Set<String> only) {
         StringBuilder out = new StringBuilder();
         out.append("Track ").append(course.subject().id()).append(" (").append(course.subject().name()).append("), lang ")
                 .append(course.subject().lang()).append(", sources in ").append(course.subject().sourcesDir())
                 .append(", plan ").append(course.syllabus().status().name().toLowerCase(Locale.ROOT)).append(".\n");
         course.learner().ifPresent(learner -> out.append("Learner: ").append(learner(learner)).append(".\n"));
 
-        List<SourceState> toTakeIn = toTakeIn(states);
+        List<SourceState> toTakeIn = toTakeIn(states).stream()
+                .filter(state -> only.isEmpty() || only.contains(state.file()))
+                .toList();
+        List<SourceState> later = toTakeIn(states).stream().filter(state -> !toTakeIn.contains(state)).toList();
         out.append("\nDocuments to take in: ").append(toTakeIn.isEmpty() ? "none" : toTakeIn.size()).append('\n');
         toTakeIn.forEach(state -> out.append("  ").append(String.format(Locale.ROOT, "%-8s", name(state.state())))
                 .append(state.file())
@@ -58,6 +70,10 @@ public final class TrackBrief {
                 .append(state.entry().filter(entry -> !entry.chapters().isEmpty())
                         .map(entry -> "  chapters: " + String.join(", ", entry.chapters())).orElse(""))
                 .append('\n'));
+        if (!later.isEmpty()) {
+            out.append("Left for later by the learner (do not take them in, do not record them): ")
+                    .append(later.stream().map(SourceState::file).collect(Collectors.joining(", "))).append('\n');
+        }
         List<SourceState> pending = states.stream().filter(state -> state.state() == State.PENDING).toList();
         if (!pending.isEmpty()) {
             out.append("Pending, by choice: ")

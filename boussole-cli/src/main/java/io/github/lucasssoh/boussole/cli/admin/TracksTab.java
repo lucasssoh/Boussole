@@ -61,6 +61,8 @@ final class TracksTab implements AdminTab {
     private int selected;
     private int scroll;
     private boolean plan;
+    /** The documents being ticked before {@code r} takes them in, or null. */
+    private DocumentPick pick;
     /** While an agent writes, the tracks are validated again this often. */
     private static final Duration RECHECK = Duration.ofSeconds(30);
     private volatile Instant checked = Instant.EPOCH;
@@ -372,7 +374,8 @@ final class TracksTab implements AdminTab {
         }
         int half = columns * 3 / 5;
         scroll = drawProblems(painter, track, scroll, 0, detailTop, half, detailHeight);
-        drawDocuments(painter, track, half, detailTop, columns - half, detailHeight);
+        drawDocuments(painter, track, pick != null && pick.track().equals(track.folder()) ? pick : null, half, detailTop,
+                columns - half, detailHeight);
     }
 
     /**
@@ -707,7 +710,11 @@ final class TracksTab implements AdminTab {
         return first;
     }
 
-    private static void drawDocuments(Painter painter, Track track, int column, int top, int width, int height) {
+    private static void drawDocuments(Painter painter, Track track, DocumentPick pick, int column, int top, int width, int height) {
+        if (pick != null) {
+            drawPick(painter, pick, column, top, width, height);
+            return;
+        }
         painter.pane(column, top, width, height, "Documents", false);
         int inner = width - 4;
         int row = top + 1;
@@ -723,8 +730,27 @@ final class TracksTab implements AdminTab {
         }
     }
 
+    /** The documents to take in, each with its box, the cursor's line reversed, kept in view. */
+    private static void drawPick(Painter painter, DocumentPick pick, int column, int top, int width, int height) {
+        painter.pane(column, top, width, height, "Documents to take in", true);
+        int inner = width - 4;
+        int rows = Math.max(1, height - 2);
+        int first = Math.max(0, pick.cursor() - rows + 1);
+        int row = top + 1;
+        for (int index = first; index < pick.documents().size() && row < top + height - 1; index++) {
+            SourceState document = pick.documents().get(index);
+            String line = (pick.ticked(document) ? "[x] " : "[ ] ") + Painter.column(document.state().name().toLowerCase(Locale.ROOT), 8)
+                    + document.file();
+            painter.text(column + 2, row++, line, inner, index == pick.cursor() ? Style.SELECTED : Style.PLAIN);
+        }
+    }
+
     @Override
     public boolean key(KeyStroke key) {
+        if (pick != null) {
+            pickKey(key);
+            return true;
+        }
         List<Track> read = tracks;
         if (key instanceof MouseAction mouse) {
             switch (mouse.getActionType()) {
@@ -830,33 +856,75 @@ final class TracksTab implements AdminTab {
         });
     }
 
+    /** While ticking documents: move, tick, take them in, or write the sessions left without them. */
+    private void pickKey(KeyStroke key) {
+        Optional<Track> track = (tracks == null ? List.<Track>of() : tracks).stream()
+                .filter(found -> found.folder().equals(pick.track())).findFirst();
+        switch (key.getKeyType()) {
+            case ArrowUp -> pick.move(-1);
+            case ArrowDown -> pick.move(1);
+            case Escape -> pick = null;
+            case Enter -> {
+                if (pick.chosen().isEmpty()) {
+                    app.say("Tick a document with Space, or a to tick them all.");
+                } else {
+                    Set<String> chosen = pick.chosen();
+                    pick = null;
+                    track.ifPresent(found -> start(found, AgentRun.TAKE_IN, chosen,
+                            "Take " + count(chosen.size(), "document") + " into " + found.name() + " with Claude Code?"));
+                }
+            }
+            case Character -> {
+                switch (key.getCharacter()) {
+                    case ' ' -> pick.toggle();
+                    case 'a' -> pick.toggleAll();
+                    case 'w' -> {
+                        pick = null;
+                        track.filter(found -> found.left() > 0).ifPresentOrElse(found -> start(found, AgentRun.PROMPT, Set.of(),
+                                        "Write the " + count((int) found.left(), "session") + " left of " + found.name()
+                                                + " with Claude Code, without the new documents?"),
+                                () -> app.say("No session left to write."));
+                    }
+                    default -> {
+                    }
+                }
+            }
+            default -> {
+            }
+        }
+    }
+
     private void run(Track track) {
-        int toTakeIn = track.toTakeIn();
         if (agent(track).map(status -> status.state() == AgentRun.State.RUNNING).orElse(false)) {
             app.say("An agent is already writing " + track.name() + ".");
         } else if (!track.approved()) {
             app.say(track.course().isEmpty() ? "No plan here." : "Approve the plan first.");
-        } else if (toTakeIn == 0 && track.left() == 0) {
+        } else if (track.toTakeIn() > 0) {
+            // the learner chooses the documents: the sessions left may change with them
+            pick = new DocumentPick(track.folder(), TrackBrief.toTakeIn(track.documents()));
+            plan = false;
+        } else if (track.left() == 0) {
             app.say("Every session of " + track.name() + " is written.");
         } else {
-            plan = true;
-            // the documents first: the sessions left may change with them
-            String question = toTakeIn > 0
-                    ? "Take the " + count(toTakeIn, "document") + " to do into " + track.name() + " with Claude Code?"
-                    : "Write the " + count((int) track.left(), "session") + " left of " + track.name() + " with Claude Code?";
-            String task = toTakeIn > 0 ? AgentRun.TAKE_IN : AgentRun.PROMPT;
-            app.confirm(question, () -> app.job("Starting the agent…", () -> {
-                String jar = System.getProperty("boussole.jar");
-                String agent = System.getProperty("boussole.agent");
-                String brief = track.course().map(course -> TrackBrief.of(course, track.documents())).orElse("");
-                List<String> command = AgentRun.command(agent == null ? "claude" : agent, jar, AgentRun.prompt(task, brief));
-                // a stand-in agent (tests) does not notify the desktop
-                io.github.lucasssoh.boussole.cli.init.ClaudeHooks.install(track.folder());
-                Path log = AgentRun.start(track.folder(), agent == null ? AgentRun.notifying(track.name(), jar, command) : command);
-                agents.put(track.folder(), AgentRun.read(log));
-                return "Agent started on " + track.name() + ".";
-            }));
+            start(track, AgentRun.PROMPT, Set.of(), "Write the " + count((int) track.left(), "session") + " left of " + track.name()
+                    + " with Claude Code?");
         }
+    }
+
+    /** Starts the agent on {@code task}, the brief of the track in its prompt, once the learner says yes. */
+    private void start(Track track, String task, Set<String> documents, String question) {
+        plan = true;
+        app.confirm(question, () -> app.job("Starting the agent…", () -> {
+            String jar = System.getProperty("boussole.jar");
+            String agent = System.getProperty("boussole.agent");
+            String brief = track.course().map(course -> TrackBrief.of(course, track.documents(), documents)).orElse("");
+            List<String> command = AgentRun.command(agent == null ? "claude" : agent, jar, AgentRun.prompt(task, brief));
+            // a stand-in agent (tests) does not notify the desktop
+            io.github.lucasssoh.boussole.cli.init.ClaudeHooks.install(track.folder());
+            Path log = AgentRun.start(track.folder(), agent == null ? AgentRun.notifying(track.name(), jar, command) : command);
+            agents.put(track.folder(), AgentRun.read(log));
+            return "Agent started on " + track.name() + ".";
+        }));
     }
 
     private void stop(Track track) {
@@ -888,6 +956,10 @@ final class TracksTab implements AdminTab {
 
     @Override
     public List<Hint> hints() {
+        if (pick != null) {
+            return List.of(new Hint("Space", "Tick"), new Hint("a", "All"), new Hint("Enter", "Take in"),
+                    new Hint("w", "Sessions only"), new Hint("Esc", "Cancel"));
+        }
         Optional<Track> chosen = chosen();
         boolean proposed = chosen.map(Track::proposed).orElse(false);
         boolean running = chosen.flatMap(this::agent).map(status -> status.state() == AgentRun.State.RUNNING).orElse(false);

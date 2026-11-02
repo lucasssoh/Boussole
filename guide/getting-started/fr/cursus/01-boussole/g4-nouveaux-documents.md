@@ -63,7 +63,8 @@ Deux gestes suffisent :
 
 1. **Ajoute le fichier** dans le dossier du parcours.
 2. **Lance ton :term[agent]{id=agent}** comme d'habitude, ou tape `boussole`, puis `r` sur
-   l'écran Tracks.
+   l'écran Tracks : coche les documents à intégrer avec `Espace`, puis `Entrée`. Les autres
+   attendent.
 
 L'agent commence par le validateur. Il voit le nouveau document, le lit et l'intègre :
 

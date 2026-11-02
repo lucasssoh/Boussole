@@ -66,6 +66,22 @@ class BriefCommandTest {
     }
 
     @Test
+    void onlyTheChosenDocumentsAreToTakeInTheOthersWait() throws IOException {
+        write("subject.yaml", "format: 1\nid: t\nname: T\nlang: fr\nsources: .\n");
+        write("cursus/syllabus.yaml", "status: approved\nchapters: []\n");
+        write("cours7.md", "cours 7");
+        write("td7.md", "td 7");
+        write("cours8.md", "cours 8");
+
+        assertThat(run("brief", dir.toString(), "--only", "cours7.md", "--only", "cours8.md")).isZero();
+
+        assertThat(out.toString())
+                .contains("Documents to take in: 2", "new     cours7.md", "new     cours8.md",
+                        "Left for later by the learner (do not take them in, do not record them): td7.md")
+                .doesNotContain("new     td7.md");
+    }
+
+    @Test
     void aFolderWithoutSubjectIsRefused() {
         assertThat(run("brief", dir.toString())).isEqualTo(ExitCode.UNUSABLE);
     }

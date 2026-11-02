@@ -62,7 +62,7 @@ Two moves are enough:
 
 1. **Add the file** to the folder of the track.
 2. **Start your :term[agent]{id=agent}** as usual, or type `boussole`, then `r` on the
-   Tracks screen.
+   Tracks screen: tick the documents to take in with `Space`, then `Enter`. The others wait.
 
 The agent starts with the validator. It sees the new document, reads it and takes it in:
 

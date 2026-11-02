@@ -50,8 +50,9 @@ final class AgentRun {
     /** For a track whose plan is approved and whose sources folder holds documents to take in. */
     static final String TAKE_IN = """
             Documents arrived, changed or went in the sources of this track, whose plan is approved. Follow \
-            AGENTS.md and the sources-update playbook. Read only the documents to take in, never the whole \
-            track again: the brief below says where it stands. Record each document in cursus/sources.yaml, \
+            AGENTS.md and the sources-update playbook. Take in only the documents the brief lists to take in, \
+            and leave the others as they are, unrecorded: the learner chose. Read only those documents, never \
+            the whole track again: the brief below says where it stands. Record each in cursus/sources.yaml, \
             its sha256 copied from `boussole sources .`. If the plan must change (new chapters or sessions), \
             change it, set status: proposed and stop there: the learner approves the change before its \
             sessions are written. Otherwise make what the documents call for (a corrected session, exercises \

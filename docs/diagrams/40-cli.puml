@@ -20,9 +20,10 @@ package "cli" {
   }
   class BriefCommand <<@Command brief>> {
     folder : Path
+    only : List<String>
   }
   class TrackBrief {
-    +{static} of(Course, List<SourceState>) : String
+    +{static} of(Course, List<SourceState>, only) : String
     +{static} toTakeIn(List<SourceState>) : List<SourceState>
   }
   class IndexCommand <<@Command index>> {
@@ -121,6 +122,7 @@ package "cli.admin" {
   class DevicesTab <<F2>>
   class TracksTab <<F3>>
   class PlanApproval <<status: approved>>
+  class DocumentPick <<the documents r takes in>>
   class AgentRun <<claude --print, .boussole/runs>>
   class AgentBus <<.boussole/bus/events.jsonl>>
   class Painter <<text, panes, QR code>>
@@ -214,6 +216,7 @@ ServerTab ..> BoussoleConfigFile : network on or off
 DevicesTab --> LocalServer : /api/devices
 TracksTab --> TrackCheck : validates
 TracksTab ..> TrackBrief : the prompt of the agent
+TracksTab --> DocumentPick : r, the documents ticked
 TracksTab ..> BoussoleConfigFile : adds, removes a folder
 TracksTab ..> ServerControl : opens
 TracksTab ..> PlanApproval : approves the plan
