@@ -126,18 +126,6 @@ in stone: they are there to be used, discussed and, when needed, questioned.
 No documents? `boussole new "Python" --goal "automate my work"` creates an empty track; your
 agent asks what you want to learn, finds open sources, cites each one, and proposes a plan.
 
-On another device of the same network (a phone, a tablet, a TV): add `network: true` to
-`config.yaml`, restart Boussole, then `boussole devices pair` shows a QR code and a code to type.
-Without a keyboard, the device shows a code; accept it with `boussole devices accept <code>`.
-`boussole devices` lists them; `boussole devices remove <name>` takes one away.
-
-`boussole` alone gathers it full screen in the terminal (beta): the server (start, stop,
-network), the devices, and your tracks with their problems, their new documents and their plan,
-to approve when an agent proposed it. Once the plan is approved, `r` starts an agent (Claude
-Code) that writes the sessions: the plan shows each chapter's progress and the session being
-written, the tokens it spends, and a notification tells you when it ends. The folders next to
-your tracks that hold a plan show up too, to add.
-
 ```mermaid
 flowchart LR
   D["Your documents"] --> A["Your AI agent"]
@@ -151,6 +139,34 @@ flowchart LR
 Boussole itself never calls an AI and needs no account. A short guide, itself a Boussole course
 ([`guide/getting-started`](guide/getting-started)), walks through all of this: it is where a new Boussole opens, and it stays
 apart on the home page to come back to.
+
+## The full screen (beta)
+
+Run `boussole` on its own to manage Boussole from the terminal. `Tab` or `F1`, `F2`, `F3` move
+between its three screens.
+
+![The plan of a track while an agent writes it, in the terminal](docs/screenshots/terminal.png)
+
+- **Server**: start or stop Boussole, open it in your browser, and let the devices of your
+  network reach it (`w`).
+- **Devices**: pair a phone, a tablet or a TV with a QR code (`a`), accept the code a device
+  without a keyboard shows (`Enter`), change what each one can do, or remove one.
+- **Tracks**: each track with its problems, its new documents and its plan. Approve the plan an
+  agent proposed (`a`), then start an agent (Claude Code) that writes the sessions (`r`). The
+  plan shows each chapter's progress, the session being written and the tokens spent, and a
+  notification tells you when the agent is done.
+
+Folders next to your tracks that hold a plan show up too, ready to add.
+
+To pair a device without the full screen, add `network: true` to `config.yaml` and restart
+Boussole:
+
+```
+boussole devices pair            # shows a QR code and a code to type
+boussole devices accept <code>   # the code a device without a keyboard shows
+boussole devices                 # the paired devices
+boussole devices remove <name>
+```
 
 ## Installing
 
