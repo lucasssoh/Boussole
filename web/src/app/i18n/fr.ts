@@ -236,7 +236,11 @@ export const FR: Translations = {
     noSpecialty: 'Pas encore de domaine.',
     achievements: 'Succès',
     achievementsCount: '{{reached}} / {{total}}',
-    noAchievement: 'Pas encore de succès.',
+    achievementLevel: 'Niveau {{level}} sur {{levels}}',
+    achievementUnique: 'Unique',
+    achievementLocked: 'Pas encore',
+    photo: 'Photo : {{author}}, {{licence}}',
+    unknownAuthor: 'auteur inconnu',
   },
   ranks: {
     title: 'Paliers',

@@ -104,6 +104,8 @@ package "shared" {
   class RankPillComponent <<emblem, level, the gauge of the level beneath and the points to go; +N rises on a gain>>
   class "pill-frame.ts" as PillFrame <<a frame per tier, culture and specialty>>
   class RankRouteComponent <<every division as its emblem, the learner's in the middle>>
+  class AchievementFigureComponent <<a real photo, cut out and grey, tinted with the metal of its level>>
+  class "achievement-photos.ts" as AchievementPhotos <<who took each photo, and its licence>>
   class PromotionComponent <<after a session: the emblem over a veil, put together again>>
   class "ranks.ts" as Ranks <<tier colours, roman divisions, points>>
   class RichTextComponent
@@ -153,6 +155,8 @@ ProfilePageComponent ..> RankEmblemComponent
 ProfilePageComponent --> RankRouteComponent : the route of the culture
 RankRouteComponent ..> RankEmblemComponent
 ProfilePageComponent --> RankPillComponent : each specialty
+ProfilePageComponent --> AchievementFigureComponent : each achievement
+ProfilePageComponent ..> AchievementPhotos : credit in the tooltip
 RanksPageComponent ..> BoussoleApi : ranks
 ProfilePageComponent ..> RankNames
 RanksPageComponent ..> RankNames

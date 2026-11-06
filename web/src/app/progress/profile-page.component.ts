@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AchievementProgress, LadderStep } from '../core/api';
 import { BoussoleApi } from '../core/boussole-api';
 import { StatsService } from '../core/stats.service';
+import { AchievementFigureComponent } from '../shared/achievement-figure.component';
+import { ACHIEVEMENT_PHOTOS } from '../shared/achievement-photos';
 import { emblemLook } from '../shared/emblem';
 import { LoadingComponent } from '../shared/loading.component';
 import { RankEmblemComponent } from '../shared/rank-emblem.component';
@@ -15,11 +17,11 @@ import { RankRouteComponent } from './rank-route.component';
 /**
  * The learner's page: their card (emblem, culture rank, level, points, records), the route of the
  * divisions with theirs in the middle, the next division, the specialties Sage asks for, each specialty as a pill, and the
- * achievements, kept for good.
+ * achievements, each a figure of its own, kept for good.
  */
 @Component({
   selector: 'app-profile-page',
-  imports: [LoadingComponent, RankEmblemComponent, RankRouteComponent, RouterLink, RankPillComponent, TranslocoPipe],
+  imports: [AchievementFigureComponent, LoadingComponent, RankEmblemComponent, RankRouteComponent, RouterLink, RankPillComponent, TranslocoPipe],
   host: { class: 'profile' },
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -95,14 +97,20 @@ import { RankRouteComponent } from './rank-route.component';
             <h2>{{ 'profile.achievements' | transloco }}</h2>
             <span class="count">{{ 'profile.achievementsCount' | transloco: { reached: levelsReached(), total: levelsTotal() } }}</span>
           </div>
-          @if (reached().length === 0) {
-            <p class="note">{{ 'profile.noAchievement' | transloco }}</p>
-          }
           <div class="medals">
-            @for (achievement of reached(); track achievement.id) {
-              <section class="medal" [title]="('achievement.' + achievement.id + '.description' | transloco) + ' · ' + progressText(achievement)">
-                <span class="medal-disc" aria-hidden="true">{{ roman(achievement.level) }}</span>
+            @for (achievement of shownAchievements(); track achievement.id) {
+              <section class="medal" [class.locked]="achievement.level === 0" [title]="('achievement.' + achievement.id + '.description' | transloco) + ' · ' + progressText(achievement) + photoCredit(achievement.id)">
+                <app-achievement-figure [id]="achievement.id" [level]="achievement.level" [levels]="achievement.thresholds.length" />
                 <strong>{{ 'achievement.' + achievement.id + '.name' | transloco }}</strong>
+                <span class="medal-level">
+                  @if (achievement.level === 0) {
+                    {{ 'profile.achievementLocked' | transloco }}
+                  } @else if (achievement.thresholds.length === 1) {
+                    {{ 'profile.achievementUnique' | transloco }}
+                  } @else {
+                    {{ 'profile.achievementLevel' | transloco: { level: roman(achievement.level), levels: roman(achievement.thresholds.length) } }}
+                  }
+                </span>
               </section>
             }
           </div>
@@ -116,6 +124,7 @@ import { RankRouteComponent } from './rank-route.component';
 export class ProfilePageComponent {
   protected readonly stats = inject(StatsService);
   protected readonly names = inject(RankNames);
+  private readonly transloco = inject(TranslocoService);
   protected readonly roman = roman;
 
   /** The colour that reads on the banner: the tier's, or the gold of the Grand Sage. */
@@ -156,9 +165,11 @@ export class ProfilePageComponent {
   protected readonly cultureSteps = signal<LadderStep[]>([]);
   protected readonly hereIndex = computed(() => Math.max(0, this.cultureSteps().findIndex((step) => this.isHere(step))));
   private readonly allAchievements = signal<AchievementProgress[]>([]);
-  /** The achievements reached, the highest first. */
-  protected readonly reached = computed(() =>
-    this.allAchievements().filter((achievement) => achievement.level > 0).sort((a, b) => b.level - a.level || this.toNext(b) - this.toNext(a)),
+  /** Every achievement: those reached first, the highest first, then those still to reach, the closest first. */
+  protected readonly shownAchievements = computed(() =>
+    [...this.allAchievements()].sort(
+      (a, b) => Number(b.level > 0) - Number(a.level > 0) || b.level - a.level || this.toNext(b) - this.toNext(a),
+    ),
   );
   protected readonly levelsReached = computed(() => this.allAchievements().reduce((sum, achievement) => sum + achievement.level, 0));
   protected readonly levelsTotal = computed(() => this.allAchievements().reduce((sum, achievement) => sum + achievement.thresholds.length, 0));
@@ -175,6 +186,15 @@ export class ProfilePageComponent {
     const unit = achievement.id === 'trial-by-fire' ? ' %' : '';
     const next = achievement.thresholds[achievement.level];
     return next === undefined ? `${achievement.value}${unit}` : `${achievement.value} / ${next}${unit}`;
+  }
+
+  /** Who took the photo of an achievement, and its licence, for the tooltip. */
+  protected photoCredit(id: string): string {
+    const photo = ACHIEVEMENT_PHOTOS[id];
+    if (!photo) {
+      return '';
+    }
+    return ' · ' + this.transloco.translate('profile.photo', { author: photo.author || this.transloco.translate('profile.unknownAuthor'), licence: photo.licence });
   }
 
   private toNext(achievement: AchievementProgress): number {

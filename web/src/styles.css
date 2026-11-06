@@ -4077,25 +4077,57 @@ app-settings-drawer {
   width: 8rem;
   display: grid;
   justify-items: center;
-  gap: 0.5rem;
+  align-content: start;
+  gap: 0.35rem;
   text-align: center;
 }
 
-.medal-disc {
-  display: grid;
-  place-items: center;
-  width: 5.25rem;
-  height: 5.25rem;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff3c4, #e6b422 55%, #8f6a00);
-  box-shadow: 0 0 24px rgb(242 201 76 / 0.45), inset 0 0 0 4px rgb(255 255 255 / 0.35);
-  color: #4a3500;
-  font-size: 1.35rem;
-  font-weight: 900;
+/* An achievement as a figure of its own: a photo tinted with the metal of its level, in relief. */
+.achievement-figure {
+  position: relative;
+  display: block;
+  width: 5.5rem;
+  height: 5.5rem;
+}
+
+.achievement-figure svg {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.achievement-figure img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.achievement-figure:not(.locked) {
+  filter: drop-shadow(0 2px 2px rgb(30 43 58 / 0.28));
+}
+
+.achievement-figure.complete {
+  filter: drop-shadow(0 2px 2px rgb(30 43 58 / 0.28)) drop-shadow(0 0 8px color-mix(in srgb, var(--glow) 70%, transparent));
+}
+
+.achievement-figure.locked {
+  opacity: 0.55;
+}
+
+.medal-level {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
 }
 
 .medal strong {
   font-size: 0.85rem;
+  line-height: 1.25;
+}
+
+.medal.locked strong {
+  color: var(--muted);
 }
 
 @media (max-width: 640px) {

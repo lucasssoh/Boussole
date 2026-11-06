@@ -234,7 +234,11 @@ export const EN = {
     noSpecialty: 'No field yet.',
     achievements: 'Achievements',
     achievementsCount: '{{reached}} / {{total}}',
-    noAchievement: 'No achievement yet.',
+    achievementLevel: 'Level {{level}} of {{levels}}',
+    achievementUnique: 'One of a kind',
+    achievementLocked: 'Not yet',
+    photo: 'Photo: {{author}}, {{licence}}',
+    unknownAuthor: 'unknown author',
   },
   ranks: {
     title: 'Tiers',
