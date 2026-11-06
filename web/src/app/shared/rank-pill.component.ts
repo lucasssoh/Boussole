@@ -3,20 +3,22 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { Rank } from '../core/api';
 import { LanguageService } from '../core/language.service';
 import { pillFrame } from './pill-frame';
-import { CULTURE_TIERS, SPECIALTY_TIERS, divisionProgress, formatPoints, ladderOrder } from './ranks';
+import { CULTURE_TIERS, SPECIALTY_TIERS, formatPoints, isHeld, ladderOrder, levelGauge } from './ranks';
 import { RankEmblemComponent } from './rank-emblem.component';
 import { SpecialtyEmblemComponent } from './specialty-emblem.component';
 
-/** How long the body takes to fill before a new division, then before it starts again. */
+/** How long the gauge takes to fill before a new level, then before it starts again. */
 const FILLED = 650;
 const TURNED = 1300;
+const NEXT_LEVEL = 800;
 
 /**
- * A rank as a pill: its emblem, its level, and the bounds of its division, the body filling like a
- * gauge in a frame of its tier. When the points rise, it moves on its own: the level bounces; a
- * new division fills the body, a light crosses the frame, and the gauge starts again with the new
- * numeral, or a new emblem put together piece by piece. Nothing else on the screen moves, but
- * for the points just earned, which rise from beside the pill and fade, where it shows gains.
+ * A rank as a pill: its emblem, its level with a gauge beneath, and the points left before the
+ * next, in a frame of its tier. When the points rise, it moves on its own: the gauge glides; a new
+ * level fills it, then it starts again and the level bounces; a new division also sends a light
+ * across the frame, with the new numeral, or a new emblem put together piece by piece. Nothing
+ * else on the screen moves, but for the points just earned, which rise from beside the pill and
+ * fade, where it shows gains.
  */
 @Component({
   selector: 'app-rank-pill',
@@ -52,17 +54,26 @@ const TURNED = 1300;
           }
         }
         <span class="rank-pill-text">
-          <span class="rank-pill-level" [class.bumped]="bumped()">
-            @if (field(); as name) {
-              {{ 'stats.fieldLevel' | transloco: { field: name, level: rank.level } }}
-            } @else {
-              {{ 'stats.level' | transloco: { level: rank.level } }}
-            }
+          <span class="rank-pill-head">
+            <span class="rank-pill-level" [class.bumped]="bumped()">
+              @if (field(); as name) {
+                {{ 'stats.fieldLevel' | transloco: { field: name, level: rank.level } }}
+              } @else {
+                {{ 'stats.level' | transloco: { level: rank.level } }}
+              }
+            </span>
+            <span class="rank-pill-number" [class.bumped]="bumped()" aria-hidden="true">{{ rank.level }}</span>
+            <span class="rank-pill-left">
+              @if (held()) {
+                {{ 'stats.held' | transloco }}
+              } @else {
+                {{ (gauge().left === 1 ? 'stats.leftOne' : 'stats.left') | transloco: { points: amount(gauge().left) } }}
+              }
+            </span>
           </span>
-          <span class="rank-pill-bounds">{{ 'stats.bounds' | transloco: { points: earned(shownPoints()), to: amount(rank.nextAt) } }}</span>
+          <span class="rank-pill-gauge" aria-hidden="true"><span></span></span>
         </span>
       }
-      <ng-content />
       <span class="rank-pill-shine" aria-hidden="true"><span></span></span>
     </span>
   `,
@@ -92,11 +103,16 @@ export class RankPillComponent {
   protected readonly turns = signal(0);
   private timers: ReturnType<typeof setTimeout>[] = [];
 
+  /** Where the level shown started, in points. */
+  private readonly levelStart = signal(0);
+
   protected readonly frame = computed(() => pillFrame(this.ladder(), this.shown()?.tier ?? this.rank().tier));
-  protected readonly style = computed(() => {
+  protected readonly held = computed(() => this.ladder() === 'culture' && isHeld(this.shown() ?? this.rank()));
+  protected readonly gauge = computed(() => {
     const rank = this.shown();
-    return { ...this.frame().vars, '--share': String(rank ? divisionProgress(rank, this.shownPoints()) : 0) };
+    return rank ? levelGauge(this.levelStart(), rank.levelSize, this.shownPoints()) : { share: 0, left: 0 };
   });
+  protected readonly style = computed(() => ({ ...this.frame().vars, '--share': String(this.held() ? 1 : this.gauge().share) }));
 
   constructor() {
     effect(() => {
@@ -112,11 +128,6 @@ export class RankPillComponent {
 
   protected amount(value: number): string {
     return formatPoints(Math.ceil(value), this.language.current());
-  }
-
-  /** The points so far, whole: a decimal would only blur the gauge's reading. */
-  protected earned(value: number): string {
-    return formatPoints(Math.floor(value), this.language.current());
   }
 
   protected drop(id: number): void {
@@ -136,42 +147,45 @@ export class RankPillComponent {
     const before = this.shown();
     this.timers.forEach(clearTimeout);
     this.timers = [];
-    if (!before || this.order(rank) < this.order(before)) {
+    const order = this.order(rank);
+    if (!before || order < this.order(before) || (order === this.order(before) && rank.level <= before.level)) {
       this.show(rank, points);
       return;
     }
-    if (this.order(rank) === this.order(before)) {
-      if (rank.level > before.level) {
-        this.bump();
-      }
-      this.show(rank, points);
-      return;
+    // A new level: the gauge fills, then starts again; a new division also shines across the frame.
+    const division = order > this.order(before);
+    this.shownPoints.set(this.levelStart() + before.levelSize);
+    if (division) {
+      this.later(FILLED, () => this.crossed.set(true));
     }
-    // A new division: the body fills, the frame shines, then the gauge starts again.
-    this.shownPoints.set(before.nextAt);
-    this.later(FILLED, () => this.crossed.set(true));
-    this.later(TURNED, () => {
+    this.later(division ? TURNED : NEXT_LEVEL, () => {
       this.instant.set(true);
-      this.former.set(before.tier === rank.tier ? before.division : null);
-      this.assembling.set(before.tier !== rank.tier);
-      this.turns.update((turn) => turn + 1);
+      if (division) {
+        this.former.set(before.tier === rank.tier ? before.division : null);
+        this.assembling.set(before.tier !== rank.tier);
+        this.turns.update((turn) => turn + 1);
+      }
       this.shown.set(rank);
-      this.shownPoints.set(rank.divisionFrom);
+      this.levelStart.set(points - rank.intoLevel);
+      this.shownPoints.set(points - rank.intoLevel);
       this.bump();
       requestAnimationFrame(() => requestAnimationFrame(() => {
         this.instant.set(false);
         this.shownPoints.set(points);
       }));
-      this.later(900, () => this.crossed.set(false));
-      this.later(3600, () => {
-        this.former.set(null);
-        this.assembling.set(false);
-      });
+      if (division) {
+        this.later(900, () => this.crossed.set(false));
+        this.later(3600, () => {
+          this.former.set(null);
+          this.assembling.set(false);
+        });
+      }
     });
   }
 
   private show(rank: Rank, points: number): void {
     this.shown.set(rank);
+    this.levelStart.set(points - rank.intoLevel);
     this.shownPoints.set(points);
   }
 

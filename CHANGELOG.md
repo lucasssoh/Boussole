@@ -17,6 +17,7 @@ minor release may break things and says so.
 - **Stars:** each answer now shows up to 3 stars for how much of it was right: in the correction, under its step on the Trail, in the wrap-up and on each session card. A question met before (a warmup, a quick review) shows blue stars that do not count in the total; a free exercise shows your own estimate, outlined.
 
 ### Changed
+- **Your level in the top bar:** a gauge under the level now fills as you earn points, and says how many are left before the next level ("227 points to go"). Your streak sits beside it, apart.
 - **Clearer questions:** the playbooks ask agents for statements in whole sentences that set the context first, give the whole setup, end with the question and label each blank with what goes there: no more guessing which situation a question means, in a quick review too. The vocabulary of the course stays as the teacher writes it.
 
 ### Fixed

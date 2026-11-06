@@ -300,7 +300,9 @@ export const FR: Translations = {
   stats: {
     level: 'Niveau {{level}}',
     fieldLevel: '{{field}} · niveau {{level}}',
-    bounds: '{{points}} / {{to}}',
+    left: 'encore {{points}} points',
+    leftOne: 'encore {{points}} point',
+    held: 'monte tes domaines',
     gained: '{{points}} points gagnés',
     streak: "jours d'affilée",
     label: "{{rank}}, niveau {{level}}, {{points}} points, {{streakDays}} jours d'affilée",

@@ -64,6 +64,23 @@ export function divisionProgress(rank: Rank, points: number): number {
   return span <= 0 ? 0 : Math.min(1, Math.max(0, (points - rank.divisionFrom) / span));
 }
 
+/**
+ * Where the points stand in the current level: how far, from 0 to 1, and how many are left. The
+ * level starts where the points were, less those already into it ({@link Rank.intoLevel}).
+ */
+export function levelGauge(start: number, size: number, points: number): { share: number; left: number } {
+  const into = points - start;
+  return {
+    share: size <= 0 ? 0 : Math.min(1, Math.max(0, into / size)),
+    left: Math.max(0, Math.ceil(size - into)),
+  };
+}
+
+/** Whether a culture rank waits for fields before it can rise, its points notwithstanding. */
+export function isHeld(rank: Rank): boolean {
+  return rank.specialtiesMissing > 0 || rank.criticalThinkingMissing;
+}
+
 /** Points as shown: whole when they are, else with one decimal, in the language of the interface. */
 export function formatPoints(points: number, language: string): string {
   const rounded = Math.round(points * 10) / 10;

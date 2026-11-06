@@ -355,13 +355,23 @@ a:focus-visible {
   color: var(--brand);
 }
 
-/* The learner on the right: their rank as a pill, with the streak. */
+/* The learner on the right: their rank as a pill, and the streak beside it. */
 .player-stats {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   color: inherit;
   text-decoration: none;
-  border-radius: 10px;
+  border-radius: 999px;
   transition: filter 0.25s ease;
+}
+
+.player-stats .streak {
+  height: 2.25rem;
+  padding: 0 0.75rem;
+  border-radius: 999px;
+  background: var(--partly-bg);
 }
 
 .player-stats:hover {
@@ -369,8 +379,8 @@ a:focus-visible {
 }
 
 /*
- * A rank as a pill: the frame of its tier, the body filling like a gauge (--share, from 0 to 1),
- * the level and the bounds of the division. Registered, --share can glide.
+ * A rank as a pill: the frame of its tier around the emblem, the level, the points left and,
+ * beneath, the gauge of the level (--share, from 0 to 1). Registered, --share can glide.
  */
 @property --share {
   syntax: '<number>';
@@ -381,7 +391,7 @@ a:focus-visible {
 .rank-pill {
   position: relative;
   display: inline-flex;
-  border-radius: 10px;
+  border-radius: 999px;
   transition: --share 0.6s ease-out;
 }
 
@@ -392,7 +402,7 @@ a:focus-visible {
 .rank-pill-aura {
   position: absolute;
   inset: -5px;
-  border-radius: 12px;
+  border-radius: 999px;
   background: var(--aura);
   filter: blur(9px);
   opacity: var(--glow);
@@ -413,20 +423,20 @@ a:focus-visible {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.2rem 0.9rem 0.2rem 0.35rem;
-  border-radius: 10px;
+  padding: 0.3rem 1rem 0.3rem 0.3rem;
+  border-radius: 999px;
   border: var(--frame-width) solid transparent;
   background:
-    linear-gradient(90deg, var(--fill) 0 calc(var(--share) * 100%), var(--edge) calc(var(--share) * 100%) calc(var(--share) * 100% + 2px), var(--rest) calc(var(--share) * 100% + 2px) 100%) padding-box,
+    linear-gradient(var(--rest), var(--rest)) padding-box,
     var(--frame) border-box;
-  box-shadow: 0 2px 0 var(--press), var(--ring);
+  box-shadow: var(--ring);
 }
 
 .rank-pill-body::before {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 8px;
+  border-radius: 999px;
   background: var(--stars);
   pointer-events: none;
 }
@@ -437,8 +447,38 @@ a:focus-visible {
 
 .rank-pill-text {
   display: grid;
-  min-width: 7.5rem;
+  gap: 0.3rem;
+  min-width: 10.5rem;
   text-align: left;
+}
+
+.rank-pill-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.rank-pill-number {
+  display: none;
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.rank-pill-gauge {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.rank-pill-gauge span {
+  display: block;
+  width: calc(var(--share) * 100%);
+  height: 100%;
+  border-radius: 999px;
+  background: var(--bar);
 }
 
 .rank-pill-level {
@@ -449,11 +489,12 @@ a:focus-visible {
   transform-origin: left center;
 }
 
-.rank-pill-level.bumped {
+.rank-pill-level.bumped,
+.rank-pill-number.bumped {
   animation: pill-bump 0.45s ease-out;
 }
 
-.rank-pill-bounds {
+.rank-pill-left {
   font-size: 0.74rem;
   font-weight: 800;
   color: var(--sub);
@@ -514,18 +555,6 @@ a:focus-visible {
   }
 }
 
-.rank-pill .streak {
-  margin-left: auto;
-}
-
-.rank-pill.dark .streak {
-  color: #ffd8a8;
-}
-
-.rank-pill.dark .streak svg {
-  fill: #ffd8a8;
-}
-
 .rank-pill-stud {
   position: absolute;
   z-index: 2;
@@ -559,7 +588,7 @@ a:focus-visible {
 .rank-pill-shine {
   position: absolute !important;
   inset: 0;
-  border-radius: 8px;
+  border-radius: 999px;
   overflow: hidden;
   pointer-events: none;
 }
@@ -861,8 +890,36 @@ a:focus-visible {
 }
 
 @media (max-width: 720px) {
+  .player-stats {
+    gap: 0.4rem;
+  }
+
   .player-stats .rank-pill-text {
+    min-width: 2rem;
+    gap: 0.2rem;
+  }
+
+  .player-stats .rank-pill-level,
+  .player-stats .rank-pill-left {
     display: none;
+  }
+
+  .player-stats .rank-pill-number {
+    display: inline;
+  }
+
+  .player-stats .rank-pill-gauge {
+    height: 4px;
+  }
+
+  .player-stats .rank-pill-body {
+    gap: 0.4rem;
+    padding-right: 0.6rem;
+  }
+
+  .player-stats .streak {
+    padding: 0;
+    background: none;
   }
 
   /* No room on its left: the points rise from under the pill. */
@@ -874,6 +931,7 @@ a:focus-visible {
 
   .top-bar {
     gap: 0.5rem;
+    padding-inline: 0.75rem;
   }
 
   .brand-name {
@@ -881,7 +939,35 @@ a:focus-visible {
   }
 
   .top-links a {
-    padding: 0.35rem 0.6rem;
+    padding: 0.35rem 0.5rem;
+  }
+}
+
+/* A narrow phone: the emblem alone, its gauge beneath. */
+@media (max-width: 480px) {
+  .player-stats .rank-pill-body {
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.25rem 0.55rem 0.35rem;
+    border-radius: 14px;
+  }
+
+  .player-stats .rank-pill,
+  .player-stats .rank-pill-aura,
+  .player-stats .rank-pill-shine {
+    border-radius: 14px;
+  }
+
+  .player-stats .rank-pill-body::before {
+    border-radius: 12px;
+  }
+
+  .player-stats .rank-pill-text {
+    min-width: 1.75rem;
+  }
+
+  .player-stats .rank-pill-head {
+    display: none;
   }
 }
 
@@ -3324,6 +3410,7 @@ app-settings-drawer {
 
 .gear {
   min-width: 44px;
+  padding-inline: 0.6rem;
   color: var(--muted);
 }
 

@@ -2,8 +2,8 @@ import { emblemLook, emblemStep } from './emblem';
 import { specialtyMetal } from './specialty-emblem.component';
 
 /**
- * The frame of a rank pill, one per tier: the metal of its emblem around a body that fills like a
- * gauge, a little richer each tier (a glow, rivets, a gem on top, a second ring), and from Master
+ * The frame of a rank pill, one per tier: the metal of its emblem around a body that holds the
+ * level and its gauge, a little richer each tier (a glow, rivets, a gem on top, a second ring), and from Master
  * on, the night of its emblem inside. Given as CSS custom properties, plus the ornaments to draw.
  */
 export interface PillFrame {
@@ -70,12 +70,11 @@ export function pillFrame(ladder: 'culture' | 'specialty', tier: string): PillFr
     vars: {
       '--frame': frame,
       '--frame-width': `${s.width}px`,
-      '--fill': s.dark ? (top ? '#3d5560' : color) : blend(light, color, 0.3),
-      '--rest': s.dark ? blend(deep, '#000000', 0.35) : '#ffffff',
-      '--edge': s.gold ? '#f2c94c' : s.dark ? light : color,
+      '--rest': s.dark ? blend(deep, '#000000', 0.35) : 'var(--surface)',
+      '--bar': s.gold ? '#f2c94c' : s.dark ? light : 'var(--brand)',
+      '--track': s.dark ? 'rgb(255 255 255 / 0.18)' : 'var(--surface-2)',
       '--stars': s.stars ? stars(s.gold ? '#fff3c4' : light) : 'none',
       '--ring': s.ring ? `0 0 0 2px var(--surface), 0 0 0 3.5px ${accent}` : '0 0 0 transparent',
-      '--press': blend(deep, '#ffffff', 0.55),
       '--aura': s.gold && top ? '#f2c94c' : color,
       '--glow': String(s.glow),
       '--stud': s.gold ? '#f2c94c' : light,

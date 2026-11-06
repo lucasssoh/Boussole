@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { divisionProgress, formatPoints, rankOrder, roman } from './ranks';
+import { divisionProgress, formatPoints, isHeld, levelGauge, rankOrder, roman } from './ranks';
 
 describe('ranks', () => {
   it('orders ranks by tier, then by division, I above V', () => {
@@ -11,6 +11,19 @@ describe('ranks', () => {
   it('writes divisions in roman numerals, none at the top', () => {
     expect(roman(3)).toBe('III');
     expect(roman(0)).toBe('');
+  });
+
+  it('measures the current level and the points left before the next', () => {
+    expect(levelGauge(700, 40, 730)).toEqual({ share: 0.75, left: 10 });
+    expect(levelGauge(700, 40, 729.5)).toEqual({ share: 0.7375, left: 11 });
+    expect(levelGauge(700, 40, 760)).toEqual({ share: 1, left: 0 });
+  });
+
+  it('knows a rank that waits for fields', () => {
+    const rank = { tier: 'savant', division: 1, level: 70, intoLevel: 0, levelSize: 1, divisionFrom: 0, nextAt: 1, specialtiesMissing: 0, criticalThinkingMissing: false };
+    expect(isHeld(rank)).toBe(false);
+    expect(isHeld({ ...rank, specialtiesMissing: 2 })).toBe(true);
+    expect(isHeld({ ...rank, criticalThinkingMissing: true })).toBe(true);
   });
 
   it('measures how far into its division a rank is', () => {
