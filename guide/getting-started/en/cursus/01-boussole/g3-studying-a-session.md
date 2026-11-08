@@ -30,7 +30,7 @@ per part (warm-up, notions, checkpoint, practice) and a dot per step.
 | Dot | Meaning |
 |---|---|
 | green | seen, or right answer |
-| orange | partly right answer |
+| grey, full | partly right answer |
 | red | wrong answer |
 | padlock | answer the current question first |
 

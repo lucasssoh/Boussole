@@ -1671,10 +1671,11 @@ a.session-card:active {
   color: #ffffff;
 }
 
+/* Partly right: neither the green of a right answer nor the red of a missed one, a grey full dot. */
 .path-node.partly .path-dot {
-  border-color: var(--partly-strong);
-  background: var(--partly-strong);
-  box-shadow: 0 5px 0 var(--partly);
+  border-color: #adb5bd;
+  background: #adb5bd;
+  box-shadow: 0 5px 0 #868e96;
   color: #ffffff;
 }
 

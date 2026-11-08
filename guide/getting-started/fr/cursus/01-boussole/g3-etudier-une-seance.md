@@ -30,7 +30,7 @@ par partie (échauffement, notions, point de contrôle, entraînement) et un ron
 | Rond | Sens |
 |---|---|
 | vert | vu, ou réponse juste |
-| orange | réponse en partie juste |
+| gris, plein | réponse en partie juste |
 | rouge | réponse fausse |
 | cadenas | réponds d'abord à la question en cours |
 

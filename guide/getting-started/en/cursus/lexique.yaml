@@ -58,7 +58,7 @@
   term: Trail
   aliases: [the Trail]
   definition: >
-    The map of the session, on the left: a zone per part, a dot per step, green, orange or red
+    The map of the session, on the left: a zone per part, a dot per step, green, grey or red
     according to your answers.
 
 - id: guided-mode

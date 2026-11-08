@@ -56,7 +56,7 @@
   term: Tracé
   aliases: [le Tracé]
   definition: >
-    La carte de la séance, à gauche : une zone par partie, un rond par étape, en vert, orange ou
+    La carte de la séance, à gauche : une zone par partie, un rond par étape, en vert, gris ou
     rouge selon tes réponses.
 
 - id: mode-guide

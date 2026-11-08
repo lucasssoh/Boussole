@@ -17,6 +17,7 @@ minor release may break things and says so.
 - **Stars:** each answer now shows up to 3 stars for how much of it was right: in the correction, under its step on the Trail, in the wrap-up and on each session card. A question met before (a warmup, a quick review) shows blue stars that do not count in the total; a free exercise shows your own estimate, outlined.
 
 ### Changed
+- **The Trail:** a partly right answer is now a full grey dot, between the green of a right answer and the red of a wrong one.
 - **A lighter page:** the background is now the same white as the top bar, with no line between them.
 - **Achievements:** each one is now a figure of its own, a real photo in the metal of its level: bronze, silver, gold, sapphire, then amethyst; an achievement of a single level is in emerald. The last level glows, and the achievements still to reach show in grey on your profile. Hover an achievement to see what it asks and how far you are.
 - **Your level in the top bar:** a gauge under the level now fills as you earn points, and says how many are left before the next level ("227 points to go"). Your streak sits beside it, apart.
