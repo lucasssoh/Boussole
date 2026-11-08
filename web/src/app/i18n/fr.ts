@@ -239,8 +239,6 @@ export const FR: Translations = {
     achievementLevel: 'Niveau {{level}} sur {{levels}}',
     achievementUnique: 'Unique',
     achievementLocked: 'Pas encore',
-    photo: 'Photo : {{author}}, {{licence}}',
-    unknownAuthor: 'auteur inconnu',
   },
   ranks: {
     title: 'Paliers',

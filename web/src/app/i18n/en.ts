@@ -237,8 +237,6 @@ export const EN = {
     achievementLevel: 'Level {{level}} of {{levels}}',
     achievementUnique: 'One of a kind',
     achievementLocked: 'Not yet',
-    photo: 'Photo: {{author}}, {{licence}}',
-    unknownAuthor: 'unknown author',
   },
   ranks: {
     title: 'Tiers',

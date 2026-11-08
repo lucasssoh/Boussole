@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { AchievementProgress, LadderStep } from '../core/api';
 import { BoussoleApi } from '../core/boussole-api';
 import { StatsService } from '../core/stats.service';
 import { AchievementFigureComponent } from '../shared/achievement-figure.component';
-import { ACHIEVEMENT_PHOTOS } from '../shared/achievement-photos';
 import { emblemLook } from '../shared/emblem';
 import { LoadingComponent } from '../shared/loading.component';
 import { RankEmblemComponent } from '../shared/rank-emblem.component';
@@ -99,7 +98,7 @@ import { RankRouteComponent } from './rank-route.component';
           </div>
           <div class="medals">
             @for (achievement of shownAchievements(); track achievement.id) {
-              <section class="medal" [class.locked]="achievement.level === 0" [title]="('achievement.' + achievement.id + '.description' | transloco) + ' · ' + progressText(achievement) + photoCredit(achievement.id)">
+              <section class="medal" [class.locked]="achievement.level === 0" tabindex="0" [attr.aria-describedby]="'medal-' + achievement.id">
                 <app-achievement-figure [id]="achievement.id" [level]="achievement.level" [levels]="achievement.thresholds.length" />
                 <strong>{{ 'achievement.' + achievement.id + '.name' | transloco }}</strong>
                 <span class="medal-level">
@@ -110,6 +109,13 @@ import { RankRouteComponent } from './rank-route.component';
                   } @else {
                     {{ 'profile.achievementLevel' | transloco: { level: roman(achievement.level), levels: roman(achievement.thresholds.length) } }}
                   }
+                </span>
+                <span class="medal-pop" role="tooltip" [id]="'medal-' + achievement.id">
+                  <span class="medal-pop-what">{{ 'achievement.' + achievement.id + '.description' | transloco }}</span>
+                  <span class="medal-pop-progress">
+                    <span class="medal-pop-gauge" aria-hidden="true"><span [style.width.%]="toNext(achievement) * 100"></span></span>
+                    <span class="medal-pop-count">{{ progressText(achievement) }}</span>
+                  </span>
                 </span>
               </section>
             }
@@ -124,7 +130,6 @@ import { RankRouteComponent } from './rank-route.component';
 export class ProfilePageComponent {
   protected readonly stats = inject(StatsService);
   protected readonly names = inject(RankNames);
-  private readonly transloco = inject(TranslocoService);
   protected readonly roman = roman;
 
   /** The colour that reads on the banner: the tier's, or the gold of the Grand Sage. */
@@ -188,18 +193,9 @@ export class ProfilePageComponent {
     return next === undefined ? `${achievement.value}${unit}` : `${achievement.value} / ${next}${unit}`;
   }
 
-  /** Who took the photo of an achievement, and its licence, for the tooltip. */
-  protected photoCredit(id: string): string {
-    const photo = ACHIEVEMENT_PHOTOS[id];
-    if (!photo) {
-      return '';
-    }
-    return ' · ' + this.transloco.translate('profile.photo', { author: photo.author || this.transloco.translate('profile.unknownAuthor'), licence: photo.licence });
-  }
-
-  private toNext(achievement: AchievementProgress): number {
+  protected toNext(achievement: AchievementProgress): number {
     const next = achievement.thresholds[achievement.level];
-    return next === undefined ? 1 : achievement.value / next;
+    return next === undefined ? 1 : Math.min(1, achievement.value / next);
   }
 
   protected toGo(from: number, points: number): number {

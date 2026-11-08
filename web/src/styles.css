@@ -4080,6 +4080,82 @@ app-settings-drawer {
   align-content: start;
   gap: 0.35rem;
   text-align: center;
+  position: relative;
+  border-radius: 12px;
+  outline: none;
+}
+
+.medal:focus-visible {
+  box-shadow: 0 0 0 2px var(--brand);
+}
+
+/* What an achievement asks, on hover or focus: a small card beneath the figure, its gauge and count. */
+.medal-pop {
+  position: absolute;
+  z-index: 20;
+  top: 5.2rem;
+  left: 50%;
+  width: max-content;
+  max-width: min(15rem, calc(100vw - 2rem));
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--line), 0 10px 28px rgb(15 28 31 / 0.14);
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  translate: -50% 6px;
+  transition: opacity 0.15s, translate 0.15s, visibility 0.15s;
+  pointer-events: none;
+}
+
+.medal:hover .medal-pop,
+.medal:focus-visible .medal-pop {
+  opacity: 1;
+  visibility: visible;
+  translate: -50% 0;
+}
+
+.medal-pop-what {
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.medal-pop-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.medal-pop-gauge {
+  flex: 1;
+  min-width: 4rem;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.medal-pop-gauge span {
+  display: block;
+  height: 100%;
+  background: var(--brand);
+}
+
+.medal-pop-count {
+  font-size: 0.82rem;
+  font-weight: 900;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .medal-pop {
+    transition: none;
+  }
 }
 
 /* An achievement as a figure of its own: a photo tinted with the metal of its level, in relief. */
