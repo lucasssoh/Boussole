@@ -4,7 +4,7 @@ Versions follow `MAJOR.MINOR.PATCH`, and each release is a git tag (`v1.0.0`). M
 also get a code name, minor ones their date; patch releases have neither. Until `1.0.0`, a
 minor release may break things and says so.
 
-## Unreleased
+## 0.3.0 (November 8 2026)
 
 ### Added
 - **Replay (Partie +):** play a finished session again, from its first step or its wrap-up. Every question starts fresh, nudges included, and no answer earns points; your first answers and your stars stay those of the first time. Stars earned above those of the first time show dotted.
