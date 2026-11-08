@@ -92,7 +92,7 @@ class AdminAppTest {
             shown = shown(app);
         }
 
-        assertThat(shown).contains("examples/reseaux", "Documents", "v Validate");
+        assertThat(shown).contains("Réseaux", "Documents", "v Validate");
         assertThat(TracksTab.read(List.of(RESEAUX)).getFirst().course()).isPresent();
     }
 
