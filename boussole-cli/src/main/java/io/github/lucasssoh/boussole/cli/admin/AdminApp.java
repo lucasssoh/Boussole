@@ -156,15 +156,17 @@ final class AdminApp {
 
     /** Runs the work away from the screen, saying {@code working} meanwhile, then what it returns. */
     void job(String working, Callable<String> work) {
-        if (working != null) {
-            message = new Message(working, Style.DIM, null);
+        Message saying = working == null ? null : new Message(working, Style.DIM, null);
+        if (saying != null) {
+            message = saying;
         }
         jobs.execute(() -> {
             try {
                 String done = work.call();
                 if (done != null) {
                     say(done);
-                } else if (working != null) {
+                } else if (saying != null && message == saying) {
+                    // Only its own word: a message said since, such as an error, stays.
                     message = null;
                 }
             } catch (InterruptedException e) {

@@ -4,6 +4,11 @@ Versions follow `MAJOR.MINOR.PATCH`, and each release is a git tag (`v1.0.0`). M
 also get a code name, minor ones their date; patch releases have neither. Until `1.0.0`, a
 minor release may break things and says so.
 
+## 0.3.1
+
+- **Full screen:** a task that ends in the background no longer wipes a message shown since, such as the error of a folder without `subject.yaml`.
+- **Packages:** the archives of 0.3.0 could not be built; this release brings them, with every change of 0.3.0.
+
 ## 0.3.0 (November 8 2026)
 
 ### Added
