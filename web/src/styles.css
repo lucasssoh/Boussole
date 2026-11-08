@@ -7,7 +7,7 @@
 :root {
   color-scheme: light;
   color-scheme: light;
-  --bg: #eef3f6;
+  --bg: #fbfcfd;
   --surface: #fbfcfd;
   --surface-2: #e6edf2;
   --text: #1e2b3a;
@@ -308,7 +308,6 @@ a:focus-visible {
   height: var(--top-bar);
   padding: 0.4rem 1.25rem;
   background: var(--surface);
-  border-bottom: 2px solid var(--line);
 }
 
 .brand {
