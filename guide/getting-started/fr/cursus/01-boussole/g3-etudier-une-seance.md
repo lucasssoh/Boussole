@@ -3,7 +3,7 @@ id: g3
 objectives:
   - Avancer dans une séance étape par étape, en suivant le Tracé.
   - Répondre du premier coup, avec les coups de pouce, et lire la correction expliquée.
-terms: [etape, trace, mode-guide, premier-coup, coup-de-pouce, derniere-verification, serie, palier, revision-express]
+terms: [etape, trace, mode-guide, premier-coup, coup-de-pouce, derniere-verification, serie, palier, revision-express, partie-plus]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code
@@ -89,7 +89,9 @@ même si tu reviens sur la séance un autre jour. Pour t'aider à bien répondre
 
 **« Je ne vois pas mes progrès. »** Chaque bonne réponse rapporte des **points**, davantage dans un
 parcours exigeant : ils s'envolent à côté de ton palier, en haut à droite, qui montre tes points et
-le prochain cap (`180 / 240`). Une première réponse manquée le reste : pas de retour en arrière. Avec les
+le prochain cap (`180 / 240`). Une première réponse manquée le reste : pas de retour en arrière. Pour
+t'entraîner encore, rejoue une séance terminée en :term[Partie +]{id=partie-plus} : chaque question
+repart de zéro, sans points, et les étoiles gagnées en plus de la première fois sont en pointillé. Avec les
 points, tu gravis les :term[paliers]{id=palier}, de Curieux à Grand Sage, et tu gagnes des succès, sur ton profil. Ta :term[série]{id=serie}
 avance chaque jour où tu étudies.
 

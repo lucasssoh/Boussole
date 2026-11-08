@@ -38,7 +38,7 @@ package "session" {
   class "SessionView.PartView" as PartView <<record>>
 }
 package "exercise" {
-  class ExerciseController <<…/exercises/{id}>>
+  class ExerciseController <<…/exercises/{id}, attempts?session&lang&replay>>
   interface AttemptRequest <<sealed, JSON kind>>
   class AttemptView <<record>> {
     verdict, items, progress

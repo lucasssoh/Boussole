@@ -135,6 +135,24 @@ class LearningTest {
     }
 
     @Test
+    void a_finished_lesson_can_be_played_again_without_points_and_keeps_its_first_answers() {
+        SubmitAttempt submit = new SubmitAttempt(content, progress, RewardedSubjects.all(), clock);
+        submit.submit(MAC_BITS, new ValueResponse("6"), Optional.of("s11"), Optional.empty());
+
+        assertThatThrownBy(() -> submit.submit(MAC_BITS, new ValueResponse("48"), Optional.of("s11"), Optional.empty(), true))
+                .isInstanceOf(LearningRuleException.class);
+
+        new FinishSession(content, progress, RewardedSubjects.all(), clock).finish(new SessionKey("reseaux", "s11"), Duration.ofMinutes(52));
+        AttemptOutcome replay = submit.submit(MAC_BITS, new ValueResponse("48"), Optional.of("s11"), Optional.empty(), true);
+        AttemptOutcome again = submit.submit(MAC_BITS, new ValueResponse("48"), Optional.of("s11"), Optional.empty(), true);
+
+        assertThat(replay.result().verdict()).isEqualTo(Verdict.CORRECT);
+        assertThat(replay.pointsGained()).isZero();
+        assertThat(again.pointsGained()).isZero();
+        assertThat(new OpenSession(content, progress).open("reseaux", "s11", Optional.empty()).answered()).containsEntry("s11-a1", new FirstAnswer(Verdict.WRONG, 0));
+    }
+
+    @Test
     void a_review_can_be_sat_again() {
         SubmitAttempt submit = new SubmitAttempt(content, progress, RewardedSubjects.all(), clock);
         ExerciseKey reviewed = new ExerciseKey("reseaux", "r19-q1");

@@ -116,6 +116,11 @@ in the same session, and `OpenSession` returns the verdict of each answer alread
 the interface shows again (with the answer itself when the browser kept it). A review or a mock
 exam can be sat again.
 
+A finished session can be played again (`replay` on the attempt; the interface calls it « Partie
++ », *Replay*): `SubmitAttempt` takes a second answer there, earns nothing for it, and keeps the
+attempt with no session, so that the first answers, the stars and the score of the session stay
+those of the first time. The interface opens every question afresh, the hints included.
+
 A response is a sealed `LearnerResponse` (choices, a value, gaps, an order, pairs, a self
 grade). `QuestionChecker` hands it to the `ResponseChecker` of the question's kind, which
 returns a `CheckResult`: a `Verdict` (correct, partly, wrong) and each part judged, never the

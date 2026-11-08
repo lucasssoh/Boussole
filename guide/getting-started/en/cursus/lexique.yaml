@@ -90,6 +90,12 @@
   definition: >
     A short, timed session that brings back the key questions of a chapter.
 
+- id: replay
+  term: Replay
+  definition: >
+    A finished session played again: every question starts fresh, for no points. Your first
+    answers and your stars stay those of the first time.
+
 - id: streak
   term: Streak
   definition: >

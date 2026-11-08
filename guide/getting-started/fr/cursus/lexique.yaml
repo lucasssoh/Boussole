@@ -89,6 +89,12 @@
   definition: >
     Une séance courte et chronométrée qui reprend les questions clés d'un chapitre.
 
+- id: partie-plus
+  term: Partie +
+  definition: >
+    Une séance terminée, rejouée : chaque question repart de zéro, sans points. Tes premières
+    réponses et tes étoiles restent celles de la première fois.
+
 - id: serie
   term: Série
   definition: >

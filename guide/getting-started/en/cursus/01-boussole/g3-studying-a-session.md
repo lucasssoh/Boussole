@@ -3,7 +3,7 @@ id: g3
 objectives:
   - Move through a session step by step, following the Trail.
   - Answer on the first try, with nudges, and read the explained answer.
-terms: [step, trail, guided-mode, first-try, nudge, final-check, streak, tier, quick-review]
+terms: [step, trail, guided-mode, first-try, nudge, final-check, streak, tier, quick-review, replay]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code
@@ -86,7 +86,8 @@ even if you come back to the session another day. To help you answer well:
 
 **"I can't see my progress."** Every right answer earns **points**, more in a demanding track:
 they rise beside your tier, top right, which shows your points and the next mark (`180 / 240`). A
-first answer missed stays missed: no going back. With points you climb the
+first answer missed stays missed: no going back. To practise again, play a finished session as a
+:term[Replay]{id=replay}: every question starts fresh, for no points, and stars earned above those of the first time are dotted. With points you climb the
 :term[tiers]{id=tier}, from Curious to Grand Sage, and you collect achievements on your profile. Your :term[streak]{id=streak} grows each day
 you study.
 

@@ -23,6 +23,7 @@ package "learn" {
   }
   class SubmitAttempt <<use case>> {
     +submit(ExerciseKey, LearnerResponse, session, language) : AttemptOutcome
+    +submit(…, replay) : AttemptOutcome <<a finished session again: no points, kept with no session>>
   }
   class RevealNextHint <<use case>> {
     +reveal(ExerciseKey, language) : RevealedHint

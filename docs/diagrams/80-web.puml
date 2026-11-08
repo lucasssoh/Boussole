@@ -37,19 +37,21 @@ package "learn" {
   class SessionRun <<per session page>> {
     spentSeconds, remainingSeconds : Signal
     seen, verdicts, stars, lastAnswered : Signal
+    replay : Signal <<a finished session played again>>
     +question(id, create) : QuestionState
     +record(question, verdict, points, stars)
   }
   class SubjectListComponent <<page />>
   class CoursePageComponent <<page subjects/:subject>>
-  class SessionPageComponent <<page …/sessions/:session?screen=N>> {
+  class SessionPageComponent <<page …/sessions/:session?screen=N&replay=1>> {
     index, screen : Signal
     +goTo(index)
+    +replay()
   }
   class "sessionPlan()" as SessionPlan <<start, explanation, example, question…, end>>
   class PairPageComponent <<page /pair: a code typed, or one shown to accept>>
   class SessionPathComponent <<the session as a path of nodes, stars on a plate under answered ones>>
-  class StarsComponent <<3 stars in relief: gold, blue (met before), outlined (own estimate); arrive one by one>>
+  class StarsComponent <<3 stars in relief: gold, blue (met before), outlined (own estimate); arrive one by one; dotted above the first time in a replay>>
   class "starTone(), starSummary()" as StarRules <<gold counts, blue and outlined do not, hooks have none>>
   class SessionGridComponent <<the sessions of a chapter as a grid, on the home page>>
   class LoadingComponent <<the needle turning while a page waits>>
@@ -105,7 +107,7 @@ package "shared" {
   class "pill-frame.ts" as PillFrame <<a frame per tier, culture and specialty>>
   class RankRouteComponent <<every division as its emblem, the learner's in the middle>>
   class AchievementFigureComponent <<a real photo, cut out and grey, tinted with the metal of its level>>
-  class "achievement-photos.ts" as AchievementPhotos <<who took each photo, and its licence>>
+  class "achievement-photos.ts" as AchievementPhotos <<who took each photo, and its licence; kept in the code, not shown>>
   class PromotionComponent <<after a session: the emblem over a veil, put together again>>
   class "ranks.ts" as Ranks <<tier colours, roman divisions, points>>
   class RichTextComponent

@@ -11,7 +11,8 @@ const STAR = 'M12 2.6l2.85 5.9 6.5.92-4.7 4.55 1.13 6.43L12 17.35l-5.78 3.05 1.1
  * The stars of an answer, in relief like the buttons: a face lit from above, a darker edge below,
  * a glint. With {@link play}, they arrive one by one: earned stars pop, empty ones settle, blue ones
  * rise, outlined ones draw themselves, and three gold stars end on a burst; {@link delay} holds
- * them back, hidden, so that a list fills in turn. Nothing moves when motion is reduced.
+ * them back, hidden, so that a list fills in turn. Nothing moves when motion is reduced. With
+ * {@link earned}, in a replay, the stars above those earned the first time are dotted.
  */
 @Component({
   selector: 'app-stars',
@@ -26,7 +27,7 @@ const STAR = 'M12 2.6l2.85 5.9 6.5.92-4.7 4.55 1.13 6.43L12 17.35l-5.78 3.05 1.1
       <span class="visually-hidden">{{ 'stars.' + tone() | transloco: { count: count() } }}</span>
     }
     @for (slot of slots(); track slot) {
-      <svg class="star" [class.on]="slot < count()" [class.off]="slot >= count()" [style.--i]="slot" viewBox="0 0 24 25" aria-hidden="true">
+      <svg class="star" [class.on]="slot < count()" [class.off]="slot >= count()" [class.extra]="isExtra(slot)" [style.--i]="slot" viewBox="0 0 24 25" aria-hidden="true">
         @if (slot === 0) {
           <defs>
             <linearGradient [attr.id]="id + '-on'" x1="0" y1="0" x2="0" y2="1">
@@ -39,14 +40,16 @@ const STAR = 'M12 2.6l2.85 5.9 6.5.92-4.7 4.55 1.13 6.43L12 17.35l-5.78 3.05 1.1
             </linearGradient>
           </defs>
         }
-        @if (tone() === 'outline') {
+        @if (isExtra(slot)) {
+          <path class="star-dotted" [attr.d]="star"></path>
+        } @else if (tone() === 'outline') {
           <path class="star-trace star-trace-edge" pathLength="1" [attr.d]="star" transform="translate(0 1.8)"></path>
           <path class="star-trace" pathLength="1" [attr.d]="star"></path>
         } @else {
           <path class="star-edge" [attr.d]="star" transform="translate(0 1.9)"></path>
           <path class="star-face" [attr.d]="star" [style.fill]="'url(#' + id + (slot < count() ? '-on' : '-off') + ')'"></path>
           <path class="star-glint" d="M7.6 9.9l2.7-.4 1.6-3.3"></path>
-          @if (tone() === 'gold' && slot === 2) {
+          @if (tone() === 'gold' && slot === 2 && earned() === null) {
             <path class="star-rays" d="M12 -1.5v-3M23 5.5l2.6-1.6M1 5.5l-2.6-1.6M20.5 21.5l1.8 2.4M3.5 21.5l-1.8 2.4"></path>
           }
         }
@@ -62,10 +65,17 @@ export class StarsComponent {
   readonly play = input(false);
   /** Seconds before the first star arrives. */
   readonly delay = input(0);
+  /** In a replay, the stars earned the first time: those above them, earned in the replay only, are dotted. */
+  readonly earned = input<number | null>(null);
   /** The text beside says what the stars mean: they are not read out. */
   readonly decorative = input(false, { transform: booleanAttribute });
 
   protected readonly id = `stars-${nextId++}`;
   protected readonly star = STAR;
   protected readonly slots = computed(() => Array.from({ length: this.max() }, (_, index) => index));
+
+  protected isExtra(slot: number): boolean {
+    const earned = this.earned();
+    return earned !== null && slot >= earned && slot < this.count();
+  }
 }

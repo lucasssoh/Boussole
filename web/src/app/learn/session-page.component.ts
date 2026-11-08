@@ -62,6 +62,9 @@ import { sessionDocuments } from './session-documents';
         <div class="screen-bar">
           <button type="button" class="quiet outline-toggle" (click)="outlineOpen.set(!outlineOpen())"><app-icon name="menu" /> {{ 'session.plan' | transloco }}</button>
           <span class="screen-where"><app-rich-text [text]="where()" /></span>
+          @if (run.replay()) {
+            <span class="replay-tag" [title]="'replay.note' | transloco"><app-icon name="replay" /> {{ 'replay.tag' | transloco }}</span>
+          }
           @if (timed() && run.started()) {
             <span class="timer" [class.over]="run.timeIsUp()" role="timer"><app-icon name="timer" /> {{ remaining() }}</span>
           }
@@ -117,6 +120,14 @@ import { sessionDocuments } from './session-documents';
               @if (timed()) {
                 <p class="note">{{ 'timed.intro' | transloco: { minutes: current.duration, questions: roundedQuestionMinutes() } }}</p>
               }
+              @if (run.replay()) {
+                <p class="frame replay-note"><app-icon name="replay" /> {{ 'replay.note' | transloco }}</p>
+              } @else if (finishedBefore()) {
+                <div class="replay-offer">
+                  <button type="button" (click)="replay()"><app-icon name="replay" /> {{ 'replay.start' | transloco }}</button>
+                  <span>{{ 'replay.offer' | transloco }}</span>
+                </div>
+              }
               @if (writtenBy(); as line) {
                 <p class="written-by">{{ line }}</p>
               }
@@ -130,13 +141,13 @@ import { sessionDocuments } from './session-documents';
                     @for (part of starred.parts; track $index) {
                       <li>
                         <span class="bilan-stars-part"><app-rich-text [text]="part.title" /></span>
-                        <app-stars [count]="part.count" [tone]="part.tone" [play]="true" [delay]="0.3 + $index * 0.25" />
+                        <app-stars [count]="part.count" [tone]="part.tone" [play]="true" [delay]="0.3 + $index * 0.25" [earned]="part.earned" />
                       </li>
                     }
                   </ul>
                   @if (starred.possible > 0) {
                     <div class="bilan-stars-total">
-                      <app-stars [count]="starred.average" [play]="true" [delay]="0.3 + starred.parts.length * 0.25" decorative />
+                      <app-stars [count]="starred.average" [play]="true" [delay]="0.3 + starred.parts.length * 0.25" [earned]="starred.earned" decorative />
                       <strong>{{ shownStars() }} / {{ starred.possible }}</strong>
                       <span>{{ 'session.starsTotal' | transloco }}</span>
                     </div>
@@ -179,7 +190,9 @@ import { sessionDocuments } from './session-documents';
                   <div class="missed"><dt>{{ 'session.tallyMissed' | transloco }}</dt><dd>{{ tally.missed }}</dd><dd class="tally-points">0</dd></div>
                 </dl>
               }
-              @if (finishedIn() === null && finishedBefore() && current.kind !== 'exam') {
+              @if (run.replay()) {
+                <p class="verdict correct">{{ 'replay.done' | transloco }}</p>
+              } @else if (finishedIn() === null && finishedBefore() && current.kind !== 'exam') {
                 <p class="verdict correct">{{ 'session.finishedBefore' | transloco }}</p>
               } @else if (finishedIn() === null) {
                 <button type="button" class="primary" (click)="finish()">
@@ -187,6 +200,12 @@ import { sessionDocuments } from './session-documents';
                 </button>
               } @else {
                 <p class="verdict correct">{{ 'session.finished' | transloco: { minutes: finishedIn() } }}</p>
+              }
+              @if (run.replay() || finishedIn() !== null || (finishedBefore() && current.kind !== 'exam')) {
+                <div class="replay-offer">
+                  <button type="button" (click)="replay()"><app-icon name="replay" /> {{ (run.replay() ? 'replay.again' : 'replay.start') | transloco }}</button>
+                  <span>{{ 'replay.offer' | transloco }}</span>
+                </div>
               }
               <nav class="session-nav">
                 <a [routerLink]="['/subjects', current.subject]" [queryParams]="{ chapter: current.chapterId }"><app-icon name="arrow-left" /> {{ learn.course()?.name }}</a>
@@ -238,6 +257,9 @@ export class SessionPageComponent {
   readonly session = input.required<string>();
   /** The screen shown, from 1, kept in the address. */
   readonly screenParam = input<string | undefined>(undefined, { alias: 'screen' });
+  /** A finished session played again (« Partie + »), kept in the address. */
+  readonly replayParam = input<string | undefined>(undefined, { alias: 'replay' });
+  private readonly replaying = computed(() => this.replayParam() === '1');
 
   protected readonly learn = inject(LearnFacade);
   private readonly transloco = inject(TranslocoService);
@@ -302,25 +324,42 @@ export class SessionPageComponent {
   /**
    * The stars of the wrap-up: those of each part (gold when it has questions of its own, else the
    * blue of those asked again), and the total of the session's own questions, out of 3 for each.
+   * In a replay, each also says the stars of the first answers to the same questions, so that
+   * those above them show dotted.
    */
   protected readonly starsBilan = computed(() => {
     const plan = this.plan();
     const stars = this.run.stars();
+    const replay = this.run.replay();
+    const first = new Map<string, number>();
+    if (replay) {
+      for (const screen of plan.screens) {
+        const block = this.questionOf(screen);
+        if ((block?.type === 'mcq' || block?.type === 'exercise') && stars.has(block.id)) {
+          first.set(block.id, block.progress.answeredStars ?? 0);
+        }
+      }
+    }
     const questionsOf = (screens: number[]) => screens.flatMap((index) => {
       const block = this.questionOf(plan.screens[index]);
       return block?.type === 'mcq' || block?.type === 'exercise' ? [{ id: block.id, tone: blockStarTone(block) }] : [];
     });
-    const total = starSummary(plan.parts.flatMap((part) => questionsOf(part.screens)), stars);
+    const all = plan.parts.flatMap((part) => questionsOf(part.screens));
+    const total = starSummary(all, stars);
     const parts = plan.parts.flatMap((part) => {
       const summary = starSummary(questionsOf(part.screens), stars);
       const tone: StarTone | null = summary.gold.length > 0 ? 'gold' : summary.blue.length > 0 ? 'blue' : null;
-      return tone ? [{ title: this.partTitle(part.part), tone, count: averageStars(tone === 'gold' ? summary.gold : summary.blue) }] : [];
+      const before = starSummary(questionsOf(part.screens), first);
+      const earned = replay ? averageStars(tone === 'gold' ? before.gold : before.blue) : null;
+      return tone ? [{ title: this.partTitle(part.part), tone, count: averageStars(tone === 'gold' ? summary.gold : summary.blue), earned }] : [];
     });
+    const before = starSummary(all, first);
     return {
       stars: total.stars,
       possible: total.possible,
       answered: total.gold.length + total.blue.length,
       average: total.possible > 0 ? Math.round((MAX_STARS * total.stars) / total.possible) : 0,
+      earned: replay && total.possible > 0 ? Math.round((MAX_STARS * before.stars) / total.possible) : null,
       parts,
     };
   });
@@ -349,7 +388,7 @@ export class SessionPageComponent {
     }
     const verdicts = this.run.verdicts();
     const blocking = screens.findIndex((screen) => holds(screen, this.plan().parts[screen.part]?.part.kind, this.exerciseType(screen))
-      && !verdicts.has(screen.question!.id) && !this.answeredBefore(screen));
+      && !verdicts.has(screen.question!.id) && (this.run.replay() || !this.answeredBefore(screen)));
     return blocking < 0 ? screens.length - 1 : blocking;
   });
   protected readonly roundedQuestionMinutes = computed(() => Math.round(this.opened()?.questionMinutes ?? 0));
@@ -368,6 +407,7 @@ export class SessionPageComponent {
     effect(() => {
       const subject = this.subject();
       const session = this.session();
+      const replay = this.replaying();
       untracked(() => {
         this.finishedIn.set(null);
         this.stats.studying.set(true);
@@ -375,8 +415,8 @@ export class SessionPageComponent {
           () => {
             const opened = this.learn.session();
             if (opened) {
-              this.run.begin(opened.kind, opened.duration, opened.subject, opened.id, this.answeredHere());
-              this.resumeStoredScreen(opened.kind === 'lesson');
+              this.run.begin(opened.kind, opened.duration, opened.subject, opened.id, this.answeredHere(), replay && this.finishedBefore());
+              this.resumeStoredScreen(opened.kind === 'lesson' && !this.run.replay());
             }
           },
           () => undefined,
@@ -394,7 +434,9 @@ export class SessionPageComponent {
       const session = this.opened();
       if (session) {
         untracked(() => this.run.see(index));
-        storeValue(positionKey(session.subject, session.id), String(index + 1));
+        if (!untracked(() => this.run.replay())) {
+          storeValue(positionKey(session.subject, session.id), String(index + 1));
+        }
       }
     });
   }
@@ -438,7 +480,7 @@ export class SessionPageComponent {
     if (index > this.gate()) {
       return;
     }
-    void this.router.navigate([], { queryParams: { screen: index + 1 }, replaceUrl: true });
+    void this.router.navigate([], { queryParams: { screen: index + 1 }, queryParamsHandling: 'merge', replaceUrl: true });
     scrollTo({ top: 0 });
   }
 
@@ -453,6 +495,17 @@ export class SessionPageComponent {
     } else if (event.key === 'ArrowLeft' && this.index() > 0) {
       this.goTo(this.index() - 1);
     }
+  }
+
+  /** Plays the session again from its first step, as a « Partie + »: every question afresh, for no points. */
+  protected replay(): void {
+    const opened = this.opened();
+    if (opened && this.run.replay()) {
+      // Already replaying, the address keeps its replay: the sitting starts again here.
+      this.run.begin(opened.kind, opened.duration, opened.subject, opened.id, new Map(), true);
+    }
+    void this.router.navigate([], { queryParams: { screen: 1, replay: 1 } });
+    scrollTo({ top: 0 });
   }
 
   protected points(points: number): string {

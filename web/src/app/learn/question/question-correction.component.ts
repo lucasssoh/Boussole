@@ -24,7 +24,7 @@ import { StarsComponent } from '../stars.component';
           {{ (state().isFree ? 'question.proposedCorrection' : verdict() ? 'verdict.' + verdict() : 'question.solutionTitle') | transloco }}
         </span>
         @if (state().starTone && state().stars() !== null && verdict()) {
-          <app-stars [count]="state().stars()!" [tone]="state().starTone!" [play]="state().fresh()" />
+          <app-stars [count]="state().stars()!" [tone]="state().starTone!" [play]="state().fresh()" [earned]="state().firstStars" />
         }
       </span>
       @if (state().result(); as result) {

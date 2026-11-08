@@ -1746,6 +1746,20 @@ a.session-card:active {
   color: var(--subject-ink);
 }
 
+/* A finished session played again: a tag in the bar, the same violet on every step of it. */
+.replay-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--recall-bg);
+  color: #7048e8;
+  font-size: 0.82rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
 .screen-count {
   color: var(--muted);
 }
@@ -1972,6 +1986,16 @@ a.session-card:active {
 
 .star.off .star-trace {
   stroke: var(--star-empty-line);
+}
+
+/* In a replay, a star earned above those of the first time: dotted, not yet for good. */
+.star-dotted {
+  fill: color-mix(in srgb, var(--star-on-top) 18%, transparent);
+  stroke: var(--star-on-line);
+  stroke-width: 1.8;
+  stroke-dasharray: 2.2 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .stars.play .star.on {
@@ -2250,6 +2274,34 @@ a.session-card:active {
   font-size: 1.8rem;
   font-weight: 900;
   font-variant-numeric: tabular-nums;
+}
+
+.replay-offer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.8rem;
+  margin-top: 1.25rem;
+}
+
+.replay-offer span {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.frame.replay-note {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-color: #b197fc;
+  background: var(--recall-bg);
+  font-weight: 700;
+}
+
+.frame.replay-note .icon-host {
+  flex: none;
+  color: #7048e8;
 }
 
 .session-nav {

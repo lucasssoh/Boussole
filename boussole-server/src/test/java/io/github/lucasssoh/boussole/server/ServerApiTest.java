@@ -163,6 +163,15 @@ class ServerApiTest {
     }
 
     @Test
+    void a_finished_session_can_be_played_again_and_earns_nothing() throws Exception {
+        post("/api/subjects/reseaux/sessions/s11/finish", "{\"spentSeconds\":3000}");
+
+        HttpResponse<String> replay = post("/api/subjects/reseaux/exercises/s11-a2/attempts?session=s11&replay=true", "{\"kind\":\"choices\",\"picked\":[1]}");
+        assertThat(replay.statusCode()).isEqualTo(200);
+        assertThat(replay.body()).contains("\"pointsGained\":0.0");
+    }
+
+    @Test
     void serves_the_documents_of_the_subject_only() throws Exception {
         assertThat(get("/api/subjects/reseaux/files/sources/Reseaux_Cours_Intro_2026.pdf").headers().firstValue("Content-Type"))
                 .contains("application/pdf");

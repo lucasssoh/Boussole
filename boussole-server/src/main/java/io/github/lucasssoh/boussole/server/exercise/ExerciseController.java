@@ -38,9 +38,10 @@ class ExerciseController {
             @PathVariable String exercise,
             @RequestParam Optional<String> session,
             @RequestParam Optional<String> lang,
+            @RequestParam(defaultValue = "false") boolean replay,
             @RequestBody AttemptRequest request) {
         ExerciseKey key = new ExerciseKey(subject, exercise);
-        AttemptOutcome outcome = submitAttempt.submit(key, request.toResponse(), session, lang);
+        AttemptOutcome outcome = submitAttempt.submit(key, request.toResponse(), session, lang, replay);
         return AttemptView.of(outcome, SolutionView.of(revealSolution.reveal(key, lang), mapper(subject, lang)));
     }
 

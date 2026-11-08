@@ -39,7 +39,7 @@ interface PathNode {
   /** Where its label goes: towards the centre of the path, so that it stays inside the zone. */
   side: 'left' | 'right';
   /** The stars of the answer to its question, once answered and moved on from. */
-  stars: { count: number; tone: StarTone } | null;
+  stars: { count: number; tone: StarTone; earned: number | null } | null;
   /** The node of the question just answered: its stars arrive. */
   arriving: boolean;
   /** What a screen reader says of it: its label, and its stars. */
@@ -173,7 +173,7 @@ const FIRST_NODE = 52;
           </span>
           @if (node.stars; as stars) {
             <span class="path-stars" [class.arriving]="node.arriving">
-              <app-stars [count]="stars.count" [tone]="stars.tone" [play]="node.arriving" [delay]="node.arriving ? 0.3 : 0" decorative />
+              <app-stars [count]="stars.count" [tone]="stars.tone" [play]="node.arriving" [delay]="node.arriving ? 0.3 : 0" [earned]="stars.earned" decorative />
             </span>
           }
           <span class="path-label">{{ node.label }}</span>
@@ -304,7 +304,7 @@ export class SessionPathComponent {
       return 'locked';
     }
     if (screen.question) {
-      return this.run.verdicts().get(screen.question.id) ?? earlierVerdict(screen) ?? 'open';
+      return this.run.verdicts().get(screen.question.id) ?? (this.run.replay() ? undefined : earlierVerdict(screen)) ?? 'open';
     }
     return this.run.seen().has(index) ? 'done' : 'open';
   }
@@ -315,11 +315,12 @@ export class SessionPathComponent {
   }
 
   /** The stars of the first answer to the question of a screen, when the server gave them. */
-  private starsOf(screen: SessionScreen): { count: number; tone: StarTone } | null {
+  private starsOf(screen: SessionScreen): { count: number; tone: StarTone; earned: number | null } | null {
     const block = questionBlock(screen);
     const tone = block ? blockStarTone(block) : null;
     const count = screen.question ? this.run.stars().get(screen.question.id) : undefined;
-    return tone && count !== undefined ? { count, tone } : null;
+    const earned = this.run.replay() && (block?.type === 'mcq' || block?.type === 'exercise') ? (block.progress.answeredStars ?? 0) : null;
+    return tone && count !== undefined ? { count, tone, earned } : null;
   }
 
   private partTitle(plan: SessionPlan, part: number): string {

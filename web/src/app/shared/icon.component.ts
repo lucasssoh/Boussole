@@ -20,6 +20,7 @@ export const ICONS = {
   grip: 'M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01',
   lock: 'M7 11V8a5 5 0 0110 0v3M5 11h14v10H5z',
   timer: 'M12 8v5l3 2M9 2h6M12 22a8 8 0 100-16 8 8 0 000 16z',
+  replay: 'M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8M3 3v5h5',
 } as const;
 
 export type IconName = keyof typeof ICONS;

@@ -77,10 +77,11 @@ export class BoussoleApi {
 
   /**
    * {@code session}: the session the learner answers in, so that the subject resumes there;
-   * {@code lang}: the version of the track the question was read in, whose answer is checked.
+   * {@code lang}: the version of the track the question was read in, whose answer is checked;
+   * {@code replay}: a finished session played again, whose answers earn nothing.
    */
-  attempt(subject: string, exercise: string, request: AttemptRequest, session: string | null, lang: string | null = null): Promise<AttemptResult> {
-    return this.post(`${exercisePath(subject, exercise)}/attempts${query({ session, lang })}`, request);
+  attempt(subject: string, exercise: string, request: AttemptRequest, session: string | null, lang: string | null = null, replay = false): Promise<AttemptResult> {
+    return this.post(`${exercisePath(subject, exercise)}/attempts${query({ session, lang, replay: replay ? 'true' : null })}`, request);
   }
 
   nextHint(subject: string, exercise: string, lang: string | null = null): Promise<RevealedHint> {

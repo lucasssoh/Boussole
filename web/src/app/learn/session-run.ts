@@ -19,6 +19,8 @@ export class SessionRun implements OnDestroy {
   private readonly questions = new Map<string, QuestionState>();
 
   readonly kind = signal<SessionKind>('lesson');
+  /** A finished session played again: every question opens afresh, and no answer earns points. */
+  readonly replay = signal(false);
   readonly started = signal(false);
   /** The learner ended the session (in an exam, before the time is up). */
   readonly ended = signal(false);
@@ -74,13 +76,15 @@ export class SessionRun implements OnDestroy {
 
   /**
    * A lesson starts at once; a review or an exam when the learner says so, with its countdown.
-   * {@code answered}: the questions of a lesson answered in an earlier sitting, whose verdict stays.
+   * {@code answered}: the questions of a lesson answered in an earlier sitting, whose verdict stays,
+   * unless the learner plays the session again ({@code replay}).
    */
-  begin(kind: SessionKind, minutes: number, subject: string, session: string, answered: ReadonlyMap<string, FirstAnswer> = new Map()): void {
+  begin(kind: SessionKind, minutes: number, subject: string, session: string, answered: ReadonlyMap<string, FirstAnswer> = new Map(), replay = false): void {
     this.seenKey = `seen.${subject}.${session}`;
     this.kind.set(kind);
+    this.replay.set(replay);
     this.spent.set(0);
-    this.firstAnswers.set(new Map(answered));
+    this.firstAnswers.set(new Map(replay ? [] : answered));
     this.lastAnswered.set(null);
     this.questions.clear();
     this.seen.set(new Set(storedNumbers(this.seenKey)));
@@ -100,7 +104,7 @@ export class SessionRun implements OnDestroy {
    */
   reloadQuestions(answered: ReadonlyMap<string, FirstAnswer>): void {
     this.questions.clear();
-    this.firstAnswers.set(new Map([...answered, ...this.firstAnswers()]));
+    this.firstAnswers.set(new Map([...(this.replay() ? [] : answered), ...this.firstAnswers()]));
   }
 
   see(screen: number): void {

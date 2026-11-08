@@ -7,6 +7,7 @@ minor release may break things and says so.
 ## Unreleased
 
 ### Added
+- **Replay (Partie +):** play a finished session again, from its first step or its wrap-up. Every question starts fresh, nudges included, and no answer earns points; your first answers and your stars stay those of the first time. Stars earned above those of the first time show dotted.
 - **Lock a track:** once every document is in, `L` on the Tracks screen of `boussole`, or `boussole lock .`, locks the track. Documents added later are left out (`F046`), and the final mock exam, the last session of the plan, is written then, on the whole track. Unlocking stays possible, with a warning: a document taken in after the final mock exam means building it again, and the screen says about how many tokens that costs.
 - **Agents that work freely in the track:** the agent of `r`, and Claude Code opened in a track, run any command in the sandbox of Claude Code, which writes only in the track and has no network. A loop or a variable is no longer refused, and writing files outside the track is. The agent of `r` may search the web too. Needs `bubblewrap` and `socat` on Linux.
 - **What an agent costs:** the Tracks screen counts its tokens at input price, as they are billed (a reread from the cache costs a tenth of an input token, an output token five), with the raw count beside it.

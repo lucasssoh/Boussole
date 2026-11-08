@@ -24,6 +24,9 @@ export class QuestionState {
   readonly result = signal<AttemptResult | null>(null);
   readonly hints: WritableSignal<BlockView[][]>;
   readonly hintTotal: number;
+  /** In a replay, the hints revealed in an earlier sitting, shown again only when asked for. */
+  private readonly hintsKept: BlockView[][];
+  private readonly replay: boolean;
   readonly solution = signal<RevealedSolution | null>(null);
   readonly correctionFocus = signal(false);
   readonly busy = signal(false);
@@ -45,6 +48,8 @@ export class QuestionState {
   /** The stars of the answer, out of 3; an answer kept by an older Boussole has those the server gives. */
   private readonly earlierStars: WritableSignal<number | null>;
   readonly stars = computed(() => this.result()?.stars ?? this.earlierStars());
+  /** In a replay, the stars of the first answer, for good: those above them are the replay's only. */
+  readonly firstStars: number | null;
   readonly starTone: StarTone | null;
   /** Answered in this sitting, rather than shown again: its stars arrive one by one. */
   readonly fresh = signal(false);
@@ -79,12 +84,15 @@ export class QuestionState {
     readonly reused = false,
   ) {
     this.order = signal([...shuffledItems]);
+    this.replay = run?.replay() ?? false;
     this.progress = signal(progress);
-    this.hints = signal(hints.revealed);
+    this.hints = signal(this.replay ? [] : hints.revealed);
+    this.hintsKept = this.replay ? [...hints.revealed] : [];
     this.hintTotal = hints.total;
     this.starTone = starTone({ hook, reused, free: isFree });
-    this.earlierStars = signal(progress.answeredStars ?? null);
-    const earlier = progress.answeredHere;
+    this.earlierStars = signal(this.replay ? null : (progress.answeredStars ?? null));
+    this.firstStars = this.replay ? (progress.answeredStars ?? 0) : null;
+    const earlier = this.replay ? undefined : progress.answeredHere;
     if (earlier) {
       // A question is created while a page computes what it shows, where signals cannot be written.
       untracked(() => this.restore(earlier));
@@ -97,7 +105,7 @@ export class QuestionState {
 
   async attempt(request: AttemptRequest): Promise<void> {
     await this.call(async () => {
-      const result = await this.api.attempt(this.subject, this.id, request, this.session, this.language);
+      const result = await this.api.attempt(this.subject, this.id, request, this.session, this.language, this.replay);
       this.result.set(result);
       this.fresh.set(true);
       this.solution.set(result.solution);
@@ -105,7 +113,7 @@ export class QuestionState {
       if (this.correctionShown()) {
         this.correctionFocus.set(true);
       }
-      if (this.run?.kind() === 'lesson') {
+      if (this.run?.kind() === 'lesson' && !this.replay) {
         storeValue(this.keptKey(), JSON.stringify({ request, result } satisfies KeptAnswer));
       }
       this.run?.record(this.id, result.verdict, result.pointsGained, result.stars);
@@ -115,8 +123,9 @@ export class QuestionState {
 
   async nextHint(): Promise<void> {
     await this.call(async () => {
-      const hint = await this.api.nextHint(this.subject, this.id, this.language);
-      this.hints.update((hints) => [...hints, hint.blocks]);
+      const kept = this.hintsKept[this.hints().length];
+      const blocks = kept ?? (await this.api.nextHint(this.subject, this.id, this.language)).blocks;
+      this.hints.update((hints) => [...hints, blocks]);
     });
   }
 

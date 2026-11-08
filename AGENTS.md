@@ -135,6 +135,7 @@ words (no abbreviations).
 | first answer final | first try / du premier coup |
 | confirm before a multiple MCQ | final check / dernière vérification |
 | review | quick review / révision express |
+| a finished session played again (`replay`) | Replay / Partie + |
 | `free_navigation: false` | guided mode / mode guidé |
 | skills | playbooks / fiches méthode |
 | `boussole validate` | validator / validateur |

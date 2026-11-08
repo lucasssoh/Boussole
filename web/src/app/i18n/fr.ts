@@ -89,6 +89,14 @@ export const FR: Translations = {
     contents: 'Sommaire',
   },
   part: { text: 'Introduction', warmup: 'Échauffement', notion: '', checkpoint: 'Point de contrôle', practice: "Pour s'entraîner" },
+  replay: {
+    tag: 'Partie +',
+    start: 'Rejouer en Partie +',
+    again: 'Rejouer encore',
+    offer: 'Chaque question repart de zéro, sans points.',
+    note: 'Partie + : chaque question repart de zéro, sans points. Tes premières réponses et tes étoiles restent.',
+    done: 'Partie + terminée.',
+  },
   timed: {
     notStarted: 'Commence la séance depuis sa première étape : le chrono part à ce moment-là.',
     intro: 'Séance chronométrée : {{minutes}} minutes, pour environ {{questions}} minutes de questions à un rythme normal.',

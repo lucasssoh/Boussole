@@ -41,7 +41,23 @@ public final class SubmitAttempt {
      * checked. In a lesson, a question already answered there is refused, in any language (see AnswerOnce).
      */
     public AttemptOutcome submit(ExerciseKey key, LearnerResponse response, Optional<String> session, Optional<String> language) {
-        session.ifPresent(id -> refuseASecondAnswer(key, id));
+        return submit(key, response, session, language, false);
+    }
+
+    /**
+     * {@code replay}: the learner plays a session they have finished again, as a New Game Plus. They
+     * may answer every question once more, and no answer earns points. Its attempts are kept with no
+     * session, so that the first answers, the stars and the score of the session stay as they were.
+     */
+    public AttemptOutcome submit(ExerciseKey key, LearnerResponse response, Optional<String> session, Optional<String> language, boolean replay) {
+        if (replay) {
+            String id = session.orElseThrow(() -> new LearningRuleException("a replay is played in a session"));
+            if (!progress.finishedSessions(key.subject()).contains(id)) {
+                throw new LearningRuleException(id + " is not finished yet: only a finished session can be played again");
+            }
+        } else {
+            session.ifPresent(id -> refuseASecondAnswer(key, id));
+        }
         Block question = lookup.question(key, language);
         CheckResult result = switch (question) {
             case McqBlock mcq -> checker.check(mcq, response);
@@ -52,13 +68,13 @@ public final class SubmitAttempt {
         ExerciseProgress before = progress.exercise(key);
         boolean firstHere = session.map(id -> !progress.firstAnswers(new SessionKey(key.subject(), id)).containsKey(key.exercise()))
                 .orElse(false);
-        double points = rewarded.rewards(key.subject())
+        double points = !replay && rewarded.rewards(key.subject())
                 ? PointRules.weight(before.attempts() == 0, firstHere) * score.earned() * coefficient(key.subject())
                 : 0;
         ExerciseProgress after = before.withAttempt(result.verdict());
         progress.saveExercise(key, after, clock.instant());
         int stars = Stars.of(score, result.verdict());
-        progress.recordAttempt(key, session, result.verdict(), points, stars, clock.instant());
+        progress.recordAttempt(key, replay ? Optional.empty() : session, result.verdict(), points, stars, clock.instant());
         return new AttemptOutcome(result, after, score, points, stars);
     }
 

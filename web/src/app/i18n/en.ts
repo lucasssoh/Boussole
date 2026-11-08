@@ -87,6 +87,14 @@ export const EN = {
     contents: 'Contents',
   },
   part: { text: 'Introduction', warmup: 'Warm-up', notion: '', checkpoint: 'Checkpoint', practice: 'Practice' },
+  replay: {
+    tag: 'Replay',
+    start: 'Play it again',
+    again: 'Play it again',
+    offer: 'Every question starts fresh, for no points.',
+    note: 'Replay: every question starts fresh, for no points. Your first answers and stars stay.',
+    done: 'Replay finished.',
+  },
   timed: {
     notStarted: 'Start the session from its first step: the countdown begins then.',
     intro: 'This session is timed: {{minutes}} minutes, for about {{questions}} minutes of questions at a normal pace.',
