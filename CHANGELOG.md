@@ -26,6 +26,7 @@ minor release may break things and says so.
 - **On a phone:** the Trail opens over the step with a ground of its own, below the top bar; Previous and Next sit in a bar of their own; the part's name leaves the bar above the step, the Trail shows it; the profile's gauge sits above its words.
 - **Free exercises:** self-grading no longer awards points, and the answer is labelled as a proposed correction.
 - **Fill-in exercises:** typing a number no longer closes the field after each digit.
+- **Drop-down lists in a statement:** a list near the edge of the window now moves to stay whole, long choices go to the next line, and a list with no room below opens above.
 
 ## 0.2.1
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Injector, afterNextRender, computed, inject, input, output, signal } from '@angular/core';
 import { IconComponent } from './icon.component';
 import { RichTextComponent } from './rich-text.component';
 
@@ -36,7 +36,7 @@ let nextId = 0;
       <app-icon name="chevron-down" [size]="16" />
     </button>
     @if (open()) {
-      <ul class="choice-list" role="listbox" [id]="id + '-list'" [attr.aria-label]="label()">
+      <ul class="choice-list" role="listbox" [id]="id + '-list'" [attr.aria-label]="label()" [class.above]="above()" [style.translate]="shift() ? shift() + 'px 0' : null">
         @for (option of options(); track option; let index = $index) {
           <li
             role="option"
@@ -68,7 +68,12 @@ export class ChoiceMenuComponent {
   protected readonly id = `choice-menu-${nextId++}`;
   protected readonly open = signal(false);
   protected readonly active = signal(-1);
+  /** How far the open list moves left so as to stay in the window, and whether it opens upwards. */
+  protected readonly shift = signal(0);
+  protected readonly above = signal(false);
   private readonly chosenIndex = computed(() => this.options().indexOf(this.value()));
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly injector = inject(Injector);
 
   protected toggle(): void {
     if (this.open()) {
@@ -127,6 +132,27 @@ export class ChoiceMenuComponent {
 
   private show(): void {
     this.active.set(Math.max(this.chosenIndex(), 0));
+    this.shift.set(0);
+    this.above.set(false);
     this.open.set(true);
+    afterNextRender(() => this.keepInWindow(), { injector: this.injector });
+  }
+
+  /** A list longer than the room to the right moves left; one with no room below opens above. */
+  private keepInWindow(): void {
+    const list = (this.host.nativeElement as HTMLElement).querySelector('.choice-list');
+    if (!list) {
+      return;
+    }
+    const margin = 8;
+    const box = list.getBoundingClientRect();
+    const overflow = box.right - (document.documentElement.clientWidth - margin);
+    if (overflow > 0) {
+      this.shift.set(-Math.min(overflow, box.left - margin));
+    }
+    const trigger = (this.host.nativeElement as HTMLElement).getBoundingClientRect();
+    if (box.bottom > window.innerHeight - margin && trigger.top - box.height - margin > 0) {
+      this.above.set(true);
+    }
   }
 }
