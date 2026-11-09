@@ -175,6 +175,8 @@ class ServerApiTest {
     void serves_the_documents_of_the_subject_only() throws Exception {
         assertThat(get("/api/subjects/reseaux/files/sources/Reseaux_Cours_Intro_2026.pdf").headers().firstValue("Content-Type"))
                 .contains("application/pdf");
+        assertThat(get("/api/subjects/reseaux/files/sources/Reseaux_Cours_Intro_2026.pdf?original").headers().firstValue("Content-Type"))
+                .contains("application/pdf");
         assertThat(get("/api/subjects/reseaux/files/../../pom.xml").statusCode()).isEqualTo(404);
         assertThat(get("/api/subjects/reseaux/files/%2E%2E/%2E%2E/pom.xml").statusCode()).isEqualTo(404);
     }

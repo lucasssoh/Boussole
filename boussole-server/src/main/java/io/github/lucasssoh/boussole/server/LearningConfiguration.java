@@ -1,7 +1,10 @@
 package io.github.lucasssoh.boussole.server;
 
 import io.github.lucasssoh.boussole.adapters.content.FileContentRepository;
+import io.github.lucasssoh.boussole.adapters.document.LibreOfficeDocuments;
 import io.github.lucasssoh.boussole.adapters.web.HttpWebPages;
+import io.github.lucasssoh.boussole.core.reference.OfficeDocuments;
+import io.github.lucasssoh.boussole.core.reference.ShowDocument;
 import io.github.lucasssoh.boussole.core.reference.PreviewWebPage;
 import io.github.lucasssoh.boussole.core.reference.WebPages;
 import io.github.lucasssoh.boussole.adapters.progress.SqliteDatabase;
@@ -134,6 +137,17 @@ class LearningConfiguration {
     @Bean
     PreviewWebPage previewWebPage(WebPages pages) {
         return new PreviewWebPage(pages);
+    }
+
+    /** The PDFs of Word and PowerPoint documents, kept beside the progress database. */
+    @Bean
+    OfficeDocuments officeDocuments(ServerSettings settings) {
+        return new LibreOfficeDocuments(settings.database().toAbsolutePath().resolveSibling("pdf"));
+    }
+
+    @Bean
+    ShowDocument showDocument(OfficeDocuments office) {
+        return new ShowDocument(office);
     }
 
     @Bean

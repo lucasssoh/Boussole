@@ -65,6 +65,12 @@ package "video" {
   class YoutubeOEmbedCatalog
 }
 
+package "document" {
+  class LibreOfficeDocuments <<soffice --headless, PDFs kept>> {
+    +pdfOf(Path) : Optional<Path>
+  }
+}
+
 package "web" {
   class HttpWebPages <<never this machine or its network>> {
     +preview(URI) : PagePreview
@@ -76,10 +82,12 @@ interface ProgressRepository <<boussole-core port>>
 interface DeviceRepository <<boussole-core port>>
 interface VideoCatalog <<boussole-format>>
 interface WebPages <<boussole-core port>>
+interface OfficeDocuments <<boussole-core port>>
 class CourseLoader <<boussole-format>>
 
 ContentRepository <|.. FileContentRepository
 WebPages <|.. HttpWebPages
+OfficeDocuments <|.. LibreOfficeDocuments
 FileContentRepository *-- SubjectFolderCache : one per folder
 SubjectFolderCache ..> CourseFilesFingerprint : changed?
 SubjectFolderCache ..> CourseLoader : reads again

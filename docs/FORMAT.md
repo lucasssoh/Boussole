@@ -303,7 +303,7 @@ each answer and the correction right after it.
 | `note`, `tip`, `warning`, `beyond` | container | Callouts. `beyond` holds what does **not** come from the documents of the track, and says where it comes from: a web source (`:link`) or general knowledge. |
 | `term` | inline | Hover definition from the lexicon. `{id=…}` is optional when the text equals a term or alias, ignoring case (`:term[Dépôt]` finds the term `dépôt`). |
 | `video` | leaf | A video beside the text: `youtube=<11-character video id>` for YouTube, or `src=<file>` for a video file of the sources folder (a lecture recording), never both. `start`, `end` as seconds, `m:ss` or `h:mm:ss`. The label is the caption. A file plays in the browser when it is MP4 (H.264), WebM or Ogg (`F038` otherwise). |
-| `pdf` | leaf or inline | Opens a file of `sources/` beside the text. `src=<file>` required; `page=N` optional. |
+| `pdf` | leaf or inline | Opens a file of `sources/` beside the text. `src=<file>` required; `page=N` optional. A Word or PowerPoint document (`doc`, `docx`, `odt`, `ppt`, `pptx`, `odp`) shows as the PDF LibreOffice makes of it: `page` counts the pages of that PDF. |
 | `link` | leaf or inline | A web page the course cites (documentation, an article, a reference), opened beside the text: `url=<https://…>` required, a whole web address. Boussole shows the page in place when its site allows it, and otherwise opens it in a window of its own, beside Boussole. The label is the caption, or the words of the sentence. |
 | `graph` | container | A small graph that Boussole draws and checks itself (below). The label is the caption; `layout=circle` (default), `row` or `layers`. |
 

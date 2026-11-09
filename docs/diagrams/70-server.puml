@@ -120,7 +120,7 @@ LearningConfiguration ..> core : adapters into use cases
 CourseController --> core
 SessionController --> core
 ExerciseController --> core
-SubjectFileController --> core
+SubjectFileController --> core : OpenCourse, ShowDocument
 StatsController --> core
 StatsController ..> StatsView
 ReferenceController --> core : PreviewWebPage

@@ -102,6 +102,8 @@ session should be split, and propose how.
   short explanation.
 - **Source every claim.** Boussole is worth only as much as what it says can be checked:
   - **every notion points to the page it relies on**, `:pdf[…]{src=… page=…}` in the sentence
+    (for a Word or PowerPoint document, the page of the PDF Boussole shows: make it with
+    `soffice --headless --convert-to pdf --outdir <scratch folder> <file>` and read that)
     (or a `::pdf` block), at least once, and again wherever a definition, a theorem, a figure
     or a method is taken from the documents (`boussole validate` warns, P014);
   - a web source the track recorded is a `:link[…]{url=…}`, or a `::link[…]{url=…}` block for

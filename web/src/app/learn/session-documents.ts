@@ -177,3 +177,8 @@ function walk(blocks: BlockView[], reading: DocumentReading, cite: (panel: Opene
     }
   }
 }
+
+/** A Word or PowerPoint document, which the server shows as a PDF. */
+export function isOfficeDocument(path: string): boolean {
+  return /\.(docx?|odt|pptx?|odp)$/i.test(path);
+}

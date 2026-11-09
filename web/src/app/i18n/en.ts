@@ -370,6 +370,8 @@ export const EN = {
     webApart: 'This site refuses to show here: it is open in a window of its own, on the right.',
     webElsewhere: 'This site refuses to show here. Open it in a window of its own, on the right:',
     webUnreachable: 'This site does not answer right now. You can try opening it in a tab.',
+    officeMissing: 'This document does not show here. Install LibreOffice to read it in Boussole, or download it:',
+    download: 'Download the document',
   },
 };
 

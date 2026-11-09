@@ -228,6 +228,12 @@ package "reference" {
     reachable, embeddable : boolean
     title : Optional<String>
   }
+  class ShowDocument <<use case>> {
+    +fileToShow(Path) : Optional<Path>
+  }
+  interface OfficeDocuments <<port>> {
+    +pdfOf(Path) : Optional<Path>
+  }
 }
 
 ListCourses --> ContentRepository
@@ -252,6 +258,7 @@ CourseOverviews ..> ChapterLinks : chapters in order
 TrackScores ..> QuestionScore : possible
 PreviewWebPage --> WebPages : pages
 PreviewWebPage ..> PagePreview
+ShowDocument --> OfficeDocuments : Word, PowerPoint
 ReadStudyStats --> RewardedSubjects : rewarded
 SubmitAttempt --> RewardedSubjects : rewarded
 FinishSession --> RewardedSubjects : rewarded

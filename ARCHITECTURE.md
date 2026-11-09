@@ -136,6 +136,7 @@ The implementations of the ports:
 | `ProgressRepository`, later `EventRepository` | `Sqlite…Repository`: plain JDBC; `SqliteDatabase` runs the migrations of `db/V*.sql` once each, counted by `PRAGMA user_version` |
 | `ReminderScheduler` (V2) | `SystemdReminderScheduler`, `LaunchdReminderScheduler`, `WindowsTaskReminderScheduler` |
 | `VideoCatalog` (of `boussole-format`) | `YoutubeOEmbedCatalog` |
+| `OfficeDocuments` | `LibreOfficeDocuments`: the PDF of a Word or PowerPoint document, made by `soffice --headless` with a profile of its own, kept in `pdf/` of the data folder until the document changes; nothing when LibreOffice is not installed |
 
 `config/` reads and writes `config.yaml` (`BoussoleConfigFile`, which adds a folder without
 touching the rest of the file) and knows the per-user folders (`BoussolePaths`).
@@ -368,7 +369,7 @@ POST …/sessions/{session}/finish         { spentSeconds }
 POST …/exercises/{id}/attempts?session=  verdict, each part judged, the stars and the correction, recorded
 POST …/exercises/{id}/hints              the next hint, recorded
 GET  …/exercises/{id}/solution           after an attempt (at once for a free exercise)
-GET  …/files/{path}                      a file of the subject folder: PDFs, videos (range requests), images
+GET  …/files/{path}                      a file of the subject folder: PDFs, videos (range requests), images; a Word or PowerPoint document as its PDF (`ShowDocument`), 404 without LibreOffice; `?original` for the file itself
 GET  …/lang/{lang}/files/{path}          the same, in one version of the track (the language in the path keeps relative links)
 GET  /api/references/preview?url=        whether a web page a course cites may show beside the text
 GET  /api/stats                          points, culture rank, specialty of each field, streak, records, route

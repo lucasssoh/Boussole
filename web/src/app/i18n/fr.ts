@@ -372,5 +372,7 @@ export const FR: Translations = {
     webApart: 'Ce site refuse de s’afficher ici : il est ouvert dans une fenêtre à part, à droite.',
     webElsewhere: 'Ce site refuse de s’afficher ici. Ouvre-le dans une fenêtre à part, à droite :',
     webUnreachable: 'Ce site ne répond pas pour l’instant. Tu peux essayer de l’ouvrir dans un onglet.',
+    officeMissing: 'Ce document ne s’affiche pas ici. Installe LibreOffice pour le lire dans Boussole, ou télécharge-le :',
+    download: 'Télécharger le document',
   },
 };

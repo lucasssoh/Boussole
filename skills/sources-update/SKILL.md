@@ -55,7 +55,9 @@ Never lock the track yourself.
 
 ## 2. Read and classify each new or changed document
 
-Read it (for a PDF, `pdftotext -layout <file> -`). Decide what it is, one document at a time:
+Read it (for a PDF, `pdftotext -layout <file> -`; for a Word or PowerPoint document, convert it first with
+`soffice --headless --convert-to pdf --outdir <scratch folder> <file>`: Boussole shows that PDF, so its pages are
+the ones to cite, and its figures are images to look at). Decide what it is, one document at a time:
 
 | The document is… | Do |
 |---|---|

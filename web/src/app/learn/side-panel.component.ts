@@ -8,7 +8,7 @@ import { LoadingComponent } from '../shared/loading.component';
 import { RichTextComponent } from '../shared/rich-text.component';
 import { clock } from './blocks/video-block.component';
 import { LearnFacade, SidePanel } from './learn.facade';
-import { DocumentPlace, SessionDocument, panelKey } from './session-documents';
+import { DocumentPlace, SessionDocument, isOfficeDocument, panelKey } from './session-documents';
 import { WebReferences } from './web-references';
 import { MarkdownDocumentComponent } from './markdown-document.component';
 
@@ -89,6 +89,15 @@ import { MarkdownDocumentComponent } from './markdown-document.component';
                    (loadeddata)="loaded()" (error)="loaded()"></video>
           } @else if (panel.kind === 'markdown') {
             <app-markdown-document [path]="panel.path" />
+          } @else if (panel.kind === 'pdf' && noPdf() === panel.path) {
+            <div class="panel-card">
+              <app-icon name="document" [size]="40" />
+              <strong>{{ panel.label }}</strong>
+              <p>{{ 'panel.officeMissing' | transloco }}</p>
+              <a class="button primary" [href]="learn.fileUrl(panel.path) + '?original'" download>
+                {{ 'panel.download' | transloco }} <app-icon name="arrow-right" />
+              </a>
+            </div>
           } @else if (frameUrl(); as url) {
             <iframe
               [class]="panel.kind"
@@ -163,6 +172,9 @@ export class SidePanelComponent {
     return shown ? panelKey(shown) : null;
   });
 
+  /** The Word or PowerPoint document open that the server could not make into a PDF. */
+  protected readonly noPdf = signal<string | null>(null);
+
   /** What the server learned of the web page open, once it answers. */
   protected readonly webPreview = signal<PagePreview | null>(null);
 
@@ -231,6 +243,17 @@ export class SidePanelComponent {
       }
     });
     effect(() => {
+      // A Word or PowerPoint document comes as a PDF only when the server could make one.
+      const panel = this.shown();
+      untracked(() => this.noPdf.set(null));
+      if (panel?.kind === 'pdf' && isOfficeDocument(panel.path)) {
+        void fetch(this.learn.fileUrl(panel.path), { method: 'HEAD' }).then(
+          (response) => this.markNoPdf(panel.path, response.ok),
+          () => this.markNoPdf(panel.path, false),
+        );
+      }
+    });
+    effect(() => {
       const panel = this.shown();
       untracked(() => this.webPreview.set(null));
       if (panel?.kind === 'web') {
@@ -241,6 +264,14 @@ export class SidePanelComponent {
         });
       }
     });
+  }
+
+  private markNoPdf(path: string, shown: boolean): void {
+    const panel = this.shown();
+    if (!shown && panel?.kind === 'pdf' && panel.path === path) {
+      this.noPdf.set(path);
+      this.loaded();
+    }
   }
 
   protected loaded(): void {

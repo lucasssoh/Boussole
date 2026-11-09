@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { BlockView, SessionPart } from '../core/api';
 import { MarkdownRenderer } from '../shared/markdown-renderer';
-import { panelKey, sessionDocuments } from './session-documents';
+import { isOfficeDocument, panelKey, sessionDocuments } from './session-documents';
 import { sessionPlan } from './session-screens';
 
 const long = 'x'.repeat(400);
@@ -51,5 +51,16 @@ describe('sessionDocuments', () => {
 
     expect(documents[0].kind).toBe('markdown');
     expect(documents[0].places[0].panel).toEqual({ kind: 'markdown', label: '', path: 'sources/notes.md' });
+  });
+});
+
+describe('isOfficeDocument', () => {
+  it('knows the Word and PowerPoint documents the server shows as a PDF', () => {
+    for (const path of ['Michel/DP_composite_exo.doc', 'td.DOCX', 'notes.odt', 'cours.ppt', 'cours.pptx', 'cours.odp']) {
+      expect(isOfficeDocument(path)).toBe(true);
+    }
+    for (const path of ['cours.pdf', 'doc/notes.md', 'archive.zip', 'schema.png', 'document']) {
+      expect(isOfficeDocument(path)).toBe(false);
+    }
   });
 });
