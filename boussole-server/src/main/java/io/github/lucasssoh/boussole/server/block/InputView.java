@@ -39,7 +39,11 @@ public sealed interface InputView {
     record Match(List<String> lefts, List<String> rights) implements InputView {
     }
 
-    record Free() implements InputView {
+    /**
+     * Written in a text area, or on {@code paper} (or in the learner's own editor); with a
+     * {@code rubric} to tick after the solution, whose criteria come with the solution only.
+     */
+    record Free(boolean paper, boolean rubric) implements InputView {
     }
 
     /** The answer of the exercise could not be read (the validator reports why). */

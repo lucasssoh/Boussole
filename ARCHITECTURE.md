@@ -323,7 +323,9 @@ web/src/app/
   with its feedback, the stars arrive one by one beside the verdict, and
   `QuestionCorrectionComponent` shows *why* (the solution) beside the question,
   or below it on a narrow screen. In an exam, the correction waits for the end, and there is no
-  hint. A free exercise shows its solution first, then the learner grades their answer. A fill
+  hint. A free exercise shows its solution first, then the learner grades their answer: in three
+  words, or by ticking the criteria of its rubric, which come with the solution only (the share
+  of their weight gives the stars, `CheckResult.share`). With `paper=true` it has no text area. A fill
   exercise places its fields where the statement has `[[N]]` (`FillGaps`).
 
 - **Standalone components and signals.** State lives in services, exposed as signals; no NgRx.

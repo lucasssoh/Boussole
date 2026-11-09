@@ -7,6 +7,7 @@ minor release may break things and says so.
 ## Unreleased
 
 ### Added
+- **Marking schemes for free exercises:** a free exercise may come with a marking scheme, the points an exam corrector would check, each with its weight. Once you have read the solution, tick each point your answer has: the stars follow from the weight ticked. A free exercise may also be answered on paper or in your own editor, as at the exam: it then shows no text area, only its time and the way to the solution.
 - **Word and PowerPoint documents in the viewer:** a `.doc`, `.docx`, `.odt`, `.ppt`, `.pptx` or `.odp` the course cites now opens beside the text as a PDF, at its page, instead of being downloaded. It needs LibreOffice on the computer that runs Boussole; without it, the viewer offers to download the document.
 
 ### Fixed

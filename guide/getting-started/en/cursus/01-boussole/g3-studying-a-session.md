@@ -36,7 +36,9 @@ per part (warm-up, notions, checkpoint, practice) and a dot per step.
 
 Under an answered question, **stars** say how much of it was right: 3 for all of it, 2 for at
 least half, 1 for a little, none for nothing. Blue stars mark a question met in an earlier session:
-they do not add to the total. A free exercise shows your own estimate, outlined.
+they do not add to the total. A free exercise shows your own estimate, outlined: when it comes
+with a marking scheme, tick each point your answer has, and the stars follow. Some free exercises
+are answered on paper or in your own editor, as at the exam.
 
 Clicking an open dot goes there.
 

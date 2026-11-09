@@ -39,7 +39,8 @@ Example: a 20-minute review → 14 single-choice MCQs and 2 numeric exercises (1
 - **Mostly MCQs and fills**: in a given time they cover the most ground. A proof, an algorithm or
   a calculation from the exam becomes a `fill` with choice gaps for its steps and a number gap
   for its result. Typed answers stay short and precise (a value, a keyword); `free` only when the
-  real exam asks for a written answer nothing else can check.
+  real exam asks for a written answer nothing else can check, then with a `:::rubric` marked as
+  the exam would be, and `paper=true` when the exam is written by hand (`exercise-author`).
 - **Cover every goal** of the sessions concerned at least once, weighted by how much of the
   course each takes.
 - **Review**: reuse the lessons' questions with `::ref{id=…}` (retrieving what was learnt is what

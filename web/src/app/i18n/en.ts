@@ -352,6 +352,11 @@ export const EN = {
     got_it: 'got it',
     partly: 'partly got it',
     not_yet: 'not yet',
+    paper: 'Answer on paper or in your editor, then compare with the solution.',
+    rubric: 'Tick what your answer has:',
+    point: '{{weight}} point',
+    points: '{{weight}} points',
+    rubricDone: 'Confirm',
   },
   documents: {
     button: 'Documents · {{count}}',

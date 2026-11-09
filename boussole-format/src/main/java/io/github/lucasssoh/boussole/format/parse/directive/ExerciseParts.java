@@ -12,16 +12,18 @@ import java.util.Set;
 
 /**
  * The content of an {@code exercise} or a {@code mcq}, split into its statement and its
- * {@code answer}, {@code hint} and {@code solution} parts.
+ * {@code answer}, {@code hint}, {@code solution} and {@code rubric} parts.
  */
 record ExerciseParts(
-        List<RawNode> statement, List<RawNode.Container> answers, List<ExerciseHint> hints, List<ExerciseSolution> solutions) {
+        List<RawNode> statement, List<RawNode.Container> answers, List<ExerciseHint> hints, List<ExerciseSolution> solutions,
+        List<RawNode.Container> rubrics) {
 
     static ExerciseParts split(CheckedDirective directive, ParseContext context) {
         List<RawNode> statement = new ArrayList<>();
         List<RawNode.Container> answers = new ArrayList<>();
         List<ExerciseHint> hints = new ArrayList<>();
         List<ExerciseSolution> solutions = new ArrayList<>();
+        List<RawNode.Container> rubrics = new ArrayList<>();
         for (RawNode child : directive.children()) {
             if (child instanceof RawNode.Container part && DirectivePlaces.EXERCISE_PARTS.contains(part.directive().name())) {
                 String name = part.directive().name();
@@ -29,6 +31,7 @@ record ExerciseParts(
                 var position = context.position(part.line());
                 switch (name) {
                     case "answer" -> answers.add(part);
+                    case "rubric" -> rubrics.add(part);
                     case "hint" -> hints.add(new ExerciseHint(context.blocks(part.children(), name), position));
                     default -> solutions.add(new ExerciseSolution(context.blocks(part.children(), name), position));
                 }
@@ -36,7 +39,7 @@ record ExerciseParts(
                 statement.add(child);
             }
         }
-        return new ExerciseParts(List.copyOf(statement), List.copyOf(answers), List.copyOf(hints), List.copyOf(solutions));
+        return new ExerciseParts(List.copyOf(statement), List.copyOf(answers), List.copyOf(hints), List.copyOf(solutions), List.copyOf(rubrics));
     }
 
     /** The single solution, after reporting when there is none or several. */

@@ -87,7 +87,7 @@ package "learn.question" {
   class QuestionHeaderComponent
   class QuestionState {
     progress, result, hints, solution : Signal
-    picked, value, order, pairs, gaps : Signal
+    picked, value, order, pairs, gaps, met : Signal
     +attempt(AttemptRequest)
     +nextHint()
     +showSolution() : free exercise
@@ -95,6 +95,7 @@ package "learn.question" {
     stars, starTone, fresh
   }
   class FillGaps <<fields in the statement>>
+  class "rubricShare(), weightWords()" as RubricRules <<the criteria of a free exercise, ticked after its solution>>
 }
 
 package "shared" {
@@ -184,6 +185,7 @@ BlockListComponent --> McqBlockComponent
 BlockListComponent --> ExerciseBlockComponent
 McqBlockComponent *-- QuestionState
 ExerciseBlockComponent *-- QuestionState
+ExerciseBlockComponent ..> RubricRules : a rubric; paper: no text area
 ExerciseBlockComponent *-- FillGaps
 McqBlockComponent --> QuestionFooterComponent
 ExerciseBlockComponent --> QuestionFooterComponent

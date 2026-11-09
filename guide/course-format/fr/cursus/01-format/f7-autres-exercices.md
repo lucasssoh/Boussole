@@ -9,6 +9,10 @@ written_by:
   - model: claude-opus-5-5
     tool: Claude Code
     date: 2026-10-21
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-11-09
+    role: revised
 ---
 
 :::::warmup
@@ -128,7 +132,7 @@ Sans mot-clé, l'apprenant tape sa réponse.
 |---|---|---|
 | `order` | une liste (`1.` ou `-`) dans le bon ordre, deux éléments au moins | remet dans l'ordre les éléments mélangés |
 | `match` | une ligne par paire, `gauche => droite`, deux paires au moins | associe à chaque gauche une droite, choisie dans une liste |
-| `free` | pas de `:::answer` | écrit, compare à la solution, puis s'évalue : réussi, en partie, pas encore |
+| `free` | pas de `:::answer` ; un `:::rubric` s'il est noté comme à l'examen | écrit, compare à la solution, puis s'évalue : réussi, en partie, pas encore ; ou coche chaque critère du barème |
 
 Comme pour les trous à liste, les côtés droits d'un `match` s'affichent dans une liste : pas de
 `$…$`. `free` sert à ce que Boussole ne peut pas vérifier : expliquer, concevoir, démontrer.
@@ -203,6 +207,48 @@ Lequel Boussole ne peut-il pas corriger tout seul ?
 :::solution
 **`free`** : l'apprenant lit la solution et s'évalue lui-même. Tous les autres types ont
 exactement un `:::answer`.
+:::
+::::
+
+**Et un exercice que l'examen note point par point ?** Donne à l'exercice `free` un `:::rubric`,
+le barème : ce que le correcteur vérifie, un élément par point, son poids entre crochets. Après la
+solution, l'apprenant coche ce que sa réponse contient, et les étoiles suivent le poids coché.
+Avec `paper=true`, l'apprenant répond sur papier ou dans son propre éditeur : pas de zone de
+saisie.
+
+```markdown
+::::exercise{#s3-p1 type=free paper=true minutes=15}
+Écris les commandes qui publient la branche `menu` sur le dépôt distant `origin`.
+
+:::solution
+`git switch menu`, puis `git push -u origin menu` : `-u` relie la branche à sa branche distante.
+:::
+
+:::rubric
+- [1] Se place d'abord sur la branche `menu`.
+- [2] La pousse avec `git push origin menu`.
+- [1] La relie à sa branche distante avec `-u`.
+:::
+::::
+```
+
+::::mcq{#f7-a5}
+Dans un `:::rubric`, quelle ligne est un critère que Boussole sait lire ?
+
+- [x] `- [2] La classe Cadre ne nomme aucune classe concrète.`
+- [ ] `- La classe Cadre ne nomme aucune classe concrète.`
+  > Un critère porte son poids entre crochets, avant le texte : `- [1] …`.
+- [ ] `- [0] La classe Cadre ne nomme aucune classe concrète.`
+  > Un poids est un nombre plus grand que 0 : `[0.5]`, `[1]`, `[2]`.
+
+:::hint
+Que donne le correcteur pour chaque point vérifié ?
+:::
+
+:::solution
+**`- [2] La classe Cadre ne nomme aucune classe concrète.`** Chaque critère est un élément de
+liste, avec son poids entre crochets, un nombre plus grand que 0. Un barème ne se met que dans un
+exercice `free`.
 :::
 ::::
 

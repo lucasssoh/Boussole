@@ -310,7 +310,7 @@ export type ExerciseInput =
   | { kind: 'fill'; gaps: FillGapInput[] }
   | { kind: 'order'; items: string[] }
   | { kind: 'match'; lefts: string[]; rights: string[] }
-  | { kind: 'free' }
+  | { kind: 'free'; paper: boolean; rubric: boolean }
   | { kind: 'unreadable' };
 
 export interface FillGapInput {
@@ -326,7 +326,8 @@ export type AttemptRequest =
   | { kind: 'gaps'; values: Record<number, string> }
   | { kind: 'order'; items: string[] }
   | { kind: 'match'; pairs: Record<string, string> }
-  | { kind: 'selfGrade'; grade: 'got_it' | 'partly' | 'not_yet' };
+  | { kind: 'selfGrade'; grade: 'got_it' | 'partly' | 'not_yet' }
+  | { kind: 'rubric'; met: number[] };
 
 export interface CheckedItem {
   key: string;
@@ -421,7 +422,14 @@ export type ExpectedAnswer =
   | { kind: 'gaps'; values: Record<string, string> }
   | { kind: 'order'; items: string[] }
   | { kind: 'pairs'; pairs: [string, string][] }
+  | { kind: 'rubric'; criteria: RubricCriterion[] }
   | { kind: 'nothing' };
+
+/** What an exam corrector would check in a free exercise, and what it weighs. */
+export interface RubricCriterion {
+  text: string;
+  weight: number;
+}
 
 export interface RevealedSolution {
   blocks: BlockView[];

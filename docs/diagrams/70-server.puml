@@ -46,7 +46,7 @@ package "exercise" {
     earned, possible, pointsGained, stars
   }
   class HintView <<record>>
-  class SolutionView <<record>>
+  class SolutionView <<record: blocks, expected (a rubric's criteria too)>>
 }
 package "reward" {
   class StatsController <<GET /api/stats, /api/ranks, /api/achievements>>
@@ -60,7 +60,7 @@ package "block" {
     +blocks(List<Block>) : List<BlockView>
   }
   interface BlockView <<sealed, JSON type>>
-  interface InputView <<sealed, JSON kind>>
+  interface InputView <<sealed, JSON kind; free: paper, rubric>>
   class HintsView <<record>>
   class ProgressView <<record>> {
     attempts, solved, lastVerdict

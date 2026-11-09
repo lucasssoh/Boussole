@@ -194,6 +194,7 @@ package "learn.check" {
   class OrderAnswerResponseChecker
   class MatchAnswerResponseChecker
   class SelfGradeResponseChecker
+  class RubricResponseChecker
   class ExpectationMatcher <<helpers>> {
     +{static} matches(Expectation, String) : boolean
   }
@@ -205,9 +206,13 @@ package "learn.check" {
   class OrderResponse <<record>>
   class MatchResponse <<record>>
   class SelfGradeResponse <<record>>
+  class RubricResponse <<record>> {
+    met : Set<Integer>
+  }
   class CheckResult <<record>> {
     verdict : Verdict
     items : List<CheckedItem>
+    share : OptionalDouble
   }
   class CheckedItem <<record>>
   enum Verdict {
@@ -297,6 +302,7 @@ ResponseChecker <|.. FillAnswerResponseChecker
 ResponseChecker <|.. OrderAnswerResponseChecker
 ResponseChecker <|.. MatchAnswerResponseChecker
 ResponseChecker <|.. SelfGradeResponseChecker
+ResponseChecker <|.. RubricResponseChecker
 SingleAnswerResponseChecker ..> ExpectationMatcher
 FillAnswerResponseChecker ..> ExpectationMatcher
 LearnerResponse <|.. ChoicesResponse
@@ -305,6 +311,7 @@ LearnerResponse <|.. GapsResponse
 LearnerResponse <|.. OrderResponse
 LearnerResponse <|.. MatchResponse
 LearnerResponse <|.. SelfGradeResponse
+LearnerResponse <|.. RubricResponse
 ResponseChecker ..> CheckResult
 CheckResult *-- CheckedItem : items
 CheckResult --> Verdict

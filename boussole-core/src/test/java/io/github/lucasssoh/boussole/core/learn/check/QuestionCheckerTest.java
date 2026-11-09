@@ -12,7 +12,9 @@ import io.github.lucasssoh.boussole.format.model.answer.MatchPair;
 import io.github.lucasssoh.boussole.format.model.answer.OrderAnswer;
 import io.github.lucasssoh.boussole.format.model.answer.SingleAnswer;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
+import io.github.lucasssoh.boussole.format.model.block.ExerciseRubric;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseType;
+import io.github.lucasssoh.boussole.format.model.block.RubricCriterion;
 import io.github.lucasssoh.boussole.format.model.block.McqBlock;
 import io.github.lucasssoh.boussole.format.model.block.McqChoice;
 import io.github.lucasssoh.boussole.format.model.expectation.ChoiceExpectation;
@@ -33,8 +35,8 @@ class QuestionCheckerTest {
     private final QuestionChecker checker = new QuestionChecker();
 
     private static ExerciseBlock exercise(ExerciseType type, Answer answer) {
-        return new ExerciseBlock("s11-a1", type, List.of(), Optional.ofNullable(answer), List.of(), Optional.empty(),
-                OptionalInt.empty(), false, HERE);
+        return new ExerciseBlock("s11-a1", type, List.of(), Optional.ofNullable(answer), List.of(), Optional.empty(), Optional.empty(),
+                OptionalInt.empty(), false, false, HERE);
     }
 
     private static McqChoice choice(String text, boolean correct, String feedback) {
@@ -126,6 +128,26 @@ class QuestionCheckerTest {
         ExerciseBlock free = exercise(ExerciseType.FREE, null);
 
         assertThat(checker.check(free, new SelfGradeResponse(SelfGrade.PARTLY)).verdict()).isEqualTo(Verdict.PARTLY);
+    }
+
+    @Test
+    void a_free_exercise_with_a_rubric_counts_the_criteria_ticked() {
+        ExerciseRubric rubric = new ExerciseRubric(List.of(
+                new RubricCriterion("La fabrique est abstraite.", 2), new RubricCriterion("Cadre ne nomme aucune classe concrète.", 1),
+                new RubricCriterion("Le main choisit la fabrique.", 1)), HERE);
+        ExerciseBlock free = new ExerciseBlock("s11-p1", ExerciseType.FREE, List.of(), Optional.empty(), List.of(), Optional.empty(),
+                Optional.of(rubric), OptionalInt.empty(), false, true, HERE);
+
+        CheckResult some = checker.check(free, new RubricResponse(Set.of(0, 2)));
+        assertThat(some.verdict()).isEqualTo(Verdict.PARTLY);
+        assertThat(some.share()).hasValue(0.75);
+        assertThat(some.items()).extracting(CheckedItem::correct).containsExactly(true, false, true);
+        assertThat(checker.check(free, new RubricResponse(Set.of(0, 1, 2))).verdict()).isEqualTo(Verdict.CORRECT);
+        CheckResult none = checker.check(free, new RubricResponse(Set.of()));
+        assertThat(none.verdict()).isEqualTo(Verdict.WRONG);
+        assertThat(none.share()).hasValue(0.0);
+        assertThatThrownBy(() -> checker.check(free, new RubricResponse(Set.of(3)))).isInstanceOf(ResponseMismatchException.class);
+        assertThatThrownBy(() -> checker.check(free, new SelfGradeResponse(SelfGrade.GOT_IT))).isInstanceOf(ResponseMismatchException.class);
     }
 
     @Test

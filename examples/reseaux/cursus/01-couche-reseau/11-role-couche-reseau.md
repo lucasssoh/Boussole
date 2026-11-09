@@ -153,7 +153,7 @@ L'adressage hiérarchique (agrégeable) et le relayage entre liens, plus un hori
 :::::
 
 :::::practice
-::::exercise{#s11-p1 type=free}
+::::exercise{#s11-p1 type=free paper=true minutes=6}
 Un opérateur propose de remplacer IP par un réseau tout en circuits virtuels pour garantir la
 qualité de service. Donne un argument pour et deux arguments contre, en t'appuyant sur la
 notion d'état dans les routeurs.
@@ -167,6 +167,12 @@ Combien de communications simultanées traversent un routeur du cœur d'Internet
 **Contre** : un routeur du cœur verrait des millions de circuits, soit autant d'entrées d'état
 à maintenir ; et une panne casse tous les circuits qui passaient par lui, alors qu'en
 datagramme le trafic est simplement redirigé.
+:::
+
+:::rubric
+- [1] Un argument pour : la réservation de ressources par circuit garantit un débit.
+- [1] Un argument contre : l'état à maintenir pour chaque circuit dans les routeurs du cœur.
+- [1] Un argument contre : une panne de routeur coupe tous les circuits qui le traversent.
 :::
 ::::
 :::::

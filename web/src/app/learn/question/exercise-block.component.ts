@@ -2,7 +2,7 @@ import { ApplicationRef, ChangeDetectionStrategy, Component, ElementRef, compute
 import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../../shared/icon.component';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ChoiceMenuComponent } from '../../shared/choice-menu.component';
 import { RichTextComponent } from '../../shared/rich-text.component';
 import { AttemptRequest, ExerciseBlockView } from '../../core/api';
@@ -16,6 +16,7 @@ import { QuestionCorrectionComponent } from './question-correction.component';
 import { QuestionFooterComponent } from './question-footer.component';
 import { QuestionHeaderComponent } from './question-header.component';
 import { QuestionState } from './question-state';
+import { toggled, weightWords } from './rubric';
 
 /** The colours of the lines to put in order: told apart by hue, each one readable on its tint. */
 const ORDER_TONES = ['#1c7ed6', '#e8590c', '#2b8a3e', '#ae3ec9', '#f08c00', '#0c8599', '#e03131', '#5f3dc4'];
@@ -24,8 +25,8 @@ type SelfGrade = 'got_it' | 'partly' | 'not_yet';
 
 /**
  * An exercise: one field for a number or a text, fields in the statement for a fill exercise,
- * items to arrange or to pair, or, for a free exercise, a draft compared with the solution and
- * graded by the learner.
+ * items to arrange or to pair, or, for a free exercise, a draft (or an answer on paper) compared
+ * with the solution and graded by the learner: with the criteria of its rubric when it has one.
  */
 @Component({
   selector: 'app-exercise-block',
@@ -96,7 +97,11 @@ type SelfGrade = 'got_it' | 'partly' | 'not_yet';
               </table>
             }
             @case ('free') {
-              <textarea class="draft" rows="5" [placeholder]="'free.write' | transloco" [ngModel]="typed()" (ngModelChange)="type($event)"></textarea>
+              @if (input.kind === 'free' && input.paper) {
+                <p class="paper-note"><app-icon name="timer" /> {{ 'free.paper' | transloco }}</p>
+              } @else {
+                <textarea class="draft" rows="5" [placeholder]="'free.write' | transloco" [ngModel]="typed()" (ngModelChange)="type($event)"></textarea>
+              }
             }
             @case ('unreadable') {
               <p class="frame warning">{{ 'question.unreadable' | transloco }}</p>
@@ -105,7 +110,23 @@ type SelfGrade = 'got_it' | 'partly' | 'not_yet';
 
           <app-question-footer [state]="state()" [checkable]="checkable()" [ready]="ready()" [incomplete]="['fill', 'match'].includes(exercise().input.kind)" (check)="check()" />
 
-          @if (input.kind === 'free' && state().solution()) {
+          @if (input.kind === 'free' && state().solution()?.expected; as solved) {
+            @if (solved.kind === 'rubric') {
+              <fieldset class="rubric" [disabled]="state().busy() || locked">
+                <legend>{{ 'free.rubric' | transloco }}</legend>
+                @for (criterion of solved.criteria; track $index) {
+                  @let words = weight(criterion.weight);
+                  <label class="rubric-criterion" [class.met]="met().has($index)">
+                    <input type="checkbox" [checked]="met().has($index)" (change)="tick($index)" />
+                    <app-rich-text class="rubric-text" [text]="criterion.text" />
+                    <span class="rubric-weight">{{ (words.plural ? 'free.points' : 'free.point') | transloco: { weight: words.weight } }}</span>
+                  </label>
+                }
+                @if (!locked) {
+                  <button type="button" class="primary" (click)="sendRubric()">{{ 'free.rubricDone' | transloco }}</button>
+                }
+              </fieldset>
+            } @else {
             <div class="self-grade">
               <span>{{ 'free.grade' | transloco }}</span>
               @for (grade of grades; track grade) {
@@ -114,6 +135,7 @@ type SelfGrade = 'got_it' | 'partly' | 'not_yet';
                 </button>
               }
             </div>
+            }
           }
         </div>
 
@@ -161,6 +183,7 @@ export class ExerciseBlockComponent {
   private readonly stats = inject(StatsService);
   private readonly host: HTMLElement = inject(ElementRef).nativeElement;
   private readonly app = inject(ApplicationRef);
+  private readonly transloco = inject(TranslocoService);
 
   protected readonly grades: SelfGrade[] = ['got_it', 'partly', 'not_yet'];
   protected readonly graded = signal<SelfGrade | null>(null);
@@ -174,6 +197,7 @@ export class ExerciseBlockComponent {
     return this.run?.question(exercise.id, create) ?? create();
   });
   protected readonly typed = computed(() => this.state().value());
+  protected readonly met = computed(() => this.state().met());
   protected readonly order = computed(() => this.state().order());
   protected readonly pairs = computed(() => this.state().pairs());
   protected readonly fill = computed(() => {
@@ -256,6 +280,18 @@ export class ExerciseBlockComponent {
     if (request && this.ready()) {
       void this.state().attempt(request);
     }
+  }
+
+  protected tick(index: number): void {
+    this.state().met.update((met) => toggled(met, index));
+  }
+
+  protected sendRubric(): void {
+    void this.state().attempt({ kind: 'rubric', met: [...this.met()].sort((a, b) => a - b) });
+  }
+
+  protected weight(weight: number): { weight: string; plural: boolean } {
+    return weightWords(weight, this.transloco.getActiveLang());
   }
 
   protected selfGrade(grade: SelfGrade): void {

@@ -37,6 +37,8 @@ export class QuestionState {
   readonly order: WritableSignal<string[]>;
   readonly pairs = signal<Readonly<Record<string, string>>>({});
   readonly gaps = signal<Readonly<Record<number, string>>>({});
+  /** The criteria of a rubric ticked, by their place in it. */
+  readonly met = signal<ReadonlySet<number>>(new Set());
   readonly error = signal<string | null>(null);
 
   /**
@@ -170,6 +172,9 @@ export class QuestionState {
         break;
       case 'match':
         this.pairs.set(request.pairs);
+        break;
+      case 'rubric':
+        this.met.set(new Set(request.met));
         break;
       case 'selfGrade':
         break;

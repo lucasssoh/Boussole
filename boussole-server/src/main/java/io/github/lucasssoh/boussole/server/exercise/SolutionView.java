@@ -31,6 +31,9 @@ record SolutionView(List<BlockView> blocks, ExpectedView expected) {
             case McqBlock mcq -> new ExpectedView.Choices(mcq.choices().stream()
                     .map(choice -> new ExpectedView.Choice(choice.correct(), choice.feedback().orElse(null)))
                     .toList());
+            case ExerciseBlock exercise when exercise.rubric().isPresent() -> new ExpectedView.Rubric(exercise.rubric().get().criteria().stream()
+                    .map(criterion -> new ExpectedView.Criterion(criterion.text(), criterion.weight()))
+                    .toList());
             case ExerciseBlock exercise when exercise.answer().isPresent() -> switch (exercise.answer().get()) {
                 case SingleAnswer single -> new ExpectedView.Value(ExpectationText.of(single.expected()));
                 case FillAnswer fill -> new ExpectedView.Gaps(fill.gaps().stream()
@@ -51,6 +54,7 @@ record SolutionView(List<BlockView> blocks, ExpectedView expected) {
         @JsonSubTypes.Type(value = ExpectedView.Gaps.class, name = "gaps"),
         @JsonSubTypes.Type(value = ExpectedView.Order.class, name = "order"),
         @JsonSubTypes.Type(value = ExpectedView.Pairs.class, name = "pairs"),
+        @JsonSubTypes.Type(value = ExpectedView.Rubric.class, name = "rubric"),
         @JsonSubTypes.Type(value = ExpectedView.Nothing.class, name = "nothing")
     })
     sealed interface ExpectedView {
@@ -73,6 +77,13 @@ record SolutionView(List<BlockView> blocks, ExpectedView expected) {
 
         /** Each pair as {@code [left, right]}. */
         record Pairs(List<List<String>> pairs) implements ExpectedView {
+        }
+
+        /** A free exercise with a rubric: each criterion, in file order, and what it weighs. */
+        record Rubric(List<Criterion> criteria) implements ExpectedView {
+        }
+
+        record Criterion(String text, double weight) {
         }
 
         /** A free exercise: the solution says it all. */

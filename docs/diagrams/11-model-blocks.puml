@@ -80,6 +80,7 @@ class ExerciseBlock <<record>> {
   id : String
   minutes : OptionalInt
   hook : boolean
+  paper : boolean
 }
 enum ExerciseType {
   NUMERIC
@@ -102,6 +103,13 @@ class McqChoice <<record>> {
 }
 class ExerciseHint <<record>>
 class ExerciseSolution <<record>>
+class ExerciseRubric <<record>> {
+  +total() : double
+}
+class RubricCriterion <<record>> {
+  text : String
+  weight : double
+}
 class ExerciseRefBlock <<record>> {
   id : String
 }
@@ -153,6 +161,8 @@ ExerciseBlock o-- "*" Block : statement
 ExerciseBlock *-- "0..1" Answer : answer
 ExerciseBlock *-- "*" ExerciseHint : hints
 ExerciseBlock *-- "0..1" ExerciseSolution : solution
+ExerciseBlock *-- "0..1" ExerciseRubric : rubric (free only)
+ExerciseRubric *-- "1..*" RubricCriterion : criteria
 McqBlock o-- "*" Block : statement
 McqBlock *-- "2..*" McqChoice : choices
 McqBlock *-- "*" ExerciseHint : hints

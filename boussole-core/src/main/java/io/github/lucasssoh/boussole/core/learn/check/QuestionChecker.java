@@ -18,6 +18,7 @@ public final class QuestionChecker {
     private final OrderAnswerResponseChecker order = new OrderAnswerResponseChecker();
     private final MatchAnswerResponseChecker match = new MatchAnswerResponseChecker();
     private final SelfGradeResponseChecker selfGrade = new SelfGradeResponseChecker();
+    private final RubricResponseChecker rubric = new RubricResponseChecker();
 
     public CheckResult check(McqBlock question, LearnerResponse response) {
         return mcq.checkResponse(question, response);
@@ -25,7 +26,9 @@ public final class QuestionChecker {
 
     public CheckResult check(ExerciseBlock question, LearnerResponse response) {
         if (question.type() == ExerciseType.FREE) {
-            return selfGrade.checkResponse(question, response);
+            return question.rubric().isPresent()
+                    ? rubric.checkResponse(question.rubric().get(), response)
+                    : selfGrade.checkResponse(question, response);
         }
         Answer answer = question.answer()
                 .orElseThrow(() -> new ResponseMismatchException("the answer of " + question.id() + " could not be read"));

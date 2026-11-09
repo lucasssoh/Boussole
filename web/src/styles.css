@@ -3313,6 +3313,58 @@ a.session-card:active {
   margin-top: 0.5rem;
 }
 
+/* A free exercise answered away from the screen, and the rubric ticked after its solution */
+
+.paper-note {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  color: var(--muted);
+}
+
+.rubric {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+  margin: 1rem 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.rubric legend {
+  margin-bottom: 0.3rem;
+  padding: 0;
+  font-weight: 700;
+}
+
+.rubric-criterion {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.rubric-criterion.met {
+  border-color: var(--correct-strong);
+  background: var(--correct-bg);
+}
+
+.rubric-weight {
+  color: var(--muted);
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+.rubric > button {
+  justify-self: start;
+  margin-top: 0.4rem;
+}
+
 .unit {
   margin-left: 0.3rem;
   color: var(--muted);

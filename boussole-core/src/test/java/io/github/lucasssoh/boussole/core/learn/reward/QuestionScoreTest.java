@@ -37,7 +37,7 @@ class QuestionScoreTest {
                 .mapToObj(number -> new FillGap(number, new TextExpectation(List.of(), false)))
                 .toList();
         return new ExerciseBlock("e", ExerciseType.FILL, List.of(new ProseBlock(statement, List.of(), HERE)),
-                Optional.of(new FillAnswer(answer)), List.of(), Optional.empty(), OptionalInt.empty(), hook, HERE);
+                Optional.of(new FillAnswer(answer)), List.of(), Optional.empty(), Optional.empty(), OptionalInt.empty(), hook, false, HERE);
     }
 
     private static CheckResult gaps(boolean... right) {
@@ -81,7 +81,7 @@ class QuestionScoreTest {
     @Test
     void a_free_exercise_earns_no_points_even_when_the_learner_grades_it_as_successful() {
         ExerciseBlock exercise = new ExerciseBlock("free", ExerciseType.FREE, List.of(),
-                Optional.empty(), List.of(), Optional.empty(), OptionalInt.empty(), false, HERE);
+                Optional.empty(), List.of(), Optional.empty(), Optional.empty(), OptionalInt.empty(), false, false, HERE);
 
         assertThat(QuestionScore.of(exercise, new SelfGradeResponse(SelfGrade.GOT_IT),
                 new CheckResult(Verdict.CORRECT, List.of()))).isEqualTo(QuestionScore.NOTHING);
@@ -104,7 +104,7 @@ class QuestionScoreTest {
     void a_pair_left_out_of_a_match_counts_nothing() {
         ExerciseBlock match = new ExerciseBlock("p", ExerciseType.MATCH, List.of(), Optional.of(new MatchAnswer(List.of(
                 new MatchPair("a", "1"), new MatchPair("b", "2"), new MatchPair("c", "3"), new MatchPair("d", "4")))),
-                List.of(), Optional.empty(), OptionalInt.empty(), false, HERE);
+                List.of(), Optional.empty(), Optional.empty(), OptionalInt.empty(), false, false, HERE);
         CheckResult result = new CheckResult(Verdict.PARTLY, List.of(
                 new CheckedItem("a", true, Optional.empty()), new CheckedItem("b", true, Optional.empty()),
                 new CheckedItem("c", false, Optional.empty()), new CheckedItem("d", false, Optional.empty())));

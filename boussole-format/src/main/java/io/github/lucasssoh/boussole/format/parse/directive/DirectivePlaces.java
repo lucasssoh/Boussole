@@ -10,7 +10,7 @@ public final class DirectivePlaces {
     public static final String TOP = "";
 
     public static final Set<String> SECTIONS = Set.of("warmup", "checkpoint", "practice");
-    public static final Set<String> EXERCISE_PARTS = Set.of("answer", "hint", "solution");
+    public static final Set<String> EXERCISE_PARTS = Set.of("answer", "hint", "solution", "rubric");
 
     /** Where text and exercises flow: the body and the sections. */
     public static final Set<String> FLOW = union(Set.of(TOP), SECTIONS);

@@ -9,6 +9,10 @@ written_by:
   - model: claude-opus-5-5
     tool: Claude Code
     date: 2026-10-21
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-11-09
+    role: revised
 ---
 
 :::::warmup
@@ -126,7 +130,7 @@ without a keyword: a **typed** gap, where `add` and `a` are accepted.
 |---|---|---|
 | `order` | a list (`1.` or `-`) in the right order, at least two items | puts the shuffled items back in order |
 | `match` | one line per pair, `left => right`, at least two pairs | matches each left side with a right side, picked from a list |
-| `free` | no `:::answer` | writes, compares with the solution, then grades themself: got it, partly, not yet |
+| `free` | no `:::answer`; a `:::rubric` if it is marked like an exam | writes, compares with the solution, then grades themself: got it, partly, not yet; or ticks each criterion of the rubric |
 
 As for list gaps, the right-hand sides of a `match` show in a list: no `$…$`. `free` is for what
 Boussole cannot check: explaining, designing, proving.
@@ -200,6 +204,46 @@ Which one can Boussole not correct on its own?
 :::solution
 **`free`**: the learner reads the solution and grades themself. All other types have exactly one
 `:::answer`.
+:::
+::::
+
+**And an exercise the exam marks point by point?** Give the `free` exercise a `:::rubric`: what
+the corrector checks, one item each, its weight in brackets. After the solution, the learner
+ticks what their answer has, and the stars follow from the weight ticked. With `paper=true`, the
+learner answers on paper or in their own editor: no text area.
+
+```markdown
+::::exercise{#s3-p1 type=free paper=true minutes=15}
+Write the commands that publish the branch `menu` on the remote `origin`.
+
+:::solution
+`git switch menu`, then `git push -u origin menu`: `-u` links the branch to its remote.
+:::
+
+:::rubric
+- [1] Switches to the branch `menu` first.
+- [2] Pushes it with `git push origin menu`.
+- [1] Links it to its remote with `-u`.
+:::
+::::
+```
+
+::::mcq{#f7-a5}
+In a `:::rubric`, which line is a criterion Boussole can read?
+
+- [x] `- [2] The class Cadre names no concrete class.`
+- [ ] `- The class Cadre names no concrete class.`
+  > A criterion has its weight in brackets, before the text: `- [1] …`.
+- [ ] `- [0] The class Cadre names no concrete class.`
+  > A weight is a number above 0: `[0.5]`, `[1]`, `[2]`.
+
+:::hint
+What does the corrector give for each point checked?
+:::
+
+:::solution
+**`- [2] The class Cadre names no concrete class.`** Each criterion is a list item, with its weight
+in brackets, a number above 0. A rubric sits only in a `free` exercise.
 :::
 ::::
 

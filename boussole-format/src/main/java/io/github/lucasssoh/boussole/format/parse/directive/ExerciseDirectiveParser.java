@@ -21,10 +21,13 @@ import java.util.stream.Collectors;
 final class ExerciseDirectiveParser implements DirectiveParser {
 
     private static final DirectiveSpec SPEC = new DirectiveSpec(
-            "exercise", DirectiveKind.CONTAINER, Set.of("id", "type"), Set.of("tolerance", "unit", "strict", "minutes", "hook"), DirectivePlaces.FLOW);
+            "exercise", DirectiveKind.CONTAINER, Set.of("id", "type"), Set.of("tolerance", "unit", "strict", "minutes", "hook", "paper"), DirectivePlaces.FLOW);
 
     /** Attributes every type accepts, besides {@code id} and {@code type}. */
     private static final Set<String> COMMON = Set.of("minutes", "hook");
+
+    /** What only a free exercise accepts: done on paper, or in the learner's own editor. */
+    private static final Set<String> FREE = Set.of("paper");
 
     @Override
     public DirectiveSpec spec() {
@@ -36,7 +39,7 @@ final class ExerciseDirectiveParser implements DirectiveParser {
         String id = directive.attributes().required("id");
         ExerciseType type = type(directive);
         Optional<AnswerParser> answerParser = context.answerParsers().forType(type);
-        checkTypeAttributes(directive, type, answerParser.map(AnswerParser::attributes).orElse(Set.of()));
+        checkTypeAttributes(directive, type, type == ExerciseType.FREE ? FREE : answerParser.map(AnswerParser::attributes).orElse(Set.of()));
 
         ExerciseParts parts = ExerciseParts.split(directive, context);
         Optional<Answer> answer = answerParser.isEmpty()
@@ -49,8 +52,10 @@ final class ExerciseDirectiveParser implements DirectiveParser {
                 answer,
                 parts.hints(),
                 parts.solution(directive, context),
+                RubricReader.read(type, parts.rubrics(), context),
                 directive.attributes().positiveInteger("minutes"),
                 directive.attributes().flag("hook"),
+                directive.attributes().flag("paper"),
                 context.position(directive.line())));
     }
 

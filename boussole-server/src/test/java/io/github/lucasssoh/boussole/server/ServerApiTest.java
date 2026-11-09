@@ -172,6 +172,17 @@ class ServerApiTest {
     }
 
     @Test
+    void a_rubric_comes_with_the_solution_and_its_criteria_give_the_stars() throws Exception {
+        String session = get("/api/subjects/reseaux/sessions/s11").body();
+        assertThat(session).contains("\"kind\":\"free\",\"paper\":true,\"rubric\":true").doesNotContain("Un argument pour");
+
+        assertThat(get("/api/subjects/reseaux/exercises/s11-p1/solution").body())
+                .contains("\"kind\":\"rubric\"", "Un argument pour", "\"weight\":1.0");
+        HttpResponse<String> attempt = post("/api/subjects/reseaux/exercises/s11-p1/attempts", "{\"kind\":\"rubric\",\"met\":[0,2]}");
+        assertThat(attempt.body()).contains("\"verdict\":\"partly\"", "\"stars\":2", "\"pointsGained\":0.0");
+    }
+
+    @Test
     void serves_the_documents_of_the_subject_only() throws Exception {
         assertThat(get("/api/subjects/reseaux/files/sources/Reseaux_Cours_Intro_2026.pdf").headers().firstValue("Content-Type"))
                 .contains("application/pdf");

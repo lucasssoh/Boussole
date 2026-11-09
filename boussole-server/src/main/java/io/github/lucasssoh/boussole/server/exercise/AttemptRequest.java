@@ -7,6 +7,7 @@ import io.github.lucasssoh.boussole.core.learn.check.GapsResponse;
 import io.github.lucasssoh.boussole.core.learn.check.LearnerResponse;
 import io.github.lucasssoh.boussole.core.learn.check.MatchResponse;
 import io.github.lucasssoh.boussole.core.learn.check.OrderResponse;
+import io.github.lucasssoh.boussole.core.learn.check.RubricResponse;
 import io.github.lucasssoh.boussole.core.learn.check.SelfGrade;
 import io.github.lucasssoh.boussole.core.learn.check.SelfGradeResponse;
 import io.github.lucasssoh.boussole.core.learn.check.ValueResponse;
@@ -22,7 +23,8 @@ import java.util.Set;
     @JsonSubTypes.Type(value = AttemptRequest.Gaps.class, name = "gaps"),
     @JsonSubTypes.Type(value = AttemptRequest.Order.class, name = "order"),
     @JsonSubTypes.Type(value = AttemptRequest.Match.class, name = "match"),
-    @JsonSubTypes.Type(value = AttemptRequest.SelfGraded.class, name = "selfGrade")
+    @JsonSubTypes.Type(value = AttemptRequest.SelfGraded.class, name = "selfGrade"),
+    @JsonSubTypes.Type(value = AttemptRequest.Rubric.class, name = "rubric")
 })
 sealed interface AttemptRequest {
 
@@ -68,6 +70,14 @@ sealed interface AttemptRequest {
         @Override
         public LearnerResponse toResponse() {
             return new SelfGradeResponse(SelfGrade.valueOf(grade.toUpperCase(java.util.Locale.ROOT)));
+        }
+    }
+
+    /** The criteria of the rubric the learner ticks, by their place in it, from 0. */
+    record Rubric(Set<Integer> met) implements AttemptRequest {
+        @Override
+        public LearnerResponse toResponse() {
+            return new RubricResponse(met);
         }
     }
 }

@@ -169,10 +169,32 @@ The solution of a `free` exercise, where the learner grades themself, ends with 
 points to check** (« Ta réponse doit… »): what a right answer contains. Comparing against a list
 is far more reliable than comparing against a whole text.
 
+**A free exercise in exam format has a `:::rubric`**: the criteria an exam corrector would mark,
+one per item, each with its weight in brackets. The learner ticks those their answer meets, and
+the stars follow from the weight ticked.
+
+```markdown
+:::rubric
+- [2] `FabriqueMotif` est abstraite et déclare `créeMotif()`.
+- [1] `Cadre` ne nomme aucune classe concrète de motif.
+- [1] Seul le `main` choisit les fabriques.
+:::
+```
+
+- One criterion is one thing a corrector can see on the page: a class, a line, a step of the
+  proof, a justification. Not « bonne réponse », not two checks in one.
+- The weights are the points of the marking scheme: when the statement or the past exam gives
+  the exercise's points, the weights add up to them; else 1 per criterion, 2 for the heart of it.
+- When the exam is written by hand, or the code is written in the learner's own editor, add
+  `paper=true` to the exercise: no text area, the learner answers on paper and compares. Give
+  `minutes=` the time the exam would allow.
+- The solution still explains the reasoning; the rubric does not replace it.
+
 ## Check
 
 Run `boussole validate .`: every exercise needs exactly one `solution`, an `answer` of its type
-(none for `free`), and the gaps of a `fill` must match its answer.
+(none for `free`), and the gaps of a `fill` must match its answer. A `rubric` sits only in a
+`free` exercise (`F047`), with at least one criterion `- [weight] text` (`F048`).
 
 When you change an exercise in a session written by someone else, add your line to its
 `written_by` with `role: revised` (your exact model ID, your tool, today's date).

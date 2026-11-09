@@ -2,7 +2,10 @@ package io.github.lucasssoh.boussole.core.learn.reward;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.github.lucasssoh.boussole.core.learn.check.CheckResult;
 import io.github.lucasssoh.boussole.core.learn.check.Verdict;
+import java.util.List;
+import java.util.OptionalDouble;
 import org.junit.jupiter.api.Test;
 
 class StarsTest {
@@ -27,5 +30,13 @@ class StarsTest {
         assertThat(Stars.of(QuestionScore.NOTHING, Verdict.CORRECT)).isEqualTo(3);
         assertThat(Stars.of(QuestionScore.NOTHING, Verdict.PARTLY)).isEqualTo(2);
         assertThat(Stars.of(QuestionScore.NOTHING, Verdict.WRONG)).isZero();
+    }
+
+    @Test
+    void a_rubric_gives_the_stars_of_the_weight_ticked() {
+        assertThat(Stars.of(QuestionScore.NOTHING, new CheckResult(Verdict.PARTLY, List.of(), OptionalDouble.of(0.75)))).isEqualTo(2);
+        assertThat(Stars.of(QuestionScore.NOTHING, new CheckResult(Verdict.PARTLY, List.of(), OptionalDouble.of(0.25)))).isEqualTo(1);
+        assertThat(Stars.of(QuestionScore.NOTHING, new CheckResult(Verdict.CORRECT, List.of(), OptionalDouble.of(1)))).isEqualTo(3);
+        assertThat(Stars.of(QuestionScore.NOTHING, new CheckResult(Verdict.WRONG, List.of(), OptionalDouble.of(0)))).isZero();
     }
 }

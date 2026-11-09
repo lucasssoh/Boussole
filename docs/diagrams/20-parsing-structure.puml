@@ -90,6 +90,7 @@ package "parse.directive" {
   class McqDirectiveParser
   class ExerciseParts <<record>>
   class McqChoiceReader
+  class RubricReader <<F047, F048>>
 }
 
 class AnswerParserRegistry <<see 21-parsing-answers>>
@@ -132,5 +133,6 @@ ExerciseDirectiveParser --> ExerciseParts
 McqDirectiveParser --> ExerciseParts
 McqDirectiveParser --> McqChoiceReader
 ExerciseDirectiveParser --> AnswerParserRegistry : answer by type
+ExerciseDirectiveParser --> RubricReader : rubric of a free exercise
 
 @enduml

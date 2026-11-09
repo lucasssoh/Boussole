@@ -37,7 +37,9 @@ par partie (échauffement, notions, point de contrôle, entraînement) et un ron
 Sous une question répondue, des **étoiles** disent quelle part était juste : 3 pour le tout, 2
 pour au moins la moitié, 1 pour un peu, aucune pour rien. Des étoiles bleues marquent une question
 déjà vue dans une séance d'avant : elles ne comptent pas dans le total. Un exercice libre montre ta
-propre estimation, en contour.
+propre estimation, en contour : quand il a un barème, coche chaque point que ta réponse contient,
+et les étoiles suivent. Certains exercices libres se font sur papier ou dans ton éditeur, comme à
+l'examen.
 
 Un clic sur un rond ouvert y mène.
 

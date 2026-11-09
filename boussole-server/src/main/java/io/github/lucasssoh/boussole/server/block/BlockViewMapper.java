@@ -133,7 +133,7 @@ public final class BlockViewMapper {
 
     private static InputView input(ExerciseBlock exercise) {
         if (exercise.type() == ExerciseType.FREE) {
-            return new InputView.Free();
+            return new InputView.Free(exercise.paper(), exercise.rubric().isPresent());
         }
         if (exercise.answer().isEmpty()) {
             return new InputView.Unreadable();

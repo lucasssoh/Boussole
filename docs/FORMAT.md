@@ -358,13 +358,16 @@ Where each directive may appear:
 | `video`, `pdf`, `link`, `graph` | anywhere except `answer` |
 | `ref` | a notion, an introduction, a section, the body of a review or exam |
 | `answer` | `exercise` |
+| `rubric` | an `exercise` with `type=free` |
 | `hint`, `solution` | `exercise`, `mcq` |
 
 ### 5.6 Exercises
 
 Every exercise has an `id` that is **unique in the subject and never reused**. An exercise or a
 MCQ may also have `minutes=N`, the time it takes at a normal pace when it differs from the
-estimate of its type. `hook=true` marks a **hook**: a guess, in the warmup, on what the session is
+estimate of its type. A `free` exercise may have `paper=true`: it is answered away from the
+screen, on paper as at the exam or in the learner's own editor, so the interface shows no text
+area, only its time and the button to the solution. `hook=true` marks a **hook**: a guess, in the warmup, on what the session is
 about to teach; it earns no points and is not counted in *first try* (`F043` elsewhere than in a
 warmup). The time each type takes:
 
@@ -389,6 +392,7 @@ An exercise is a container. Its first part is the statement (Markdown); then com
 | `:::answer` | exactly one, except `free` | What is accepted. Syntax depends on the type, below. |
 | `:::hint` | one or more (optional in an exam) | Hints, revealed one at a time in file order, before the learner answers. An exam never shows them: a question written in an exam may have hints, which show when a lesson or a review asks it again with `::ref`. |
 | `:::solution` | exactly one | Why the right answer is right: shown beside the question as soon as the learner has answered, with the right answer in green and a wrong one in red. |
+| `:::rubric` | at most one, only in a `free` exercise | What an exam corrector would check, one criterion per list item, its weight in brackets: `- [2] La classe abstraite déclare créeMotif()`. A weight is a number above 0 (`[0.5]` too). Sent with the solution only: the learner ticks the criteria their answer meets instead of grading it in three words (`F047`, `F048`). |
 
 ```markdown
 ::::exercise{#s11-a1 type=numeric}
@@ -417,7 +421,7 @@ Une adresse MAC s'écrit avec 6 octets, comme `3c:52:82:1a:9f:04`.
 | `fill` | One line per gap, `N: …`, where the statement has `[[N]]`. A gap is **typed text** (`1: answer \| other accepted answer`, alternatives separated by a `\|` between spaces), a **number** (`2: number 62` or `2: number 3/4 ±0.01`), or a **choice** in a drop-down list (`3: choice *right \| wrong \| other`, the right option starred). A gap may sit in code too, inline or in a block, to complete a command or a line of a program (`` `ip [[1]] show` ``). Outside the statement of a `fill` exercise, `[[N]]` is shown as written. | Typed gaps like `text` and `numeric`; a choice gap by the option picked. The options of a choice gap are shown shuffled, so their order in the file does not matter. |
 | `order` | A list (`1. item` or `- item`), in the right order, at least two items. | Items are shown shuffled. |
 | `match` | One line per pair: `left => right`, at least two pairs. | Right-hand sides are shown shuffled. |
-| `free` | No `answer` part. | The learner writes, reads the solution, then grades themself: *got it / partly / not yet*. For what cannot be checked otherwise. |
+| `free` | No `answer` part; a `rubric` if it is marked like an exam. | The learner writes (or answers on paper with `paper=true`), reads the solution, then grades themself: *got it / partly / not yet*, or, with a `rubric`, ticks each criterion met. Right when all are, partly when some are; the stars are the share of the weight ticked. A free exercise earns no points. For what cannot be checked otherwise. |
 
 Typing must stay easy in a browser: an expected text or number is **short and precise** (a
 value, a keyword, an address), never a formula to write in LaTeX. A proof, an algorithm or an
@@ -504,6 +508,8 @@ chapter.
 | `F044` | error | Chapters that wait for one another: a chapter waits for every chapter one of its sessions has a prerequisite in, so the chapters must follow one order. |
 | `F045` | error | A written session whose `prerequisites` differ from those the syllabus plans for it: write the same list in both. |
 | `F046` | warning | A document new or changed after the track was `locked`: it is left out. Only the learner takes it in, by unlocking the track (`boussole lock . --off`). |
+| `F047` | error | A `rubric` in an MCQ or in an exercise Boussole checks itself: only a `free` exercise has one. |
+| `F048` | error | A `rubric` empty, given twice, or with a line that is not a criterion `- [weight] text`, or a weight that is not a number above 0. |
 | `F032` | warning | `video` that YouTube does not know (checked only with `--check-videos`). |
 | `P001` | warning | A notion without exercise or `mcq`. |
 | `P002` | warning | A notion with more than one `example`. |

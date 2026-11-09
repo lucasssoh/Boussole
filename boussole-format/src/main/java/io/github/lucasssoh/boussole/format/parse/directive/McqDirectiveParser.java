@@ -26,6 +26,10 @@ final class McqDirectiveParser implements DirectiveParser {
         if (!parts.answers().isEmpty()) {
             context.report(DiagnosticCode.F021, parts.answers().getFirst().line(), "an MCQ has no `answer`: tick the right choices");
         }
+        if (!parts.rubrics().isEmpty()) {
+            context.report(DiagnosticCode.F047, parts.rubrics().getFirst().line(),
+                    "an MCQ is checked by Boussole: remove the `rubric`, or make it an `exercise` with `type=free`");
+        }
         McqChoiceReader.Result read = McqChoiceReader.read(parts.statement(), context);
         return Optional.of(new McqBlock(
                 id,

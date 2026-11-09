@@ -73,7 +73,7 @@ public final class SubmitAttempt {
                 : 0;
         ExerciseProgress after = before.withAttempt(result.verdict());
         progress.saveExercise(key, after, clock.instant());
-        int stars = Stars.of(score, result.verdict());
+        int stars = Stars.of(score, result);
         progress.recordAttempt(key, replay ? Optional.empty() : session, result.verdict(), points, stars, clock.instant());
         return new AttemptOutcome(result, after, score, points, stars);
     }

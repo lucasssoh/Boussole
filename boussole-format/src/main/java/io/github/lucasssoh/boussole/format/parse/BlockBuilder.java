@@ -54,6 +54,10 @@ final class BlockBuilder {
             context.report(DiagnosticCode.F020, number, "`" + name + "` is only allowed at the top level of a session");
             return Optional.empty();
         }
+        if (name.equals("rubric")) {
+            context.report(DiagnosticCode.F020, number, "`rubric` is only allowed inside a free exercise (`type=free`), as :::rubric");
+            return Optional.empty();
+        }
         if (DirectivePlaces.EXERCISE_PARTS.contains(name)) {
             context.report(DiagnosticCode.F020, number, "`" + name + "` is only allowed inside `exercise` or `mcq`, as :::" + name);
             return Optional.empty();

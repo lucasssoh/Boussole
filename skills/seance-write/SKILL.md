@@ -59,6 +59,8 @@ by `learner.yaml` as the table after it says:
 3. **Closing**, as `closing` asks: a **checkpoint** (`:::::checkpoint`), three to five questions
    on the whole session, passing it means the goal is reached; and/or a **practice**
    (`:::::practice`, last), exercises closer to the exam, often taken from the tutorial sheets
+   (one written as at the exam, on paper or in the learner's editor, is a `free` exercise with
+   `paper=true` and a `:::rubric`, see `exercise-author`)
    or past exams of the sources (say so in the statement). The closing **mixes** the notions
    of the session rather than taking them one after the other, and asks at least once **which
    method applies** (two close notions, such as two formulas or two algorithms, opposed in one

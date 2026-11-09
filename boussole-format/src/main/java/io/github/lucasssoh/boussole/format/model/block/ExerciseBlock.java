@@ -9,7 +9,9 @@ import java.util.OptionalInt;
 /**
  * An exercise checked by Boussole. Its answer is empty for a {@link ExerciseType#FREE} exercise,
  * or when it could not be read. {@code minutes} overrides the time estimated by {@link QuestionTimeEstimator};
- * a {@code hook} is a guess on what the session is about to teach, which earns no points.
+ * a {@code hook} is a guess on what the session is about to teach, which earns no points. A free
+ * exercise may have a {@code rubric}, the criteria the learner ticks after the solution, and be done
+ * on {@code paper} (or in the learner's own editor) rather than in a text area.
  */
 public record ExerciseBlock(
         String id,
@@ -18,8 +20,10 @@ public record ExerciseBlock(
         Optional<Answer> answer,
         List<ExerciseHint> hints,
         Optional<ExerciseSolution> solution,
+        Optional<ExerciseRubric> rubric,
         OptionalInt minutes,
         boolean hook,
+        boolean paper,
         SourcePosition position)
         implements Block {
 }

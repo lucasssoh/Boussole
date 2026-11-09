@@ -354,6 +354,11 @@ export const FR: Translations = {
     got_it: 'réussi',
     partly: 'en partie réussi',
     not_yet: 'pas encore réussi',
+    paper: 'Réponds sur papier ou dans ton éditeur, puis compare avec la solution.',
+    rubric: 'Coche ce que ta réponse contient :',
+    point: '{{weight}} point',
+    points: '{{weight}} points',
+    rubricDone: 'Valider',
   },
   documents: {
     button: 'Documents · {{count}}',

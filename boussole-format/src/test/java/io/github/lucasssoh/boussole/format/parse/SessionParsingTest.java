@@ -327,6 +327,66 @@ class SessionParsingTest {
             assertThat(messages(DiagnosticCode.F021)).singleElement().asString().contains("free exercise has no `answer`");
         }
 
+        private static String freeWithRubric(String attributes, String rubric) {
+            return "::::exercise{#e1 type=free " + attributes + "}\nÉcris la fabrique.\n\n:::solution\nSolution.\n:::\n\n:::rubric\n"
+                    + rubric + "\n:::\n::::\n";
+        }
+
+        @Test
+        void aFreeExerciseMayHaveARubricAndBeDoneOnPaper() {
+            ExerciseBlock exercise = onlyExercise(parse(freeWithRubric("paper=true minutes=20",
+                    "- [2] La classe abstraite déclare `créeMotif()`.\n- [0.5] `Cadre` ne nomme aucune\n  classe concrète.\n- [1,5] Le `main` choisit la fabrique.")));
+
+            assertThat(diagnostics.list()).isEmpty();
+            assertThat(exercise.paper()).isTrue();
+            assertThat(exercise.rubric()).get().satisfies(rubric -> {
+                assertThat(rubric.criteria()).extracting(c -> c.text()).containsExactly(
+                        "La classe abstraite déclare `créeMotif()`.", "`Cadre` ne nomme aucune classe concrète.", "Le `main` choisit la fabrique.");
+                assertThat(rubric.criteria()).extracting(c -> c.weight()).containsExactly(2.0, 0.5, 1.5);
+                assertThat(rubric.total()).isEqualTo(4.0);
+            });
+        }
+
+        @Test
+        void aRubricBelongsToAFreeExercise() {
+            parse("::::exercise{#e1 type=text}\nQ ?\n\n:::answer\nx\n:::\n\n:::solution\nx\n:::\n\n:::rubric\n- [1] x\n:::\n::::\n");
+            parse("::::mcq{#q1}\nQ ?\n\n- [x] Oui\n- [ ] Non\n  > Non.\n\n:::solution\nOui.\n:::\n\n:::rubric\n- [1] x\n:::\n::::\n");
+            parse(":::rubric\n- [1] x\n:::\n");
+
+            assertThat(messages(DiagnosticCode.F047)).containsExactly(
+                    "a text exercise is checked by Boussole: remove the `rubric`, or make the exercise `type=free`",
+                    "an MCQ is checked by Boussole: remove the `rubric`, or make it an `exercise` with `type=free`");
+            assertThat(messages(DiagnosticCode.F020)).contains("`rubric` is only allowed inside a free exercise (`type=free`), as :::rubric");
+        }
+
+        @Test
+        void eachCriterionHasAWeightAboveZero() {
+            parse(freeWithRubric("", "- La fabrique est abstraite.\n- [0] Rien.\n- [beaucoup] Tout.\nUne phrase."));
+
+            assertThat(messages(DiagnosticCode.F048)).containsExactly(
+                    "criterion without a weight: write each criterion as `- [2] what the corrector checks`, its weight in brackets",
+                    "the weight `0` is not a number above 0: write `[1]`, `[2]` or `[0.5]`, the points the corrector gives",
+                    "the weight `beaucoup` is not a number above 0: write `[1]`, `[2]` or `[0.5]`, the points the corrector gives",
+                    "`Une phrase.` is not a criterion: write each criterion as `- [2] what the corrector checks`, its weight in brackets");
+        }
+
+        @Test
+        void aRubricIsNotEmptyAndComesOnce() {
+            parse(freeWithRubric("", ""));
+            parse("::::exercise{#e2 type=free}\nQ\n\n:::solution\nS\n:::\n\n:::rubric\n- [1] a\n:::\n\n:::rubric\n- [1] b\n:::\n::::\n");
+
+            assertThat(messages(DiagnosticCode.F048)).containsExactly(
+                    "the `rubric` is empty: write each criterion as `- [2] what the corrector checks`, its weight in brackets",
+                    "a free exercise has one `rubric`: put every criterion in the first");
+        }
+
+        @Test
+        void onlyAFreeExerciseIsDoneOnPaper() {
+            parse(exerciseOfType("type=text paper=true", "x"));
+
+            assertThat(messages(DiagnosticCode.F027)).singleElement().asString().contains("`paper` is not an attribute of a text exercise");
+        }
+
         @Test
         void aMcqHasNoAnswer() {
             parse("::::mcq{#q1}\nQ ?\n\n- [x] Oui\n- [ ] Non\n\n:::answer\nOui\n:::\n\n:::solution\nOui.\n:::\n::::\n");
