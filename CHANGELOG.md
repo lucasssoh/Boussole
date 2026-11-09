@@ -4,6 +4,11 @@ Versions follow `MAJOR.MINOR.PATCH`, and each release is a git tag (`v1.0.0`). M
 also get a code name, minor ones their date; patch releases have neither. Until `1.0.0`, a
 minor release may break things and says so.
 
+## Unreleased
+
+### Fixed
+- **Prerequisites of added chapters and of exams:** the playbooks now ask agents to give prerequisites to a chapter taken in from documents that arrived later, and to every review and mock exam. Without them, such a chapter showed at the top of the Trail, open at once, and an exam could be opened before its lessons.
+
 ## 0.3.1
 
 - **Full screen:** a task that ends in the background no longer wipes a message shown since, such as the error of a folder without `subject.yaml`.

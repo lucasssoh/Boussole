@@ -74,6 +74,7 @@ covers, how long), then the questions.
 id: r19
 objectives:
   - Revoir la dualité en conditions d'examen.
+prerequisites: [oc.dualite.s11, oc.dualite.s12, oc.dualite.s13]
 terms: [dual, ecarts-complementaires]
 ---
 
@@ -96,7 +97,15 @@ In the syllabus, the session reads:
         duration: 20
         goal: Retrouver les résultats de dualité sans notes, en temps limité.
         file: 19-revision-dualite.md
+        prerequisites: [oc.dualite.s11, oc.dualite.s12, oc.dualite.s13]
 ```
+
+Every review and mock exam has `prerequisites`, in the syllabus and in its front matter: without
+them it waits for nothing and the learner can open it before the lessons it asks about.
+
+- A chapter review: the lessons of its chapter.
+- A cumulative review: the last session (or the review) of each chapter it covers.
+- A mock exam: the cumulative review before it, or the reviews of the chapters it covers.
 
 Then run `boussole validate .` until it ends without error, and fix `P008` and `P009` (no notion,
 no worked example) for this session.

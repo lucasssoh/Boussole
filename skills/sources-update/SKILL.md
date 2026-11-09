@@ -79,8 +79,14 @@ Read it (for a PDF, `pdftotext -layout <file> -`). Decide what it is, one docume
   exercises to its practice. Its notions and exercise IDs stay.
 - Respect the teacher's order: a later lecture goes after what is already there, even if the
   plan would be nicer otherwise.
+- **Give every new session its `prerequisites`** (`cursus-plan` §2), in the syllabus and, once
+  written, in its front matter: the sessions of earlier chapters whose notions it uses, not only
+  those of its own chapter. A new chapter with none at all waits for nothing: the Trail draws it
+  on the first row, open at once, as if it came before the whole course. Leave a chapter without
+  prerequisites only when it truly needs nothing earlier, and say so in your report.
 - Reviews and mock exams follow: a new chapter gets its review (`exam-build`); a mock exam is
-  extended or rebuilt only when the new material belongs to the exam.
+  extended or rebuilt only when the new material belongs to the exam. A cumulative review or a
+  final mock exam that the new chapter belongs to gets it in its `prerequisites` too.
 - Keep the durations honest (`cursus-plan` §2).
 
 If the plan changes (new chapters or sessions, sessions moved), set `status: proposed`, show the
