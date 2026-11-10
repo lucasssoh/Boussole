@@ -86,6 +86,9 @@ sentence needs reading twice, rewrite it.
 - A statement may show a `:::graph` (a network, a weighted graph, a tree) instead of describing
   it in words: the learner reads the figure, the question asks about it. Mark nothing with `!`
   that would give the answer away; the `solution` can repeat the graph with the answer marked.
+- An algorithm in a statement is an `:::algorithm`, and the question names the line it is
+  about (« À la ligne 4, … »). Code is a fenced block with its language, with `{numbers}` when
+  the question names a line; a gap `[[1]]` may sit inside it, in a `fill`.
 - A statement never contains its answer, and the answer never depends on an interpretation the
   statement leaves open.
 

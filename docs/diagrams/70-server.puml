@@ -34,7 +34,9 @@ package "course" {
 }
 package "session" {
   class SessionController <<…/sessions/{id}>>
-  class SessionView <<record>>
+  class SessionView <<record>> {
+    codeColors : boolean
+  }
   class "SessionView.PartView" as PartView <<record>>
 }
 package "exercise" {
@@ -60,6 +62,10 @@ package "block" {
     +blocks(List<Block>) : List<BlockView>
   }
   interface BlockView <<sealed, JSON type>>
+  class "BlockView.Algorithm" as AlgorithmView <<record>> {
+    label : String
+    lines : List<AlgorithmLineView>
+  }
   interface InputView <<sealed, JSON kind; free: paper, rubric>>
   class HintsView <<record>>
   class ProgressView <<record>> {
@@ -142,6 +148,7 @@ ExerciseController ..> SolutionView
 HintView ..> BlockViewMapper
 SolutionView ..> BlockViewMapper
 BlockViewMapper ..> BlockView : no answers
+BlockView <|.. AlgorithmView
 BlockView --> InputView : exercise input
 BlockView --> HintsView : revealed only
 BlockView --> ProgressView

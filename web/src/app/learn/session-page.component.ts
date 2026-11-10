@@ -41,6 +41,7 @@ import { sessionDocuments } from './session-documents';
     class: 'player subject-scope',
     '[class.with-panel]': 'learn.panel() !== null',
     '[class.outline-open]': 'outlineOpen()',
+    '[class.code-plain]': 'opened()?.codeColors === false',
     '(document:keydown)': 'onKey($event)',
     '[style.--subject]': 'color()',
   },

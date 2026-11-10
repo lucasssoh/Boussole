@@ -26,6 +26,8 @@ import io.github.lucasssoh.boussole.format.model.block.McqChoice;
 import io.github.lucasssoh.boussole.format.model.block.McqBlock;
 import io.github.lucasssoh.boussole.format.model.block.LinkInlineDirective;
 import io.github.lucasssoh.boussole.format.model.block.VideoBlock;
+import io.github.lucasssoh.boussole.format.model.block.AlgorithmBlock;
+import io.github.lucasssoh.boussole.format.model.block.AlgorithmLine;
 import io.github.lucasssoh.boussole.format.model.block.GraphBlock;
 import io.github.lucasssoh.boussole.format.model.block.GraphEdge;
 import io.github.lucasssoh.boussole.format.model.block.GraphLayout;
@@ -305,6 +307,62 @@ class SessionParsingTest {
             parse(body.append(":::\n").toString());
 
             assertThat(messages(DiagnosticCode.P011)).singleElement().asString().startsWith("this graph has 14 nodes");
+        }
+    }
+
+    @Nested
+    class Algorithms {
+
+        @Test
+        void eachLineKeepsItsDepthAndItsText() {
+            SessionContent session = parse("""
+                    :::algorithm[List Scheduling]
+                    Entrée : $m$ machines, les tâches $J_1, …, J_n$
+
+                    pour $j$ de 1 à $n$ faire
+                        si une machine est libre alors
+                            placer $J_j$ sur la machine la moins chargée   // la première en cas d'égalité
+                    retourner l'ordonnancement
+                    :::
+                    """);
+
+            assertThat(diagnostics.list()).isEmpty();
+            assertThat(session.blocks().findFirst().orElseThrow()).isInstanceOfSatisfying(AlgorithmBlock.class, algorithm -> {
+                assertThat(algorithm.label()).isEqualTo("List Scheduling");
+                assertThat(algorithm.lines()).containsExactly(
+                        new AlgorithmLine(0, "Entrée : $m$ machines, les tâches $J_1, …, J_n$"),
+                        new AlgorithmLine(0, "pour $j$ de 1 à $n$ faire"),
+                        new AlgorithmLine(1, "si une machine est libre alors"),
+                        new AlgorithmLine(2, "placer $J_j$ sur la machine la moins chargée   // la première en cas d'égalité"),
+                        new AlgorithmLine(0, "retourner l'ordonnancement"));
+            });
+        }
+
+        @Test
+        void aTabIsOneLevelLikeFourSpaces() {
+            SessionContent session = parse(":::algorithm\ntant que $x > 0$ faire\n\t$x \\gets x - 1$\n:::\n");
+
+            AlgorithmBlock algorithm = (AlgorithmBlock) session.blocks().findFirst().orElseThrow();
+            assertThat(algorithm.label()).isEmpty();
+            assertThat(algorithm.lines()).extracting(AlgorithmLine::depth).containsExactly(0, 1);
+        }
+
+        @Test
+        void eachMistakeSaysWhatToWrite() {
+            parse("""
+                    :::algorithm[Vide]
+                    :::
+                    ::::algorithm[Avec un bloc]
+                    pour chaque tâche faire
+                    :::note
+                    Une remarque.
+                    :::
+                    ::::
+                    """);
+
+            assertThat(messages(DiagnosticCode.F049)).containsExactly(
+                    "`algorithm` is empty: write one step per line, indented under the loop or test that holds it",
+                    "`algorithm` holds only lines of pseudo-code: write this step as a line, and put any other block after the algorithm");
         }
     }
 

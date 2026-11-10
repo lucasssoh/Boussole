@@ -76,6 +76,13 @@ enum GraphLayout {
   ROW
   LAYERS
 }
+class AlgorithmBlock <<record>> {
+  label : String
+}
+class AlgorithmLine <<record>> {
+  depth : int
+  text : String
+}
 class ExerciseBlock <<record>> {
   id : String
   minutes : OptionalInt
@@ -135,6 +142,8 @@ VideoSource <|.. FileVideoSource
 FileVideoSource --> SourceReference : file
 Block <|.. PdfBlock
 Block <|.. GraphBlock
+Block <|.. AlgorithmBlock
+AlgorithmBlock *-- "1..*" AlgorithmLine : lines
 Block <|.. LinkBlock
 GraphBlock *-- "1..*" GraphNode : nodes
 GraphBlock *-- "*" GraphEdge : edges

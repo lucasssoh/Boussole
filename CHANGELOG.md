@@ -7,6 +7,8 @@ minor release may break things and says so.
 ## Unreleased
 
 ### Added
+- **Coloured code:** a code block with its language (Java, Python, C, SQL, Bash, OCaml…) now shows in colour, with a button that copies the code into your editor. It may number its lines, and mark the lines the text talks about. A track whose exam prints code in black and white may keep its code in black and white (`code_colors: false` in `subject.yaml`).
+- **Algorithms:** pseudo-code has a block of its own (`:::algorithm`), with numbered lines, a guide for each level of indentation, the words that give the structure in bold and in colour (pour, si, tant que, retourner…), maths, and comments set apart on the right. A question may point to « la ligne 3 ».
 - **Marking schemes for free exercises:** a free exercise may come with a marking scheme, the points an exam corrector would check, each with its weight. Once you have read the solution, tick each point your answer has: the stars follow from the weight ticked. A free exercise may also be answered on paper or in your own editor, as at the exam: it then shows no text area, only its time and the way to the solution.
 - **Word and PowerPoint documents in the viewer:** a `.doc`, `.docx`, `.odt`, `.ppt`, `.pptx` or `.odp` the course cites now opens beside the text as a PDF, at its page, instead of being downloaded. It needs LibreOffice on the computer that runs Boussole; without it, the viewer offers to download the document.
 

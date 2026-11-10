@@ -103,6 +103,17 @@ Un routeur tombe au milieu d'un transfert. En **datagramme**, les paquets suivan
 autre chemin dès que le routage a convergé : la communication continue. En **circuit
 virtuel**, le circuit passait par ce routeur : il faut en établir un nouveau.
 
+En datagramme, chaque routeur traite chaque paquet sans rien se rappeler des précédents :
+
+:::algorithm[Un routeur, pour chaque datagramme]
+pour chaque datagramme reçu faire
+    chercher dans la table l'entrée de plus long préfixe qui contient la destination
+    si une entrée est trouvée alors
+        envoyer le datagramme sur l'interface de cette entrée   // aucun état par communication
+    sinon
+        jeter le datagramme
+:::
+
 :::graph[R2 tombe : les paquets passent par R3]{layout=layers}
 A "Hôte A" !
 A -> R1 !

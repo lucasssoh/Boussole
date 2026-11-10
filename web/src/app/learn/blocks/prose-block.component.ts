@@ -1,4 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, effect, inject, input, untracked } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
+import { codeText } from '../../shared/code-fence';
+import { iconSvg } from '../../shared/icon.component';
 import { MarkdownRenderer } from '../../shared/markdown-renderer';
 import { drawMermaidDiagrams } from '../../shared/mermaid-diagrams';
 import { LearnFacade } from '../learn.facade';
@@ -9,7 +12,8 @@ import { FillGaps } from '../question/fill-gaps';
  * Markdown of the session. Once rendered, its :term get their definition from the lexicon, its
  * :pdf open the document beside the text, and the gaps of a fill exercise get their fields. Its
  * tables get a frame as wide as the screen allows, and a definition is placed against the window,
- * so that nothing around it, a table or a frame, cuts it.
+ * so that nothing around it, a table or a frame, cuts it. Each code block gets a button that copies
+ * its code, to take it into one's own editor.
  */
 @Component({
   selector: 'app-prose-block',
@@ -35,6 +39,7 @@ export class ProseBlockComponent {
   private readonly renderer = inject(MarkdownRenderer);
   private readonly learn = inject(LearnFacade);
   private readonly references = inject(WebReferences);
+  private readonly transloco = inject(TranslocoService, { optional: true });
   /** The term whose definition shows, kept in place while the page scrolls. */
   private shownTerm: HTMLElement | null = null;
   /** The definitions, in the body of the page while this text is shown: above everything. */
@@ -48,12 +53,18 @@ export class ProseBlockComponent {
       this.widenTables();
       this.defineTerms();
       this.lookAtWebLinks();
+      this.addCopyButtons();
       untracked(() => this.fill()?.mountIn(this.host));
       void drawMermaidDiagrams(this.host);
     });
   }
 
   protected onClick(event: MouseEvent): void {
+    const copy = (event.target as HTMLElement).closest<HTMLButtonElement>('.code-copy');
+    if (copy) {
+      this.copyCode(copy);
+      return;
+    }
     const web = (event.target as HTMLElement).closest<HTMLElement>('.web-link');
     if (web) {
       this.references.open(web.querySelector('.pdf-label')?.textContent?.trim() ?? '', web.dataset['linkUrl'] ?? '');
@@ -69,6 +80,34 @@ export class ProseBlockComponent {
         page: Number.isInteger(page) && page > 0 ? page : null,
       });
     }
+  }
+
+  private addCopyButtons(): void {
+    const label = this.transloco?.translate('block.copy') ?? '';
+    for (const block of Array.from(this.host.querySelectorAll('.code-block'))) {
+      block.insertAdjacentHTML('afterbegin', `<button type="button" class="code-copy quiet" title="${label}" aria-label="${label}">${iconSvg('copy', 16)}<span>${label}</span></button>`);
+    }
+  }
+
+  private copyCode(button: HTMLButtonElement): void {
+    const block = button.closest('.code-block');
+    if (!block || !navigator.clipboard) {
+      return;
+    }
+    void navigator.clipboard.writeText(codeText(block)).then(() => {
+      const copied = this.transloco?.translate('block.copied') ?? '';
+      const label = button.querySelector('span');
+      if (label) {
+        label.textContent = copied;
+      }
+      button.classList.add('copied');
+      setTimeout(() => {
+        button.classList.remove('copied');
+        if (label) {
+          label.textContent = this.transloco?.translate('block.copy') ?? '';
+        }
+      }, 2000);
+    });
   }
 
   protected showTip(event: Event): void {

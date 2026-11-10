@@ -51,6 +51,7 @@ final class CourseSubjectReader {
                         "`level` is discovery, secondary, bachelor, master or research, not `" + id + "`")),
                 map.text("domain").map(String::strip).flatMap(id -> known(Domain.of(id), map, "domain", id, diagnostics,
                         "`domain` `" + id + "` is not in the list of docs/FORMAT.md §2 (such as information-technology, mathematics, philosophy-and-ethics)")),
+                map.flag("code_colors").orElse(true),
                 map.positionOf("id")));
     }
 

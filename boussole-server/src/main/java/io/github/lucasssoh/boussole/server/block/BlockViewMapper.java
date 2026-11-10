@@ -15,6 +15,7 @@ import io.github.lucasssoh.boussole.format.model.block.ExampleBlock;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseHint;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseRefBlock;
+import io.github.lucasssoh.boussole.format.model.block.AlgorithmBlock;
 import io.github.lucasssoh.boussole.format.model.block.GraphBlock;
 import io.github.lucasssoh.boussole.format.model.block.LinkBlock;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseType;
@@ -81,6 +82,8 @@ public final class BlockViewMapper {
                     pdf.source().page().isPresent() ? pdf.source().page().getAsInt() : null);
             case LinkBlock link -> new BlockView.Link(link.label(), link.url());
             case GraphBlock graph -> graph(graph);
+            case AlgorithmBlock algorithm -> new BlockView.Algorithm(algorithm.label(),
+                    algorithm.lines().stream().map(line -> new BlockView.AlgorithmLineView(line.depth(), line.text())).toList());
             case McqBlock mcq -> mcq(mcq, false);
             case ExerciseBlock exercise -> exercise(exercise, false);
             case ExerciseRefBlock ref -> reused(ref);

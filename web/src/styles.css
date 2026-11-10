@@ -59,6 +59,15 @@
   --content-width: 48rem;
   --font: 'Nunito Variable', Nunito, system-ui, sans-serif;
   --mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  /* Code and algorithms: a discreet palette, readable on the light surface. */
+  --code-keyword: #7b2f8f;
+  --code-type: #1c5f9e;
+  --code-string: #2b7a3e;
+  --code-number: #a34e00;
+  --code-meta: #5c5f99;
+  --code-mark: #fff3bf;
+  --code-mark-line: #f2b45a;
+  --code-algorithm-line: #d0bfff;
 }
 
 * {
@@ -2807,6 +2816,183 @@ a.session-card:active {
 .prose pre code {
   padding: 0;
   background: none;
+}
+
+/* Code blocks: coloured by language, discreetly; numbered and marked lines; a copy button. */
+
+.prose .code-block {
+  position: relative;
+  margin: 1rem 0;
+}
+
+.prose .code-block pre {
+  margin: 0;
+  counter-reset: code-line;
+}
+
+.prose pre.code .line {
+  display: block;
+  min-height: 1.4em;
+  white-space: pre;
+}
+
+.prose pre.code.numbered .line::before {
+  counter-increment: code-line;
+  content: counter(code-line);
+  display: inline-block;
+  width: 2.2em;
+  margin-right: 0.9em;
+  padding-right: 0.5em;
+  border-right: 1px solid var(--line);
+  text-align: right;
+  color: var(--muted);
+  user-select: none;
+}
+
+.prose pre.code .line.marked {
+  margin: 0 -1rem;
+  padding: 0 1rem;
+  background: var(--code-mark);
+  box-shadow: inset 3px 0 0 var(--code-mark-line);
+}
+
+.code-copy {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.45rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--muted);
+  background: var(--surface);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.code-block:hover .code-copy,
+.code-copy:focus-visible,
+.code-copy.copied {
+  opacity: 1;
+}
+
+.code-copy.copied {
+  color: var(--correct);
+}
+
+@media (hover: none) {
+  .code-copy {
+    opacity: 1;
+  }
+}
+
+.prose pre.hljs .hljs-keyword,
+.prose pre.hljs .hljs-built_in,
+.prose pre.hljs .hljs-literal,
+.prose pre.hljs .hljs-selector-tag {
+  color: var(--code-keyword);
+  font-weight: 700;
+}
+
+.prose pre.hljs .hljs-type,
+.prose pre.hljs .hljs-title,
+.prose pre.hljs .hljs-class {
+  color: var(--code-type);
+}
+
+.prose pre.hljs .hljs-string,
+.prose pre.hljs .hljs-regexp,
+.prose pre.hljs .hljs-char {
+  color: var(--code-string);
+}
+
+.prose pre.hljs .hljs-number,
+.prose pre.hljs .hljs-symbol {
+  color: var(--code-number);
+}
+
+.prose pre.hljs .hljs-comment,
+.prose pre.hljs .hljs-quote,
+.prose pre.hljs .hljs-doctag {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.prose pre.hljs .hljs-meta,
+.prose pre.hljs .hljs-attr,
+.prose pre.hljs .hljs-attribute {
+  color: var(--code-meta);
+}
+
+/* A track whose exam prints code in black and white (code_colors: false): the colours go, the rest stays. */
+.code-plain .prose pre.hljs span {
+  color: inherit;
+  font-weight: inherit;
+  font-style: inherit;
+}
+
+/* Algorithms: numbered lines, a guide per level, keywords in bold and in colour, comments apart. */
+
+.frame.algorithm {
+  border-color: var(--code-algorithm-line);
+  background: var(--surface);
+}
+
+.frame.algorithm .frame-title {
+  color: var(--code-keyword);
+}
+
+.algorithm-lines {
+  margin: 0.4rem 0 0.2rem;
+  padding: 0;
+  list-style: none;
+  counter-reset: algorithm-line;
+  line-height: 1.7;
+}
+
+.algorithm-lines li {
+  --depth: 0;
+  counter-increment: algorithm-line;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 1rem;
+  padding-left: calc(2.6em + var(--depth) * 1.6em);
+  position: relative;
+  background-image: repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px 1.6em);
+  background-size: calc(var(--depth) * 1.6em) 100%;
+  background-position: 3.1em 0;
+  background-repeat: no-repeat;
+}
+
+.algorithm-lines li::before {
+  content: counter(algorithm-line);
+  position: absolute;
+  left: 0;
+  width: 1.8em;
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 0.85em;
+  color: var(--muted);
+}
+
+.algorithm-keyword {
+  color: var(--code-keyword);
+  font-weight: 800;
+}
+
+.algorithm-comment {
+  margin-left: auto;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.algorithm-comment::before {
+  content: '▷ ';
+  font-style: normal;
 }
 
 .prose pre.mermaid {

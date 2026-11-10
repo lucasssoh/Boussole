@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import MarkdownItCallable, { type MarkdownIt, type RendererRule, type StateInline } from 'markdown-it';
 import katexPlugin from '@vscode/markdown-it-katex';
 import { iconSvg } from './icon.component';
+import { renderCodeFence } from './code-fence';
 
 /** What a piece of Markdown is rendered against: the folder its relative links and images start from. */
 export interface MarkdownContext {
@@ -17,8 +18,9 @@ const ATTRIBUTE = /([#.]?)([\w-]+)(?:=(?:"([^"]*)"|'([^']*)'|([^\s"']+)))?/g;
 
 /**
  * Renders the prose of a session: Markdown, maths ($…$ and $$…$$ with KaTeX), the inline
- * directives of the format (:term, :pdf and :link), the gaps of a fill exercise ([[N]]) and Mermaid
- * diagrams. Raw HTML in the source is shown as text, never run.
+ * directives of the format (:term, :pdf and :link), the gaps of a fill exercise ([[N]]), code
+ * blocks coloured by their language, and Mermaid diagrams. Raw HTML in the source is shown as
+ * text, never run.
  */
 @Injectable({ providedIn: 'root' })
 export class MarkdownRenderer {
@@ -59,22 +61,20 @@ function createMarkdown(): MarkdownIt {
   markdown.renderer.rules['boussole_directive'] = (tokens, index) => renderDirective(tokens[index].meta as unknown as DirectiveMeta, markdown);
   markdown.renderer.rules['boussole_gap'] = (tokens, index) => `<span class="gap" data-gap="${Number(tokens[index].meta?.['number'])}"></span>`;
   resolveRelativeUrls(markdown);
-  renderMermaid(markdown);
+  renderFences(markdown);
   gapsInCode(markdown);
   return markdown;
 }
 
 /**
- * A gap may sit in code too, to complete a line of a program: `for i in [[1]](10)`. Code is
- * rendered as it is written, so its gaps become fields after the code is escaped.
+ * A gap may sit in inline code too, to complete a command: `ip [[1]] show`. Code is rendered as it
+ * is written, so its gaps become fields after the code is escaped. Code blocks place their gaps
+ * themselves ({@link renderCodeFence}).
  */
 function gapsInCode(markdown: MarkdownIt): void {
-  const withGaps = (rule: RendererRule): RendererRule => (tokens, index, options, env, self) =>
+  const rule = markdown.renderer.rules['code_inline']!;
+  markdown.renderer.rules['code_inline'] = (tokens, index, options, env, self) =>
     !(env as MarkdownContext | undefined)?.gaps ? rule(tokens, index, options, env, self) : rule(tokens, index, options, env, self).replace(/\[\[(\d+)\]\]/g, (_, number: string) => `<span class="gap" data-gap="${Number(number)}"></span>`);
-  markdown.renderer.rules['code_inline'] = withGaps(markdown.renderer.rules['code_inline']!);
-  const fence = markdown.renderer.rules['fence']!;
-  markdown.renderer.rules['fence'] = (tokens, index, options, env, self) =>
-    tokens[index].info.trim() === 'mermaid' ? fence(tokens, index, options, env, self) : withGaps(fence)(tokens, index, options, env, self);
 }
 
 function directiveRule(state: StateInline, silent: boolean): boolean {
@@ -167,13 +167,13 @@ function resolved(url: string, context: MarkdownContext | undefined): string {
   return absolute.pathname + absolute.search + absolute.hash;
 }
 
-function renderMermaid(markdown: MarkdownIt): void {
-  const fence = markdown.renderer.rules['fence']!;
-  const mermaidFence: RendererRule = (tokens, index, options, env, self) => {
+/** A Mermaid diagram is left for Mermaid to draw; any other fence is a code block. */
+function renderFences(markdown: MarkdownIt): void {
+  const fence: RendererRule = (tokens, index, _options, env) => {
     const token = tokens[index];
     return token.info.trim() === 'mermaid'
       ? `<pre class="mermaid">${markdown.utils.escapeHtml(token.content)}</pre>`
-      : fence(tokens, index, options, env, self);
+      : renderCodeFence(token.content, token.info, !!(env as MarkdownContext | undefined)?.gaps, markdown.utils.escapeHtml);
   };
-  markdown.renderer.rules['fence'] = mermaidFence;
+  markdown.renderer.rules['fence'] = fence;
 }

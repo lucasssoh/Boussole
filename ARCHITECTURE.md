@@ -290,7 +290,7 @@ web/src/app/
 │   ├── blocks/     BlockListComponent and one component per kind of block
 │   └── question/   MCQ and exercises, sharing QuestionState and QuestionFooterComponent
 ├── plan/        today, week, deadlines, quick add                        (V2)
-└── shared/      Markdown (markdown-it, KaTeX, :term, :pdf, gaps), Mermaid
+└── shared/      Markdown (markdown-it, KaTeX, :term, :pdf, gaps), code blocks (highlight.js), Mermaid
 ```
 
 - **The home page** puts on top the session to resume (in the subject studied last: the session
@@ -539,7 +539,7 @@ On macOS and Windows the equivalent per-user folders are used.
 | Persistence | SQLite (xerial JDBC), migrations run by `SqliteDatabase` |
 | Course files | own line-based parser for the structure, SnakeYAML Engine, PDFBox for page counts; Markdown rendered by markdown-it in `web/` |
 | CLI | picocli; Lanterna for `boussole` alone; QR-Code generator (Nayuki) |
-| Interface | Angular 22 (standalone components, signals), Transloco, markdown-it, KaTeX, Mermaid |
+| Interface | Angular 22 (standalone components, signals), Transloco, markdown-it, KaTeX, highlight.js (the languages of `code-fence.ts` only), Mermaid |
 | Tests | JUnit 6, AssertJ, ArchUnit; Vitest for `web/` |
 
 ---

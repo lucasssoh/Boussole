@@ -119,6 +119,14 @@ session should be split, and propose how.
   `:::graph` (`docs/FORMAT.md` §5.5): nodes and edges as lines of text, `!` on what matters,
   checked by `boussole validate`. A flowchart or a sequence is a `mermaid` block. Keep each to a
   few nodes; never invent a figure the sources do not support.
+- **An algorithm is an `:::algorithm`**, never prose or a bare code block: one step per line,
+  indented under the loop or test that holds it, `$…$` for the maths, `//` for a comment
+  (`docs/FORMAT.md` §5.5). Its lines are numbered: the explanation and the questions point to
+  « la ligne 3 ». Keep the teacher's names for the variables and the steps.
+- **Code is a fenced block with its language** (` ```java `), so it is coloured; add
+  `{numbers}` when the text refers to its lines, and `{3,5-6}` to mark the lines that matter. A
+  track whose exam prints code in black and white has `code_colors: false` in `subject.yaml`
+  (ask the learner when the exam has code); its algorithms stay in colour.
 - **Answers are never in the text**: the solution of an exercise is only in its `:::solution`.
   An `:::example` is the only place where a worked answer is visible.
 - **Say who wrote it**: the front matter gets `written_by` with your **exact model ID** (the one

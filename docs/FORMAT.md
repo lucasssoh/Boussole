@@ -69,6 +69,7 @@ description: M1 networking course, network and transport layers.
 | `contributors` | no | Who helped: each a `name`, optionally a `role` (`exercises of chapter 3`, `review`) and a `url`. |
 | `level` | no (`P013` without it) | What it takes to follow the track: `discovery` (nothing), `secondary` (secondary school), `bachelor`, `master` or `research`. The points of its questions are multiplied by 1, 1.5, 2, 3 or 4. |
 | `domain` | no (`P013` without it) | Its field of knowledge, one of the list below. |
+| `code_colors` | no | `false` shows the code of the track in black and white, as its exam prints it; line numbers, marked lines and the copy button stay. Default `true`. Algorithms (`algorithm`, §5.5) keep their colours. |
 
 The fields follow the detailed fields of the UNESCO International Standard Classification of
 Education (ISCED-F 2013), whose code each keeps; information technology is one field, as at
@@ -246,6 +247,11 @@ The body is [CommonMark](https://commonmark.org) with:
 - math: `$…$` inline, `$$…$$` on its own lines (rendered with KaTeX);
 - diagrams: a fenced code block with the language `mermaid` (flowcharts, sequences); for a
   graph of nodes and edges, the `graph` directive (§5.5), which Boussole draws and checks;
+- code: a fenced code block with its language (` ```java `), coloured for `java`, `python`, `c`,
+  `cpp`, `javascript`, `typescript`, `sql`, `bash`, `ocaml`, `xml`, `json` and `yaml`, plain for any
+  other; ` ```java {numbers} ` numbers its lines, ` ```java {3,5-6} ` numbers them and marks lines
+  3, 5 and 6, so that the text may point to them. Each block has a button that copies its code.
+  Pseudo-code goes in an `algorithm` (§5.5), not in a code block;
 - **directives**, following the
   [generic directives proposal](https://talk.commonmark.org/t/generic-directives-plugins-syntax/444)
   (the syntax of `remark-directive`).
@@ -306,6 +312,7 @@ each answer and the correction right after it.
 | `pdf` | leaf or inline | Opens a file of `sources/` beside the text. `src=<file>` required; `page=N` optional. A Word or PowerPoint document (`doc`, `docx`, `odt`, `ppt`, `pptx`, `odp`) shows as the PDF LibreOffice makes of it: `page` counts the pages of that PDF. |
 | `link` | leaf or inline | A web page the course cites (documentation, an article, a reference), opened beside the text: `url=<https://…>` required, a whole web address. Boussole shows the page in place when its site allows it, and otherwise opens it in a window of its own, beside Boussole. The label is the caption, or the words of the sentence. |
 | `graph` | container | A small graph that Boussole draws and checks itself (below). The label is the caption; `layout=circle` (default), `row` or `layers`. |
+| `algorithm` | container | Pseudo-code, one step per line, its indentation showing what a loop or a test holds (below). The label is its title. Boussole numbers the lines, so that a question may point to « la ligne 3 ». |
 
 Images use plain Markdown (`![caption](../assets/route.png)`).
 
@@ -346,6 +353,26 @@ One line per node or edge, blank lines ignored:
 - No edge from a node to itself (a loop is not drawn). Above 12 nodes a graph no longer reads at
   a glance (`P011`): split it, or use an image.
 
+An `algorithm` holds only lines of pseudo-code (`F049` when it is empty or holds another block):
+
+```markdown
+:::algorithm[List Scheduling]
+Entrée : $m$ machines, les tâches $J_1, …, J_n$ dans l'ordre de la liste
+pour $j$ de 1 à $n$ faire
+    placer $J_j$ sur la machine la moins chargée   // la première en cas d'égalité
+retourner l'ordonnancement
+:::
+```
+
+- One step per line; blank lines are left out. The smallest indentation step is one level (a tab
+  counts as four spaces).
+- A line may hold `$…$` math, emphasis and `code`. A comment starts at `//` or `▷`.
+- The words that give the structure are set in bold, in French and in English: *pour, pour
+  chaque, pour tout, tant que, faire, si, alors, sinon, sinon si, fin, fin pour, fin si, fin tant
+  que, répéter, jusqu'à, retourner, renvoyer, entrée, sortie, début*; *for, for each, for all,
+  while, do, if, then, else, else if, end, end for, end if, end while, repeat, until, return,
+  input, output, begin*.
+
 Where each directive may appear:
 
 | Directive | Allowed in |
@@ -355,7 +382,7 @@ Where each directive may appear:
 | `example` | a notion, an introduction, a section |
 | `recall` | the same, and `hint`, `solution` |
 | `note`, `tip`, `warning`, `beyond` | the same as `recall`, and `example`, `recall` |
-| `video`, `pdf`, `link`, `graph` | anywhere except `answer` |
+| `video`, `pdf`, `link`, `graph`, `algorithm` | anywhere except `answer` |
 | `ref` | a notion, an introduction, a section, the body of a review or exam |
 | `answer` | `exercise` |
 | `rubric` | an `exercise` with `type=free` |
@@ -510,6 +537,7 @@ chapter.
 | `F046` | warning | A document new or changed after the track was `locked`: it is left out. Only the learner takes it in, by unlocking the track (`boussole lock . --off`). |
 | `F047` | error | A `rubric` in an MCQ or in an exercise Boussole checks itself: only a `free` exercise has one. |
 | `F048` | error | A `rubric` empty, given twice, or with a line that is not a criterion `- [weight] text`, or a weight that is not a number above 0. |
+| `F049` | error | An `algorithm` empty, or holding another block than lines of pseudo-code. |
 | `F032` | warning | `video` that YouTube does not know (checked only with `--check-videos`). |
 | `P001` | warning | A notion without exercise or `mcq`. |
 | `P002` | warning | A notion with more than one `example`. |

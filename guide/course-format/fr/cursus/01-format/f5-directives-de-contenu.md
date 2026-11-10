@@ -4,12 +4,17 @@ objectives:
   - Choisir entre exemple, rappel, encadré et terme pour expliquer une notion.
   - Ouvrir un document, une vidéo ou une page web à côté du texte.
   - Dessiner un schéma avec `graph` ou `mermaid`, et écrire des maths.
+  - Montrer du code coloré et un algorithme aux lignes numérotées.
 terms: [worked-example, directive, lexicon, notion]
 prerequisites: [boussole-format.format.f4]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code
     date: 2026-10-21
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-11-10
+    role: revised
 ---
 
 :::::warmup
@@ -261,6 +266,65 @@ Relis le tableau des lignes de `graph`.
 :::
 ::::
 
+## Code et algorithmes {#code}
+
+**Comment montrer du code ou un algorithme ?** Deux blocs, deux usages :
+
+- du **code** : un bloc de code avec son langage (` ```java `, ` ```python `…). Boussole le
+  colore et met un bouton pour copier le code dans ton éditeur. `{numbers}` numérote les
+  lignes ; `{3,5-6}` les numérote et marque les lignes 3, 5 et 6 ;
+- un **algorithme** en pseudo-code : `:::algorithm[titre]`, une étape par ligne, décalée sous
+  la boucle ou le test qui la contient. Boussole numérote les lignes, met en gras les mots de
+  structure (*pour*, *si*, *tant que*, *retourner*…) et place à droite les commentaires écrits
+  après `//`. Les maths s'écrivent `$…$`.
+
+Si l'examen imprime le code en noir et blanc, `code_colors: false` dans `subject.yaml` retire
+les couleurs du code. Les algorithmes gardent les leurs.
+
+::::example[Un algorithme de s1]
+Tu écris :
+
+~~~markdown
+:::algorithm[Publier une modification]
+pour chaque fichier modifié faire
+    si le fichier doit partir dans le commit alors
+        git add le fichier   // il entre dans l'index
+git commit -m "message"
+:::
+~~~
+
+Boussole affiche :
+
+:::algorithm[Publier une modification]
+pour chaque fichier modifié faire
+    si le fichier doit partir dans le commit alors
+        git add le fichier   // il entre dans l'index
+git commit -m "message"
+:::
+
+Une question peut alors parler de « la ligne 3 » : c'est celle du `git add`.
+::::
+
+::::mcq{#f5-a7}
+Un cours décrit l'algorithme de tri par insertion, étape par étape, et une question doit
+pouvoir renvoyer à l'une de ses lignes. Comment l'écrire dans une séance ?
+
+- [x] Dans un `:::algorithm`, une étape par ligne, décalée sous sa boucle
+- [ ] Dans un bloc de code ` ```python `
+  > Un bloc de code sert au code d'un vrai langage. Le pseudo-code va dans `algorithm`, qui met en gras les mots de structure.
+- [ ] Dans un paragraphe, les étapes séparées par des virgules
+  > Un paragraphe n'a pas de lignes numérotées : la question ne pourrait renvoyer à aucune étape.
+
+:::hint
+Lequel des trois numérote les lignes et lit les mots « pour », « si », « retourner » ?
+:::
+
+:::solution
+**Un `:::algorithm`** : une étape par ligne, l'indentation montre ce que la boucle contient, et
+les lignes sont numérotées.
+:::
+::::
+
 :::::checkpoint
 ::::exercise{#f5-c1 type=match}
 Associe chaque besoin à sa directive.
@@ -270,6 +334,7 @@ Montrer un cas traité pas à pas => example
 Ouvrir une page du manuel => pdf
 Citer une page web => link
 Dessiner un petit réseau => graph
+Écrire un algorithme en pseudo-code => algorithm
 :::
 
 :::hint
@@ -278,7 +343,7 @@ Les noms de directives sont des mots anglais : « exemple », « lien », « gra
 
 :::solution
 `example` pour un cas résolu, `pdf` pour un document de `sources/`, `link` pour une page web,
-`graph` pour un schéma de quelques nœuds.
+`graph` pour un schéma de quelques nœuds, `algorithm` pour du pseudo-code.
 :::
 ::::
 :::::

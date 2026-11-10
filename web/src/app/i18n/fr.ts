@@ -117,6 +117,9 @@ export const FR: Translations = {
     open: 'Ouvrir',
     page: 'p. {{page}}',
     missingRef: "L'exercice {{id}} est introuvable.",
+    algorithm: 'Algorithme',
+    copy: 'Copier',
+    copied: 'Copié',
   },
   question: {
     hook: 'Accroche',

@@ -46,6 +46,7 @@ are about the teaching contract and matter to the learner.
 | F033 to F036 | a document is new, changed, gone, or the same as another | follow `sources-update`: take it into the course, then record it in `cursus/sources.yaml` |
 | F047 | a `rubric` in an MCQ or in an exercise Boussole checks | remove the `rubric`, or make the exercise `type=free` if it is really marked by hand |
 | F048 | a `rubric` empty, twice, or with a line that is not `- [weight] text`, or a weight of 0 or not a number | write one criterion per item, `- [2] what the corrector checks`; merge two rubrics into one |
+| F049 | an `algorithm` empty, or holding another block (a note, an exercise) | write one step per line, indented under its loop or test; move the other block after the algorithm; FORMAT.md §5.5 |
 | F046 | a document arrived or changed after the learner locked the track | nothing: leave it out, and tell the learner. Never remove `locked` yourself; only they unlock the track |
 | P001–P005 | teaching contract | add the exercise, keep one example, move warmup/practice, add hints (MCQs too: one or two, never the answer), list terms |
 | P006, P007 | the session does not follow `learner.yaml` | close it as `closing` asks; add the quick MCQ before the example |

@@ -70,6 +70,8 @@ package "learn.blocks" {
   class VideoBlockComponent
   class PdfBlockComponent
   class GraphBlockComponent
+  class AlgorithmBlockComponent <<numbered lines, keywords, comments>>
+  class "algorithm-lines.ts" as AlgorithmLines <<markKeywords(), splitComment()>>
   class LinkBlockComponent
   class WebReferences <<service>> {
     +preview(url) : Promise<PagePreview>
@@ -100,6 +102,7 @@ package "learn.question" {
 
 package "shared" {
   class MarkdownRenderer <<markdown-it + KaTeX>>
+  class "code-fence.ts" as CodeFence <<highlight.js, numbered and marked lines, gaps>>
   class "subjectColor()" as SubjectColor
   class RankEmblemComponent <<the gem of a rank, its division in relief>>
   class "emblem.ts" as Emblem <<instruments, ornaments, aura per tier; pieces that come apart>>
@@ -173,6 +176,9 @@ BlockListComponent --> ProseBlockComponent
 BlockListComponent --> VideoBlockComponent
 BlockListComponent --> PdfBlockComponent
 BlockListComponent --> GraphBlockComponent
+BlockListComponent --> AlgorithmBlockComponent
+AlgorithmBlockComponent ..> AlgorithmLines
+AlgorithmBlockComponent --> MarkdownRenderer : each line
 BlockListComponent --> LinkBlockComponent
 SidePanelComponent ..> WebReferences : preview, window
 SidePanelComponent --> MarkdownDocumentComponent : cited Markdown file
@@ -194,6 +200,8 @@ ExerciseBlockComponent --> QuestionCorrectionComponent
 QuestionState --> BoussoleApi
 QuestionState ..> SessionRun : first verdicts
 ProseBlockComponent --> MarkdownRenderer
+MarkdownRenderer ..> CodeFence : code blocks
+ProseBlockComponent ..> CodeFence : copies the code
 ProseBlockComponent ..> FillGaps : mounts fields
 ProseBlockComponent ..> Mermaid
 VideoBlockComponent ..> LearnFacade : opens panel

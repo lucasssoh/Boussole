@@ -31,7 +31,7 @@ describe('MarkdownRenderer', () => {
     const html = renderer.render('Complète `for i in [[1]](10):`\n\n```python\nprint([[2]])\n```', { ...context, gaps: true });
 
     expect(html).toContain('<code>for i in <span class="gap" data-gap="1"></span>(10):</code>');
-    expect(html).toContain('print(<span class="gap" data-gap="2"></span>)');
+    expect(html).toContain('<span class="hljs-built_in">print</span>(<span class="gap" data-gap="2"></span>)');
   });
 
   it('leaves [[N]] as written outside a fill exercise, to show the syntax', () => {

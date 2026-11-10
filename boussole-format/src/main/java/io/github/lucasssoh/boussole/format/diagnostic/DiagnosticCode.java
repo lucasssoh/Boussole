@@ -43,6 +43,7 @@ public enum DiagnosticCode {
     F046(WARNING, "document arrived after the track was locked"),
     F047(ERROR, "rubric in a question Boussole checks itself"),
     F048(ERROR, "rubric empty, repeated or malformed"),
+    F049(ERROR, "algorithm empty or malformed"),
     P001(WARNING, "notion without exercise"),
     P002(WARNING, "notion with several examples"),
     P003(WARNING, "warmup not first, or practice not last"),

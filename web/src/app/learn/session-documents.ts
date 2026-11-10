@@ -172,6 +172,7 @@ function walk(blocks: BlockView[], reading: DocumentReading, cite: (panel: Opene
         walk(block.statement, reading, cite);
         break;
       case 'graph':
+      case 'algorithm':
       case 'missingRef':
         break;
     }

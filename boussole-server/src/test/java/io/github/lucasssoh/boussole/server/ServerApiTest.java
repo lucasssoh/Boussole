@@ -183,6 +183,16 @@ class ServerApiTest {
     }
 
     @Test
+    void an_algorithm_comes_line_by_line_and_the_session_says_whether_code_is_coloured() throws Exception {
+        String session = get("/api/subjects/reseaux/sessions/s11").body();
+
+        assertThat(session).contains("{\"type\":\"algorithm\",\"label\":\"Un routeur, pour chaque datagramme\",\"lines\":[",
+                "{\"depth\":0,\"text\":\"pour chaque datagramme reçu faire\"}",
+                "{\"depth\":2,\"text\":\"envoyer le datagramme sur l'interface de cette entrée   // aucun état par communication\"}",
+                "\"codeColors\":true");
+    }
+
+    @Test
     void serves_the_documents_of_the_subject_only() throws Exception {
         assertThat(get("/api/subjects/reseaux/files/sources/Reseaux_Cours_Intro_2026.pdf").headers().firstValue("Content-Type"))
                 .contains("application/pdf");

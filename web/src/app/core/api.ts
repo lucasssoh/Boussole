@@ -157,6 +157,8 @@ export interface Session {
   previous: string | null;
   next: string | null;
   writtenBy: Authorship[];
+  /** False when the track shows its code in black and white, as its exam prints it. */
+  codeColors: boolean;
 }
 
 export interface SessionPart {
@@ -175,6 +177,7 @@ export type BlockView =
   | PdfBlockView
   | LinkBlockView
   | GraphBlockView
+  | AlgorithmBlockView
   | McqBlockView
   | ExerciseBlockView
   | MissingRefBlockView;
@@ -226,6 +229,15 @@ export interface PagePreview {
 }
 
 /** A small graph drawn by Boussole; places are in grid units, one unit between neighbours. */
+/** Pseudo-code, one line per step; the interface numbers the lines. */
+export interface AlgorithmBlockView {
+  type: 'algorithm';
+  /** Empty when the algorithm has no title. */
+  label: string;
+  /** {@code text} may hold $…$ and end with a comment after // or ▷. */
+  lines: { depth: number; text: string }[];
+}
+
 export interface GraphBlockView {
   type: 'graph';
   label: string;

@@ -1,5 +1,6 @@
 import { ApplicationRef, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { TranslocoService } from '@jsverse/transloco';
 import { FillGapInput } from '../../core/api';
 import { FillGaps } from '../question/fill-gaps';
 import { LearnFacade } from '../learn.facade';
@@ -13,6 +14,7 @@ describe('ProseBlockComponent', () => {
       providers: [
         { provide: LearnFacade, useValue: { sessionBase: () => '' } },
         { provide: WebReferences, useValue: { preview: () => Promise.resolve(undefined) } },
+        { provide: TranslocoService, useValue: { translate: (key: string) => key } },
       ],
     });
 

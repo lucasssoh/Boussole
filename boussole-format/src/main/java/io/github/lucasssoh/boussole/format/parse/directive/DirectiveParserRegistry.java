@@ -29,6 +29,7 @@ public final class DirectiveParserRegistry {
                 new PdfDirectiveParser(),
                 new LinkDirectiveParser(),
                 new GraphDirectiveParser(),
+                new AlgorithmDirectiveParser(),
                 new ExerciseDirectiveParser(),
                 new McqDirectiveParser(),
                 new RefDirectiveParser()));

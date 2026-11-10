@@ -115,6 +115,9 @@ export const EN = {
     open: 'Open',
     page: 'p. {{page}}',
     missingRef: 'Exercise {{id}} cannot be found.',
+    algorithm: 'Algorithm',
+    copy: 'Copy',
+    copied: 'Copied',
   },
   question: {
     hook: 'Hook',

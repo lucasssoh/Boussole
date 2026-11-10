@@ -4,12 +4,17 @@ objectives:
   - Choose between example, reminder, callout and term to explain a notion.
   - Open a document, a video or a web page beside the text.
   - Draw a diagram with `graph` or `mermaid`, and write maths.
+  - Show coloured code and an algorithm with numbered lines.
 terms: [worked-example, directive, lexicon, notion]
 prerequisites: [boussole-format.format.f4]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code
     date: 2026-10-21
+  - model: claude-opus-5-5
+    tool: Claude Code
+    date: 2026-11-10
+    role: revised
 ---
 
 :::::warmup
@@ -261,6 +266,65 @@ Read the table of `graph` lines again.
 :::
 ::::
 
+## Code and algorithms {#code}
+
+**How do you show code or an algorithm?** Two blocks, two uses:
+
+- **code**: a code block with its language (` ```java `, ` ```python `…). Boussole colours it
+  and adds a button that copies the code into your editor. `{numbers}` numbers the lines;
+  `{3,5-6}` numbers them and marks lines 3, 5 and 6;
+- an **algorithm** in pseudo-code: `:::algorithm[title]`, one step per line, indented under the
+  loop or test that holds it. Boussole numbers the lines, sets the structure words in bold
+  (*for*, *if*, *while*, *return*…) and puts the comments written after `//` on the right. Maths
+  is written `$…$`.
+
+If the exam prints code in black and white, `code_colors: false` in `subject.yaml` takes the
+colours out of the code. Algorithms keep theirs.
+
+::::example[An algorithm of s1]
+You write:
+
+~~~markdown
+:::algorithm[Publish a change]
+for each changed file do
+    if the file belongs in the commit then
+        git add the file   // it goes into the index
+git commit -m "message"
+:::
+~~~
+
+Boussole shows:
+
+:::algorithm[Publish a change]
+for each changed file do
+    if the file belongs in the commit then
+        git add the file   // it goes into the index
+git commit -m "message"
+:::
+
+A question can then refer to "line 3": the one with `git add`.
+::::
+
+::::mcq{#f5-a7}
+A course describes insertion sort step by step, and a question must be able to point to one of
+its lines. How do you write it in a session?
+
+- [x] In an `:::algorithm`, one step per line, indented under its loop
+- [ ] In a ` ```python ` code block
+  > A code block is for the code of a real language. Pseudo-code goes in `algorithm`, which sets the structure words in bold.
+- [ ] In a paragraph, the steps separated by commas
+  > A paragraph has no numbered lines: the question could point to no step.
+
+:::hint
+Which of the three numbers its lines and reads the words "for", "if", "return"?
+:::
+
+:::solution
+**An `:::algorithm`**: one step per line, the indentation shows what the loop holds, and the
+lines are numbered.
+:::
+::::
+
 :::::checkpoint
 ::::exercise{#f5-c1 type=match}
 Match each need with its directive.
@@ -270,6 +334,7 @@ Show a case solved step by step => example
 Open a page of the book => pdf
 Cite a web page => link
 Draw a small network => graph
+Write an algorithm in pseudo-code => algorithm
 :::
 
 :::hint
@@ -278,7 +343,7 @@ Directive names are plain English words.
 
 :::solution
 `example` for a solved case, `pdf` for a document of `sources/`, `link` for a web page, `graph`
-for a diagram of a few nodes.
+for a diagram of a few nodes, `algorithm` for pseudo-code.
 :::
 ::::
 :::::

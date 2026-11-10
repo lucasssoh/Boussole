@@ -6,7 +6,8 @@ import java.util.Optional;
 
 /**
  * What {@code subject.yaml} says about a subject, with the authors and contributors it credits,
- * how demanding it is and its field of knowledge.
+ * how demanding it is and its field of knowledge. {@code codeColors} is false when the code of the
+ * track is shown in black and white, as its exam prints it ({@code code_colors: false}).
  */
 public record CourseSubject(
         String id,
@@ -18,5 +19,6 @@ public record CourseSubject(
         List<SubjectCredit> contributors,
         Optional<TrackLevel> level,
         Optional<Domain> domain,
+        boolean codeColors,
         SourcePosition position) {
 }

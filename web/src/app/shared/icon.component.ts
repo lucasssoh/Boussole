@@ -11,6 +11,7 @@ export const ICONS = {
   'chevron-down': 'M6 9l6 6 6-6',
   'chevron-up': 'M6 15l6-6 6 6',
   check: 'M5 12l5 5 9-10',
+  copy: 'M9 9h11v12H9zM5 15H4V3h11v1',
   close: 'M6 6l12 12M18 6L6 18',
   play: 'M8 5v14l11-7z',
   menu: 'M4 6h16M4 12h16M4 18h16',

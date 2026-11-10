@@ -47,6 +47,18 @@ class SubjectLoadingTest {
     }
 
     @Test
+    void aTrackMayShowItsCodeInBlackAndWhite() {
+        assertThat(SubjectFixture.in(dir).inspect().course().orElseThrow().subject().codeColors()).isTrue();
+
+        InspectionReport plain = SubjectFixture.in(dir).subjectYaml("format: 1\nid: test\nname: T\nlang: fr\ncode_colors: false\n").inspect();
+        assertThat(plain.course().orElseThrow().subject().codeColors()).isFalse();
+
+        InspectionReport wrong = SubjectFixture.in(dir).subjectYaml("format: 1\nid: test\nname: T\nlang: fr\ncode_colors: no colour\n").inspect();
+        assertThat(wrong.withCode(DiagnosticCode.F001)).extracting(Diagnostic::message)
+                .containsExactly("`code_colors` is true or false, not `no colour`");
+    }
+
+    @Test
     void invalidYamlIsReportedWhereItIs() {
         InspectionReport report = SubjectFixture.in(dir).subjectYaml("format: 1\nid: [test\nname: T\n").inspect();
 

@@ -18,6 +18,7 @@ import java.util.List;
     @JsonSubTypes.Type(value = BlockView.Pdf.class, name = "pdf"),
     @JsonSubTypes.Type(value = BlockView.Link.class, name = "link"),
     @JsonSubTypes.Type(value = BlockView.Graph.class, name = "graph"),
+    @JsonSubTypes.Type(value = BlockView.Algorithm.class, name = "algorithm"),
     @JsonSubTypes.Type(value = BlockView.Mcq.class, name = "mcq"),
     @JsonSubTypes.Type(value = BlockView.Exercise.class, name = "exercise"),
     @JsonSubTypes.Type(value = BlockView.MissingRef.class, name = "missingRef")
@@ -66,6 +67,14 @@ public sealed interface BlockView {
 
     /** {@code label} is null when the edge has none. */
     record GraphEdgeView(String from, String to, boolean directed, String label, boolean emphasized) {
+    }
+
+    /** Pseudo-code, one line per step, numbered by the interface; {@code label} is empty without a title. */
+    record Algorithm(String label, List<AlgorithmLineView> lines) implements BlockView {
+    }
+
+    /** {@code text} may hold {@code $…$} math and end with a comment after {@code //} or {@code ▷}. */
+    record AlgorithmLineView(int depth, String text) {
     }
 
     /**

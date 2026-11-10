@@ -27,6 +27,7 @@ import java.util.stream.Stream;
  * A session as the player shows it, in {@code lang}, one of the {@code languages} of its track. {@code file} is the session file in the subject folder:
  * relative links and images of the Markdown resolve against it. {@code questionMinutes} is the
  * time its questions take at a normal pace, which a timed session fits to its {@code duration}.
+ * {@code codeColors} is false when the track shows its code in black and white.
  */
 record SessionView(
         String subject,
@@ -47,7 +48,8 @@ record SessionView(
         double questionMinutes,
         String previous,
         String next,
-        List<CreditViews.AuthorshipView> writtenBy) {
+        List<CreditViews.AuthorshipView> writtenBy,
+        boolean codeColors) {
 
     static SessionView of(OpenedSession opened) {
         Course course = opened.course();
@@ -80,7 +82,8 @@ record SessionView(
                 questionMinutes(opened),
                 index > 0 ? written.get(index - 1) : null,
                 index >= 0 && index + 1 < written.size() ? written.get(index + 1) : null,
-                header.writtenBy().stream().map(CreditViews.AuthorshipView::of).toList());
+                header.writtenBy().stream().map(CreditViews.AuthorshipView::of).toList(),
+                course.subject().codeColors());
     }
 
     private static double questionMinutes(OpenedSession opened) {
