@@ -13,6 +13,7 @@ minor release may break things and says so.
 - **Word and PowerPoint documents in the viewer:** a `.doc`, `.docx`, `.odt`, `.ppt`, `.pptx` or `.odp` the course cites now opens beside the text as a PDF, at its page, instead of being downloaded. It needs LibreOffice on the computer that runs Boussole; without it, the viewer offers to download the document.
 
 ### Fixed
+- **Algorithms:** a structure word is set in bold only where it opens a line, or closes it for *alors* and *faire*: « pour tout $i$ » in the middle of a step stays plain text.
 - **Prerequisites of added chapters and of exams:** the playbooks now ask agents to give prerequisites to a chapter taken in from documents that arrived later, and to every review and mock exam. Without them, such a chapter showed at the top of the Trail, open at once, and an exam could be opened before its lessons.
 
 ## 0.3.1

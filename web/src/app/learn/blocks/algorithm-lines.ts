@@ -1,17 +1,26 @@
 /**
  * The words that give an algorithm its structure, in French and in English, as `algorithmic` sets
- * them in LaTeX. Longer phrases first, so that « pour chaque » is one keyword, not « pour ».
+ * them in LaTeX. Most open a line (« pour chaque », « si », « retourner »); a few close it
+ * (« alors », « faire »). Only there are they keywords: « pour tout $i$ » inside a step stays text.
+ * Longer phrases first, so that « pour chaque » is one keyword, not « pour ».
  */
-const KEYWORDS = [
-  'pour chaque', 'pour tout', 'pour', 'tant que', 'faire', 'sinon si', 'sinon', 'si', 'alors',
+const OPENING = [
+  'pour chaque', 'pour tout', 'pour', 'tant que', 'sinon si', 'sinon', 'si',
   'fin pour', 'fin tant que', 'fin si', 'fin', 'répéter', "jusqu'à", 'jusqu’à', 'retourner', 'renvoyer',
-  'entrées', 'entrée', 'sorties', 'sortie', 'début',
-  'for each', 'for all', 'for', 'while', 'do', 'else if', 'else', 'if', 'then',
-  'end for', 'end while', 'end if', 'end', 'repeat', 'until', 'return', 'input', 'output', 'begin',
-].sort((a, b) => b.length - a.length);
+  'entrées', 'entrée', 'sorties', 'sortie', 'début', 'faire',
+  'for each', 'for all', 'for', 'while', 'else if', 'else', 'if',
+  'end for', 'end while', 'end if', 'end', 'repeat', 'until', 'return', 'input', 'output', 'begin', 'do',
+];
+const CLOSING = ['alors', 'faire', 'then', 'do'];
 
-const escaped = KEYWORDS.map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/ /g, '\\s+'));
-const KEYWORD = new RegExp(`(?<![\\p{L}\\p{N}_'’])(${escaped.join('|')})(?![\\p{L}\\p{N}_'’])`, 'giu');
+const alternatives = (words: string[]) =>
+  [...words]
+    .sort((a, b) => b.length - a.length)
+    .map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/ /g, '\\s+'))
+    .join('|');
+const NOT_WORD = "[\\p{L}\\p{N}_'’]";
+const LEADING = new RegExp(`^(\\s*)(${alternatives(OPENING)})(?!${NOT_WORD})`, 'iu');
+const TRAILING = new RegExp(`(?<!${NOT_WORD})(${alternatives(CLOSING)})(\\s*)$`, 'iu');
 
 /** Marks a keyword while the line goes through Markdown: characters Markdown neither escapes nor reads. */
 export const KEYWORD_OPEN = '\uE010';
@@ -58,9 +67,22 @@ export function splitComment(text: string): AlgorithmLineParts {
   return { step: text, comment: null };
 }
 
-/** The step with its keywords between {@link KEYWORD_OPEN} and {@link KEYWORD_CLOSE}, math left alone. */
+/**
+ * The step with its keywords between {@link KEYWORD_OPEN} and {@link KEYWORD_CLOSE}: the one that
+ * opens the line and the one that closes it, never one inside math or in the middle of the step.
+ */
 export function markKeywords(step: string): string {
-  return outsideMath(step)
-    .map((piece) => (piece.math ? piece.text : piece.text.replace(KEYWORD, `${KEYWORD_OPEN}$1${KEYWORD_CLOSE}`)))
-    .join('');
+  const pieces = outsideMath(step);
+  if (pieces.length === 0) {
+    return step;
+  }
+  const first = pieces[0];
+  if (!first.math) {
+    first.text = first.text.replace(LEADING, `$1${KEYWORD_OPEN}$2${KEYWORD_CLOSE}`);
+  }
+  const last = pieces[pieces.length - 1];
+  if (!last.math && !(pieces.length === 1 && first.text.endsWith(KEYWORD_CLOSE))) {
+    last.text = last.text.replace(TRAILING, `${KEYWORD_OPEN}$1${KEYWORD_CLOSE}$2`);
+  }
+  return pieces.map((piece) => piece.text).join('');
 }

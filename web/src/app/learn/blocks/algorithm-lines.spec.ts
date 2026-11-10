@@ -4,7 +4,14 @@ describe('markKeywords', () => {
   it('marks whole keywords, French or English, whatever their case', () => {
     expect(markKeywords('Pour chaque tâche faire')).toBe(`${O}Pour chaque${C} tâche ${O}faire${C}`);
     expect(markKeywords('while x > 0 do')).toBe(`${O}while${C} x > 0 ${O}do${C}`);
-    expect(markKeywords("répéter jusqu'à ce que tout soit placé")).toBe(`${O}répéter${C} ${O}jusqu'à${C} ce que tout soit placé`);
+    expect(markKeywords("  jusqu'à ce que tout soit placé")).toBe(`  ${O}jusqu'à${C} ce que tout soit placé`);
+  });
+
+  it('marks a keyword only where it opens or closes the line', () => {
+    expect(markKeywords('pour tout $i \\in F$ faire')).toBe(`${O}pour tout${C} $i \\in F$ ${O}faire${C}`);
+    expect(markKeywords('calculer la pénalité pour tout $i \\in F$')).toBe('calculer la pénalité pour tout $i \\in F$');
+    expect(markKeywords('placer la tâche si possible, sinon la garder')).toBe('placer la tâche si possible, sinon la garder');
+    expect(markKeywords('retourner $C$')).toBe(`${O}retourner${C} $C$`);
   });
 
   it('leaves words that only contain a keyword, and math, alone', () => {

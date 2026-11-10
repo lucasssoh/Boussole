@@ -371,7 +371,8 @@ retourner l'ordonnancement
   chaque, pour tout, tant que, faire, si, alors, sinon, sinon si, fin, fin pour, fin si, fin tant
   que, répéter, jusqu'à, retourner, renvoyer, entrée, sortie, début*; *for, for each, for all,
   while, do, if, then, else, else if, end, end for, end if, end while, repeat, until, return,
-  input, output, begin*.
+  input, output, begin*. Only where they open the line (after its indentation), and *alors, faire,
+  then, do* where they close it: « pour tout $i$ » in the middle of a step stays plain text.
 
 Where each directive may appear:
 
