@@ -11,6 +11,7 @@ import { QuestionCorrectionComponent } from './question-correction.component';
 import { QuestionFooterComponent } from './question-footer.component';
 import { QuestionHeaderComponent } from './question-header.component';
 import { QuestionState } from './question-state';
+import { holdChoice } from '../arrow-keys';
 
 /** A multiple-choice question: radio buttons, or check boxes when several answers are right. */
 @Component({
@@ -28,7 +29,8 @@ import { QuestionState } from './question-state';
           @if (question.multiple) {
             <p class="note">{{ 'question.several' | transloco }}</p>
           }
-          <ul class="choices">
+          <!-- Each choice stands alone, so that Tab reaches each one; the component keeps a single pick. -->
+          <ul class="choices" [attr.role]="question.multiple ? 'group' : 'radiogroup'" (keydown)="holdChoice($event)">
             @for (index of question.order; track index) {
               @let choice = question.choices[index];
               @let expected = corrected ? expectedChoice(index) : undefined;
@@ -37,7 +39,6 @@ import { QuestionState } from './question-state';
                 <label>
                   <input
                     [type]="question.multiple ? 'checkbox' : 'radio'"
-                    [name]="question.id"
                     [checked]="isPicked"
                     [disabled]="state().answered()"
                     (change)="toggle(index)"
@@ -75,6 +76,7 @@ export class McqBlockComponent {
         this.learn.session()?.lang ?? null, question.hook, question.reused);
     return this.run?.question(question.id, create) ?? create();
   });
+  protected readonly holdChoice = holdChoice;
   protected readonly picked = computed(() => this.state().picked());
   /** Several answers may be right: before a final answer, the learner checks they ticked them all. */
   protected readonly confirmation = computed(() =>

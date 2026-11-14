@@ -25,6 +25,7 @@ import { MAX_STARS, StarTone, averageStars, blockStarTone, starSummary } from '.
 import { SidePanelComponent } from './side-panel.component';
 import { MarkdownRenderer } from '../shared/markdown-renderer';
 import { sessionDocuments } from './session-documents';
+import { typingIn } from './arrow-keys';
 
 /**
  * The session player: one screen at a time (the goal, then each explanation, example and
@@ -487,8 +488,7 @@ export class SessionPageComponent {
 
   /** The right and left arrow keys change screen, unless the learner is typing. */
   protected onKey(event: KeyboardEvent): void {
-    const target = event.target as HTMLElement;
-    if (event.altKey || event.ctrlKey || event.metaKey || target.closest('input, textarea, select, [contenteditable]')) {
+    if (event.altKey || event.ctrlKey || event.metaKey || typingIn(event.target)) {
       return;
     }
     if (event.key === 'ArrowRight' && this.index() < this.gate() && !(this.timed() && !this.run.started())) {
