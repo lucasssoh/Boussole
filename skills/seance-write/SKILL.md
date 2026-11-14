@@ -127,6 +127,31 @@ session should be split, and propose how.
   `{numbers}` when the text refers to its lines, and `{3,5-6}` to mark the lines that matter. A
   track whose exam prints code in black and white has `code_colors: false` in `subject.yaml`
   (ask the learner when the exam has code); its algorithms stay in colour.
+- **Maths that has a shape is set out, not run into a sentence**: in the explanation, the
+  examples, the statements, the hints and the solutions. A linear program, a system of
+  equations, a matrix, a dictionary or a tableau, a computation of more than one step: each goes
+  in a `$$…$$` block, one objective, constraint, equation or step per line, after a sentence
+  that says what it is. Inline `$…$` is for a symbol or a short formula the sentence reads
+  aloud ($x_1 \ge 0$, $v(P) = 4$). Points or values the learner compares go in a list or a
+  table, not in a row of commas. When in doubt, go to the line: the learner should never have
+  to pick a formula out of the words around it. A linear program, in the layout and notation of
+  the teacher (`s.c.` or `s.t.`, `\max` or `\text{Max}`):
+
+  ```
+  On maximise le total produit :
+
+  $$
+  \begin{cases}
+  \max & x_1 + x_2 \\
+  \text{s.c.} & x_1 + x_2 \le 4 \\
+  & x_1 \le 3 \\
+  & x_2 \le 3 \\
+  & x_1, x_2 \ge 0
+  \end{cases}
+  $$
+  ```
+
+  A computation in steps is an `aligned` block, one `=` per line (`&=` and `\\`).
 - **Answers are never in the text**: the solution of an exercise is only in its `:::solution`.
   An `:::example` is the only place where a worked answer is visible.
 - **Say who wrote it**: the front matter gets `written_by` with your **exact model ID** (the one

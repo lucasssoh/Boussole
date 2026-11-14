@@ -58,6 +58,11 @@ by itself.
 - **Exactly one answer**: a learner who knows the notion but has never seen this example finds
   one answer only. If two readings are possible, the statement is not finished.
 - Same notation as the example just before it.
+- **Set the data out, one item per line**, never run into the sentence: a linear program, a
+  system, a matrix, a list of points or values, a chain of computations goes in its own block
+  (see `seance-write`, *Maths that has a shape*). The statement then reads in three parts: the
+  context in a sentence, the data set out, the questions as a list with one gap each. A gap
+  stays outside `$…$` and `$$…$$`.
 
 Before and after:
 
