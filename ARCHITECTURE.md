@@ -205,6 +205,8 @@ picocli. One class per command.
 executable `boussole.jar`. `bin/package` makes of it a program of its own for each system
 (`jlink` for a smaller Java, `jpackage` for the program), which the release workflow publishes;
 a packaged Boussole starts its server by running its own program again (`Launcher`).
+The server runs with a bounded heap, the serial collector and two compiler threads
+(`Launcher.SERVER_JAVA_OPTIONS`, repeated in `bin/package`): it stays up between sessions.
 
 ### `web/`
 

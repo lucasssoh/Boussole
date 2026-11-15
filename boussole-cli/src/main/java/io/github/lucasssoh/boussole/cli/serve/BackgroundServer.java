@@ -39,7 +39,7 @@ final class BackgroundServer {
             command.addAll(List.of(launcher.app().get().toString(), "serve"));
         } else {
             Files.copy(launcher.jar().get(), paths.serverJar(), StandardCopyOption.REPLACE_EXISTING);
-            command.addAll(Launcher.commandLine(paths.serverJar(), "serve"));
+            command.addAll(Launcher.commandLine(Launcher.SERVER_JAVA_OPTIONS, paths.serverJar(), "serve"));
         }
         ProcessBuilder builder = new ProcessBuilder(command);
         // The program of a packaged Boussole marks its own process; a second one so marked would not start Boussole.

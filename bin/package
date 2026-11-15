@@ -58,7 +58,7 @@ cp "$jar" "$out/input/"
   --input "$out/input" \
   --main-jar boussole.jar \
   --runtime-image "$out/runtime" \
-  --java-options "--enable-native-access=ALL-UNNAMED" \
+  --java-options "--enable-native-access=ALL-UNNAMED -Xmx256m -XX:+UseSerialGC -XX:CICompilerCount=2 -XX:ReservedCodeCacheSize=64m" \
   --dest "$out/image"
 
 # Preserve the actual Boussole version in the user-visible macOS app metadata.

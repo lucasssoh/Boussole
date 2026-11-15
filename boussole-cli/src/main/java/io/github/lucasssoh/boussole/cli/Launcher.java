@@ -14,6 +14,16 @@ import java.util.Optional;
  */
 public record Launcher(Optional<Path> app, Optional<Path> jar) {
 
+    /**
+     * The Java options of the server, which stays up for hours between sessions. Left alone, Java
+     * lets its heap grow to a quarter of the memory and starts a compiler thread per few cores:
+     * about 650 MB for a server that needs under 300. A bounded heap, the serial collector (one
+     * thread, gives memory back) and two compiler threads keep it there, at the same speed.
+     * {@code bin/package} gives a packaged Boussole the same options.
+     */
+    public static final List<String> SERVER_JAVA_OPTIONS =
+            List.of("-Xmx256m", "-XX:+UseSerialGC", "-XX:CICompilerCount=2", "-XX:ReservedCodeCacheSize=64m");
+
     public static Launcher current() {
         Optional<Path> app = Optional.ofNullable(System.getProperty("jpackage.app-path")).map(path -> Path.of(path).toAbsolutePath());
         String classPath = System.getProperty("java.class.path", "");
@@ -30,11 +40,13 @@ public record Launcher(Optional<Path> app, Optional<Path> jar) {
                 .orElse("boussole validate .");
     }
 
-    /** The command line that runs a subcommand of the given jar in a new process, with the same Java. */
-    public static List<String> commandLine(Path jar, String... arguments) {
+    /** The command line that runs a subcommand of the given jar in a new process, with the same Java and the given Java options. */
+    public static List<String> commandLine(List<String> javaOptions, Path jar, String... arguments) {
         Path home = Path.of(System.getProperty("java.home", ""), "bin", isWindows() ? "java.exe" : "java");
         String java = Files.isExecutable(home) ? home.toString() : ProcessHandle.current().info().command().orElse("java");
-        List<String> command = new java.util.ArrayList<>(List.of(java, "-jar", jar.toString()));
+        List<String> command = new java.util.ArrayList<>(List.of(java));
+        command.addAll(javaOptions);
+        command.addAll(List.of("-jar", jar.toString()));
         command.addAll(List.of(arguments));
         return List.copyOf(command);
     }
