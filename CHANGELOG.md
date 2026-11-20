@@ -13,6 +13,7 @@ minor release may break things and says so.
 - **Word and PowerPoint documents in the viewer:** a `.doc`, `.docx`, `.odt`, `.ppt`, `.pptx` or `.odp` the course cites now opens beside the text as a PDF, at its page, instead of being downloaded. It needs LibreOffice on the computer that runs Boussole; without it, the viewer offers to download the document.
 
 ### Fixed
+- **Tables in a frame:** a table inside an example, a reminder or a callout stays inside its frame, its text wrapped, instead of spilling over both sides.
 - **Lighter server:** the server that `boussole open` starts in the background now uses less than half the memory it did, about 290 MB instead of 650, at the same speed.
 - **The choice you pick is the one sent:** on a multiple-choice question, an arrow key pressed after a click (to scroll, or to go to the next step) moved your pick to the choice next to it, and the answer checked was not the one you had chosen. The arrow keys now leave your pick where it is: left and right change step, as anywhere else, and Tab then Space picks a choice from the keyboard.
 - **Maths set out on their own lines:** the playbooks now ask agents to write a linear program, a system, a matrix or a computation in steps on lines of its own, one constraint or step per line, instead of running it into a sentence. A question gives its context, then its data set out, then its questions as a list, one box each.

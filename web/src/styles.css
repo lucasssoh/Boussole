@@ -3135,6 +3135,20 @@ a.session-card:active {
   font-size: 1.15em;
 }
 
+/* In a frame, a table stays inside it: its text wraps, and only a table still too wide scrolls. */
+.frame .table-frame {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin: 1rem 0;
+  justify-content: flex-start;
+}
+
+.frame .prose table {
+  flex: 0 1 auto;
+  width: auto;
+}
+
 .frame.example {
   border-color: #74c0fc;
   background: var(--example-bg);
