@@ -24,4 +24,13 @@ describe('drawGraph', () => {
     expect(there.path).toContain(' Q ');
     expect(Math.sign(there.labelY - back.labelY)).not.toBe(0);
   });
+
+  it('spaces the columns by the widest node, so that long names never touch', () => {
+    const long = { id: 'a', text: 'Calendrier institutionnel', x: 0, y: 0, emphasized: false };
+    const graph: GraphBlockView = { type: 'graph', label: '', nodes: [long, node('b', 1, 0)], edges: [], width: 1, height: 0 };
+
+    const [a, b] = drawGraph(graph).nodes;
+
+    expect(b.cx - b.width / 2 - (a.cx + a.width / 2)).toBeGreaterThanOrEqual(40);
+  });
 });

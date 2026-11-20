@@ -51,6 +51,19 @@ class GraphPlacementTest {
     }
 
     @Test
+    void the_hub_of_a_star_is_drawn_in_the_middle_of_the_others() {
+        Map<String, Point> places = GraphPlacement.place(graph(GraphLayout.CIRCLE,
+                List.of(node("a"), node("hub"), node("c"), node("d"), node("e")),
+                List.of(arrow("a", "hub"), arrow("hub", "c"), arrow("d", "hub"), arrow("hub", "e"))));
+
+        assertThat(places).containsEntry("hub", new Point(1, 1))
+                .containsEntry("a", new Point(1, 0))
+                .containsEntry("c", new Point(2, 1))
+                .containsEntry("d", new Point(1, 2))
+                .containsEntry("e", new Point(0, 1));
+    }
+
+    @Test
     void the_authors_places_win_over_the_layout() {
         Map<String, Point> places = GraphPlacement.place(graph(GraphLayout.CIRCLE, List.of(
                 new GraphNode("u", Optional.empty(), Optional.of(new GraphPoint(3, 2)), false),

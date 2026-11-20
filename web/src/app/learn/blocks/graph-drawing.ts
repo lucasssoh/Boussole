@@ -2,6 +2,8 @@ import { GraphBlockView, GraphEdgeView, GraphNodeView } from '../../core/api';
 
 /** Pixels per grid unit, between two neighbouring nodes. */
 const UNIT = 120;
+/** At least this much room between two nodes side by side, for the edge and its label. */
+const GAP = 64;
 const NODE_HEIGHT = 40;
 const PADDING = 28;
 /** Roughly the width of a character of a node's text, in pixels. */
@@ -38,7 +40,9 @@ export function drawGraph(graph: GraphBlockView): GraphDrawing {
   const widest = Math.max(NODE_HEIGHT, ...graph.nodes.map((node) => nodeWidth(node)));
   const left = PADDING + widest / 2;
   const top = PADDING + NODE_HEIGHT / 2;
-  const nodes = graph.nodes.map((node) => ({ node, cx: left + node.x * UNIT, cy: top + node.y * UNIT, width: nodeWidth(node) }));
+  // A column is as wide as the widest node and a gap, so that long names never touch.
+  const column = Math.max(UNIT, widest + GAP);
+  const nodes = graph.nodes.map((node) => ({ node, cx: left + node.x * column, cy: top + node.y * UNIT, width: nodeWidth(node) }));
   const byId = new Map(nodes.map((drawn) => [drawn.node.id, drawn]));
   const pairs = new Set(graph.edges.map((edge) => `${edge.from}\u0000${edge.to}`));
   const edges = graph.edges.map((edge) => {
@@ -48,7 +52,7 @@ export function drawGraph(graph: GraphBlockView): GraphDrawing {
     return drawEdge(edge, from, to, bend);
   });
   return {
-    width: graph.width * UNIT + 2 * left,
+    width: graph.width * column + 2 * left,
     height: graph.height * UNIT + 2 * top,
     nodes,
     edges,

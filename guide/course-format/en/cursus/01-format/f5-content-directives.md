@@ -216,7 +216,7 @@ seconds, that is 3 minutes 30.
 | `a "My node"` | node `a` shown with this text |
 | `… !` | at the end of a line: this element stands out |
 
-The placement is chosen with `{layout=circle}` (default), `row` or `layers`. Above 12 nodes, the
+The placement is chosen with `{layout=circle}` (default), `row` or `layers`; in a circle, a node linked to all the others goes in the middle. Above 12 nodes, the
 validator warns (`P011`).
 
 Maths is written `$…$` in a sentence and `$$…$$` on lines of their own: Git can name $2^{160}$

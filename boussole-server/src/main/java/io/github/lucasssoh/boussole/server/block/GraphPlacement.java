@@ -29,7 +29,7 @@ final class GraphPlacement {
                 ? authors(graph)
                 : switch (graph.layout()) {
                     case ROW -> row(graph.nodes());
-                    case CIRCLE -> graph.nodes().size() <= 2 ? row(graph.nodes()) : circle(graph.nodes());
+                    case CIRCLE -> graph.nodes().size() <= 2 ? row(graph.nodes()) : circleOrStar(graph);
                     case LAYERS -> layers(graph);
                 };
         return fromTopLeft(places);
@@ -47,6 +47,36 @@ final class GraphPlacement {
             places.put(nodes.get(index).id(), new Point(index, 0));
         }
         return places;
+    }
+
+    /**
+     * A node linked to every other one, in a graph of four nodes or more, is the hub of a star: it
+     * goes in the middle and the others around it, so that no edge crosses another. Otherwise all
+     * the nodes go on the circle.
+     */
+    private static Map<String, Point> circleOrStar(GraphBlock graph) {
+        List<GraphNode> nodes = graph.nodes();
+        if (nodes.size() < 4) {
+            return circle(nodes);
+        }
+        for (GraphNode hub : nodes) {
+            long linked = nodes.stream()
+                    .filter(other -> !other.id().equals(hub.id()))
+                    .filter(other -> graph.edges().stream().anyMatch(edge -> links(edge, hub.id(), other.id())))
+                    .count();
+            if (linked == nodes.size() - 1) {
+                List<GraphNode> around = nodes.stream().filter(other -> !other.id().equals(hub.id())).toList();
+                Map<String, Point> places = new LinkedHashMap<>();
+                places.put(hub.id(), new Point(0, 0));
+                places.putAll(circle(around));
+                return places;
+            }
+        }
+        return circle(nodes);
+    }
+
+    private static boolean links(GraphEdge edge, String one, String other) {
+        return edge.from().equals(one) && edge.to().equals(other) || edge.from().equals(other) && edge.to().equals(one);
     }
 
     /** On a circle from the top, clockwise, wide enough for one unit between neighbours. */

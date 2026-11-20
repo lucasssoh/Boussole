@@ -118,7 +118,10 @@ session should be split, and propose how.
 - **Draw when a picture helps**: a network, a path, a flow, a tree or a state machine is a
   `:::graph` (`docs/FORMAT.md` §5.5): nodes and edges as lines of text, `!` on what matters,
   checked by `boussole validate`. A flowchart or a sequence is a `mermaid` block. Keep each to a
-  few nodes; never invent a figure the sources do not support.
+  few nodes; never invent a figure the sources do not support. Draw sparingly: a figure earns its
+  place when it shows what the text cannot (a path, a frontier, a structure); one that repeats
+  the table or the sentence just above is cut. Short node labels (one or two words) and short
+  edge labels, or none: the picture is read at a glance.
 - **An algorithm is an `:::algorithm`**, never prose or a bare code block: one step per line,
   indented under the loop or test that holds it, `$…$` for the maths, `//` for a comment
   (`docs/FORMAT.md` §5.5). Its lines are numbered: the explanation and the questions point to

@@ -216,7 +216,7 @@ secondes, soit 3 minutes 30.
 | `a "Mon nœud"` | le nœud `a` affiché avec ce texte |
 | `… !` | à la fin d'une ligne : cet élément ressort |
 
-Le placement se choisit avec `{layout=circle}` (par défaut), `row` ou `layers`. Au-delà de 12
+Le placement se choisit avec `{layout=circle}` (par défaut), `row` ou `layers` ; en cercle, un nœud relié à tous les autres se place au milieu d'eux. Au-delà de 12
 nœuds, le validateur prévient (`P011`).
 
 Les maths s'écrivent `$…$` dans une phrase et `$$…$$` sur leurs propres lignes : Git peut

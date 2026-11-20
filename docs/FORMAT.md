@@ -346,7 +346,8 @@ One line per node or edge, blank lines ignored:
 
 - A node ID is letters, digits, `_` or `'` (`s`, `v1`, `R2`, `x'`). A node used by an edge needs
   no line of its own; a node line may also stand alone (an isolated node).
-- Without `@`, Boussole places the nodes: `circle` in the order they first appear, from the top;
+- Without `@`, Boussole places the nodes: `circle` in the order they first appear, from the top
+  (a node linked to all the others, in a graph of four nodes or more, goes in the middle of them);
   `row` from left to right; `layers` in columns by distance from the first node, following the
   arrows. With `@`, every node gives its place, and no two share one.
 - Labels are plain text: no `$…$`; write `x₁`, `≤`, `∞` with Unicode.
