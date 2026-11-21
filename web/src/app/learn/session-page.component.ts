@@ -26,6 +26,7 @@ import { SidePanelComponent } from './side-panel.component';
 import { MarkdownRenderer } from '../shared/markdown-renderer';
 import { sessionDocuments } from './session-documents';
 import { typingIn } from './arrow-keys';
+import { SelectionPillsDirective } from '../shared/selection-pills.directive';
 
 /**
  * The session player: one screen at a time (the goal, then each explanation, example and
@@ -35,7 +36,7 @@ import { typingIn } from './arrow-keys';
  */
 @Component({
   selector: 'app-session-page',
-  imports: [LoadingComponent, IconComponent, RichTextComponent, RouterLink, TranslocoPipe, BlockListComponent, SessionPathComponent, SidePanelComponent, StarsComponent, TrackLanguagesComponent],
+  imports: [LoadingComponent, IconComponent, RichTextComponent, RouterLink, TranslocoPipe, BlockListComponent, SessionPathComponent, SidePanelComponent, StarsComponent, TrackLanguagesComponent, SelectionPillsDirective],
   providers: [SessionRun],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -84,7 +85,7 @@ import { typingIn } from './arrow-keys';
         </div>
 
         @for (shown of [screen()]; track index()) {
-        <article [class]="'screen screen-' + shown.kind">
+        <article appSelectionPills [class]="'screen screen-' + shown.kind">
           @switch (shown.kind) {
             @case ('start') {
               <p class="eyebrow">

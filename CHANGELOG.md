@@ -11,6 +11,7 @@ minor release may break things and says so.
 - **Algorithms:** pseudo-code has a block of its own (`:::algorithm`), with numbered lines, a guide for each level of indentation, the words that give the structure in bold and in colour (pour, si, tant que, retourner…), maths, and comments set apart on the right. A question may point to « la ligne 3 ».
 - **Marking schemes for free exercises:** a free exercise may come with a marking scheme, the points an exam corrector would check, each with its weight. Once you have read the solution, tick each point your answer has: the stars follow from the weight ticked. A free exercise may also be answered on paper or in your own editor, as at the exam: it then shows no text area, only its time and the way to the solution.
 - **Word and PowerPoint documents in the viewer:** a `.doc`, `.docx`, `.odt`, `.ppt`, `.pptx` or `.odp` the course cites now opens beside the text as a PDF, at its page, instead of being downloaded. It needs LibreOffice on the computer that runs Boussole; without it, the viewer offers to download the document.
+- **Selected text in yellow:** the text you select to follow your reading, in a lesson or a document, shows as yellow pills, one per line, instead of the blue rectangles of the system. In code, drawings and answer fields, it is plain yellow.
 
 ### Fixed
 - **Tables in a frame:** a table inside an example, a reminder or a callout stays inside its frame, its text wrapped, instead of spilling over both sides.

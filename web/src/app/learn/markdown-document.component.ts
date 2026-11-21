@@ -4,11 +4,12 @@ import { BoussoleApi } from '../core/boussole-api';
 import { LoadingComponent } from '../shared/loading.component';
 import { LearnFacade } from './learn.facade';
 import { ProseBlockComponent } from './blocks/prose-block.component';
+import { SelectionPillsDirective } from '../shared/selection-pills.directive';
 
 /** A Markdown document cited by a session, rendered beside the lesson. */
 @Component({
   selector: 'app-markdown-document',
-  imports: [LoadingComponent, ProseBlockComponent, TranslocoPipe],
+  imports: [LoadingComponent, ProseBlockComponent, TranslocoPipe, SelectionPillsDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (loading()) {
@@ -16,7 +17,7 @@ import { ProseBlockComponent } from './blocks/prose-block.component';
     } @else if (error()) {
       <p class="markdown-document-error" role="alert">{{ 'documents.loadFailed' | transloco }}</p>
     } @else {
-      <div class="markdown-document">
+      <div class="markdown-document" appSelectionPills>
         <app-prose-block [markdown]="markdown()" [base]="base()" />
       </div>
     }

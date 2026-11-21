@@ -66,6 +66,7 @@
   --code-number: #a34e00;
   --code-meta: #5c5f99;
   --code-mark: #fff3bf;
+  --selection: #fff0a8;
   --code-mark-line: #f2b45a;
   --code-algorithm-line: #d0bfff;
 }
@@ -97,6 +98,44 @@ body {
 a {
   color: var(--subject-ink);
   font-weight: 700;
+}
+
+/*
+ * Selected text is yellow, like a highlighter, not the system blue. In a lesson and a document
+ * the selection is drawn as pills, one per line (SelectionPillsDirective): the browser's own is
+ * transparent there, but kept for code, drawings and fields, which the pills leave alone.
+ */
+::selection {
+  background: var(--selection);
+}
+
+.selection-pills {
+  position: relative;
+}
+
+.selection-pills ::selection {
+  background: transparent;
+}
+
+.selection-pills :is(pre, svg) ::selection,
+.selection-pills :is(pre, svg, input, textarea)::selection {
+  background: var(--selection);
+}
+
+.selection-pills-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 1px;
+  height: 1px;
+  overflow: visible;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.selection-pills-layer rect {
+  fill: var(--selection);
 }
 
 h1,

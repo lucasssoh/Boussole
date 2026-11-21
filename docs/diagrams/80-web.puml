@@ -117,6 +117,8 @@ package "shared" {
   class RichTextComponent
   class ChoiceMenuComponent <<a drop-down list drawn by the interface, not by the browser>>
   class "drawMermaidDiagrams()" as Mermaid
+  class SelectionPillsDirective <<the text selected in a lesson or a document, drawn as yellow pills>>
+  class "selection-pills.ts" as SelectionPills <<the lines of a selection, cut to what is shown, as pills>>
   class IconComponent <<SVG icons, no emoji>> {
     +iconSvg(name) : string
   }
@@ -138,6 +140,9 @@ SessionPageComponent *-- SessionRun : provides
 SessionPageComponent ..> SessionPlan : screens
 SessionPageComponent ..> ServerSettingsService : free navigation?
 SessionPageComponent --> SessionPathComponent
+SessionPageComponent ..> SelectionPillsDirective : the screen
+MarkdownDocumentComponent ..> SelectionPillsDirective
+SelectionPillsDirective ..> SelectionPills
 PairPageComponent --> BoussoleApi : /api/pairing
 SessionPageComponent --> StarsComponent : wrap-up
 SessionPageComponent ..> StarRules : total, each part
