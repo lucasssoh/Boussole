@@ -4,7 +4,7 @@ Versions follow `MAJOR.MINOR.PATCH`, and each release is a git tag (`v1.0.0`). M
 also get a code name, minor ones their date; patch releases have neither. Until `1.0.0`, a
 minor release may break things and says so.
 
-## Unreleased
+## 0.4.0 (November 21 2026)
 
 ### Added
 - **Coloured code:** a code block with its language (Java, Python, C, SQL, Bash, OCaml…) now shows in colour, with a button that copies the code into your editor. It may number its lines, and mark the lines the text talks about. A track whose exam prints code in black and white may keep its code in black and white (`code_colors: false` in `subject.yaml`).
