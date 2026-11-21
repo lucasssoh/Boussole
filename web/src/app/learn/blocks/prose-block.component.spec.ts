@@ -36,4 +36,28 @@ describe('ProseBlockComponent', () => {
 
     fixture.destroy();
   });
+
+  it('opens a note cited in a sentence as a page of text, a PDF in the frame', () => {
+    const panel = signal<unknown>(null);
+    TestBed.configureTestingModule({
+      imports: [ProseBlockComponent],
+      providers: [
+        { provide: LearnFacade, useValue: { sessionBase: () => '', panel, sourcePath: (file: string) => file } },
+        { provide: WebReferences, useValue: { preview: () => Promise.resolve(undefined) } },
+        { provide: TranslocoService, useValue: { translate: (key: string) => key } },
+      ],
+    });
+
+    const fixture = TestBed.createComponent(ProseBlockComponent);
+    fixture.componentRef.setInput('markdown', 'Voir :pdf[les notes]{src=Couche/notes.md} et :pdf[le cours]{src=cours.pdf page=3}.');
+    fixture.detectChanges();
+    const links = fixture.nativeElement.querySelectorAll('.pdf-link') as NodeListOf<HTMLElement>;
+
+    links[0].click();
+    expect(panel()).toEqual({ kind: 'markdown', label: 'les notes', path: 'Couche/notes.md' });
+    links[1].click();
+    expect(panel()).toEqual({ kind: 'pdf', label: 'le cours', path: 'cours.pdf', page: 3 });
+
+    fixture.destroy();
+  });
 });

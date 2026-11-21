@@ -5,6 +5,7 @@ import { iconSvg } from '../../shared/icon.component';
 import { MarkdownRenderer } from '../../shared/markdown-renderer';
 import { drawMermaidDiagrams } from '../../shared/mermaid-diagrams';
 import { LearnFacade } from '../learn.facade';
+import { sourcePanel } from '../session-documents';
 import { WebReferences } from '../web-references';
 import { FillGaps } from '../question/fill-gaps';
 
@@ -73,12 +74,11 @@ export class ProseBlockComponent {
     const link = (event.target as HTMLElement).closest<HTMLElement>('.pdf-link');
     if (link) {
       const page = Number(link.dataset['pdfPage']);
-      this.learn.panel.set({
-        kind: 'pdf',
-        label: link.querySelector('.pdf-label')?.textContent?.trim() ?? '',
-        path: this.learn.sourcePath(link.dataset['pdfSrc'] ?? ''),
-        page: Number.isInteger(page) && page > 0 ? page : null,
-      });
+      this.learn.panel.set(sourcePanel(
+        link.querySelector('.pdf-label')?.textContent?.trim() ?? '',
+        this.learn.sourcePath(link.dataset['pdfSrc'] ?? ''),
+        Number.isInteger(page) && page > 0 ? page : null,
+      ));
     }
   }
 

@@ -4,6 +4,11 @@ Versions follow `MAJOR.MINOR.PATCH`, and each release is a git tag (`v1.0.0`). M
 also get a code name, minor ones their date; patch releases have neither. Until `1.0.0`, a
 minor release may break things and says so.
 
+## Unreleased
+
+### Fixed
+- **Notes cited in a sentence:** a Markdown note the lesson cites in the middle of a sentence now opens beside the text as a page, as it does from the list of documents, instead of asking your browser to download it as a text file.
+
 ## 0.4.0 (November 21 2026)
 
 ### Added

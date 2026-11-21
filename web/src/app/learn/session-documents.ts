@@ -131,10 +131,16 @@ function documentTitle(panel: Opened): string {
   }
 }
 
+/**
+ * How a document of the sources opens beside the text: a Markdown note as a page of text, any other
+ * file in the frame. Opened in the frame, a note would come as a bare file the browser downloads.
+ */
+export function sourcePanel(label: string, path: string, page: number | null): Opened {
+  return /\.md$/i.test(path) ? { kind: 'markdown', label, path } : { kind: 'pdf', label, path, page };
+}
+
 function markdownPanel(panel: Opened): Opened {
-  return panel.kind === 'pdf' && /\.md$/i.test(panel.path)
-    ? { kind: 'markdown', label: panel.label, path: panel.path }
-    : panel;
+  return panel.kind === 'pdf' ? sourcePanel(panel.label, panel.path, panel.page) : panel;
 }
 
 function walk(blocks: BlockView[], reading: DocumentReading, cite: (panel: Opened) => void): void {

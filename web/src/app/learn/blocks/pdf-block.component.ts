@@ -3,6 +3,7 @@ import { IconComponent } from '../../shared/icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { PdfBlockView } from '../../core/api';
 import { LearnFacade } from '../learn.facade';
+import { panelKey, sourcePanel } from '../session-documents';
 
 /** A page of the learner's documents, opened beside the text. */
 @Component({
@@ -28,13 +29,14 @@ export class PdfBlockComponent {
   readonly pdf = input.required<PdfBlockView>();
   private readonly learn = inject(LearnFacade);
 
+  private readonly opened = computed(() => sourcePanel(this.pdf().label, this.pdf().path, this.pdf().page));
+
   protected readonly active = computed(() => {
     const panel = this.learn.panel();
-    return panel?.kind === 'pdf' && panel.path === this.pdf().path && panel.page === this.pdf().page;
+    return !!panel && panelKey(panel) === panelKey(this.opened());
   });
 
   protected open(): void {
-    const { label, path, page } = this.pdf();
-    this.learn.panel.set({ kind: 'pdf', label, path, page });
+    this.learn.panel.set(this.opened());
   }
 }
