@@ -7,6 +7,7 @@ minor release may break things and says so.
 ## Unreleased
 
 ### Fixed
+- **Solutions rewritten since you answered:** a question you answered in an earlier sitting shows its solution as the track writes it now, instead of the one it had when you answered.
 - **Notes cited in a sentence:** a Markdown note the lesson cites in the middle of a sentence now opens beside the text as a page, as it does from the list of documents, instead of asking your browser to download it as a text file.
 - **Solutions you can follow:** the playbooks now ask agents to open the solution of a calculation with its formula, to say where each value comes from, to write every product out one step per line, to state the rule behind a verdict (optimal, feasible…) and to name the likely mistake. A solution such as `2/3 + 10/3 = 4` no longer hides the step you missed.
 

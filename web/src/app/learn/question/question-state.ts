@@ -142,14 +142,21 @@ export class QuestionState {
 
   /**
    * Shows again the answer given in an earlier sitting: as it was, when this browser kept it,
-   * else its verdict with the solution.
+   * else its verdict with the solution. The solution is asked again either way: an agent may have
+   * rewritten it since, and the one kept is shown only when the server cannot be reached.
    */
   private restore(verdict: Verdict): void {
     const kept = keptAnswer(storedText(this.keptKey()));
     if (kept && kept.result.verdict === verdict) {
       this.fillFrom(kept.request);
       this.result.set(kept.result);
-      this.solution.set(kept.result.solution);
+      void this.call(async () => {
+        try {
+          this.solution.set(await this.api.solution(this.subject, this.id, this.language));
+        } catch {
+          this.solution.set(kept.result.solution);
+        }
+      });
       return;
     }
     this.earlierVerdict.set(verdict);
