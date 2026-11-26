@@ -51,7 +51,8 @@ by `learner.yaml` as the table after it says:
       given, the last ones to complete) before the learner does it alone.
    4. **Right away**, one or two exercises or MCQs of the **same kind** as the example
       (« À toi »). Every question, quick checks included, has hints, feedback on each wrong
-      choice and a solution that explains why the right answer is right (`exercise-author`).
+      choice and a solution that explains why the right answer is right; for a calculation,
+      the formula first, then every value put in, one step per line (`exercise-author`).
       Among a notion's questions, one **changes the setting** (another context, the question
       asked the other way round), not only the values, so that the learner recognises the
       method rather than the example. For a notion about an idea rather than a calculation, an

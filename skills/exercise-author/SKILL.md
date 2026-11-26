@@ -173,6 +173,48 @@ three sentences), step by step for a calculation. End with the result in bold. P
 of the documents (or the web source) that gives the method, `:pdf[…]{src=… page=…}`, so that the
 learner can check it there.
 
+A learner who got a calculation wrong reads its solution to find **where** they went wrong.
+They can only do that if they can redo it line by line:
+
+- **The formula first**, in its general form and in the notation of the course, in a sentence
+  that names it (« Formule : $\bar c^{\,j} = c^j - c^I(A^I)^{-1}A^j$ »). The hints may have
+  shown it; the solution shows it again, since the learner may have answered without opening
+  them.
+- **Every number traceable**: say where each value comes from (« la 1re colonne de
+  $(A^I)^{-1}$, puisque $A^3 = (1, 0, 0)$ »), then write the formula with the values put in,
+  every product written out (`1/3 · 2 + 0 · 2 + 2/3 · 5`), before any simplified sum. A line
+  such as `2/3 + 10/3 = 4` hides the step the learner missed.
+- **One step per line**, set out in an `aligned` block, the result of each line in bold. When
+  the method has stages (compute a column, take a product, subtract), list them first, then
+  compute.
+- **A decision states its criterion**: when the answer is a verdict (optimal, feasible,
+  bounded, adjacent…), give the rule (« en maximisation, tous les coûts réduits hors-base
+  $\le 0$ »), then apply it to the values found.
+- **Name the expected mistake** when one is likely, in one sentence: what a learner who typed
+  the wrong value probably confused (« un écart a un coût $c^j = 0$, mais pas un coût réduit
+  nul »).
+- With several gaps, the solution follows their order, one part per question, each titled
+  (« **1. La solution de base.** »).
+
+Before and after, for the gap `c̄³` of a `fill`:
+
+```markdown
+$\bar c^{\,3} = -(1 \cdot \tfrac13 + 0 \cdot 1 - 1 \cdot (-\tfrac13)) = \mathbf{-2/3}$. Tous $\le 0$ : **optimale**.
+```
+
+```markdown
+**2. Les coûts réduits.** Formule : $\bar c^{\,j} = c^j - c^I(A^I)^{-1}A^j$. Comme
+$A^3 = (1, 0, 0)$, $(A^I)^{-1}A^3$ est la 1re colonne de $(A^I)^{-1}$, soit $(\tfrac13, 1, -\tfrac13)$ ;
+on la multiplie par $c^I = (1, 0, -1)$, puis on retranche de $c^3 = 0$ :
+
+$$
+\bar c^{\,3} = 0 - \left(1 \cdot \tfrac13 + 0 \cdot 1 + (-1) \cdot (-\tfrac13)\right) = 0 - \tfrac23 = \mathbf{-2/3}
+$$
+
+**3. La conclusion.** Critère d'optimalité, en maximisation : tous les coûts réduits hors-base
+sont $\le 0$. Ici $-2/3 \le 0$ et $-1/3 \le 0$ : la base est **optimale**.
+```
+
 The solution of a `free` exercise, where the learner grades themself, ends with **three to six
 points to check** (« Ta réponse doit… »): what a right answer contains. Comparing against a list
 is far more reliable than comparing against a whole text.
