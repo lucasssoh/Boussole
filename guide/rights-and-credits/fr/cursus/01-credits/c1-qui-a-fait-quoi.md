@@ -162,9 +162,9 @@ Le poly de ton cours ne porte ni licence ni symbole ©. Tu voudrais le mettre su
 Qu'est-ce qui s'applique ?
 
 - [x] Il est protégé quand même : il te faut l'accord de l'auteur
-- [ ] Sans licence, il est libre d'usage
+- [ ] Il est libre d'usage : sans licence, rien ne le protège
   > Pas de licence, c'est aucune permission donnée : tous les droits restent à l'auteur.
-- [ ] C'est permis du moment que tu cites l'auteur
+- [ ] Il est permis : citer l'auteur suffit
   > Citer l'auteur est une bonne pratique, mais cela ne remplace pas son accord.
 
 :::hint

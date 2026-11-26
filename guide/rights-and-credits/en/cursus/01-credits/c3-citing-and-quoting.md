@@ -145,10 +145,10 @@ for videos.
 Your agent wants to put a whole page of your teacher's notes in a session, word for word, with
 the source. Is that a quotation?
 
-- [ ] Yes, since the source is given
+- [ ] Yes, since the source is given under the page
   > A quotation is short: a whole page is a copy, even with its source.
-- [x] No, it is too long: better to explain it in its own words and quote a sentence or two
-- [ ] Yes, as long as it is in quotation marks
+- [x] No: it is too long, a quotation is a sentence or two
+- [ ] Yes, as long as the whole page is in quotation marks
   > Quotation marks do not make a long passage short.
 
 :::hint

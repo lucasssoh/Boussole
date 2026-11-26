@@ -6,6 +6,9 @@ minor release may break things and says so.
 
 ## Unreleased
 
+### Added
+- **Choices that do not give the answer away:** the validator now warns (`P015`) when the right choice of a multiple-choice question stands out, because it is the only one to give a reason or it is much longer than the others. The playbooks ask agents to give every choice the same form, and the built-in tracks were rewritten that way: you have to understand to pick, not spot the odd one out.
+
 ### Fixed
 - **Solutions rewritten since you answered:** a question you answered in an earlier sitting shows its solution as the track writes it now, instead of the one it had when you answered.
 - **Notes cited in a sentence:** a Markdown note the lesson cites in the middle of a sentence now opens beside the text as a page, as it does from the list of documents, instead of asking your browser to download it as a text file.

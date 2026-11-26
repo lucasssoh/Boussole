@@ -62,7 +62,9 @@ mais peut en avoir un.
 
 :::tip
 Un bon mauvais choix est une vraie erreur d'apprenant. Son retour dit où regarder, sans donner la
-bonne réponse.
+bonne réponse. Tous les choix ont la même forme et à peu près la même longueur : si seul le bon
+choix donne une raison (« : … », « car »), ou s'il est deux fois plus long, l'apprenant le
+repère sans réfléchir, et le validateur le signale (`P015`).
 :::
 
 Ce QCM, lui, passe le validateur avec des avertissements :

@@ -117,6 +117,26 @@ sentence needs reading twice, rewrite it.
   sign, a bound, a condition, a word such as "always" or "at most"); a learner who has only
   skimmed the notion should hesitate. Same form, same length and same register as the right
   choice, so that neither its length nor its wording gives it away.
+- **The right choice never explains itself.** A learner soon notices that the one choice with a
+  reason after a colon, a « car » or a « parce que » is the right one, and clicks it without
+  thinking. Either no choice gives a reason (the reason goes in the `:::solution`), or every
+  choice gives one, each wrong choice with the reason a learner would wrongly give: that is the
+  *answer + reason* form below. Read the choices without the question: if one stands out, rewrite.
+  `boussole validate` warns (P015) when the right choice is the only one with a reason, or much
+  longer than the others.
+
+  ```markdown
+  - [ ] $x_1$ et $x_2$
+  - [ ] $x_4$ seulement
+  - [x] $x_3$ et $x_5$ : le sommet est à l'intersection des droites $x_3 = 0$ et $x_5 = 0$
+  ```
+
+  ```markdown
+  - [ ] $x_1$ et $x_2$ : ce sont les variables de décision
+  - [ ] $x_4$ seulement : c'est le seul écart non nul
+  - [x] $x_3$ et $x_5$ : ce sont les écarts nuls en $(1, 4)$
+  - [ ] $x_1$ et $x_3$ : ce sont les variables qui ont changé depuis $(0, 2)$
+  ```
 - No "all of the above", "none of the above" or joke choice. The order of the choices does not
   matter: Boussole shuffles them.
 - **Every wrong choice gets feedback** (`  > …` under it) that **names the mistake** behind it,

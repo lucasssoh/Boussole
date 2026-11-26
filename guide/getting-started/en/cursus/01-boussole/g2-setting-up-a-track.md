@@ -124,10 +124,10 @@ init` prepares a folder, `boussole validate` checks the track.
 ::::mcq{#g2-c1}
 Your agent wants to write sessions while the plan is still `proposed`. What do you do?
 
-- [ ] Let it go ahead, it knows what it is doing
+- [ ] Let it go ahead: it knows what it is doing, you will see the sessions
   > A plan not yet approved can still change: the sessions wait for your approval.
 - [x] Read the plan, then approve it or ask for changes
-- [ ] Delete `cursus/` and start again
+- [ ] Delete `cursus/` and run the agent again from the start
   > No need: just answer its request for approval.
 
 :::hint

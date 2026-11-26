@@ -241,9 +241,9 @@ côté (`F046`)** jusqu'à ce que l'apprenant déverrouille le parcours.
 Ta révision de 5 minutes compte trois exercices `text`. Que fais-tu ?
 
 - [x] Tu gardes un exercice `text` et tu ajoutes deux QCM
-- [ ] Tu gardes les trois
+- [ ] Tu gardes les trois exercices `text`, sans rien ajouter
   > 3 × 3 = 9 minutes : bien plus que 5,5, le maximum pour 5 minutes.
-- [ ] Tu passes la durée à 6 minutes
+- [ ] Tu gardes les trois et tu passes la durée à 6 minutes
   > 9 minutes dépassent encore 6,6, le maximum pour 6 minutes.
 
 :::hint

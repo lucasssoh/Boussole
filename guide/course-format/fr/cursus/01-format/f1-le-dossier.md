@@ -205,10 +205,10 @@ séance pas encore traduite.
 ::::mcq{#f1-a4}
 Tu traduis la séance s1 de « Les bases de Git » en anglais. Que gardes-tu tel quel ?
 
-- [ ] Le titre de la notion `## Créer un dépôt`
+- [ ] Les titres : `## Créer un dépôt` et ceux des autres notions
   > Le titre se traduit ; c'est son identifiant `{#init}` qui reste.
 - [x] Les identifiants : `{#init}`, `s1-a1`, et le `id` du parcours
-- [ ] Les réponses acceptées d'un exercice `text`
+- [ ] Les réponses acceptées : celles des exercices `text`
   > Elles sont dans la langue de la version : on écrit les réponses anglaises.
 
 :::hint
@@ -249,9 +249,9 @@ proposition, à relire avant d'écrire les séances.
 Le validateur répond `no problem`. Qu'est-ce que cela veut dire ?
 
 - [x] Le parcours est bien écrit : aucune erreur, aucun avertissement
-- [ ] Les réponses de tes exercices sont justes
+- [ ] Les réponses de tes exercices sont justes : chacune a été vérifiée
   > Le validateur vérifie la forme et le contrat pédagogique, pas l'exactitude de tes réponses.
-- [ ] Le parcours a au moins une séance
+- [ ] Le parcours n'est pas vide : il a au moins une séance
   > Un parcours vide donne aussi `no problem` : `0 of 0 sessions written`.
 
 :::hint

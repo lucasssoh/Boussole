@@ -78,10 +78,10 @@ exam is written then, on the whole track; a document added later is left out.
 ::::mcq{#g4-a2}
 You add the slides of lecture 7. What becomes of the sessions you have done?
 
-- [ ] They are rewritten to include lecture 7
+- [ ] They are rewritten so that lecture 7 fits among them
   > Written sessions stay; only a corrected version of a document would get them corrected.
-- [x] They stay as they are; lecture 7 gives new sessions, after them
-- [ ] They are renumbered to keep the order
+- [x] They stay; lecture 7 gives new sessions after them
+- [ ] They are renumbered so that lecture 7 takes its place in the order
   > Your progress is tied to their numbers: they do not move.
 
 :::hint
@@ -98,10 +98,10 @@ numbers, and the agent shows you what changes in the plan.
 ::::mcq{#g4-c1}
 The validator reports `F034` for `lecture3.pdf`. What happened?
 
-- [x] `lecture3.pdf` changed since the track used it
-- [ ] `lecture3.pdf` is new
+- [x] `lecture3.pdf` changed: the track used an older version
+- [ ] `lecture3.pdf` is new: the track has never used it
   > A new document gives `F033`.
-- [ ] `lecture3.pdf` is there twice
+- [ ] `lecture3.pdf` is there twice, in two folders
   > A duplicate gives `F036`.
 
 :::hint

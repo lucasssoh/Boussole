@@ -203,10 +203,10 @@ repeats the same list in its front matter; when the two differ, the validator sa
 The plan gives `s2` the prerequisite `git-basics.first-steps.s1`. The agent writes `s2` without
 a `prerequisites` field in its front matter. What does the validator say?
 
-- [x] `F045`: the session must list the same prerequisites as the plan
-- [ ] Nothing: the plan is enough
+- [x] `F045`: the session must repeat the plan's prerequisites
+- [ ] Nothing: the plan is enough, the session need not repeat it
   > The plan and the session would tell two stories: the session file repeats the list.
-- [ ] `F030`: the prerequisite does not exist
+- [ ] `F030`: the prerequisite `s1` points to no session
   > `s1` exists; `F030` is for an identifier that points to nothing.
 
 :::hint
@@ -224,9 +224,9 @@ plan does, or both change together.
 A lesson has `duration: 15`. The learner spends 25 minutes on it. What happens?
 
 - [x] Nothing: for a lesson, the duration is an estimate
-- [ ] The session stops after 15 minutes
+- [ ] The session stops: after 15 minutes, its time is up
   > Only quick reviews and mock exams are timed.
-- [ ] The validator reports an error
+- [ ] An error: the validator sees the duration was exceeded
   > The validator reads files; it does not see the time the learner spends.
 
 :::hint

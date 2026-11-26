@@ -99,9 +99,9 @@ Lesquels peux-tu **en général** partager sans demander ?
 
 - [x] Les questions que tu as écrites toi-même
 - [x] Un chapitre de *Pro Git*, sous CC BY-NC-SA, crédité et gratuitement
-- [ ] Les slides de ton prof
+- [ ] Les slides de ton prof, avec son nom sur chacune
   > Elles appartiennent à ton prof : demande d'abord.
-- [ ] Des scans de ton manuel
+- [ ] Des scans de ton manuel, avec sa référence complète
   > Le manuel appartient à ses auteurs et à son éditeur.
 
 :::hint
@@ -140,9 +140,9 @@ Tu partages un parcours dont une IA a écrit les séances, que tu as ensuite cor
 doit-il se présenter ?
 
 - [x] Dans chaque séance, la ligne du modèle avec `wrote`, puis la tienne avec `revised`
-- [ ] Seulement ton nom, avec `wrote` : tu as tout vérifié
+- [ ] Dans chaque séance, seulement ta ligne avec `wrote` : tu as tout vérifié
   > Cela cache le travail de l'IA : on ne sait plus qui a écrit quoi.
-- [ ] Pas de `written_by` du tout, pour faire simple
+- [ ] Dans aucune séance : pas de `written_by`, pour faire simple
   > Personne ne voit plus qui a écrit la séance, et le validateur dit `P012`.
 
 :::hint

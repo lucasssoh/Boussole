@@ -63,7 +63,9 @@ one.
 
 :::tip
 A good wrong choice is a real learner's mistake. Its feedback says where to look, without giving
-the right answer away.
+the right answer away. All the choices have the same form and about the same length: if only the
+right one gives a reason (": …", "because"), or if it is twice as long, the learner spots it
+without thinking, and the validator says so (`P015`).
 :::
 
 This MCQ, on the other hand, passes the validator with warnings:

@@ -240,9 +240,9 @@ the track.
 Your review of 5 minutes has three `text` exercises. What do you do?
 
 - [x] Keep one `text` exercise and add two MCQs
-- [ ] Keep all three
+- [ ] Keep all three `text` exercises, adding nothing
   > 3 × 3 = 9 minutes: far more than 5.5, the maximum for 5 minutes.
-- [ ] Set the duration to 6 minutes
+- [ ] Keep all three and set the duration to 6 minutes
   > 9 minutes is still more than 6.6, the maximum for 6 minutes.
 
 :::hint

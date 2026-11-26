@@ -54,6 +54,7 @@ package "validate" {
     class TimedSessionFitRule <<P008>>
     class TimedSessionContentRule <<P009>>
     class McqFeedbackRule <<P010>>
+    class McqGiveawayRule <<P015>>
     class "CourseIds, LessonNotions, LexiconTermResolver,\nIdSeen, TimedSessions" as RuleHelpers <<helpers>>
   }
 }

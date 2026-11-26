@@ -13,6 +13,7 @@ import io.github.lucasssoh.boussole.format.validate.rule.NotionExerciseRule;
 import io.github.lucasssoh.boussole.format.validate.rule.PartOrderRule;
 import io.github.lucasssoh.boussole.format.validate.rule.McqChoicesRule;
 import io.github.lucasssoh.boussole.format.validate.rule.McqFeedbackRule;
+import io.github.lucasssoh.boussole.format.validate.rule.McqGiveawayRule;
 import io.github.lucasssoh.boussole.format.validate.rule.QuickCheckRule;
 import io.github.lucasssoh.boussole.format.validate.rule.CitationRule;
 import io.github.lucasssoh.boussole.format.validate.rule.ChapterOrderRule;
@@ -69,6 +70,7 @@ public final class Validator {
                 new TrackProfileRule(),
                 new CitationRule(),
                 new McqFeedbackRule(),
+                new McqGiveawayRule(),
                 new DeclaredTermsRule(),
                 new ClosingRule(),
                 new QuickCheckRule(),

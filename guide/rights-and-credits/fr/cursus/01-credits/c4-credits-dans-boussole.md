@@ -161,10 +161,10 @@ Ce qui va dans le dossier des sources dépend de la licence :
 Ton :term[agent]{id=agent} trouve un article de blog utile marqué « Tous droits réservés ».
 Qu'est-ce qu'il met dans ton dossier des sources ?
 
-- [ ] Une copie de la page en PDF, avec son adresse
+- [ ] Une copie de la page en PDF, avec son adresse et sa date
   > La licence ne permet pas de copie, même avec l'adresse.
-- [x] Une note de source `web/<nom>.md`, son propre résumé avec l'adresse et de courtes citations
-- [ ] Rien : il utilise l'article sans le dire
+- [x] Une note `web/<nom>.md` : son propre résumé, l'adresse, de courtes citations
+- [ ] Rien : il utilise l'article sans dire d'où il vient
   > Le parcours doit dire d'où viennent ses idées.
 
 :::hint

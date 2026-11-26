@@ -126,10 +126,10 @@ Pour ouvrir ensuite le parcours, la commande est [[4]].
 ::::mcq{#g2-c1}
 Ton agent veut écrire des séances alors que le plan est encore `proposed`. Que fais-tu ?
 
-- [ ] Tu le laisses faire, il sait ce qu'il fait
+- [ ] Tu le laisses continuer : il sait ce qu'il fait, tu verras les séances
   > Un plan pas encore validé peut encore changer : les séances attendent ton accord.
 - [x] Tu relis le plan, puis tu le valides ou tu demandes des changements
-- [ ] Tu supprimes `cursus/` et tu recommences
+- [ ] Tu supprimes `cursus/` et tu relances l'agent depuis le début
   > Inutile : il suffit de répondre à sa demande de validation.
 
 :::hint

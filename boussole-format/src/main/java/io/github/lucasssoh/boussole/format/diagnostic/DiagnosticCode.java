@@ -57,7 +57,8 @@ public enum DiagnosticCode {
     P011(WARNING, "graph too large to read at a glance"),
     P012(WARNING, "session that does not say who wrote it"),
     P013(WARNING, "track that does not say how demanding it is or its field"),
-    P014(WARNING, "notion that cites no source");
+    P014(WARNING, "notion that cites no source"),
+    P015(WARNING, "MCQ whose right choice stands out");
 
     private final DiagnosticSeverity severity;
     private final String summary;

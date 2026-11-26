@@ -204,10 +204,10 @@ translated yet.
 ::::mcq{#f1-a4}
 You translate session s1 of "Git basics" into French. What do you keep as it is?
 
-- [ ] The title of the notion `## Creating a repository`
+- [ ] The titles: `## Creating a repository` and those of the other notions
   > The title is translated; its ID `{#init}` is what stays.
 - [x] The IDs: `{#init}`, `s1-a1`, and the `id` of the track
-- [ ] The accepted answers of a `text` exercise
+- [ ] The accepted answers: those of the `text` exercises
   > They are in the language of the version: write the French answers.
 
 :::hint
@@ -248,9 +248,9 @@ proposal, to read before writing the sessions.
 The validator answers `no problem`. What does that mean?
 
 - [x] The track is well written: no error, no warning
-- [ ] The answers of your exercises are right
+- [ ] The answers of your exercises are right: each one was checked
   > The validator checks the form and the teaching contract, not whether your answers are right.
-- [ ] The track has at least one session
+- [ ] The track is not empty: it has at least one session
   > An empty track also gives `no problem`: `0 of 0 sessions written`.
 
 :::hint

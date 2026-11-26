@@ -148,10 +148,10 @@ Quelle directive porte le nom du type de document ?
 Ton agent veut mettre une page entière du poly de ton prof dans une séance, mot pour mot, avec
 la source. Est-ce une citation ?
 
-- [ ] Oui, puisque la source est donnée
+- [ ] Oui, puisque la source est donnée sous la page
   > Une citation est courte : une page entière est une copie, même avec sa source.
-- [x] Non, c'est trop long : mieux vaut l'expliquer avec ses mots et citer une phrase ou deux
-- [ ] Oui, du moment que c'est entre guillemets
+- [x] Non : c'est trop long, une citation tient en une phrase ou deux
+- [ ] Oui, du moment que toute la page est entre guillemets
   > Des guillemets ne rendent pas court un long passage.
 
 :::hint

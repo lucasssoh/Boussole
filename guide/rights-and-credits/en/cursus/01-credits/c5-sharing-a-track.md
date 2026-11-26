@@ -94,9 +94,9 @@ Which of these can you **usually** share without asking?
 
 - [x] The questions you wrote yourself
 - [x] A chapter of *Pro Git*, under CC BY-NC-SA, credited and for free
-- [ ] Your teacher's slides
+- [ ] Your teacher's slides, with their name on each one
   > They belong to your teacher: ask first.
-- [ ] Scans of your textbook
+- [ ] Scans of your textbook, with its full reference
   > The textbook belongs to its authors and publisher.
 
 :::hint
@@ -131,9 +131,9 @@ whoever studies the track.
 You share a track whose sessions an AI wrote and you then corrected. How should it read?
 
 - [x] In each session, the model's line with `wrote`, then yours with `revised`
-- [ ] Only your name, with `wrote`: you checked everything
+- [ ] In each session, only your line with `wrote`: you checked everything
   > That hides the AI's work: the learner can no longer tell who wrote what.
-- [ ] No `written_by` at all, to keep it simple
+- [ ] In no session: no `written_by` at all, to keep it simple
   > The learner no longer sees who wrote the session, and the validator says `P012`.
 
 :::hint

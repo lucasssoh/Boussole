@@ -205,10 +205,10 @@ séance reprend la même liste dans son en-tête ; quand les deux diffèrent, le
 Le plan donne à `s2` le prérequis `git-bases.premiers-pas.s1`. L'agent écrit `s2` sans champ
 `prerequisites` dans son en-tête. Que dit le validateur ?
 
-- [x] `F045` : la séance doit lister les mêmes prérequis que le plan
-- [ ] Rien : le plan suffit
+- [x] `F045` : la séance doit reprendre les prérequis du plan
+- [ ] Rien : le plan suffit, la séance n'a pas à le répéter
   > Le plan et la séance raconteraient deux histoires : le fichier de la séance reprend la liste.
-- [ ] `F030` : le prérequis n'existe pas
+- [ ] `F030` : le prérequis `s1` ne mène à aucune séance
   > `s1` existe ; `F030` concerne un identifiant qui ne mène nulle part.
 
 :::hint
@@ -226,9 +226,9 @@ plan, ou bien les deux changent ensemble.
 Une leçon a `duration: 15`. L'apprenant y passe 25 minutes. Que se passe-t-il ?
 
 - [x] Rien : pour une leçon, la durée est une estimation
-- [ ] La séance s'arrête au bout de 15 minutes
+- [ ] La séance s'arrête : au bout de 15 minutes, son temps est écoulé
   > Seules les révisions express et les examens blancs sont chronométrés.
-- [ ] Le validateur signale une erreur
+- [ ] Une erreur : le validateur voit que la durée est dépassée
   > Le validateur lit les fichiers ; il ne voit pas le temps passé par l'apprenant.
 
 :::hint

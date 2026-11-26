@@ -92,9 +92,9 @@ Une seule de ces directives s'écrit dans une phrase.
 Ta notion a déjà un `:::example`. Tu veux montrer un deuxième cas. Que fais-tu ?
 
 - [x] Tu en fais une question, juste après l'exemple
-- [ ] Tu ajoutes un second `:::example`
+- [ ] Tu ajoutes un second `:::example`, juste après le premier
   > Une notion n'a qu'un exemple (`P002`) : l'apprenant comprend en essayant le cas suivant.
-- [ ] Tu le mets dans un `:::recall`
+- [ ] Tu le mets dans un `:::recall`, avant l'exemple
   > Un rappel remet en mémoire ce qui est déjà connu ; il ne montre pas un cas nouveau.
 
 :::hint

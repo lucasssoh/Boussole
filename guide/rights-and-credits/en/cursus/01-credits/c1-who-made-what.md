@@ -160,9 +160,9 @@ The lecture notes of your course carry no licence and no © symbol. You would li
 a public website. What applies?
 
 - [x] They are protected all the same: you need the author's consent
-- [ ] Without a licence, they are free to use
+- [ ] They are free to use: without a licence, nothing protects them
   > No licence means no permission given: all the rights stay with the author.
-- [ ] It is allowed as long as you name the author
+- [ ] They are allowed: naming the author is enough
   > Naming the author is good practice, but it does not replace their consent.
 
 :::hint

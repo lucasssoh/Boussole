@@ -57,5 +57,6 @@ are about the teaching contract and matter to the learner.
 | P008 | the questions of a review or exam do not fill its time | add or remove questions (estimated times in `exam-build`), or set `minutes=` on a long one |
 | P009 | a review or exam holds a notion or a worked example | move it to a lesson; a timed session only asks questions |
 | P010 | a wrong MCQ choice has no feedback | add `  > why it is wrong` under it |
+| P015 | the right MCQ choice stands out: the only one with a reason, or much longer | give every choice the same form: each wrong one with the reason a learner would wrongly give, at the same length; or cut the reason from the right one and put it in the `:::solution`. Keep the order of the choices and which one is ticked |
 
 Never "fix" an error by deleting content the learner needs, and never edit the sources folder.

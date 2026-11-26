@@ -71,10 +71,10 @@ flowchart LR
 ::::mcq{#g1-a1}
 Who writes the sessions and questions of your track?
 
-- [ ] Boussole, with a built-in AI
+- [ ] Boussole itself, with an AI built into the application
   > Boussole presents and corrects the track; your agent writes it.
 - [x] Your AI agent, following the playbooks of Boussole
-- [ ] You, by hand
+- [ ] You, by hand, following the format of Boussole
   > You can touch up the files, but the agent writes the track.
 
 :::hint
@@ -100,10 +100,10 @@ Everything happens on your machine, next to your documents.
 ::::mcq{#g1-a2}
 What does Boussole do when you answer a question?
 
-- [ ] It sends your answer to an AI that judges it
+- [ ] It sends your answer to an AI, which judges it and explains
   > The right answer and its explanation are already in the session: Boussole simply compares.
-- [x] It compares your answer with the one written in the session, and follows your progress
-- [ ] Nothing, it only shows the text
+- [x] It compares your answer with the one written in the session
+- [ ] Nothing: it shows the text, and you check yourself
   > It does correct: green if right, red if not, with the explanation.
 
 :::hint

@@ -81,10 +81,10 @@ ensuite est laissé de côté.
 ::::mcq{#g4-a2}
 Tu ajoutes les transparents du cours 7. Que deviennent tes séances déjà faites ?
 
-- [ ] Elles sont réécrites pour intégrer le cours 7
+- [ ] Elles sont réécrites pour que le cours 7 s'y insère
   > Les séances déjà écrites restent ; seule une version corrigée d'un document les ferait corriger.
-- [x] Elles restent telles quelles ; le cours 7 donne de nouvelles séances, à la suite
-- [ ] Elles sont renumérotées pour garder l'ordre
+- [x] Elles restent ; le cours 7 donne de nouvelles séances à la suite
+- [ ] Elles sont renumérotées pour que le cours 7 prenne sa place dans l'ordre
   > Ta progression est attachée à leurs numéros : ils ne bougent pas.
 
 :::hint
@@ -101,10 +101,10 @@ suite, avec de nouveaux numéros, et l'agent te montre ce qui change dans le pla
 ::::mcq{#g4-c1}
 Le validateur signale `F034` pour `cours3.pdf`. Que s'est-il passé ?
 
-- [x] `cours3.pdf` a changé depuis que le parcours l'a utilisé
-- [ ] `cours3.pdf` est nouveau
+- [x] `cours3.pdf` a changé : le parcours en a utilisé une version plus ancienne
+- [ ] `cours3.pdf` est nouveau : le parcours ne l'a jamais utilisé
   > Un document nouveau donne `F033`.
-- [ ] `cours3.pdf` est en double
+- [ ] `cours3.pdf` est en double, dans deux dossiers
   > Un doublon donne `F036`.
 
 :::hint

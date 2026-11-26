@@ -105,6 +105,7 @@ the whole teaching contract.
 | `F022` | an MCQ with no ticked choice, or two without `multiple=true` | tick the right choice, or add `multiple=true` |
 | `F030` | a `::ref`, a `:term` or a prerequisite that points to nothing | check the :term[identifier]{id=identifier} |
 | `P004`, `P010` | a question without a nudge, a wrong choice without feedback | add `:::hint`, and `  > why` under the choice |
+| `P015` | an MCQ whose right choice stands out: the only one with a reason, or much longer | give every choice the same form, or move the reason into the solution |
 
 Then start again, until `no problem`:
 
@@ -192,11 +193,11 @@ Write, validate, fix the first diagnostic, validate again: until `no problem`.
 The validator says `s2-first-commit.md:1: error F010 the file says id: s1, the syllabus s2`.
 What do you fix?
 
-- [x] The `id` in the front matter of `s2-first-commit.md`, which must be `s2`
+- [x] The `id` in the front matter of `s2-first-commit.md`
 - [ ] The file name, to `s1-first-commit.md`
   > The file name has nothing to do with it: Boussole compares the front matter `id` with the
   > plan's.
-- [ ] The lexicon
+- [ ] The `id` of a term in the lexicon
   > `F010` is about the `id` of a session, not of a term.
 
 :::hint

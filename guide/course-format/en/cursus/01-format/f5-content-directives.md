@@ -92,9 +92,9 @@ shows a definition of the lexicon on hover.
 Your notion already has an `:::example`. You want to show a second case. What do you do?
 
 - [x] You turn it into a question, right after the example
-- [ ] You add a second `:::example`
+- [ ] You add a second `:::example`, right after the first
   > A notion has only one example (`P002`): the learner understands by trying the next case.
-- [ ] You put it in a `:::recall`
+- [ ] You put it in a `:::recall`, before the example
   > A reminder brings back what is already known; it does not show a new case.
 
 :::hint

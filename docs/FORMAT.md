@@ -555,6 +555,7 @@ chapter.
 | `P012` | warning | A session without `written_by`: the learner cannot see who wrote it. |
 | `P013` | warning | `subject.yaml` without `level` or `domain`. |
 | `P014` | warning | In a track with documents, a notion that cites no source: no `:pdf` page and no `:link`. |
+| `P015` | warning | A `mcq` whose right choice stands out: it is the only one to give a reason (« : … », « car », « parce que »…), or it is much longer than every wrong one (half as long again, and 15 characters more). |
 
 `P001`, `P002`, `P006` and `P007` apply to lessons only; `P004` does not apply to exams, which
 show no hints.

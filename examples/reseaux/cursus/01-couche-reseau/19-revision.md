@@ -18,10 +18,10 @@ Révision de la séance sur le rôle de la couche réseau : 5 minutes, 3 questio
 ::::mcq{#r19-q1}
 Pourquoi ne peut-on pas router Internet avec des :term[adresses MAC]{id=mac} ?
 
-- [ ] Elles sont trop longues
+- [ ] Elles sont trop longues : 48 bits par adresse dans chaque table
   > 48 bits, c'est moins qu'une adresse IPv6 : la longueur n'est pas le problème.
 - [x] Elles sont plates : impossible de les regrouper par préfixe
-- [ ] Elles changent à chaque redémarrage
+- [ ] Elles changent : chaque redémarrage en tire une nouvelle
   > Non : une adresse MAC est fixée par le fabricant de l'interface.
 
 :::hint

@@ -159,10 +159,10 @@ What goes into the sources folder depends on the licence:
 Your :term[agent]{id=agent} finds a useful blog article marked "All rights reserved". What does
 it put in your sources folder?
 
-- [ ] A copy of the page as a PDF, with its address
+- [ ] A copy of the page as a PDF, with its address and its date
   > The licence does not allow a copy, even with the address.
-- [x] A source note `web/<name>.md`, its own summary with the address and short quotations
-- [ ] Nothing: it uses the article without saying so
+- [x] A note `web/<name>.md`: its own summary, the address, short quotations
+- [ ] Nothing: it uses the article without saying where it comes from
   > The track must say where its ideas come from.
 
 :::hint

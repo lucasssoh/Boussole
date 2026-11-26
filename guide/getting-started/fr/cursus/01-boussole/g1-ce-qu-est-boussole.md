@@ -71,10 +71,10 @@ flowchart LR
 ::::mcq{#g1-a1}
 Qui écrit les séances et les questions de ton parcours ?
 
-- [ ] Boussole, avec une IA intégrée
+- [ ] Boussole lui-même, avec une IA intégrée à l'application
   > Boussole présente et corrige le parcours ; c'est ton agent qui l'écrit.
 - [x] Ton agent IA, en suivant les fiches méthode de Boussole
-- [ ] Toi, à la main
+- [ ] Toi, à la main, en suivant le format de Boussole
   > Tu peux retoucher les fichiers, mais c'est l'agent qui écrit le parcours.
 
 :::hint
@@ -100,10 +100,10 @@ Tout se passe sur ta machine, à côté de tes documents.
 ::::mcq{#g1-a2}
 Que fait Boussole quand tu réponds à une question ?
 
-- [ ] Il envoie ta réponse à une IA qui la juge
+- [ ] Il envoie ta réponse à une IA, qui la juge et l'explique
   > La bonne réponse et son explication sont déjà dans la séance : Boussole compare, tout simplement.
-- [x] Il compare ta réponse à celle écrite dans la séance, et suit ta progression
-- [ ] Rien, il affiche seulement le texte
+- [x] Il compare ta réponse à celle écrite dans la séance
+- [ ] Rien : il affiche le texte, et tu vérifies toi-même
   > Il corrige bel et bien : vert si c'est juste, rouge sinon, avec l'explication.
 
 :::hint

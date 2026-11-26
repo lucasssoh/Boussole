@@ -107,6 +107,7 @@ avertissement respecte tout le contrat pédagogique.
 | `F022` | un QCM sans choix coché, ou deux sans `multiple=true` | coche le bon choix, ou ajoute `multiple=true` |
 | `F030` | un `::ref`, un `:term` ou un prérequis qui ne pointe sur rien | vérifie l':term[identifiant]{id=identifier} |
 | `P004`, `P010` | une question sans coup de pouce, un mauvais choix sans retour | ajoute `:::hint`, et `  > pourquoi` sous le choix |
+| `P015` | un QCM dont le bon choix se repère : seul à donner une raison, ou bien plus long | donne à chaque choix la même forme, ou passe la raison dans la correction |
 
 Puis on recommence, jusqu'à `no problem` :
 
@@ -194,10 +195,10 @@ On ne corrige que ce que le validateur a signalé.
 Le validateur dit `s2-premier-commit.md:1: error F010 the file says id: s1, the syllabus s2`.
 Que corriges-tu ?
 
-- [x] L'`id` de l'en-tête de `s2-premier-commit.md`, qui doit valoir `s2`
+- [x] L'`id` de l'en-tête de `s2-premier-commit.md`
 - [ ] Le nom du fichier, en `s1-premier-commit.md`
   > Le nom du fichier n'a rien à voir : Boussole compare l'`id` de l'en-tête à celui du plan.
-- [ ] Le lexique
+- [ ] L'`id` d'un terme du lexique
   > `F010` parle de l'`id` d'une séance, pas d'un terme.
 
 :::hint
