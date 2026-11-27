@@ -63,6 +63,7 @@ public final class SessionFileReader {
                 objectives,
                 map.texts("prerequisites"),
                 map.texts("terms"),
+                map.texts("landmarks"),
                 SourceReferenceReader.read(map, "sources", diagnostics),
                 writtenBy(map, diagnostics),
                 new SourcePosition(file, 1));
@@ -96,6 +97,6 @@ public final class SessionFileReader {
     }
 
     private static SessionFrontMatter emptyHeader(String file) {
-        return new SessionFrontMatter("", List.of(), List.of(), List.of(), List.of(), List.of(), new SourcePosition(file, 1));
+        return new SessionFrontMatter("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), new SourcePosition(file, 1));
     }
 }

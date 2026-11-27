@@ -3,7 +3,7 @@ id: g3
 objectives:
   - Avancer dans une séance étape par étape, en suivant le Tracé.
   - Répondre du premier coup, avec les coups de pouce, et lire la correction expliquée.
-terms: [etape, trace, mode-guide, premier-coup, coup-de-pouce, derniere-verification, serie, palier, revision-express, partie-plus]
+terms: [etape, trace, mode-guide, premier-coup, coup-de-pouce, derniere-verification, serie, palier, revision-express, partie-plus, landmark]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code
@@ -50,6 +50,12 @@ Un clic ouvre la page à droite, à côté du texte. Là :
 - la flèche ← revient à la liste ;
 - le titre déroule la liste, pour passer à un autre document ;
 - **Fermer**, ou Échap, ferme le panneau.
+
+**« Encore le programme du cours : il était où ? »** Ce à quoi le parcours revient sans cesse
+(un exemple fil rouge, un tableau, une figure) reste en vue dans le panneau :term[Repères]{id=landmark}, à
+droite, à côté des étapes. Pour y garder autre chose, un exemple, une formule mise à part, un
+tableau ou un algorithme, clique sur son épingle : il y reste dans toutes les séances du parcours,
+jusqu'à ce que tu le retires.
 
 :::note
 :term[Mode guidé]{id=mode-guide} : dans une leçon, Suivant attend ta réponse à la question

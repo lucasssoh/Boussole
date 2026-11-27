@@ -10,7 +10,7 @@ export interface DocumentPlace {
   page: number | null;
   start: number | null;
   /** What opens beside the text. */
-  panel: Exclude<SidePanel, { kind: 'documents' }>;
+  panel: Exclude<SidePanel, { kind: 'documents' } | { kind: 'landmarks' }>;
   /** The screens that cite it, by their index in the plan. */
   screens: number[];
 }
@@ -91,6 +91,8 @@ export function panelKey(panel: SidePanel): string {
   switch (panel.kind) {
     case 'documents':
       return 'documents';
+    case 'landmarks':
+      return 'landmarks';
     case 'pdf':
       return `pdf:${panel.path}#${panel.page ?? ''}`;
     case 'markdown':

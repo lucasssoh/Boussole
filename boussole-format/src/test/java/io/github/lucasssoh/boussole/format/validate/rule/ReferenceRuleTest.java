@@ -74,6 +74,20 @@ class ReferenceRuleTest {
     }
 
     @Test
+    void aSessionKeepsInViewOnlyLandmarksTheTrackDefines() {
+        var report = SubjectFixture.in(dir)
+                .session("s1", ":::landmark[Le programme du cours]{#pl}\n$$\\max z$$\n:::\n\n" + notion("a", "e1"))
+                .session("s2", "landmarks: [pl, pl2]\n", notion("b", "e2"))
+                .session("s3", ":::landmark[Encore]{#pl}\n$$x$$\n:::\n\n" + notion("c", "e3"))
+                .inspect();
+
+        assertThat(report.withCode(DiagnosticCode.F030)).extracting(diagnostic -> diagnostic.message())
+                .containsExactly("`landmarks` lists `pl2`, which no `:::landmark` of the track defines");
+        assertThat(report.withCode(DiagnosticCode.F003)).extracting(diagnostic -> diagnostic.message())
+                .singleElement().asString().contains("landmark");
+    }
+
+    @Test
     void aRefAsksOnlyAboutAnEarlierSession() {
         var report = SubjectFixture.in(dir)
                 .session("s1", notion("a", "e1"))

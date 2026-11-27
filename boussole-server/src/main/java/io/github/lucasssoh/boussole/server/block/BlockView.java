@@ -13,6 +13,7 @@ import java.util.List;
     @JsonSubTypes.Type(value = BlockView.Prose.class, name = "prose"),
     @JsonSubTypes.Type(value = BlockView.Example.class, name = "example"),
     @JsonSubTypes.Type(value = BlockView.Recall.class, name = "recall"),
+    @JsonSubTypes.Type(value = BlockView.Landmark.class, name = "landmark"),
     @JsonSubTypes.Type(value = BlockView.Callout.class, name = "callout"),
     @JsonSubTypes.Type(value = BlockView.Video.class, name = "video"),
     @JsonSubTypes.Type(value = BlockView.Pdf.class, name = "pdf"),
@@ -30,6 +31,10 @@ public sealed interface BlockView {
     }
 
     record Example(String label, List<BlockView> blocks) implements BlockView {
+    }
+
+    /** What the track keeps coming back to: shown in place, and kept in view beside the steps. */
+    record Landmark(String id, String title, List<BlockView> blocks) implements BlockView {
     }
 
     record Recall(List<BlockView> blocks) implements BlockView {

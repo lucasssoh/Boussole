@@ -21,6 +21,7 @@ import io.github.lucasssoh.boussole.format.model.block.Block;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
 import io.github.lucasssoh.boussole.format.model.block.ProseBlock;
 import io.github.lucasssoh.boussole.format.model.block.FileVideoSource;
+import io.github.lucasssoh.boussole.format.model.block.LandmarkBlock;
 import io.github.lucasssoh.boussole.format.model.block.LinkBlock;
 import io.github.lucasssoh.boussole.format.model.block.McqChoice;
 import io.github.lucasssoh.boussole.format.model.block.McqBlock;
@@ -307,6 +308,39 @@ class SessionParsingTest {
             parse(body.append(":::\n").toString());
 
             assertThat(messages(DiagnosticCode.P011)).singleElement().asString().startsWith("this graph has 14 nodes");
+        }
+    }
+
+    @Nested
+    class Landmarks {
+
+        @Test
+        void aLandmarkKeepsItsIdItsTitleAndWhatItHolds() {
+            SessionContent session = parse("""
+                    ::::landmark[Le programme de l'exemple du cours]{#pl-cours}
+                    $$\\max z = -x_1 + x_2$$
+
+                    :::graph
+                    a -> b
+                    :::
+                    ::::
+                    """);
+
+            assertThat(session.blocks().findFirst().orElseThrow()).isInstanceOfSatisfying(LandmarkBlock.class, landmark -> {
+                assertThat(landmark.id()).isEqualTo("pl-cours");
+                assertThat(landmark.title()).isEqualTo("Le programme de l'exemple du cours");
+                assertThat(landmark.content()).hasSize(2);
+            });
+            assertThat(messages(DiagnosticCode.F050)).isEmpty();
+        }
+
+        @Test
+        void eachMistakeSaysWhatToWrite() {
+            parse(":::landmark{#vide}\n:::\n");
+
+            assertThat(messages(DiagnosticCode.F050)).containsExactly(
+                    "landmark `vide` has no title: say what it is, `:::landmark[Le programme de l'exemple du cours]{#vide}`",
+                    "landmark `vide` is empty: put inside it what the learner keeps in view (a program, a table, a graph)");
         }
     }
 

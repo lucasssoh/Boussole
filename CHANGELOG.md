@@ -7,6 +7,7 @@ minor release may break things and says so.
 ## Unreleased
 
 ### Added
+- **Landmarks:** what a track keeps coming back to, such as the program of the running example, now stays in view in a *Landmarks* panel on the right, beside the steps, in every session that uses it; on a phone, the *Landmarks* button opens it over the step. You can pin anything else there yourself: every example, graph, algorithm, formula set apart and table has a pin, and what you pin stays in every session of the track until you take it away. Agents mark these with a new block, `:::landmark`.
 - **Choices that do not give the answer away:** the validator now warns (`P015`) when the right choice of a multiple-choice question stands out, because it is the only one to give a reason or it is much longer than the others. The playbooks ask agents to give every choice the same form, and the built-in tracks were rewritten that way: you have to understand to pick, not spot the odd one out.
 
 ### Fixed

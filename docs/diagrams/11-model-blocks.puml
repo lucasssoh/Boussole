@@ -28,6 +28,10 @@ class ExampleBlock <<record>> {
   label : String
 }
 class RecallBlock <<record>>
+class LandmarkBlock <<record>> {
+  id : String
+  title : String
+}
 class CalloutBlock <<record>>
 enum CalloutKind {
   NOTE
@@ -134,6 +138,7 @@ note bottom of Answer : see 12-model-answers
 Block <|.. ProseBlock
 Block <|.. ExampleBlock
 Block <|.. RecallBlock
+Block <|.. LandmarkBlock
 Block <|.. CalloutBlock
 Block <|.. VideoBlock
 VideoBlock --> VideoSource : source
@@ -162,6 +167,7 @@ PdfBlock --> SourceReference : source
 
 ExampleBlock o-- "*" Block : content
 RecallBlock o-- "*" Block : content
+LandmarkBlock o-- "*" Block : content
 CalloutBlock o-- "*" Block : content
 CalloutBlock --> CalloutKind : kind
 

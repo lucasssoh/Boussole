@@ -153,6 +153,8 @@ export interface Session {
   prerequisites: string[];
   sources: { path: string; page: number | null }[];
   parts: SessionPart[];
+  /** Kept in view beside the steps: those the session names, then those it writes. */
+  landmarks: LandmarkBlockView[];
   questionMinutes: number;
   previous: string | null;
   next: string | null;
@@ -171,6 +173,7 @@ export interface SessionPart {
 export type BlockView =
   | ProseBlockView
   | ExampleBlockView
+  | LandmarkBlockView
   | RecallBlockView
   | CalloutBlockView
   | VideoBlockView
@@ -190,6 +193,14 @@ export interface ProseBlockView {
 export interface ExampleBlockView {
   type: 'example';
   label: string;
+  blocks: BlockView[];
+}
+
+/** What the track keeps coming back to: shown in place, and kept in view beside the steps. */
+export interface LandmarkBlockView {
+  type: 'landmark';
+  id: string;
+  title: string;
   blocks: BlockView[];
 }
 

@@ -18,6 +18,7 @@ public final class BlockWalker {
         return switch (block) {
             case ExampleBlock example -> example.content();
             case RecallBlock recall -> recall.content();
+            case LandmarkBlock landmark -> landmark.content();
             case CalloutBlock callout -> callout.content();
             case ExerciseBlock exercise -> concat(exercise.statement(), exercise.hints(), exercise.solution().stream().toList());
             case McqBlock mcq -> concat(mcq.statement(), mcq.hints(), mcq.solution().stream().toList());

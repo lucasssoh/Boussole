@@ -113,3 +113,9 @@
   definition: >
     Une page web citée par le parcours, qui s'ouvre à côté du texte quand le site le permet, et
     sinon dans un onglet.
+
+- id: landmark
+  term: Repère
+  aliases: [repères]
+  definition: >
+    Ce à quoi tout un parcours revient (un exemple fil rouge, un tableau, une figure), gardé en vue dans un panneau à côté des étapes. Tu peux y épingler toi-même un exemple, une formule, un tableau ou un algorithme.

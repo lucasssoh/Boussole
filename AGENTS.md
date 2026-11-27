@@ -132,6 +132,7 @@ words (no abbreviations).
 | screen | step / étape |
 | session path, the map | the Trail / le Tracé |
 | hint | nudge / coup de pouce |
+| `:::landmark`, a pinned block | landmark / repère |
 | first answer final | first try / du premier coup |
 | confirm before a multiple MCQ | final check / dernière vérification |
 | review | quick review / révision express |

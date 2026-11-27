@@ -5,9 +5,11 @@ import { FillGaps } from '../question/fill-gaps';
 import { ExerciseBlockComponent } from '../question/exercise-block.component';
 import { McqBlockComponent } from '../question/mcq-block.component';
 import { RichTextComponent } from '../../shared/rich-text.component';
+import { IconComponent } from '../../shared/icon.component';
 import { AlgorithmBlockComponent } from './algorithm-block.component';
 import { GraphBlockComponent } from './graph-block.component';
 import { LinkBlockComponent } from './link-block.component';
+import { PinButtonComponent } from './pin-button.component';
 import { PdfBlockComponent } from './pdf-block.component';
 import { ProseBlockComponent } from './prose-block.component';
 import { VideoBlockComponent } from './video-block.component';
@@ -15,11 +17,12 @@ import { VideoBlockComponent } from './video-block.component';
 /**
  * Shows a list of blocks, each with the component of its type. The switch mirrors the sealed
  * Block of boussole-format: a new block type is one more case here. Blocks that only hold other
- * blocks (example, recall, callout) are drawn here, around a nested list.
+ * blocks (example, landmark, recall, callout) are drawn here, around a nested list. An example, a
+ * graph or an algorithm has a button that keeps it in view beside the steps of the track.
  */
 @Component({
   selector: 'app-block-list',
-  imports: [ProseBlockComponent, VideoBlockComponent, PdfBlockComponent, LinkBlockComponent, GraphBlockComponent, AlgorithmBlockComponent, McqBlockComponent, ExerciseBlockComponent, RichTextComponent, TranslocoPipe],
+  imports: [ProseBlockComponent, VideoBlockComponent, PdfBlockComponent, LinkBlockComponent, GraphBlockComponent, AlgorithmBlockComponent, PinButtonComponent, McqBlockComponent, ExerciseBlockComponent, RichTextComponent, IconComponent, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @for (block of blocks(); track $index) {
@@ -28,9 +31,17 @@ import { VideoBlockComponent } from './video-block.component';
           <app-prose-block [markdown]="block.markdown" [fill]="fill()" />
         }
         @case ('example') {
-          <section class="frame example">
+          <section class="frame example pinnable">
+            <app-pin-button [title]="block.label || ('block.example' | transloco)" [blocks]="block.blocks" />
             <h4 class="frame-title">{{ 'block.example' | transloco }}@if (block.label) { — <app-rich-text [text]="block.label" />}</h4>
             <app-block-list [blocks]="block.blocks" />
+          </section>
+        }
+        @case ('landmark') {
+          <section class="frame landmark">
+            <h4 class="frame-title"><app-icon name="pin" [size]="16" /> {{ 'block.landmark' | transloco }} — <app-rich-text [text]="block.title" /></h4>
+            <app-block-list [blocks]="block.blocks" />
+            <p class="landmark-note">{{ 'landmarks.inView' | transloco }}</p>
           </section>
         }
         @case ('recall') {
@@ -55,10 +66,16 @@ import { VideoBlockComponent } from './video-block.component';
           <app-link-block [link]="block" />
         }
         @case ('graph') {
-          <app-graph-block [graph]="block" />
+          <div class="pinnable">
+            <app-pin-button [title]="block.label || ('landmarks.figure' | transloco)" [blocks]="[block]" />
+            <app-graph-block [graph]="block" />
+          </div>
         }
         @case ('algorithm') {
-          <app-algorithm-block [algorithm]="block" />
+          <div class="pinnable">
+            <app-pin-button [title]="block.label || ('block.algorithm' | transloco)" [blocks]="[block]" />
+            <app-algorithm-block [algorithm]="block" />
+          </div>
         }
         @case ('mcq') {
           <app-mcq-block [mcq]="block" />

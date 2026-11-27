@@ -29,6 +29,7 @@ public final class IdSyntaxRule implements ValidationRule {
                 .map(NotionPart.class::cast)
                 .forEach(notion -> check("notion", notion.id(), notion.position(), diagnostics)));
         CourseIds.exercises(course).forEach(exercise -> check("exercise", exercise.id(), exercise.position(), diagnostics));
+        CourseIds.landmarks(course).forEach(landmark -> check("landmark", landmark.id(), landmark.position(), diagnostics));
     }
 
     private static void check(String what, String id, SourcePosition position, DiagnosticCollector diagnostics) {

@@ -3,7 +3,7 @@ id: g3
 objectives:
   - Move through a session step by step, following the Trail.
   - Answer on the first try, with nudges, and read the explained answer.
-terms: [step, trail, guided-mode, first-try, nudge, final-check, streak, tier, quick-review, replay]
+terms: [step, trail, guided-mode, first-try, nudge, final-check, streak, tier, quick-review, replay, landmark]
 written_by:
   - model: claude-opus-5-5
     tool: Claude Code
@@ -49,6 +49,11 @@ the page on the right, beside the text. There:
 - the arrow ← goes back to the list;
 - the title unrolls the list, to switch to another document;
 - **Close**, or Escape, closes the panel.
+
+**"The program of the course again: where was it?"** What the track keeps coming back to (a
+running example, a table, a figure) stays in view in the :term[Landmarks]{id=landmark} panel, on the right,
+beside the steps. To keep something else there, an example, a formula set apart, a table or an
+algorithm, click its pin: it stays in every session of the track until you take it away.
 
 :::note
 :term[Guided mode]{id=guided-mode}: in a lesson, Next waits for your answer to the question

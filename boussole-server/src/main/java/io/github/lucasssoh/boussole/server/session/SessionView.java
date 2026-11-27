@@ -11,6 +11,7 @@ import io.github.lucasssoh.boussole.format.model.SessionFrontMatter;
 import io.github.lucasssoh.boussole.format.model.SyllabusSession;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseBlock;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseRefBlock;
+import io.github.lucasssoh.boussole.format.model.block.LandmarkBlock;
 import io.github.lucasssoh.boussole.format.model.block.McqBlock;
 import io.github.lucasssoh.boussole.format.model.block.QuestionTimeEstimator;
 import io.github.lucasssoh.boussole.format.model.part.CheckpointPart;
@@ -19,7 +20,10 @@ import io.github.lucasssoh.boussole.format.model.part.Part;
 import io.github.lucasssoh.boussole.format.model.part.PracticePart;
 import io.github.lucasssoh.boussole.format.model.part.TextPart;
 import io.github.lucasssoh.boussole.format.model.part.WarmupPart;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Locale;
 import java.util.stream.Stream;
 
@@ -27,7 +31,8 @@ import java.util.stream.Stream;
  * A session as the player shows it, in {@code lang}, one of the {@code languages} of its track. {@code file} is the session file in the subject folder:
  * relative links and images of the Markdown resolve against it. {@code questionMinutes} is the
  * time its questions take at a normal pace, which a timed session fits to its {@code duration}.
- * {@code codeColors} is false when the track shows its code in black and white.
+ * {@code codeColors} is false when the track shows its code in black and white. {@code landmarks}
+ * are kept in view beside the steps: those the front matter names, then those the session writes.
  */
 record SessionView(
         String subject,
@@ -45,6 +50,7 @@ record SessionView(
         List<String> prerequisites,
         List<SourceView> sources,
         List<PartView> parts,
+        List<BlockView> landmarks,
         double questionMinutes,
         String previous,
         String next,
@@ -79,11 +85,24 @@ record SessionView(
                                 source.page().isPresent() ? source.page().getAsInt() : null))
                         .toList(),
                 session.session().parts().stream().map(part -> PartView.of(part, mapper)).toList(),
+                landmarks(course, session, BlockViewMapper.forContent(sourcesDir)),
                 questionMinutes(opened),
                 index > 0 ? written.get(index - 1) : null,
                 index >= 0 && index + 1 < written.size() ? written.get(index + 1) : null,
                 header.writtenBy().stream().map(CreditViews.AuthorshipView::of).toList(),
                 course.subject().codeColors());
+    }
+
+    private static List<BlockView> landmarks(Course course, CourseSession session, BlockViewMapper mapper) {
+        Map<String, LandmarkBlock> all = new LinkedHashMap<>();
+        course.blocks().filter(LandmarkBlock.class::isInstance).map(LandmarkBlock.class::cast)
+                .forEach(landmark -> all.putIfAbsent(landmark.id(), landmark));
+        Map<String, LandmarkBlock> kept = new LinkedHashMap<>();
+        session.session().header().landmarks().stream().map(all::get).filter(Objects::nonNull)
+                .forEach(landmark -> kept.putIfAbsent(landmark.id(), landmark));
+        session.session().blocks().filter(LandmarkBlock.class::isInstance).map(LandmarkBlock.class::cast)
+                .forEach(landmark -> kept.putIfAbsent(landmark.id(), landmark));
+        return kept.values().stream().map(mapper::block).toList();
     }
 
     private static double questionMinutes(OpenedSession opened) {

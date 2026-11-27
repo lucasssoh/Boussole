@@ -233,6 +233,7 @@ sources:
 | `objectives` | yes | One to five sentences starting with a verb. |
 | `prerequisites` | no | The same list as the session's `prerequisites` in the syllabus, when the plan gives them (`F045` otherwise). Full session IDs the learner should have finished before: only those really needed, not simply the previous session. In guided mode the session waits until they are finished; in free mode Boussole advises them. A prerequisite in another chapter of the track makes the **whole chapter** wait for that chapter: a chapter is finished before the chapters that need it, and the map of the track draws the chapters in that order (`F044` if two chapters wait for each other). *Resume* goes to a session whose prerequisites are finished and whose chapter waits for no other. |
 | `terms` | no | Lexicon IDs used in the session, shown as its vocabulary list. |
+| `landmarks` | no | IDs of `landmark` blocks written in other sessions of the track, kept in view beside the steps of this one (`F030` for an ID no `landmark` defines). A session keeps its own landmarks in view without listing them. |
 | `sources` | no | Files of `sources/`, optionally with `#page=N`. |
 | `written_by` | no (`P012` without it) | Who wrote the session, then who revised or translated it, one line each: a `model` (an AI, by its **exact ID**, such as `claude-opus-5-5`) with the `tool` that ran it, or a `name` (a person); a `date` (`2026-10-21`); a `role`, `wrote` (default), `revised` or `translated`. The learner sees it on the first step of the session. |
 
@@ -306,6 +307,7 @@ each answer and the correction right after it.
 |---|---|---|
 | `example` | container | A worked example, solution included and visible. One per notion. |
 | `recall` | container | A reminder of a term or prerequisite, just before it is needed. |
+| `landmark` | container | What the whole track keeps coming back to: the program of the running example, a figure, a table, an algorithm. `{#id}` required, unique in the track; the label is its title (`F050` without a title or content). Shown where it is written, then kept in view in a panel beside the steps of its session and of every session that lists it in `landmarks`. One or two per track: what the learner would otherwise scroll back to find. |
 | `note`, `tip`, `warning`, `beyond` | container | Callouts. `beyond` holds what does **not** come from the documents of the track, and says where it comes from: a web source (`:link`) or general knowledge. |
 | `term` | inline | Hover definition from the lexicon. `{id=…}` is optional when the text equals a term or alias, ignoring case (`:term[Dépôt]` finds the term `dépôt`). |
 | `video` | leaf | A video beside the text: `youtube=<11-character video id>` for YouTube, or `src=<file>` for a video file of the sources folder (a lecture recording), never both. `start`, `end` as seconds, `m:ss` or `h:mm:ss`. The label is the caption. A file plays in the browser when it is MP4 (H.264), WebM or Ogg (`F038` otherwise). |
@@ -315,6 +317,29 @@ each answer and the correction right after it.
 | `algorithm` | container | Pseudo-code, one step per line, its indentation showing what a loop or a test holds (below). The label is its title. Boussole numbers the lines, so that a question may point to « la ligne 3 ». |
 
 Images use plain Markdown (`![caption](../assets/route.png)`).
+
+#### The `landmark` directive
+
+Written once, where the track first needs it:
+
+```markdown
+:::landmark[Le programme de l'exemple du cours]{#pl-cours}
+$$
+\begin{cases}
+\max & z = -x_1 + x_2 \\
+\text{s.c.} & -2x_1 + x_2 \le 2 \\
+& x_1 - 2x_2 \le 2 \\
+& x_1 + x_2 \le 5 \\
+& x \ge 0
+\end{cases}
+$$
+:::
+```
+
+Then each later session that works on it lists it, `landmarks: [pl-cours]`, and its questions
+need not repeat it. Mark only what the track keeps coming back to; anything else, the learner can
+pin themself: every example, graph, algorithm, formula set apart and table has a button that keeps
+it in view beside the steps of the track.
 
 #### The `graph` directive
 
@@ -381,10 +406,10 @@ Where each directive may appear:
 |---|---|
 | `warmup`, `checkpoint`, `practice` | the top level of a session only |
 | `exercise`, `mcq` | a notion, an introduction, a section |
-| `example` | a notion, an introduction, a section |
+| `example`, `landmark` | a notion, an introduction, a section |
 | `recall` | the same, and `hint`, `solution` |
 | `note`, `tip`, `warning`, `beyond` | the same as `recall`, and `example`, `recall` |
-| `video`, `pdf`, `link`, `graph`, `algorithm` | anywhere except `answer` |
+| `video`, `pdf`, `link`, `graph`, `algorithm` | anywhere except `answer` (in a `landmark` too) |
 | `ref` | a notion, an introduction, a section, the body of a review or exam |
 | `answer` | `exercise` |
 | `rubric` | an `exercise` with `type=free` |
@@ -540,6 +565,7 @@ chapter.
 | `F047` | error | A `rubric` in an MCQ or in an exercise Boussole checks itself: only a `free` exercise has one. |
 | `F048` | error | A `rubric` empty, given twice, or with a line that is not a criterion `- [weight] text`, or a weight that is not a number above 0. |
 | `F049` | error | An `algorithm` empty, or holding another block than lines of pseudo-code. |
+| `F050` | error | A `landmark` without a title (`:::landmark[title]{#id}`) or with nothing inside. |
 | `F032` | warning | `video` that YouTube does not know (checked only with `--check-videos`). |
 | `P001` | warning | A notion without exercise or `mcq`. |
 | `P002` | warning | A notion with more than one `example`. |

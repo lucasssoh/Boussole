@@ -123,6 +123,13 @@ session should be split, and propose how.
   place when it shows what the text cannot (a path, a frontier, a structure); one that repeats
   the table or the sentence just above is cut. Short node labels (one or two words) and short
   edge labels, or none: the picture is read at a glance.
+- **What the track keeps coming back to is a `:::landmark`**: the program of the running example,
+  a figure, a table or an algorithm that many questions use. Write it once, where the track first
+  needs it, `:::landmark[Le programme de l'exemple du cours]{#pl-cours}`; every later session that
+  works on it lists it in its front matter, `landmarks: [pl-cours]`, and Boussole keeps it in view
+  beside the steps. Its questions then say « le programme de l'exemple du cours, à droite »
+  instead of copying it again, but still give any data that changes. One or two per track; an
+  example used in one notion only stays an `:::example` (the learner can pin it themself).
 - **An algorithm is an `:::algorithm`**, never prose or a bare code block: one step per line,
   indented under the loop or test that holds it, `$…$` for the maths, `//` for a comment
   (`docs/FORMAT.md` §5.5). Its lines are numbered: the explanation and the questions point to

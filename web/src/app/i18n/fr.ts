@@ -106,6 +106,7 @@ export const FR: Translations = {
     score: '{{correct}} sur {{total}} justes du premier coup',
   },
   block: {
+    landmark: 'Repère',
     example: 'Exemple',
     recall: 'Rappel',
     note: 'Remarque',
@@ -371,6 +372,17 @@ export const FR: Translations = {
     switch: 'Un autre document de la séance',
     thisStep: 'cette étape',
     loadFailed: 'Ce document n’a pas pu être ouvert.',
+  },
+  landmarks: {
+    button: 'Repères · {{count}}',
+    title: 'Repères',
+    pin: 'Garder en vue',
+    unpin: 'Ne plus garder en vue',
+    inView: 'Il reste en vue à côté des étapes, dans le panneau Repères.',
+    empty: 'Épingle un exemple, une formule, un tableau ou un algorithme : il restera ici, dans toutes les séances du parcours.',
+    figure: 'Figure',
+    formula: 'Formule',
+    table: 'Tableau',
   },
   panel: {
     close: 'Fermer',

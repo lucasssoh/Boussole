@@ -11,6 +11,7 @@ import { LearnFacade, SidePanel } from './learn.facade';
 import { DocumentPlace, SessionDocument, isOfficeDocument, panelKey } from './session-documents';
 import { WebReferences } from './web-references';
 import { MarkdownDocumentComponent } from './markdown-document.component';
+import { LandmarksPanelComponent } from './landmarks-panel.component';
 
 /**
  * The video (YouTube or a file of the sources), the document or the web page opened beside the
@@ -21,12 +22,19 @@ import { MarkdownDocumentComponent } from './markdown-document.component';
  */
 @Component({
   selector: 'app-side-panel',
-  imports: [IconComponent, LoadingComponent, MarkdownDocumentComponent, NgTemplateOutlet, RichTextComponent, TranslocoPipe],
+  imports: [IconComponent, LandmarksPanelComponent, LoadingComponent, MarkdownDocumentComponent, NgTemplateOutlet, RichTextComponent, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'side-panel', '(document:keydown.escape)': 'onEscape()' },
   template: `
     @if (shown(); as panel) {
-      @if (panel.kind === 'documents') {
+      @if (panel.kind === 'landmarks') {
+        <div class="panel-bar">
+          <app-icon name="pin" class="panel-bar-icon" />
+          <span class="panel-title">{{ 'landmarks.title' | transloco }}</span>
+          <button type="button" class="quiet" (click)="closeLandmarks()">{{ 'panel.close' | transloco }} <app-icon name="close" /></button>
+        </div>
+        <app-landmarks-panel />
+      } @else if (panel.kind === 'documents') {
         <div class="panel-bar">
           <app-icon name="document" class="panel-bar-icon" />
           <span class="panel-title">{{ 'documents.title' | transloco }}</span>
@@ -168,7 +176,7 @@ export class SidePanelComponent {
   /** What the list marks: what is shown, else, on the list, the last thing shown. */
   private readonly shownKey = computed(() => {
     const panel = this.shown();
-    const shown = panel?.kind === 'documents' ? this.learn.lastShown() : panel;
+    const shown = panel?.kind === 'documents' || panel?.kind === 'landmarks' ? this.learn.lastShown() : panel;
     return shown ? panelKey(shown) : null;
   });
 
@@ -192,6 +200,7 @@ export class SidePanelComponent {
     switch (panel?.kind) {
       case undefined:
       case 'documents':
+      case 'landmarks':
         return null;
       case 'markdown':
         return null;
@@ -286,6 +295,12 @@ export class SidePanelComponent {
     }
   }
 
+  /** Closed by the learner, the landmarks no longer open by themselves in this track. */
+  protected closeLandmarks(): void {
+    this.learn.landmarksClosed.set(true);
+    this.learn.panel.set(null);
+  }
+
   protected choose(place: DocumentPlace): void {
     const panel = place.panel;
     if (panel.kind === 'web') {
@@ -349,6 +364,7 @@ export class SidePanelComponent {
     }
     switch (panel.kind) {
       case 'documents':
+      case 'landmarks':
       case 'markdown':
         return null;
       case 'pdf':
@@ -374,7 +390,7 @@ export class SidePanelComponent {
 
   protected readonly frameUrl = computed<SafeResourceUrl | null>(() => {
     const panel = this.shown();
-    if (!panel || panel.kind === 'documents' || panel.kind === 'markdown' || panel.kind === 'localVideo' || panel.kind === 'web') {
+    if (!panel || panel.kind === 'documents' || panel.kind === 'landmarks' || panel.kind === 'markdown' || panel.kind === 'localVideo' || panel.kind === 'web') {
       return null;
     }
     const url = panel.kind === 'pdf'

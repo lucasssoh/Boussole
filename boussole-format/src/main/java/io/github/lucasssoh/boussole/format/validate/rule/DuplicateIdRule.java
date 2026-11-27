@@ -10,7 +10,7 @@ import io.github.lucasssoh.boussole.format.validate.ValidationRule;
 
 /**
  * F003: chapters and terms are unique in the subject, sessions in their chapter, notions in
- * their session, and exercises in the subject.
+ * their session, and exercises and landmarks in the subject.
  */
 public final class DuplicateIdRule implements ValidationRule {
 
@@ -34,5 +34,7 @@ public final class DuplicateIdRule implements ValidationRule {
         }
         DuplicateIdTracker exercises = new DuplicateIdTracker("exercise", diagnostics);
         CourseIds.exercises(course).forEach(exercise -> exercises.add(exercise.id(), exercise.position()));
+        DuplicateIdTracker landmarks = new DuplicateIdTracker("landmark", diagnostics);
+        CourseIds.landmarks(course).forEach(landmark -> landmarks.add(landmark.id(), landmark.position()));
     }
 }

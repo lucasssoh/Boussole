@@ -6,10 +6,11 @@ import { storeValue, storedText } from '../core/local-preferences';
 
 /**
  * What opens beside the text: a YouTube video, a video file of the sources, a document or a web
- * page, or the list of everything the session cites.
+ * page, the list of everything the session cites, or the landmarks kept in view.
  */
 export type SidePanel =
   | { kind: 'documents' }
+  | { kind: 'landmarks' }
   | { kind: 'web'; label: string; url: string }
   | { kind: 'video'; label: string; youtubeId: string; start: number | null; end: number | null }
   | { kind: 'localVideo'; label: string; path: string; start: number | null; end: number | null }
@@ -29,13 +30,22 @@ export class LearnFacade {
   /** The last document, page or video shown beside the text in this session, marked in the list. */
   readonly lastShown = signal<SidePanel | null>(null);
   readonly unreachable = signal(false);
+  /** The learner closed the landmarks in this track: they no longer open by themselves. */
+  readonly landmarksClosed = signal(false);
 
   readonly lexicon = computed(() => this.course()?.lexicon ?? []);
 
   constructor() {
     effect(() => {
+      const subject = this.session()?.subject;
+      const closed = this.landmarksClosed();
+      if (subject) {
+        untracked(() => storeValue(`landmarks-closed.${subject}`, String(closed)));
+      }
+    });
+    effect(() => {
       const panel = this.panel();
-      if (panel && panel.kind !== 'documents') {
+      if (panel && panel.kind !== 'documents' && panel.kind !== 'landmarks') {
         untracked(() => this.lastShown.set(panel));
       }
     });
@@ -59,6 +69,7 @@ export class LearnFacade {
       this.reach(this.api.session(subject, session, lang)),
     ]);
     this.course.set(course);
+    this.landmarksClosed.set(storedText(`landmarks-closed.${subject}`) === 'true');
     this.session.set(opened);
   }
 

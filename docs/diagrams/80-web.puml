@@ -59,7 +59,15 @@ package "learn" {
   class "graph-layout.ts" as GraphLayout <<floors no wider than the map, order without crossings, links routed>>
   class "chapterColor()" as ChapterColor <<the colour of a chapter, by its place>>
   class TrackLanguagesComponent <<the languages of a track, chips>>
-  class SidePanelComponent <<video, PDF, Markdown or web page, or the documents of the session>>
+  class SidePanelComponent <<video, PDF, Markdown or web page, the documents of the session, or its landmarks>>
+  class LandmarksPanelComponent <<the landmarks of the track the session uses, then those the learner pinned>>
+  class PinnedLandmarks <<service>> {
+    +pinned : Signal<PinnedLandmark[]>
+    +open(subject)
+    +toggle(title, blocks)
+    +unpin(key)
+  }
+  class "pinnablePieces()" as PinnablePieces <<the formulas set apart and the tables of a text>>
   class MarkdownDocumentComponent <<a cited Markdown document, rendered beside the lesson>>
   class "sessionDocuments()" as SessionDocuments <<what the session cites, by document and page>>
 }
@@ -73,6 +81,7 @@ package "learn.blocks" {
   class AlgorithmBlockComponent <<numbered lines, keywords, comments>>
   class "algorithm-lines.ts" as AlgorithmLines <<markKeywords(), splitComment()>>
   class LinkBlockComponent
+  class PinButtonComponent <<keeps a block in view beside the steps>>
   class WebReferences <<service>> {
     +preview(url) : Promise<PagePreview>
     +open(label, url)
@@ -187,6 +196,13 @@ AlgorithmBlockComponent --> MarkdownRenderer : each line
 BlockListComponent --> LinkBlockComponent
 SidePanelComponent ..> WebReferences : preview, window
 SidePanelComponent --> MarkdownDocumentComponent : cited Markdown file
+SidePanelComponent --> LandmarksPanelComponent : landmarks
+LandmarksPanelComponent --> BlockListComponent
+LandmarksPanelComponent ..> PinnedLandmarks
+BlockListComponent --> PinButtonComponent : example, graph, algorithm
+PinButtonComponent ..> PinnedLandmarks
+ProseBlockComponent ..> PinnablePieces : formulas, tables
+ProseBlockComponent ..> PinnedLandmarks
 MarkdownDocumentComponent --> ProseBlockComponent : renders source
 LinkBlockComponent ..> WebReferences : looks ahead, opens
 ProseBlockComponent ..> WebReferences : :link

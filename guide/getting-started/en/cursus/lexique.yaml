@@ -114,3 +114,9 @@
   definition: >
     A web page the track cites, which opens beside the text when its site allows it, and in a tab
     otherwise.
+
+- id: landmark
+  term: Landmark
+  aliases: [landmarks]
+  definition: >
+    What a whole track keeps coming back to (a running example, a table, a figure), kept in view in a panel beside the steps. You can pin an example, a formula, a table or an algorithm there yourself.

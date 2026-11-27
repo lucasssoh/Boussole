@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 /**
  * F030: every reference points to something that exists: {@code ref} to an exercise,
- * {@code term} to the lexicon, {@code terms} and {@code prerequisites} of a front matter, and
+ * {@code term} to the lexicon, {@code terms}, {@code landmarks} and {@code prerequisites} of a front matter, and
  * {@code see} of a term.
  */
 public final class ReferenceRule implements ValidationRule {
@@ -27,6 +27,7 @@ public final class ReferenceRule implements ValidationRule {
     public void check(ValidationContext context, DiagnosticCollector diagnostics) {
         Course course = context.course();
         Set<String> exercises = CourseIds.exercises(course).map(CourseIds.ExerciseId::id).collect(Collectors.toSet());
+        Set<String> landmarks = CourseIds.landmarks(course).map(CourseIds.ExerciseId::id).collect(Collectors.toSet());
         course.blocks()
                 .filter(ExerciseRefBlock.class::isInstance)
                 .map(ExerciseRefBlock.class::cast)
@@ -53,6 +54,10 @@ public final class ReferenceRule implements ValidationRule {
             loaded.session().header().terms().stream()
                     .filter(id -> course.lexicon().byId(id).isEmpty())
                     .forEach(id -> unknown(diagnostics, header, "`terms` lists `" + id + "`, which is not in the lexicon"));
+            loaded.session().header().landmarks().stream()
+                    .filter(id -> !landmarks.contains(id))
+                    .forEach(id -> unknown(diagnostics, header, "`landmarks` lists `" + id
+                            + "`, which no `:::landmark` of the track defines"));
             loaded.session().header().prerequisites().stream()
                     .filter(id -> CourseIds.fullSessionId(course, id).isEmpty())
                     .forEach(id -> unknown(diagnostics, header, "prerequisite `" + id

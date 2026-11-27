@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, effect, inject, input, untracked } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
+import { BlockView } from '../../core/api';
 import { codeText } from '../../shared/code-fence';
 import { iconSvg } from '../../shared/icon.component';
 import { MarkdownRenderer } from '../../shared/markdown-renderer';
 import { drawMermaidDiagrams } from '../../shared/mermaid-diagrams';
 import { LearnFacade } from '../learn.facade';
+import { PinnablePiece, PinnedLandmarks, landmarkKey, pinnablePieces } from '../landmarks';
 import { sourcePanel } from '../session-documents';
 import { WebReferences } from '../web-references';
 import { FillGaps } from '../question/fill-gaps';
@@ -41,6 +43,9 @@ export class ProseBlockComponent {
   private readonly learn = inject(LearnFacade);
   private readonly references = inject(WebReferences);
   private readonly transloco = inject(TranslocoService, { optional: true });
+  private readonly landmarks = inject(PinnedLandmarks);
+  /** The formulas set apart and the tables of the text, each with the button that keeps it in view. */
+  private pieces: { button: HTMLButtonElement; piece: PinnablePiece }[] = [];
   /** The term whose definition shows, kept in place while the page scrolls. */
   private shownTerm: HTMLElement | null = null;
   /** The definitions, in the body of the page while this text is shown: above everything. */
@@ -49,18 +54,31 @@ export class ProseBlockComponent {
   constructor() {
     inject(DestroyRef).onDestroy(() => this.removeTips());
     effect(() => {
+      this.landmarks.pinned();
+      untracked(() => this.markPinned());
+    });
+    effect(() => {
       this.removeTips();
       this.host.innerHTML = this.renderer.render(this.markdown(), { base: this.base() ?? this.learn.sessionBase(), gaps: this.fill() !== null });
       this.widenTables();
       this.defineTerms();
       this.lookAtWebLinks();
       this.addCopyButtons();
+      untracked(() => this.addPinButtons());
       untracked(() => this.fill()?.mountIn(this.host));
       void drawMermaidDiagrams(this.host);
     });
   }
 
   protected onClick(event: MouseEvent): void {
+    const pin = (event.target as HTMLElement).closest<HTMLButtonElement>('.piece-pin');
+    if (pin) {
+      const found = this.pieces.find((entry) => entry.button === pin);
+      if (found) {
+        this.landmarks.toggle(this.transloco?.translate(found.piece.kind === 'math' ? 'landmarks.formula' : 'landmarks.table') ?? '', this.blocksOf(found.piece));
+      }
+      return;
+    }
     const copy = (event.target as HTMLElement).closest<HTMLButtonElement>('.code-copy');
     if (copy) {
       this.copyCode(copy);
@@ -80,6 +98,44 @@ export class ProseBlockComponent {
         Number.isInteger(page) && page > 0 ? page : null,
       ));
     }
+  }
+
+  /**
+   * A formula set apart or a table gets a button that keeps it in view beside the steps. The n-th
+   * formula drawn is the n-th of the Markdown, and so for tables: each is pinned from its source.
+   */
+  private addPinButtons(): void {
+    const sources = pinnablePieces(this.markdown());
+    const drawn = { math: Array.from(this.host.querySelectorAll<HTMLElement>('.katex-display')), table: Array.from(this.host.querySelectorAll<HTMLElement>('.table-frame')) };
+    this.pieces = [];
+    for (const kind of ['math', 'table'] as const) {
+      const pieces = sources.filter((piece) => piece.kind === kind);
+      if (pieces.length !== drawn[kind].length) {
+        continue;
+      }
+      drawn[kind].forEach((element, index) => {
+        const label = this.transloco?.translate('landmarks.pin') ?? '';
+        element.classList.add('pinnable-piece');
+        element.insertAdjacentHTML('afterbegin', `<button type="button" class="piece-pin pin-button quiet" title="${label}" aria-label="${label}">${iconSvg('pin', 16)}</button>`);
+        this.pieces.push({ button: element.querySelector<HTMLButtonElement>('.piece-pin')!, piece: pieces[index] });
+      });
+    }
+    this.markPinned();
+  }
+
+  private markPinned(): void {
+    for (const { button, piece } of this.pieces) {
+      const pinned = this.landmarks.isPinned(landmarkKey(this.blocksOf(piece)));
+      button.classList.toggle('pinned', pinned);
+      button.setAttribute('aria-pressed', String(pinned));
+      const label = this.transloco?.translate(pinned ? 'landmarks.unpin' : 'landmarks.pin') ?? '';
+      button.title = label;
+      button.setAttribute('aria-label', label);
+    }
+  }
+
+  private blocksOf(piece: PinnablePiece): BlockView[] {
+    return [{ type: 'prose', markdown: piece.markdown }];
   }
 
   private addCopyButtons(): void {

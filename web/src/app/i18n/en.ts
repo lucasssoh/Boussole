@@ -104,6 +104,7 @@ export const EN = {
     score: '{{correct}} of {{total}} right at the first attempt',
   },
   block: {
+    landmark: 'Landmark',
     example: 'Example',
     recall: 'Reminder',
     note: 'Note',
@@ -369,6 +370,17 @@ export const EN = {
     switch: 'Another document of the session',
     thisStep: 'this step',
     loadFailed: 'This document could not be opened.',
+  },
+  landmarks: {
+    button: 'Landmarks · {{count}}',
+    title: 'Landmarks',
+    pin: 'Keep in view',
+    unpin: 'Stop keeping in view',
+    inView: 'It stays in view beside the steps, in the Landmarks panel.',
+    empty: 'Pin an example, a formula, a table or an algorithm: it stays here, in every session of the track.',
+    figure: 'Figure',
+    formula: 'Formula',
+    table: 'Table',
   },
   panel: {
     close: 'Close',

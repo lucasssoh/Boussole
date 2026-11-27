@@ -23,6 +23,7 @@ import { FirstAnswer, SessionRun } from './session-run';
 import { StarsComponent } from './stars.component';
 import { MAX_STARS, StarTone, averageStars, blockStarTone, starSummary } from './stars';
 import { SidePanelComponent } from './side-panel.component';
+import { PinnedLandmarks } from './landmarks';
 import { MarkdownRenderer } from '../shared/markdown-renderer';
 import { sessionDocuments } from './session-documents';
 import { typingIn } from './arrow-keys';
@@ -73,6 +74,12 @@ import { SelectionPillsDirective } from '../shared/selection-pills.directive';
           }
           @if (opened(); as current) {
             <app-track-languages [languages]="current.languages" [current]="current.lang" [compact]="true" (choose)="switchLanguage($event)" />
+          }
+          @if (landmarkCount() > 0) {
+            <button type="button" class="documents-toggle" [class.active]="learn.panel()?.kind === 'landmarks'"
+                    [attr.aria-pressed]="learn.panel()?.kind === 'landmarks'" (click)="toggleLandmarks()">
+              <app-icon name="pin" /> {{ 'landmarks.button' | transloco: { count: landmarkCount() } }}
+            </button>
           }
           @if (documents().length > 0) {
             <button type="button" class="documents-toggle" [class.active]="learn.panel()?.kind === 'documents'"
@@ -272,6 +279,7 @@ export class SessionPageComponent {
   private readonly settings = inject(ServerSettingsService);
   protected readonly stats = inject(StatsService);
   private readonly markdown = inject(MarkdownRenderer);
+  private readonly pinned = inject(PinnedLandmarks);
 
   protected readonly finishedIn = signal<number | null>(null);
   protected readonly outlineOpen = signal(false);
@@ -286,6 +294,8 @@ export class SessionPageComponent {
   });
   protected readonly screen = computed<SessionScreen>(() => this.plan().screens[this.index()]);
   /** Everything the session cites, in the list the Documents button opens beside the text. */
+  /** The landmarks of the track this session uses, and those the learner pinned in the track. */
+  protected readonly landmarkCount = computed(() => (this.opened()?.landmarks.length ?? 0) + this.pinned.pinned().length);
   protected readonly documents = computed(() => sessionDocuments(this.plan(), this.opened()?.sources ?? [], {
     references: (markdown) => this.markdown.references(markdown),
     sourcePath: (file) => this.learn.sourcePath(file),
@@ -398,6 +408,20 @@ export class SessionPageComponent {
   protected readonly remaining = computed(() => clock(this.run.remainingSeconds() ?? 0));
 
   constructor() {
+    effect(() => {
+      // The landmarks of the track open beside the steps, on a screen wide enough for both, unless
+      // the learner closed them in this track.
+      const opened = this.opened();
+      if (!opened) {
+        return;
+      }
+      untracked(() => {
+        this.pinned.open(opened.subject);
+        if (this.landmarkCount() > 0 && !this.learn.landmarksClosed() && this.learn.panel() === null && window.matchMedia('(min-width: 1101px)').matches) {
+          this.learn.panel.set({ kind: 'landmarks' });
+        }
+      });
+    });
     inject(DestroyRef).onDestroy(() => {
       this.stats.studying.set(false);
       cancelAnimationFrame(this.countFrame);
@@ -475,6 +499,13 @@ export class SessionPageComponent {
   }
 
   /** The button opens the list, even over a document shown; on the list, it closes the panel. */
+  /** Opened by the learner, the landmarks open by themselves again in this track. */
+  protected toggleLandmarks(): void {
+    const open = this.learn.panel()?.kind === 'landmarks';
+    this.learn.landmarksClosed.set(open);
+    this.learn.panel.set(open ? null : { kind: 'landmarks' });
+  }
+
   protected toggleDocuments(): void {
     this.learn.panel.set(this.learn.panel()?.kind === 'documents' ? null : { kind: 'documents' });
   }

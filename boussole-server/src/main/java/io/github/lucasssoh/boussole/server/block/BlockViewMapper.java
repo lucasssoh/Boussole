@@ -17,6 +17,7 @@ import io.github.lucasssoh.boussole.format.model.block.ExerciseHint;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseRefBlock;
 import io.github.lucasssoh.boussole.format.model.block.AlgorithmBlock;
 import io.github.lucasssoh.boussole.format.model.block.GraphBlock;
+import io.github.lucasssoh.boussole.format.model.block.LandmarkBlock;
 import io.github.lucasssoh.boussole.format.model.block.LinkBlock;
 import io.github.lucasssoh.boussole.format.model.block.ExerciseType;
 import io.github.lucasssoh.boussole.format.model.block.McqBlock;
@@ -73,6 +74,7 @@ public final class BlockViewMapper {
             case ProseBlock prose -> new BlockView.Prose(prose.markdown());
             case ExampleBlock example -> new BlockView.Example(example.label(), blocks(example.content()));
             case RecallBlock recall -> new BlockView.Recall(blocks(recall.content()));
+            case LandmarkBlock landmark -> new BlockView.Landmark(landmark.id(), landmark.title(), blocks(landmark.content()));
             case CalloutBlock callout -> new BlockView.Callout(callout.kind().name().toLowerCase(Locale.ROOT), blocks(callout.content()));
             case VideoBlock video -> new BlockView.Video(video.label(),
                     video.source() instanceof YoutubeVideoSource youtube ? youtube.youtubeId() : null,

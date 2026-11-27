@@ -5,6 +5,7 @@ objectives:
   - Ouvrir un document, une vidéo ou une page web à côté du texte.
   - Dessiner un schéma avec `graph` ou `mermaid`, et écrire des maths.
   - Montrer du code coloré et un algorithme aux lignes numérotées.
+  - Garder en vue avec un repère ce à quoi tout le parcours revient.
 terms: [worked-example, directive, lexicon, notion]
 prerequisites: [boussole-format.format.f4]
 written_by:
@@ -322,6 +323,62 @@ Lequel des trois numérote les lignes et lit les mots « pour », « si », « r
 :::solution
 **Un `:::algorithm`** : une étape par ligne, l'indentation montre ce que la boucle contient, et
 les lignes sont numérotées.
+:::
+::::
+
+## Repères {#landmarks}
+
+**Et si tout le parcours revient sans cesse à la même chose ?** Un exemple fil rouge, le
+programme d'un cours, un tableau de valeurs : l'apprenant ne devrait pas remonter pour le
+retrouver. Écris-le une fois dans un `:::landmark`, avec un identifiant et un titre :
+
+~~~markdown
+:::landmark[Les commandes de s1]{#commands-s1}
+| Commande | Ce qu'elle fait |
+|---|---|
+| `git init` | crée le dépôt |
+| `git add` | met un changement dans l'index |
+| `git commit` | enregistre l'index |
+:::
+~~~
+
+Boussole le montre là où il est écrit, puis le garde en vue dans le panneau *Repères*, à côté des
+étapes. Une séance suivante qui s'en sert le liste dans son en-tête, `landmarks: [commands-s1]`,
+et ses questions n'ont plus à le recopier. Un ou deux par parcours : seulement ce à quoi
+l'apprenant revient sans cesse.
+
+L'apprenant peut épingler tout le reste lui-même : chaque exemple, schéma, algorithme, formule
+mise à part et tableau a un bouton qui le garde en vue dans toutes les séances du parcours.
+
+:::landmark[Les commandes de s1]{#commands-s1}
+| Commande | Ce qu'elle fait |
+|---|---|
+| `git init` | crée le dépôt |
+| `git add` | met un changement dans l'index |
+| `git commit` | enregistre l'index |
+:::
+
+::::mcq{#f5-a8}
+Dans un parcours de recherche opérationnelle, presque toutes les questions du chapitre 2
+travaillent sur le même programme linéaire. Comment éviter à l'apprenant de remonter pour le
+retrouver ?
+
+- [x] Un `:::landmark` là où il apparaît d'abord, puis `landmarks:` dans les séances suivantes
+- [ ] Un `:::recall` qui contient le programme, au début de chaque notion suivante
+  > Un rappel se lit une fois, puis défile avec le texte : le programme n'est plus en vue pendant les questions.
+- [ ] Un second `:::example` qui contient le programme, dans chaque notion qui s'en sert
+  > Une notion n'a qu'un exemple (`P002`), et le programme défilerait quand même avec le texte.
+- [ ] Le programme recopié dans l'énoncé de chaque question qui en a besoin
+  > Ça marche, mais l'apprenant lit vingt fois le même programme ; un repère reste en vue une fois pour toutes.
+
+:::hint
+Lequel des quatre reste en vue pendant que l'apprenant passe d'une étape à l'autre ?
+:::
+
+:::solution
+**Un `:::landmark`**, écrit une fois là où le programme apparaît d'abord. Chaque séance suivante
+le liste dans `landmarks:`, et Boussole le garde en vue à côté des étapes : les questions ne le
+recopient plus.
 :::
 ::::
 

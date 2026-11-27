@@ -5,6 +5,7 @@ objectives:
   - Open a document, a video or a web page beside the text.
   - Draw a diagram with `graph` or `mermaid`, and write maths.
   - Show coloured code and an algorithm with numbered lines.
+  - Keep what the whole track comes back to in view with a landmark.
 terms: [worked-example, directive, lexicon, notion]
 prerequisites: [boussole-format.format.f4]
 written_by:
@@ -322,6 +323,60 @@ Which of the three numbers its lines and reads the words "for", "if", "return"?
 :::solution
 **An `:::algorithm`**: one step per line, the indentation shows what the loop holds, and the
 lines are numbered.
+:::
+::::
+
+## Landmarks {#landmarks}
+
+**What if the whole track keeps coming back to the same thing?** A running example, the program
+of a course, a table of values: the learner should not have to scroll back to find it. Write it
+once in a `:::landmark`, with an ID and a title:
+
+~~~markdown
+:::landmark[The commands of s1]{#commands-s1}
+| Command | What it does |
+|---|---|
+| `git init` | creates the repository |
+| `git add` | puts a change in the index |
+| `git commit` | records the index |
+:::
+~~~
+
+Boussole shows it where it is written, then keeps it in view in the *Landmarks* panel, beside the
+steps. A later session that uses it lists it in its front matter, `landmarks: [commands-s1]`, and
+its questions need not copy it again. One or two per track: only what the learner keeps coming
+back to.
+
+The learner can pin anything else themself: every example, graph, algorithm, formula set apart
+and table has a button that keeps it in view in every session of the track.
+
+:::landmark[The commands of s1]{#commands-s1}
+| Command | What it does |
+|---|---|
+| `git init` | creates the repository |
+| `git add` | puts a change in the index |
+| `git commit` | records the index |
+:::
+
+::::mcq{#f5-a8}
+In an operations research track, almost every question of chapter 2 works on the same linear
+program. How do you spare the learner from scrolling back to it?
+
+- [x] A `:::landmark` where it first appears, then `landmarks:` in the later sessions
+- [ ] A `:::recall` holding the program, at the start of each later notion
+  > A reminder is read once, then scrolls away with the text: the program is out of view during the questions.
+- [ ] A second `:::example` holding the program, in each notion that uses it
+  > A notion has one example (`P002`), and the program would still scroll away with the text.
+- [ ] The program copied into the statement of each question that needs it
+  > It works, but the learner reads the same program twenty times; a landmark stays in view once and for all.
+
+:::hint
+Which of these stays in view while the learner goes from one step to the next?
+:::
+
+:::solution
+**A `:::landmark`**, written once where the program first appears. Each later session lists it
+in `landmarks:`, and Boussole keeps it in view beside the steps: the questions no longer copy it.
 :::
 ::::
 

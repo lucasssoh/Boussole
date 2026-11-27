@@ -21,6 +21,7 @@ public final class DirectiveParserRegistry {
         return new DirectiveParserRegistry(List.of(
                 new ExampleDirectiveParser(),
                 new RecallDirectiveParser(),
+                new LandmarkDirectiveParser(),
                 new CalloutDirectiveParser(CalloutKind.NOTE),
                 new CalloutDirectiveParser(CalloutKind.TIP),
                 new CalloutDirectiveParser(CalloutKind.WARNING),
