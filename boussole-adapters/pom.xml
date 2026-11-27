@@ -7,7 +7,7 @@
     <parent>
         <groupId>io.github.lucasssoh.boussole</groupId>
         <artifactId>boussole</artifactId>
-        <version>0.4.0</version>
+        <version>0.5.0</version>
     </parent>
 
     <artifactId>boussole-adapters</artifactId>

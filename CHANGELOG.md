@@ -4,7 +4,7 @@ Versions follow `MAJOR.MINOR.PATCH`, and each release is a git tag (`v1.0.0`). M
 also get a code name, minor ones their date; patch releases have neither. Until `1.0.0`, a
 minor release may break things and says so.
 
-## Unreleased
+## 0.5.0 (November 27 2026)
 
 ### Added
 - **Landmarks:** what a track keeps coming back to, such as the program of the running example, now stays in view in a *Landmarks* panel on the right, beside the steps, in every session that uses it; on a phone, the *Landmarks* button opens it over the step. You can pin anything else there yourself: every example, graph, algorithm, formula set apart and table has a pin, and what you pin stays in every session of the track until you take it away. Agents mark these with a new block, `:::landmark`.
